@@ -15,6 +15,7 @@ import { SpecFileRow } from '@/components/runs/SpecFileRow';
 import { runDisplayStatus, RUN_PILL } from '@/components/runs/run-status';
 import { cn } from '@/lib/utils';
 import { timeAgo } from '@/lib/format';
+import { gitBranchUrl, gitProviderIcon } from '@/lib/git';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/runs/$runId/')({
   component: RunDetailPage,
@@ -30,6 +31,7 @@ function RunDetailPage() {
   const { run, summary, files } = q.data;
   const pill = RUN_PILL[runDisplayStatus(run)];
   const author = run.authorEmail ?? run.authorName ?? 'unknown';
+  const branchHref = gitBranchUrl(run);
 
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
@@ -79,13 +81,29 @@ function RunDetailPage() {
           <span>{timeAgo(run.startedAt)}</span>
           <Flex align="center" gap={1}>
             <HugeiconsIcon icon={GitBranchIcon} size={14} className="shrink-0" />
-            <span className="font-mono">{run.branch ?? 'no branch'}</span>
+            {run.branch && branchHref ? (
+              <a
+                href={branchHref}
+                target="_blank"
+                rel="noreferrer"
+                className="font-mono transition-colors hover:text-foreground hover:underline"
+              >
+                {run.branch}
+              </a>
+            ) : (
+              <span className="font-mono">{run.branch ?? 'no branch'}</span>
+            )}
           </Flex>
           <Flex align="center" gap={1.5}>
             <UserAvatar name={run.authorName} email={author} size="sm" />
             <span>{author}</span>
           </Flex>
-          {run.ciProvider && <span>via {run.ciProvider}</span>}
+          {run.ciProvider && (
+            <Flex align="center" gap={1}>
+              <HugeiconsIcon icon={gitProviderIcon(run.ciProvider)} size={14} className="shrink-0" />
+              <span>via {run.ciProvider}</span>
+            </Flex>
+          )}
         </Flex>
       </Flex>
 

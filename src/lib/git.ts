@@ -1,0 +1,50 @@
+import type { IconSvgElement } from '@hugeicons/react';
+import { GithubIcon, GitlabIcon, ServerStack01Icon } from '@hugeicons/core-free-icons';
+
+type RunGit = {
+  repository: string | null;
+  branch: string | null;
+  ciProvider: string | null;
+  ciRunUrl: string | null;
+};
+
+const PROVIDER_ICON: Record<string, IconSvgElement> = {
+  github: GithubIcon,
+  gitlab: GitlabIcon,
+};
+
+/** Provider logo (GitHub/GitLab); a generic CI icon for everything else. */
+export function gitProviderIcon(provider: string | null): IconSvgElement {
+  return (provider && PROVIDER_ICON[provider]) || ServerStack01Icon;
+}
+
+// Per-provider branch path + cloud host (host is overridden by the CI run URL's
+// origin when present, so self-hosted GitHub/GitLab resolve correctly).
+const BRANCH_PATH: Record<string, string> = { github: 'tree', gitlab: '-/tree', bitbucket: 'src' };
+const DEFAULT_HOST: Record<string, string> = {
+  github: 'https://github.com',
+  gitlab: 'https://gitlab.com',
+  bitbucket: 'https://bitbucket.org',
+};
+
+function originFromUrl(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+}
+
+/** Web URL for a run's branch on its provider, or null if it can't be built. */
+export function gitBranchUrl(run: RunGit): string | null {
+  const { repository, branch, ciProvider } = run;
+  if (!repository || !branch || !ciProvider) return null;
+  const path = BRANCH_PATH[ciProvider];
+  const host = originFromUrl(run.ciRunUrl) ?? DEFAULT_HOST[ciProvider];
+  if (!path || !host) return null;
+  const repo = repository.replace(/^\/+|\/+$/g, '');
+  // Keep slashes in branch names (e.g. feature/x) but encode each segment.
+  const ref = branch.split('/').map(encodeURIComponent).join('/');
+  return `${host}/${repo}/${path}/${ref}`;
+}

@@ -86,6 +86,7 @@ export function RunRow({
               passed={run.stats.passed}
               failed={run.stats.failed}
               flaky={run.stats.flaky}
+              skipped={run.stats.skipped}
             />
           )}
           {run.ciRunUrl && (

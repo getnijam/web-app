@@ -83,6 +83,7 @@ function FileDetailPage() {
             passed={fileSummary.passed}
             failed={fileSummary.failed}
             flaky={fileSummary.flaky}
+            skipped={fileSummary.skipped}
           />
         )}
       </Flex>

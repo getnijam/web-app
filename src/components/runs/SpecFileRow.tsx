@@ -52,7 +52,12 @@ export function SpecFileRow({
       <Text as="span" truncate className="min-w-0 flex-1 font-mono text-sm">
         {displayFile(file.file)}
       </Text>
-      <CountDots passed={file.passed} failed={file.failed} flaky={file.flaky} />
+      <CountDots
+        passed={file.passed}
+        failed={file.failed}
+        flaky={file.flaky}
+        skipped={file.skipped}
+      />
       <HugeiconsIcon icon={ArrowRight01Icon} size={18} className="shrink-0 text-muted-foreground" />
     </Link>
   );
