@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { client } from '@/client/client.gen';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
 import { routeTree } from './routeTree.gen';
 import './styles/globals.css';
@@ -35,7 +36,9 @@ createRoot(rootEl).render(
   <StrictMode>
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <TooltipProvider delayDuration={200}>
+          <RouterProvider router={router} />
+        </TooltipProvider>
       </QueryClientProvider>
       <Toaster />
     </ThemeProvider>

@@ -94,7 +94,9 @@ function FileDetailPage() {
         <Accordion
           type="multiple"
           defaultValue={firstNonPassing ? [firstNonPassing.testId] : []}
-          className="flex flex-col gap-2"
+          // Each test is its own bordered card (below), so drop the shadcn root's
+          // container border/rounding — otherwise it doubles up as an outer box.
+          className="flex flex-col gap-2 overflow-visible rounded-none border-0"
         >
           {tests.map((t) => {
             const meta = testStatusMeta(t.status);

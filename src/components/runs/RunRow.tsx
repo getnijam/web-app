@@ -5,6 +5,7 @@ import type { RunSummary } from '@/client';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { UserAvatar } from '@/components/users/UserAvatar';
 import { timeAgo, formatDuration } from '@/lib/format';
@@ -29,8 +30,8 @@ export function RunRow({
 
   return (
     <Flex
-      align="stretch"
-      className="group relative overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/45"
+      align="center"
+      className="group relative border-b border-border transition-colors last:border-b-0 hover:bg-accent/40"
     >
       <Link
         to="/orgs/$orgId/projects/$projectId/runs/$runId"
@@ -38,7 +39,8 @@ export function RunRow({
         aria-label={`Run ${run.commitSha ? run.commitSha.slice(0, 7) : run.id}`}
         className="absolute inset-0 z-0"
       />
-      <div className={cn('w-1 shrink-0', RUN_BAR_CLASS[ds])} />
+      {/* short, rounded status indicator (vertically centered) */}
+      <div className={cn('ml-3 h-9 w-1 shrink-0 rounded-full', RUN_BAR_CLASS[ds])} />
       <Flex align="center" gap={4} wrap className="min-w-0 flex-1 px-4 py-3">
         <Flex direction="col" gap={1} className="min-w-0 flex-1">
           <Flex align="center" gap={2} className="min-w-0">
@@ -87,17 +89,22 @@ export function RunRow({
             />
           )}
           {run.ciRunUrl && (
-            <Button
-              asChild
-              variant="ghost"
-              size="icon"
-              aria-label="View run on CI"
-              className="relative z-10 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
-            >
-              <a href={run.ciRunUrl} target="_blank" rel="noreferrer">
-                <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} />
-              </a>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Open run in new tab"
+                  className="relative z-10 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+                >
+                  <a href={run.ciRunUrl} target="_blank" rel="noreferrer">
+                    <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} />
+                  </a>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Open run in new tab</TooltipContent>
+            </Tooltip>
           )}
         </Flex>
       </Flex>

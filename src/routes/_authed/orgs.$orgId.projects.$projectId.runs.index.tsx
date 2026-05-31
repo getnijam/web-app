@@ -118,7 +118,10 @@ function RunsPage() {
           <ErrorState error={runs.error} onRetry={() => runs.refetch()} />
         ) : runs.data && runs.data.runs.length > 0 ? (
           <>
-            <Flex direction="col" gap={2.5}>
+            <Flex
+              direction="col"
+              className="overflow-hidden rounded-2xl border border-border bg-card"
+            >
               {runs.data.runs.map((run) => (
                 <RunRow key={run.id} run={run} orgId={orgId} projectId={projectId} />
               ))}

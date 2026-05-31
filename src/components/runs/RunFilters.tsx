@@ -1,4 +1,4 @@
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -43,19 +43,18 @@ export function RunFilters({
 }) {
   return (
     <Flex align="center" gap={3} wrap>
-      <ToggleGroup
-        type="single"
-        variant="outline"
-        size="sm"
+      <Tabs
         value={values.status}
         onValueChange={(v) => onChange({ status: (v || 'all') as RunStatusFilter })}
       >
-        {STATUS_OPTIONS.map((o) => (
-          <ToggleGroupItem key={o.value} value={o.value}>
-            {o.label}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
+        <TabsList className="rounded-lg">
+          {STATUS_OPTIONS.map((o) => (
+            <TabsTrigger key={o.value} value={o.value} className="rounded-md px-3">
+              {o.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       <Select
         value={values.branch ?? ALL}
