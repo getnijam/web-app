@@ -14,9 +14,11 @@ function formatMs(ms: number): string {
 /** One attempt: status + duration, error trace (if failed), and artifacts. */
 export function AttemptBlock({
   attempt,
+  shardTotal,
   onPreview,
 }: {
   attempt: AttemptSummary;
+  shardTotal?: number | null;
   onPreview: (artifact: ArtifactSummary) => void;
 }) {
   const meta = attemptStatusMeta(attempt.status);
@@ -32,6 +34,15 @@ export function AttemptBlock({
             {meta.label}
           </Text>
         </Flex>
+        {attempt.shardIndex != null && (
+          <Text
+            as="span"
+            className="rounded-full bg-secondary px-2 py-0.5 font-mono text-xs font-medium text-secondary-foreground"
+          >
+            shard {attempt.shardIndex}
+            {shardTotal ? `/${shardTotal}` : ''}
+          </Text>
+        )}
         <Text as="span" className="ml-auto font-mono text-xs tabular-nums text-muted-foreground">
           {formatMs(attempt.durationMs)}
         </Text>

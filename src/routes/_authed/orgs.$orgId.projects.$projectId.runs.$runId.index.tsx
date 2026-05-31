@@ -66,6 +66,14 @@ function RunDetailPage() {
           <Text variant="code" className="text-lg font-semibold">
             #{run.commitSha ? run.commitSha.slice(0, 7) : '———'}
           </Text>
+          {run.shardTotal != null && run.shardTotal > 1 && (
+            <Text
+              as="span"
+              className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground"
+            >
+              {run.shardTotal} shards
+            </Text>
+          )}
         </Flex>
         <Flex align="center" gap={2.5} wrap className="text-sm text-muted-foreground">
           <span>{timeAgo(run.startedAt)}</span>

@@ -17,6 +17,7 @@ import {
 import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
+import { displayFile } from '@/lib/format';
 import { CountDots } from '@/components/runs/CountDots';
 import { AttemptBlock } from '@/components/runs/AttemptBlock';
 import { ArtifactPreviewModal } from '@/components/runs/ArtifactPreviewModal';
@@ -75,7 +76,7 @@ function FileDetailPage() {
       {/* header */}
       <Flex align="center" justify="between" gap={3} wrap>
         <Text variant="code" className="min-w-0 truncate text-lg font-semibold">
-          {path}
+          {displayFile(path)}
         </Text>
         {fileSummary && (
           <CountDots
@@ -122,7 +123,12 @@ function FileDetailPage() {
                 <AccordionContent className="px-4 pb-4">
                   <Flex direction="col" gap={3}>
                     {t.attempts.map((a) => (
-                      <AttemptBlock key={a.id} attempt={a} onPreview={setPreview} />
+                      <AttemptBlock
+                        key={a.id}
+                        attempt={a}
+                        shardTotal={runData.shardTotal}
+                        onPreview={setPreview}
+                      />
                     ))}
                   </Flex>
                 </AccordionContent>

@@ -5,6 +5,7 @@ import type { RunFileSummary } from '@/client';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
+import { displayFile } from '@/lib/format';
 import { CountDots } from './CountDots';
 
 type FileStatus = 'passed' | 'failed' | 'flaky';
@@ -49,7 +50,7 @@ export function SpecFileRow({
         <HugeiconsIcon icon={File01Icon} size={18} strokeWidth={1.9} />
       </Flex>
       <Text as="span" truncate className="min-w-0 flex-1 font-mono text-sm">
-        {file.file}
+        {displayFile(file.file)}
       </Text>
       <CountDots passed={file.passed} failed={file.failed} flaky={file.flaky} />
       <HugeiconsIcon icon={ArrowRight01Icon} size={18} className="shrink-0 text-muted-foreground" />

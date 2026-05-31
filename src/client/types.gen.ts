@@ -230,6 +230,9 @@ export type CreateRunBody = {
     ciProvider?: string;
     ciRunId?: string;
     ciRunUrl?: string;
+    ciRunAttempt?: string;
+    shardIndex?: number;
+    shardTotal?: number;
 };
 
 export type FinalizeRunBody = {
@@ -242,6 +245,7 @@ export type FinalizeRunBody = {
         skipped: number;
         flaky: number;
     };
+    shardIndex?: number;
 };
 
 export type CreateExecutionsBody = {
@@ -258,6 +262,7 @@ export type CreateExecutionsBody = {
         errorMessage?: string;
         startedAt: string;
     }>;
+    shardIndex?: number;
 };
 
 export type ArtifactUploadedResponse = {
@@ -298,6 +303,7 @@ export type RunSummary = {
         skipped: number;
         flaky: number;
     } | null;
+    shardTotal: number | null;
     createdAt: string;
 };
 
@@ -348,6 +354,7 @@ export type AttemptSummary = {
     status: string;
     durationMs: number;
     errorMessage: string | null;
+    shardIndex: number | null;
     startedAt: string;
     artifacts: Array<ArtifactSummary>;
 };
@@ -1343,6 +1350,10 @@ export type FinalizeRunData = {
 };
 
 export type FinalizeRunErrors = {
+    /**
+     * Invalid or missing API key
+     */
+    401: ApiError;
     /**
      * Run not found
      */

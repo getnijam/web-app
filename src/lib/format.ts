@@ -43,3 +43,18 @@ export function repoFromUrl(url: string | null | undefined): string {
     .replace(/\.git$/i, '')
     .replace(/\/+$/, '');
 }
+
+/**
+ * Display form for a spec-file path. The reporter stores paths relative to the
+ * Playwright rootDir, but older runs (and absolute-path setups) can hold a full
+ * machine path like `/home/runner/_work/.../foo.spec.ts` — collapse those to the
+ * basename. Relative paths are shown as-is (their directories are useful context).
+ * Display-only: the stored `file` value is still what links/queries use.
+ */
+export function displayFile(file: string): string {
+  if (file.startsWith('/') || /^[A-Za-z]:[\\/]/.test(file)) {
+    const parts = file.split(/[\\/]/);
+    return parts[parts.length - 1] || file;
+  }
+  return file;
+}

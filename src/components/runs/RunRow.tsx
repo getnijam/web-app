@@ -54,6 +54,11 @@ export function RunRow({
               <span className={cn('size-1.75 rounded-full', pill.dot)} />
               {pill.label}
             </span>
+            {run.shardTotal != null && run.shardTotal > 1 && (
+              <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
+                {run.shardTotal} shards
+              </span>
+            )}
           </Flex>
           <Flex align="center" gap={2.5} wrap className="min-w-0 text-xs text-muted-foreground">
             <span>{timeAgo(run.startedAt)}</span>

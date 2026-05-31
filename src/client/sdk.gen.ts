@@ -391,7 +391,7 @@ export const getRun = <ThrowOnError extends boolean = false>(options: Options<Ge
 };
 
 /**
- * Finalize a run with its status and summary stats
+ * Finalize a run (called by the reporter at the end of a run / shard)
  */
 export const finalizeRun = <ThrowOnError extends boolean = false>(options: Options<FinalizeRunData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).patch<FinalizeRunResponse, FinalizeRunError, ThrowOnError>({
