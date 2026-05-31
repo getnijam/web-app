@@ -284,6 +284,7 @@ export type RunSummary = {
     projectId: string;
     projectName: string;
     status: string;
+    hadFailure: boolean;
     environment: string | null;
     commitSha: string | null;
     branch: string | null;

@@ -31,6 +31,7 @@ export function RunSummaryBar({ summary }: { summary: RunAggregate }) {
       <Metric label="Passed" value={summary.passed} color="text-success" />
       <Metric label="Failed" value={summary.failed} color="text-destructive" />
       <Metric label="Flaky" value={summary.flaky} color="text-warning" />
+      <Metric label="Skipped" value={summary.skipped} color="text-muted-foreground" />
       <Metric
         label="Duration"
         value={summary.durationSec === null ? '—' : formatDuration(summary.durationSec)}
