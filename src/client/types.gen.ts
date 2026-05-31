@@ -169,6 +169,7 @@ export type RunBar = {
     passed: number;
     failed: number;
     flaky: number;
+    skipped: number;
     durationSec: number | null;
     commitSha: string | null;
     branch: string | null;

@@ -15,6 +15,7 @@ const chartConfig = {
   passed: { label: 'Passed', color: 'var(--success)' },
   flaky: { label: 'Flaky', color: 'var(--warning)' },
   failed: { label: 'Failed', color: 'var(--destructive)' },
+  skipped: { label: 'Skipped', color: 'var(--muted-foreground)' },
 } satisfies ChartConfig;
 
 /**
@@ -34,10 +35,12 @@ export function RunChart({ runs, height = 78 }: { runs: RunBar[]; height?: numbe
         barCategoryGap="26%"
       >
         {/* One continuous bar per run — color is the only separation between
-            segments (no per-segment radius). Bottom → top: passed, flaky, failed. */}
+            segments (no per-segment radius). The segments are disjoint and sum
+            to total. Bottom → top: passed, flaky, failed, skipped. */}
         <Bar dataKey="passed" stackId="run" fill="var(--color-passed)" isAnimationActive={false} />
         <Bar dataKey="flaky" stackId="run" fill="var(--color-flaky)" isAnimationActive={false} />
         <Bar dataKey="failed" stackId="run" fill="var(--color-failed)" isAnimationActive={false} />
+        <Bar dataKey="skipped" stackId="run" fill="var(--color-skipped)" isAnimationActive={false} />
         <ChartTooltip cursor content={<RunTooltip />} />
       </BarChart>
     </ChartContainer>
@@ -62,6 +65,9 @@ function RunTooltip({
       <TipRow dotClass="bg-success" label="Passed" value={run.passed} />
       <TipRow dotClass="bg-destructive" label="Failed" value={run.failed} />
       {run.flaky > 0 && <TipRow dotClass="bg-warning" label="Flaky" value={run.flaky} />}
+      {run.skipped > 0 && (
+        <TipRow dotClass="bg-muted-foreground" label="Skipped" value={run.skipped} />
+      )}
       {run.durationSec !== null && (
         <div className="mt-1 flex items-center gap-1.5 text-muted-foreground">
           Duration
