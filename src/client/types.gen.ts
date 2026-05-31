@@ -213,6 +213,52 @@ export type ProjectDeletedResponse = {
     ok: true;
 };
 
+export type TestCaseSummary = {
+    testId: string;
+    title: string;
+    titlePath: Array<string>;
+    file: string;
+    status: 'passed' | 'failed' | 'flaky' | 'skipped';
+    durationMs: number;
+    retries: number;
+    line: number | null;
+    lastRunAt: string;
+};
+
+export type TestExplorerResponse = {
+    tests: Array<TestCaseSummary>;
+    specFileCount: number;
+};
+
+export type TestHistoryEntry = {
+    runId: string;
+    status: 'passed' | 'failed' | 'flaky' | 'skipped';
+    commitSha: string | null;
+    branch: string | null;
+    durationMs: number;
+    startedAt: string;
+};
+
+export type RunGitRef = {
+    id: string;
+    commitSha: string | null;
+    branch: string | null;
+    repository: string | null;
+    ciProvider: string | null;
+    ciRunUrl: string | null;
+} | null;
+
+export type TestSourceRef = RunGitRef & ({
+    line: number | null;
+} | null);
+
+export type TestDetailResponse = {
+    test: TestCaseSummary;
+    history: Array<TestHistoryEntry>;
+    latestRun: RunGitRef;
+    source: TestSourceRef;
+};
+
 export type RunCreatedResponse = {
     id: string;
 };
@@ -260,6 +306,7 @@ export type CreateExecutionsBody = {
         durationMs: number;
         retry: number;
         errorMessage?: string;
+        line?: number;
         startedAt: string;
     }>;
     shardIndex?: number;
@@ -269,6 +316,11 @@ export type ArtifactUploadedResponse = {
     id: string;
     kind: 'trace' | 'screenshot' | 'video';
     sizeBytes: number;
+};
+
+export type UploadSourceBody = {
+    file: string;
+    content: string;
 };
 
 export type RunFiltersResponse = {
@@ -375,6 +427,11 @@ export type RunFileTestsResponse = {
 
 export type ArtifactUrlResponse = {
     url: string;
+};
+
+export type SourceResponse = {
+    file: string;
+    content: string;
 };
 
 export type SecretKeySummary = {
@@ -1281,6 +1338,69 @@ export type UpdateProjectResponses = {
 
 export type UpdateProjectResponse = UpdateProjectResponses[keyof UpdateProjectResponses];
 
+export type ListProjectTestsData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/tests';
+};
+
+export type ListProjectTestsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Project not found
+     */
+    404: ApiError;
+};
+
+export type ListProjectTestsError = ListProjectTestsErrors[keyof ListProjectTestsErrors];
+
+export type ListProjectTestsResponses = {
+    /**
+     * OK
+     */
+    200: TestExplorerResponse;
+};
+
+export type ListProjectTestsResponse = ListProjectTestsResponses[keyof ListProjectTestsResponses];
+
+export type GetProjectTestData = {
+    body?: never;
+    path: {
+        projectId: string;
+        testId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/tests/{testId}';
+};
+
+export type GetProjectTestErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type GetProjectTestError = GetProjectTestErrors[keyof GetProjectTestErrors];
+
+export type GetProjectTestResponses = {
+    /**
+     * OK
+     */
+    200: TestDetailResponse;
+};
+
+export type GetProjectTestResponse = GetProjectTestResponses[keyof GetProjectTestResponses];
+
 export type CreateRunData = {
     body?: CreateRunBody;
     path?: never;
@@ -1452,6 +1572,39 @@ export type UploadArtifactResponses = {
 
 export type UploadArtifactResponse = UploadArtifactResponses[keyof UploadArtifactResponses];
 
+export type UploadRunSourceData = {
+    body?: UploadSourceBody;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v1/runs/{id}/source';
+};
+
+export type UploadRunSourceErrors = {
+    /**
+     * Invalid or missing API key
+     */
+    401: ApiError;
+    /**
+     * Run not found
+     */
+    404: ApiError;
+};
+
+export type UploadRunSourceError = UploadRunSourceErrors[keyof UploadRunSourceErrors];
+
+export type UploadRunSourceResponses = {
+    /**
+     * Stored
+     */
+    200: OkResponse & {
+        ok?: true;
+    };
+};
+
+export type UploadRunSourceResponse = UploadRunSourceResponses[keyof UploadRunSourceResponses];
+
 export type GetProjectRunFiltersData = {
     body?: never;
     path: {
@@ -1583,6 +1736,39 @@ export type GetArtifactUrlResponses = {
 };
 
 export type GetArtifactUrlResponse = GetArtifactUrlResponses[keyof GetArtifactUrlResponses];
+
+export type GetRunSourceData = {
+    body?: never;
+    path: {
+        runId: string;
+    };
+    query: {
+        file: string;
+    };
+    url: '/v1/runs/{runId}/source';
+};
+
+export type GetRunSourceErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Source not found
+     */
+    404: ApiError;
+};
+
+export type GetRunSourceError = GetRunSourceErrors[keyof GetRunSourceErrors];
+
+export type GetRunSourceResponses = {
+    /**
+     * OK
+     */
+    200: SourceResponse;
+};
+
+export type GetRunSourceResponse = GetRunSourceResponses[keyof GetRunSourceResponses];
 
 export type ListSecretKeysData = {
     body?: never;

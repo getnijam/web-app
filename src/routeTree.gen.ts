@@ -30,6 +30,7 @@ import { Route as AuthedOrgsOrgIdProjectsProjectIdSettingsRouteImport } from './
 import { Route as AuthedOrgsOrgIdProjectsProjectIdFlakyRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.flaky'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdExplorerRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.explorer'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdRunsIndexRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.runs.index'
+import { Route as AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.explorer_.$testId'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdRunsRunIdIndexRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.runs.$runId.index'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdRunsRunIdFileRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.runs.$runId.file'
 
@@ -144,6 +145,12 @@ const AuthedOrgsOrgIdProjectsProjectIdRunsIndexRoute =
     path: '/runs/',
     getParentRoute: () => AuthedOrgsOrgIdProjectsProjectIdRoute,
   } as any)
+const AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRoute =
+  AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRouteImport.update({
+    id: '/explorer_/$testId',
+    path: '/explorer/$testId',
+    getParentRoute: () => AuthedOrgsOrgIdProjectsProjectIdRoute,
+  } as any)
 const AuthedOrgsOrgIdProjectsProjectIdRunsRunIdIndexRoute =
   AuthedOrgsOrgIdProjectsProjectIdRunsRunIdIndexRouteImport.update({
     id: '/runs/$runId/',
@@ -177,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/orgs/$orgId/projects/$projectId/flaky': typeof AuthedOrgsOrgIdProjectsProjectIdFlakyRoute
   '/orgs/$orgId/projects/$projectId/settings': typeof AuthedOrgsOrgIdProjectsProjectIdSettingsRoute
   '/orgs/$orgId/projects/$projectId/': typeof AuthedOrgsOrgIdProjectsProjectIdIndexRoute
+  '/orgs/$orgId/projects/$projectId/explorer/$testId': typeof AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRoute
   '/orgs/$orgId/projects/$projectId/runs/': typeof AuthedOrgsOrgIdProjectsProjectIdRunsIndexRoute
   '/orgs/$orgId/projects/$projectId/runs/$runId/file': typeof AuthedOrgsOrgIdProjectsProjectIdRunsRunIdFileRoute
   '/orgs/$orgId/projects/$projectId/runs/$runId/': typeof AuthedOrgsOrgIdProjectsProjectIdRunsRunIdIndexRoute
@@ -199,6 +207,7 @@ export interface FileRoutesByTo {
   '/orgs/$orgId/projects/$projectId/flaky': typeof AuthedOrgsOrgIdProjectsProjectIdFlakyRoute
   '/orgs/$orgId/projects/$projectId/settings': typeof AuthedOrgsOrgIdProjectsProjectIdSettingsRoute
   '/orgs/$orgId/projects/$projectId': typeof AuthedOrgsOrgIdProjectsProjectIdIndexRoute
+  '/orgs/$orgId/projects/$projectId/explorer/$testId': typeof AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRoute
   '/orgs/$orgId/projects/$projectId/runs': typeof AuthedOrgsOrgIdProjectsProjectIdRunsIndexRoute
   '/orgs/$orgId/projects/$projectId/runs/$runId/file': typeof AuthedOrgsOrgIdProjectsProjectIdRunsRunIdFileRoute
   '/orgs/$orgId/projects/$projectId/runs/$runId': typeof AuthedOrgsOrgIdProjectsProjectIdRunsRunIdIndexRoute
@@ -225,6 +234,7 @@ export interface FileRoutesById {
   '/_authed/orgs/$orgId/projects/$projectId/flaky': typeof AuthedOrgsOrgIdProjectsProjectIdFlakyRoute
   '/_authed/orgs/$orgId/projects/$projectId/settings': typeof AuthedOrgsOrgIdProjectsProjectIdSettingsRoute
   '/_authed/orgs/$orgId/projects/$projectId/': typeof AuthedOrgsOrgIdProjectsProjectIdIndexRoute
+  '/_authed/orgs/$orgId/projects/$projectId/explorer_/$testId': typeof AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRoute
   '/_authed/orgs/$orgId/projects/$projectId/runs/': typeof AuthedOrgsOrgIdProjectsProjectIdRunsIndexRoute
   '/_authed/orgs/$orgId/projects/$projectId/runs/$runId/file': typeof AuthedOrgsOrgIdProjectsProjectIdRunsRunIdFileRoute
   '/_authed/orgs/$orgId/projects/$projectId/runs/$runId/': typeof AuthedOrgsOrgIdProjectsProjectIdRunsRunIdIndexRoute
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/orgs/$orgId/projects/$projectId/flaky'
     | '/orgs/$orgId/projects/$projectId/settings'
     | '/orgs/$orgId/projects/$projectId/'
+    | '/orgs/$orgId/projects/$projectId/explorer/$testId'
     | '/orgs/$orgId/projects/$projectId/runs/'
     | '/orgs/$orgId/projects/$projectId/runs/$runId/file'
     | '/orgs/$orgId/projects/$projectId/runs/$runId/'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/orgs/$orgId/projects/$projectId/flaky'
     | '/orgs/$orgId/projects/$projectId/settings'
     | '/orgs/$orgId/projects/$projectId'
+    | '/orgs/$orgId/projects/$projectId/explorer/$testId'
     | '/orgs/$orgId/projects/$projectId/runs'
     | '/orgs/$orgId/projects/$projectId/runs/$runId/file'
     | '/orgs/$orgId/projects/$projectId/runs/$runId'
@@ -298,6 +310,7 @@ export interface FileRouteTypes {
     | '/_authed/orgs/$orgId/projects/$projectId/flaky'
     | '/_authed/orgs/$orgId/projects/$projectId/settings'
     | '/_authed/orgs/$orgId/projects/$projectId/'
+    | '/_authed/orgs/$orgId/projects/$projectId/explorer_/$testId'
     | '/_authed/orgs/$orgId/projects/$projectId/runs/'
     | '/_authed/orgs/$orgId/projects/$projectId/runs/$runId/file'
     | '/_authed/orgs/$orgId/projects/$projectId/runs/$runId/'
@@ -463,6 +476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedOrgsOrgIdProjectsProjectIdRunsIndexRouteImport
       parentRoute: typeof AuthedOrgsOrgIdProjectsProjectIdRoute
     }
+    '/_authed/orgs/$orgId/projects/$projectId/explorer_/$testId': {
+      id: '/_authed/orgs/$orgId/projects/$projectId/explorer_/$testId'
+      path: '/explorer/$testId'
+      fullPath: '/orgs/$orgId/projects/$projectId/explorer/$testId'
+      preLoaderRoute: typeof AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRouteImport
+      parentRoute: typeof AuthedOrgsOrgIdProjectsProjectIdRoute
+    }
     '/_authed/orgs/$orgId/projects/$projectId/runs/$runId/': {
       id: '/_authed/orgs/$orgId/projects/$projectId/runs/$runId/'
       path: '/runs/$runId'
@@ -485,6 +505,7 @@ interface AuthedOrgsOrgIdProjectsProjectIdRouteChildren {
   AuthedOrgsOrgIdProjectsProjectIdFlakyRoute: typeof AuthedOrgsOrgIdProjectsProjectIdFlakyRoute
   AuthedOrgsOrgIdProjectsProjectIdSettingsRoute: typeof AuthedOrgsOrgIdProjectsProjectIdSettingsRoute
   AuthedOrgsOrgIdProjectsProjectIdIndexRoute: typeof AuthedOrgsOrgIdProjectsProjectIdIndexRoute
+  AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRoute: typeof AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRoute
   AuthedOrgsOrgIdProjectsProjectIdRunsIndexRoute: typeof AuthedOrgsOrgIdProjectsProjectIdRunsIndexRoute
   AuthedOrgsOrgIdProjectsProjectIdRunsRunIdFileRoute: typeof AuthedOrgsOrgIdProjectsProjectIdRunsRunIdFileRoute
   AuthedOrgsOrgIdProjectsProjectIdRunsRunIdIndexRoute: typeof AuthedOrgsOrgIdProjectsProjectIdRunsRunIdIndexRoute
@@ -500,6 +521,8 @@ const AuthedOrgsOrgIdProjectsProjectIdRouteChildren: AuthedOrgsOrgIdProjectsProj
       AuthedOrgsOrgIdProjectsProjectIdSettingsRoute,
     AuthedOrgsOrgIdProjectsProjectIdIndexRoute:
       AuthedOrgsOrgIdProjectsProjectIdIndexRoute,
+    AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRoute:
+      AuthedOrgsOrgIdProjectsProjectIdExplorerTestIdRoute,
     AuthedOrgsOrgIdProjectsProjectIdRunsIndexRoute:
       AuthedOrgsOrgIdProjectsProjectIdRunsIndexRoute,
     AuthedOrgsOrgIdProjectsProjectIdRunsRunIdFileRoute:

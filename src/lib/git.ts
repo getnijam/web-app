@@ -36,6 +36,34 @@ function originFromUrl(url: string | null): string | null {
   }
 }
 
+// Per-provider blob path + line anchor (so View-source jumps to the test).
+const BLOB_PATH: Record<string, string> = { github: 'blob', gitlab: '-/blob', bitbucket: 'src' };
+const LINE_ANCHOR: Record<string, (n: number) => string> = {
+  github: (n) => `#L${n}`,
+  gitlab: (n) => `#L${n}`,
+  bitbucket: (n) => `#lines-${n}`,
+};
+
+/**
+ * Web URL for a spec file at a run's commit (View source ↗), optionally anchored
+ * to a line. Needs a repository, commit, and provider; null otherwise.
+ */
+export function gitFileUrl(
+  ref: { repository: string | null; commitSha: string | null; ciProvider: string | null; ciRunUrl: string | null },
+  file: string,
+  line?: number | null,
+): string | null {
+  const { repository, commitSha, ciProvider } = ref;
+  if (!repository || !commitSha || !ciProvider || !file) return null;
+  const blob = BLOB_PATH[ciProvider];
+  const host = originFromUrl(ref.ciRunUrl) ?? DEFAULT_HOST[ciProvider];
+  if (!blob || !host) return null;
+  const repo = repository.replace(/^\/+|\/+$/g, '');
+  const path = file.split('/').map(encodeURIComponent).join('/');
+  const anchor = line && LINE_ANCHOR[ciProvider] ? LINE_ANCHOR[ciProvider]!(line) : '';
+  return `${host}/${repo}/${blob}/${commitSha}/${path}${anchor}`;
+}
+
 /** Web URL for a run's branch on its provider, or null if it can't be built. */
 export function gitBranchUrl(run: RunGit): string | null {
   const { repository, branch, ciProvider } = run;

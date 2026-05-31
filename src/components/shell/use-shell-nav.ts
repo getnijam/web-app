@@ -50,12 +50,16 @@ export function useShellNav(): ShellNav {
   const orgId = params.orgId ?? '';
 
   if (params.projectId) {
-    const last = segments[segments.length - 1] ?? 'runs';
+    // The section is the segment right after the projectId (runs | explorer |
+    // flaky | settings) — not the last segment, so deep routes like
+    // `/explorer/<testId>` or `/runs/<runId>/file` keep the right nav active.
+    const idx = segments.indexOf(params.projectId);
+    const section = idx >= 0 ? segments[idx + 1] : undefined;
     return {
       orgId,
       inProject: true,
       projectId: params.projectId,
-      active: PROJECT_SUB[last] ?? 'runs',
+      active: PROJECT_SUB[section ?? ''] ?? 'runs',
     };
   }
 
