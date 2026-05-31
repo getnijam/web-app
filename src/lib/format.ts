@@ -58,3 +58,28 @@ export function displayFile(file: string): string {
   }
   return file;
 }
+
+/**
+ * Whether an email is git's auto-generated placeholder (e.g.
+ * `user@Akhils-MacBook-Pro-2.local`) rather than a real address — produced when
+ * `git config user.email` isn't set to a real value at commit time.
+ */
+export function isPlaceholderEmail(email: string): boolean {
+  const at = email.lastIndexOf('@');
+  if (at < 1) return true;
+  const domain = email.slice(at + 1).toLowerCase();
+  if (!domain.includes('.') || domain === 'localhost' || domain.includes('(none)')) return true;
+  return /\.(local|lan|localdomain|internal|home|invalid)$/.test(domain);
+}
+
+/**
+ * Human label for a commit author: the email when it's real, otherwise the name,
+ * otherwise the email's local-part — so we never surface git's
+ * `user@hostname.local` placeholder verbatim.
+ */
+export function displayAuthor(email: string | null, name: string | null): string {
+  if (email && !isPlaceholderEmail(email)) return email;
+  if (name && name.trim()) return name.trim();
+  if (email) return email.split('@')[0] || email;
+  return 'unknown';
+}

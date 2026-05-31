@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { UserAvatar } from '@/components/users/UserAvatar';
-import { timeAgo, formatDuration } from '@/lib/format';
+import { timeAgo, formatDuration, displayAuthor } from '@/lib/format';
 import { CountDots } from './CountDots';
 import { runDisplayStatus, runDurationSec, RUN_BAR_CLASS, RUN_PILL } from './run-status';
 
@@ -26,7 +26,7 @@ export function RunRow({
   const ds = runDisplayStatus(run);
   const pill = RUN_PILL[ds];
   const dur = runDurationSec(run);
-  const author = run.authorEmail ?? run.authorName ?? 'unknown';
+  const author = displayAuthor(run.authorEmail, run.authorName);
 
   return (
     <Flex

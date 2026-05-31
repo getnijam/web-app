@@ -14,7 +14,7 @@ import { RunSummaryBar } from '@/components/runs/RunSummaryBar';
 import { SpecFileRow } from '@/components/runs/SpecFileRow';
 import { runDisplayStatus, RUN_PILL } from '@/components/runs/run-status';
 import { cn } from '@/lib/utils';
-import { timeAgo } from '@/lib/format';
+import { timeAgo, displayAuthor } from '@/lib/format';
 import { gitBranchUrl, gitProviderIcon } from '@/lib/git';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/runs/$runId/')({
@@ -30,7 +30,7 @@ function RunDetailPage() {
 
   const { run, summary, files } = q.data;
   const pill = RUN_PILL[runDisplayStatus(run)];
-  const author = run.authorEmail ?? run.authorName ?? 'unknown';
+  const author = displayAuthor(run.authorEmail, run.authorName);
   const branchHref = gitBranchUrl(run);
 
   return (
