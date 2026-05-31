@@ -32,7 +32,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
-import { LoadingState } from '@/components/states/LoadingState';
+import { RowsSkeleton } from '@/components/states/RowsSkeleton';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
@@ -68,9 +68,7 @@ function UsersPage() {
 
       <SettingsPanel title="Members">
         {members.isLoading ? (
-          <div className="px-5 py-6">
-            <LoadingState />
-          </div>
+          <RowsSkeleton rows={3} round />
         ) : members.error || !members.data ? (
           <div className="px-5 py-6">
             <ErrorState error={members.error} onRetry={() => members.refetch()} />
@@ -89,9 +87,7 @@ function UsersPage() {
 
       <SettingsPanel title="Pending invitations">
         {invites.isLoading ? (
-          <div className="px-5 py-6">
-            <LoadingState />
-          </div>
+          <RowsSkeleton rows={2} />
         ) : invites.error || !invites.data ? (
           <div className="px-5 py-6">
             <ErrorState error={invites.error} onRetry={() => invites.refetch()} />

@@ -17,9 +17,47 @@
         } catch (e) {}
       })();
     </script>
+    <!-- Boot loader: paints before the JS bundle loads (and matches the theme),
+         so a hard refresh shows a spinner instead of a blank screen. React clears
+         #root's children on mount, removing it automatically. -->
+    <style>
+      body {
+        margin: 0;
+        background: oklch(1 0 0);
+      }
+      html.dark body {
+        background: oklch(0.148 0.004 228.8);
+      }
+      #nijam-boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #nijam-boot > div {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 3px solid oklch(0.56 0.021 213.5 / 25%);
+        border-top-color: oklch(0.56 0.021 213.5);
+        animation: nijam-boot-spin 0.7s linear infinite;
+      }
+      html.dark #nijam-boot > div {
+        border-color: oklch(0.723 0.014 214.4 / 25%);
+        border-top-color: oklch(0.723 0.014 214.4);
+      }
+      @keyframes nijam-boot-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="nijam-boot"><div></div></div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

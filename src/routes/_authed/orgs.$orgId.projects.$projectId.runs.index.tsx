@@ -8,7 +8,6 @@ import {
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
-import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ReporterSnippet } from '@/components/projects/ReporterSnippet';
@@ -16,6 +15,7 @@ import { RunStats } from '@/components/runs/RunStats';
 import { RunFilters, type RunStatusFilter, type RunFilterValues } from '@/components/runs/RunFilters';
 import { RunsPager } from '@/components/runs/RunsPager';
 import { RunRow } from '@/components/runs/RunRow';
+import { RunsPageSkeleton, RunsListSkeleton } from '@/components/runs/RunSkeletons';
 import { timeAgo, repoFromUrl } from '@/lib/format';
 
 // Fields are optional so navigating to this route (cards, sidebar, redirect)
@@ -68,7 +68,7 @@ function RunsPage() {
     }),
   );
 
-  if (project.isLoading) return <LoadingState />;
+  if (project.isLoading) return <RunsPageSkeleton />;
   if (project.error || !project.data) {
     return <ErrorState error={project.error} onRetry={() => project.refetch()} />;
   }
@@ -113,7 +113,7 @@ function RunsPage() {
         />
 
         {runs.isLoading ? (
-          <LoadingState />
+          <RunsListSkeleton />
         ) : runs.error ? (
           <ErrorState error={runs.error} onRetry={() => runs.refetch()} />
         ) : runs.data && runs.data.runs.length > 0 ? (

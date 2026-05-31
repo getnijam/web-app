@@ -6,6 +6,7 @@ import { client } from '@/client/client.gen';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
+import { LoadingState } from '@/components/states/LoadingState';
 import { routeTree } from './routeTree.gen';
 import './styles/globals.css';
 
@@ -21,7 +22,18 @@ const queryClient = new QueryClient({
   },
 });
 
-const router = createRouter({ routeTree, context: { queryClient } });
+const router = createRouter({
+  routeTree,
+  context: { queryClient },
+  // Covers the window after React mounts while the auth gate (/v1/auth/me) and
+  // route loaders resolve — so a refresh shows a spinner, never a blank screen.
+  defaultPendingComponent: () => (
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <LoadingState />
+    </div>
+  ),
+  defaultPendingMs: 0,
+});
 
 declare module '@tanstack/react-router' {
   interface Register {

@@ -7,7 +7,7 @@ import { listSecretKeysOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
-import { LoadingState } from '@/components/states/LoadingState';
+import { RowsSkeleton } from '@/components/states/RowsSkeleton';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
@@ -76,9 +76,7 @@ function SecretKeysPage() {
 
       <SettingsPanel title="Keys">
         {keys.isLoading ? (
-          <div className="px-5 py-6">
-            <LoadingState />
-          </div>
+          <RowsSkeleton rows={3} />
         ) : keys.error || !keys.data ? (
           <div className="px-5 py-6">
             <ErrorState error={keys.error} onRetry={() => keys.refetch()} />

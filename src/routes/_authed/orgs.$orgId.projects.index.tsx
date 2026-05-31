@@ -11,9 +11,9 @@ import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
-import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { ProjectCard } from '@/components/projects/ProjectCard';
+import { ProjectsSkeleton } from '@/components/projects/ProjectsSkeleton';
 import { NewProjectDialog } from '@/components/projects/NewProjectDialog';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/')({ component: ProjectsPage });
@@ -24,7 +24,7 @@ function ProjectsPage() {
   const { data, isLoading, error, refetch } = useQuery(listOrgProjectsOptions({ path: { orgId } }));
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  if (isLoading) return <LoadingState />;
+  if (isLoading) return <ProjectsSkeleton />;
   if (error) return <ErrorState error={error} onRetry={() => refetch()} />;
 
   const projects = data?.projects ?? [];

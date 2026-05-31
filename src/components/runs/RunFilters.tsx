@@ -49,7 +49,11 @@ export function RunFilters({
       >
         <TabsList className="rounded-lg">
           {STATUS_OPTIONS.map((o) => (
-            <TabsTrigger key={o.value} value={o.value} className="rounded-md px-3">
+            <TabsTrigger
+              key={o.value}
+              value={o.value}
+              className="rounded-md px-3 data-[state=active]:font-semibold data-[state=active]:shadow-sm"
+            >
               {o.label}
             </TabsTrigger>
           ))}

@@ -6,10 +6,10 @@ import { getRunOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
-import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { UserAvatar } from '@/components/users/UserAvatar';
+import { RunDetailSkeleton } from '@/components/runs/RunSkeletons';
 import { RunSummaryBar } from '@/components/runs/RunSummaryBar';
 import { SpecFileRow } from '@/components/runs/SpecFileRow';
 import { runDisplayStatus, RUN_PILL } from '@/components/runs/run-status';
@@ -24,7 +24,7 @@ function RunDetailPage() {
   const { orgId, projectId, runId } = Route.useParams();
   const q = useQuery(getRunOptions({ path: { id: runId } }));
 
-  if (q.isLoading) return <LoadingState />;
+  if (q.isLoading) return <RunDetailSkeleton />;
   if (q.error || !q.data) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
 
   const { run, summary, files } = q.data;

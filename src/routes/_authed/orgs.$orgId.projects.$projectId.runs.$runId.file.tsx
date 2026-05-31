@@ -14,10 +14,10 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/components/ui/accordion';
-import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { displayFile } from '@/lib/format';
+import { RunFileSkeleton } from '@/components/runs/RunSkeletons';
 import { CountDots } from '@/components/runs/CountDots';
 import { AttemptBlock } from '@/components/runs/AttemptBlock';
 import { ArtifactPreviewModal } from '@/components/runs/ArtifactPreviewModal';
@@ -39,7 +39,7 @@ function FileDetailPage() {
   const run = useQuery(getRunOptions({ path: { id: runId } }));
   const fileTests = useQuery(getRunFileTestsOptions({ path: { runId }, query: { file: path } }));
 
-  if (run.isLoading || fileTests.isLoading) return <LoadingState />;
+  if (run.isLoading || fileTests.isLoading) return <RunFileSkeleton />;
   if (run.error || !run.data) return <ErrorState error={run.error} onRetry={() => run.refetch()} />;
   if (fileTests.error || !fileTests.data) {
     return <ErrorState error={fileTests.error} onRetry={() => fileTests.refetch()} />;
