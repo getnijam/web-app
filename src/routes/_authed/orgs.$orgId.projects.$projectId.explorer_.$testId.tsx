@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowLeft01Icon, ArrowRight01Icon, ArrowUpRight01Icon } from '@hugeicons/core-free-icons';
+import {
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  ArrowUpRight01Icon,
+  SourceCodeIcon,
+} from '@hugeicons/core-free-icons';
 import type { TestCaseSummary, TestSourceRef } from '@/client';
 import {
   getProjectTestOptions,
@@ -59,47 +64,51 @@ function TestDetailPage() {
       </Flex>
 
       {/* header */}
-      <Flex direction="col" gap={2}>
-        <Flex align="center" gap={2.5} className="min-w-0">
-          <HugeiconsIcon icon={meta.icon} size={22} className={cn('shrink-0', meta.color)} />
-          <Text variant="h2" truncate className="min-w-0">
-            {test.title}
-          </Text>
+      <Flex align="start" justify="between" gap={4}>
+        <Flex direction="col" gap={2} className="min-w-0">
+          <Flex align="center" gap={2.5} className="min-w-0">
+            <HugeiconsIcon icon={meta.icon} size={22} className={cn('shrink-0', meta.color)} />
+            <Text variant="h2" truncate className="min-w-0">
+              {test.title}
+            </Text>
+          </Flex>
+          <Flex align="center" gap={2} wrap className="text-sm text-muted-foreground">
+            <Text as="span" className="font-mono">
+              {displayFile(test.file)}
+            </Text>
+            {test.line != null && (
+              <>
+                <span>·</span>
+                <span>line {test.line}</span>
+              </>
+            )}
+            <span>·</span>
+            <span
+              className={cn(
+                'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold',
+                meta.pill,
+              )}
+            >
+              {meta.label}
+            </span>
+          </Flex>
         </Flex>
-        <Flex align="center" gap={2} wrap className="text-sm text-muted-foreground">
-          <Text as="span" className="font-mono">
-            {displayFile(test.file)}
-          </Text>
-          {test.line != null && (
-            <>
-              <span>·</span>
-              <span>line {test.line}</span>
-            </>
-          )}
-          <span>·</span>
-          <Text as="span" className={meta.color}>
-            {meta.label}
-          </Text>
-          {viewSrc && (
-            <>
-              <span>·</span>
-              <a
-                href={viewSrc}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-              >
-                View source
-                <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} />
-              </a>
-            </>
-          )}
-        </Flex>
+        {viewSrc && (
+          <Button asChild variant="outline" size="sm" className="shrink-0">
+            <a href={viewSrc} target="_blank" rel="noreferrer">
+              <HugeiconsIcon icon={SourceCodeIcon} size={15} />
+              View source
+              <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} />
+            </a>
+          </Button>
+        )}
       </Flex>
 
-      {/* source + history */}
-      <Grid cols={[1, 1, 2]} gap={4} className="items-start">
-        <SourcePanel source={source} test={test} />
+      {/* source (2/3) + history (1/3) */}
+      <Grid cols={[1, 1, 3]} gap={4} className="items-start">
+        <div className="min-w-0 md:col-span-2">
+          <SourcePanel source={source} test={test} />
+        </div>
         <RunHistory history={history} orgId={orgId} projectId={projectId} file={test.file} />
       </Grid>
     </Flex>
@@ -121,13 +130,13 @@ function StepButton({
   const label = dir === 'prev' ? 'Previous test' : 'Next test';
   if (!testId) {
     return (
-      <Button variant="outline" size="icon" disabled aria-label={label}>
+      <Button variant="outline" size="icon-lg" className="rounded-xl" disabled aria-label={label}>
         <HugeiconsIcon icon={icon} size={16} />
       </Button>
     );
   }
   return (
-    <Button asChild variant="outline" size="icon" aria-label={label}>
+    <Button asChild variant="outline" size="icon-lg" className="rounded-xl" aria-label={label}>
       <Link
         to="/orgs/$orgId/projects/$projectId/explorer/$testId"
         params={{ orgId, projectId, testId }}
@@ -149,7 +158,13 @@ function SourcePanel({ source, test }: { source: TestSourceRef | null; test: Tes
   }
   if (src.isLoading) return <Skeleton className="h-96 w-full rounded-2xl" />;
   if (src.error || !src.data) return <EmptyPanel>Source not available for this version.</EmptyPanel>;
-  return <CodeBlock code={src.data.content} highlightLine={source.line} />;
+  return (
+    <CodeBlock
+      code={src.data.content}
+      name={displayFile(test.file)}
+      highlightLine={source.line}
+    />
+  );
 }
 
 function EmptyPanel({ children }: { children: React.ReactNode }) {
@@ -177,8 +192,8 @@ function DetailSkeleton() {
         <Skeleton className="h-7 w-80 rounded-md" />
         <Skeleton className="h-4 w-64 rounded-md" />
       </Flex>
-      <Grid cols={[1, 1, 2]} gap={4}>
-        <Skeleton className="h-96 w-full rounded-2xl" />
+      <Grid cols={[1, 1, 3]} gap={4}>
+        <Skeleton className="h-96 w-full rounded-2xl md:col-span-2" />
         <Skeleton className="h-96 w-full rounded-2xl" />
       </Grid>
     </Flex>

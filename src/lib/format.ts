@@ -12,6 +12,19 @@ export function formatDate(input: string | Date): string {
   return dateFmt.format(d);
 }
 
+const dateTimeFmt = new Intl.DateTimeFormat(undefined, {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+});
+
+/** "May 30, 9:48 PM" — date + time, for run-history rows. */
+export function formatDateTime(input: string | Date): string {
+  const d = typeof input === 'string' ? new Date(input) : input;
+  return dateTimeFmt.format(d);
+}
+
 /** Compact relative time: "just now", "5h ago", "yesterday", "3d ago". */
 export function timeAgo(input: string | Date): string {
   const ts = (typeof input === 'string' ? new Date(input) : input).getTime();

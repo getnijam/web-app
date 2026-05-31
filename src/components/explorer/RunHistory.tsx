@@ -5,7 +5,7 @@ import type { TestHistoryEntry } from '@/client';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
-import { timeAgo, formatDuration } from '@/lib/format';
+import { timeAgo, formatDuration, formatDateTime } from '@/lib/format';
 import { testStatusMeta } from '@/components/runs/test-status';
 
 const STATUS_BG: Record<string, string> = {
@@ -20,8 +20,9 @@ function formatMs(ms: number): string {
 }
 
 /**
- * A test's run history: a chronological pass/fail/flaky strip + a newest-first
- * list, each row linking to that run's file detail (this test's spec file).
+ * A test's run history card: a header with the pass tally, a chronological
+ * pass/fail/flaky strip, and a newest-first list — each row linking to that
+ * run's file detail (this test's spec file).
  */
 export function RunHistory({
   history,
@@ -35,48 +36,74 @@ export function RunHistory({
   file: string;
 }) {
   const newest = [...history].reverse();
+  const passed = history.filter((h) => h.status === 'passed').length;
+
   return (
-    <Flex direction="col" gap={3}>
-      {/* chronological strip (oldest → newest) */}
-      <Flex gap={1} wrap>
-        {history.map((h) => (
-          <span
-            key={h.runId}
-            title={`${h.status} · ${timeAgo(h.startedAt)}`}
-            className={cn('size-3 rounded-sm', STATUS_BG[h.status] ?? 'bg-muted')}
-          />
-        ))}
+    <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+      <Flex align="center" justify="between" gap={3} className="border-b border-border px-4 py-3">
+        <Text as="span" className="text-sm font-semibold">
+          Run history
+        </Text>
+        <Text as="span" className="shrink-0 text-xs tabular-nums text-muted-foreground">
+          {passed} / {history.length} passed
+        </Text>
       </Flex>
 
-      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-        {newest.map((h) => {
-          const meta = testStatusMeta(h.status);
-          return (
-            <Link
+      {/* chronological strip (oldest → newest), filling the card width */}
+      {history.length > 0 && (
+        <Flex gap={1} className="border-b border-border px-4 py-3">
+          {history.map((h) => (
+            <span
               key={h.runId}
-              to="/orgs/$orgId/projects/$projectId/runs/$runId/file"
-              params={{ orgId, projectId, runId: h.runId }}
-              search={{ path: file }}
-              className="flex items-center gap-3 border-b border-border px-4 py-2.5 transition-colors last:border-b-0 hover:bg-accent"
-            >
-              <HugeiconsIcon icon={meta.icon} size={16} className={cn('shrink-0', meta.color)} />
-              <Text as="span" variant="code" className="shrink-0 text-sm font-medium">
-                #{h.commitSha ? h.commitSha.slice(0, 7) : '———'}
-              </Text>
+              title={`${h.status} · ${timeAgo(h.startedAt)}`}
+              className={cn(
+                'h-8 max-w-2.5 flex-1 rounded-full',
+                STATUS_BG[h.status] ?? 'bg-muted',
+              )}
+            />
+          ))}
+        </Flex>
+      )}
+
+      {newest.map((h) => {
+        const meta = testStatusMeta(h.status);
+        return (
+          <Link
+            key={h.runId}
+            to="/orgs/$orgId/projects/$projectId/runs/$runId/file"
+            params={{ orgId, projectId, runId: h.runId }}
+            search={{ path: file }}
+            className="flex items-stretch gap-3 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
+          >
+            <span className={cn('w-1 shrink-0 rounded-full', STATUS_BG[h.status] ?? 'bg-muted')} />
+            <Flex direction="col" gap={1} className="min-w-0 flex-1">
+              <Flex align="center" justify="between" gap={2}>
+                <Text as="span" variant="code" truncate className="text-sm font-semibold">
+                  #{h.commitSha ? h.commitSha.slice(0, 7) : '———'}
+                </Text>
+                <Flex align="center" gap={2.5} className="shrink-0">
+                  <span className="font-mono text-xs tabular-nums text-muted-foreground">
+                    {formatMs(h.durationMs)}
+                  </span>
+                  <span
+                    className={cn(
+                      'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold',
+                      meta.pill,
+                    )}
+                  >
+                    {meta.label}
+                  </span>
+                </Flex>
+              </Flex>
+              <span className="text-xs text-muted-foreground">{formatDateTime(h.startedAt)}</span>
               <Flex align="center" gap={1} className="min-w-0 text-xs text-muted-foreground">
                 <HugeiconsIcon icon={GitBranchIcon} size={12} className="shrink-0" />
                 <span className="truncate font-mono">{h.branch ?? 'no branch'}</span>
               </Flex>
-              <span className="ml-auto shrink-0 text-xs text-muted-foreground">
-                {timeAgo(h.startedAt)}
-              </span>
-              <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
-                {formatMs(h.durationMs)}
-              </span>
-            </Link>
-          );
-        })}
-      </Flex>
+            </Flex>
+          </Link>
+        );
+      })}
     </Flex>
   );
 }
