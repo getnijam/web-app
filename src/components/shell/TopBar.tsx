@@ -1,12 +1,8 @@
 import { Link, useParams, useRouterState, useSearch } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Search01Icon } from '@hugeicons/core-free-icons';
 import { getProjectOptions, getRunOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
-import { Kbd } from '@/components/ui/kbd';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl';
@@ -116,21 +112,6 @@ export function TopBar() {
       <Breadcrumbs />
 
       <Flex align="center" gap={2.5} className="ml-auto">
-        {/* Presentational for now — wired to a real search endpoint in a later phase. */}
-        <InputGroup className="w-auto min-w-57.5">
-          <InputGroupAddon>
-            <HugeiconsIcon icon={Search01Icon} size={16} />
-          </InputGroupAddon>
-          <InputGroupInput
-            type="search"
-            placeholder="Search tests, runs, projects…"
-            aria-label="Search"
-          />
-          <InputGroupAddon align="inline-end">
-            <Kbd>⌘K</Kbd>
-          </InputGroupAddon>
-        </InputGroup>
-
         <ThemeSegmentedControl />
       </Flex>
     </Flex>

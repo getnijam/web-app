@@ -354,9 +354,15 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton type="button" title="Docs (coming soon)">
-              <NavGlyph icon={Book02Icon} active={false} />
-              <span>Docs</span>
+            <SidebarMenuButton asChild title="Reporter docs on npm">
+              <a
+                href="https://www.npmjs.com/package/@nijam/pw-reporter"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <NavGlyph icon={Book02Icon} active={false} />
+                <span>Docs</span>
+              </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
