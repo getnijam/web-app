@@ -12,15 +12,21 @@ function formatMs(ms: number): string {
   return ms < 1000 ? `${ms}ms` : formatDuration(Math.round(ms / 1000));
 }
 
-/** One test case in the explorer; links to the test detail. */
+/**
+ * One test case in the explorer; links to the test detail. When `flakeCount` is
+ * given (the flaky-tests page) it shows a flake-count pill instead of the retry
+ * pill — otherwise the row is identical to the explorer's.
+ */
 export function TestRow({
   test,
   orgId,
   projectId,
+  flakeCount,
 }: {
   test: TestCaseSummary;
   orgId: string;
   projectId: string;
+  flakeCount?: number;
 }) {
   const meta = testStatusMeta(test.status);
   return (
@@ -38,10 +44,16 @@ export function TestRow({
           {displayFile(test.file)}
         </Text>
       </Flex>
-      {test.retries > 0 && (
+      {flakeCount != null ? (
         <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning">
-          {test.retries}× retry
+          {flakeCount} {flakeCount === 1 ? 'flake' : 'flakes'}
         </span>
+      ) : (
+        test.retries > 0 && (
+          <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning">
+            {test.retries}× retry
+          </span>
+        )
       )}
       <Text as="span" className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
         {formatMs(test.durationMs)}

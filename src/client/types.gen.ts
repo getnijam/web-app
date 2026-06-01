@@ -231,6 +231,15 @@ export type TestExplorerResponse = {
     specFileCount: number;
 };
 
+export type FlakyTestSummary = TestCaseSummary & {
+    flakeCount: number;
+};
+
+export type FlakyTestsResponse = {
+    tests: Array<FlakyTestSummary>;
+    runWindow: number;
+};
+
 export type TestHistoryEntry = {
     runId: string;
     status: 'passed' | 'failed' | 'flaky' | 'skipped';
@@ -1369,6 +1378,37 @@ export type ListProjectTestsResponses = {
 };
 
 export type ListProjectTestsResponse = ListProjectTestsResponses[keyof ListProjectTestsResponses];
+
+export type ListProjectFlakyTestsData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/flaky-tests';
+};
+
+export type ListProjectFlakyTestsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Project not found
+     */
+    404: ApiError;
+};
+
+export type ListProjectFlakyTestsError = ListProjectFlakyTestsErrors[keyof ListProjectFlakyTestsErrors];
+
+export type ListProjectFlakyTestsResponses = {
+    /**
+     * OK
+     */
+    200: FlakyTestsResponse;
+};
+
+export type ListProjectFlakyTestsResponse = ListProjectFlakyTestsResponses[keyof ListProjectFlakyTestsResponses];
 
 export type GetProjectTestData = {
     body?: never;
