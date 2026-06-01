@@ -152,6 +152,28 @@ export type AcceptInviteResponse = {
     orgName: string;
 };
 
+export type BillingResponse = {
+    plan: string;
+    status: string | null;
+    retentionDays: number;
+    usage: {
+        tests: number;
+        seats: number;
+    };
+    limits: {
+        tests: number;
+        seats: number | null;
+    };
+    estimateCents: number;
+    resetsAt: string;
+    over: boolean;
+    enforced: boolean;
+};
+
+export type BillingRedirectResponse = {
+    url: string;
+};
+
 export type ProjectStats = {
     status: 'pass' | 'fail' | 'flaky';
     passRate: number;
@@ -809,6 +831,10 @@ export type CreateOrgErrors = {
      * Not authenticated
      */
     401: ApiError;
+    /**
+     * Per-account organization limit reached
+     */
+    403: ApiError;
 };
 
 export type CreateOrgError = CreateOrgErrors[keyof CreateOrgErrors];
@@ -1077,6 +1103,10 @@ export type CreateOrgInvitationErrors = {
      */
     401: ApiError;
     /**
+     * Free plan seat limit reached
+     */
+    402: ApiError;
+    /**
      * Not found
      */
     404: ApiError;
@@ -1175,6 +1205,10 @@ export type AcceptInvitationErrors = {
      */
     401: ApiError;
     /**
+     * Free plan seat limit reached
+     */
+    402: ApiError;
+    /**
      * Email mismatch
      */
     403: ApiError;
@@ -1194,6 +1228,107 @@ export type AcceptInvitationResponses = {
 };
 
 export type AcceptInvitationResponse = AcceptInvitationResponses[keyof AcceptInvitationResponses];
+
+export type GetOrgBillingData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/billing';
+};
+
+export type GetOrgBillingErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Organization not found
+     */
+    404: ApiError;
+};
+
+export type GetOrgBillingError = GetOrgBillingErrors[keyof GetOrgBillingErrors];
+
+export type GetOrgBillingResponses = {
+    /**
+     * OK
+     */
+    200: BillingResponse;
+};
+
+export type GetOrgBillingResponse = GetOrgBillingResponses[keyof GetOrgBillingResponses];
+
+export type CreateBillingCheckoutData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/billing/checkout';
+};
+
+export type CreateBillingCheckoutErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Organization not found
+     */
+    404: ApiError;
+    /**
+     * Billing not configured
+     */
+    503: ApiError;
+};
+
+export type CreateBillingCheckoutError = CreateBillingCheckoutErrors[keyof CreateBillingCheckoutErrors];
+
+export type CreateBillingCheckoutResponses = {
+    /**
+     * Hosted checkout URL
+     */
+    200: BillingRedirectResponse;
+};
+
+export type CreateBillingCheckoutResponse = CreateBillingCheckoutResponses[keyof CreateBillingCheckoutResponses];
+
+export type CreateBillingPortalData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/billing/portal';
+};
+
+export type CreateBillingPortalErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Organization not found
+     */
+    404: ApiError;
+    /**
+     * Billing not configured
+     */
+    503: ApiError;
+};
+
+export type CreateBillingPortalError = CreateBillingPortalErrors[keyof CreateBillingPortalErrors];
+
+export type CreateBillingPortalResponses = {
+    /**
+     * Customer portal URL
+     */
+    200: BillingRedirectResponse;
+};
+
+export type CreateBillingPortalResponse = CreateBillingPortalResponses[keyof CreateBillingPortalResponses];
 
 export type ListOrgProjectsData = {
     body?: never;
@@ -1551,6 +1686,10 @@ export type CreateExecutionsErrors = {
      * Invalid or missing API key
      */
     401: ApiError;
+    /**
+     * Free plan test limit reached
+     */
+    402: ApiError;
     /**
      * Run not found
      */

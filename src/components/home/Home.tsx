@@ -3,6 +3,7 @@ import { Nav } from './components/Nav';
 import { Hero } from './components/Hero';
 import { Features } from './components/Features';
 import { HighlightRows } from './components/HighlightRows';
+import { Pricing } from './components/Pricing';
 import { CTA } from './components/CTA';
 import { Footer } from './components/Footer';
 
@@ -24,6 +25,7 @@ export function Home() {
       <Hero />
       <Features />
       <HighlightRows />
+      <Pricing />
       <CTA />
       <Footer />
     </div>

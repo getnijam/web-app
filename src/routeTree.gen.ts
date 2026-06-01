@@ -23,6 +23,7 @@ import { Route as AuthedOrgsOrgIdIndexRouteImport } from './routes/_authed/orgs.
 import { Route as AuthedOrgsOrgIdUsersRouteImport } from './routes/_authed/orgs.$orgId.users'
 import { Route as AuthedOrgsOrgIdSettingsRouteImport } from './routes/_authed/orgs.$orgId.settings'
 import { Route as AuthedOrgsOrgIdKeysRouteImport } from './routes/_authed/orgs.$orgId.keys'
+import { Route as AuthedOrgsOrgIdBillingRouteImport } from './routes/_authed/orgs.$orgId.billing'
 import { Route as AuthedOrgsOrgIdProjectsIndexRouteImport } from './routes/_authed/orgs.$orgId.projects.index'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdIndexRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.index'
@@ -103,6 +104,11 @@ const AuthedOrgsOrgIdKeysRoute = AuthedOrgsOrgIdKeysRouteImport.update({
   path: '/keys',
   getParentRoute: () => AuthedOrgsOrgIdRoute,
 } as any)
+const AuthedOrgsOrgIdBillingRoute = AuthedOrgsOrgIdBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => AuthedOrgsOrgIdRoute,
+} as any)
 const AuthedOrgsOrgIdProjectsIndexRoute =
   AuthedOrgsOrgIdProjectsIndexRouteImport.update({
     id: '/projects/',
@@ -174,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/verify': typeof VerifyRoute
   '/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/orgs/': typeof AuthedOrgsIndexRoute
+  '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
   '/orgs/$orgId/keys': typeof AuthedOrgsOrgIdKeysRoute
   '/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/verify': typeof VerifyRoute
   '/orgs': typeof AuthedOrgsIndexRoute
+  '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
   '/orgs/$orgId/keys': typeof AuthedOrgsOrgIdKeysRoute
   '/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
@@ -224,6 +232,7 @@ export interface FileRoutesById {
   '/verify': typeof VerifyRoute
   '/_authed/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/_authed/orgs/': typeof AuthedOrgsIndexRoute
+  '/_authed/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
   '/_authed/orgs/$orgId/keys': typeof AuthedOrgsOrgIdKeysRoute
   '/_authed/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/_authed/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/orgs/$orgId'
     | '/orgs/'
+    | '/orgs/$orgId/billing'
     | '/orgs/$orgId/keys'
     | '/orgs/$orgId/settings'
     | '/orgs/$orgId/users'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify'
     | '/orgs'
+    | '/orgs/$orgId/billing'
     | '/orgs/$orgId/keys'
     | '/orgs/$orgId/settings'
     | '/orgs/$orgId/users'
@@ -300,6 +311,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/_authed/orgs/$orgId'
     | '/_authed/orgs/'
+    | '/_authed/orgs/$orgId/billing'
     | '/_authed/orgs/$orgId/keys'
     | '/_authed/orgs/$orgId/settings'
     | '/_authed/orgs/$orgId/users'
@@ -427,6 +439,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedOrgsOrgIdKeysRouteImport
       parentRoute: typeof AuthedOrgsOrgIdRoute
     }
+    '/_authed/orgs/$orgId/billing': {
+      id: '/_authed/orgs/$orgId/billing'
+      path: '/billing'
+      fullPath: '/orgs/$orgId/billing'
+      preLoaderRoute: typeof AuthedOrgsOrgIdBillingRouteImport
+      parentRoute: typeof AuthedOrgsOrgIdRoute
+    }
     '/_authed/orgs/$orgId/projects/': {
       id: '/_authed/orgs/$orgId/projects/'
       path: '/projects'
@@ -537,6 +556,7 @@ const AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren =
   )
 
 interface AuthedOrgsOrgIdRouteChildren {
+  AuthedOrgsOrgIdBillingRoute: typeof AuthedOrgsOrgIdBillingRoute
   AuthedOrgsOrgIdKeysRoute: typeof AuthedOrgsOrgIdKeysRoute
   AuthedOrgsOrgIdSettingsRoute: typeof AuthedOrgsOrgIdSettingsRoute
   AuthedOrgsOrgIdUsersRoute: typeof AuthedOrgsOrgIdUsersRoute
@@ -546,6 +566,7 @@ interface AuthedOrgsOrgIdRouteChildren {
 }
 
 const AuthedOrgsOrgIdRouteChildren: AuthedOrgsOrgIdRouteChildren = {
+  AuthedOrgsOrgIdBillingRoute: AuthedOrgsOrgIdBillingRoute,
   AuthedOrgsOrgIdKeysRoute: AuthedOrgsOrgIdKeysRoute,
   AuthedOrgsOrgIdSettingsRoute: AuthedOrgsOrgIdSettingsRoute,
   AuthedOrgsOrgIdUsersRoute: AuthedOrgsOrgIdUsersRoute,

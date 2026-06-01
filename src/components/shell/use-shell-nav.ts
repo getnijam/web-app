@@ -6,6 +6,7 @@ export type SubRoute =
   | 'org'
   | 'users'
   | 'keys'
+  | 'billing'
   | 'runs'
   | 'explorer'
   | 'flaky'
@@ -17,6 +18,7 @@ export const ROUTE_TITLES: Record<SubRoute, string> = {
   org: 'Organization settings',
   users: 'Users',
   keys: 'Secret keys',
+  billing: 'Billing',
   runs: 'Runs',
   explorer: 'Test explorer',
   flaky: 'Flaky tests',
@@ -65,7 +67,15 @@ export function useShellNav(): ShellNav {
 
   const seg = segments[2]; // after orgs/<orgId>
   const active: SubRoute =
-    seg === 'settings' ? 'org' : seg === 'users' ? 'users' : seg === 'keys' ? 'keys' : 'home';
+    seg === 'settings'
+      ? 'org'
+      : seg === 'users'
+        ? 'users'
+        : seg === 'keys'
+          ? 'keys'
+          : seg === 'billing'
+            ? 'billing'
+            : 'home';
   return { orgId, inProject: false, active };
 }
 

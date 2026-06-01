@@ -40,6 +40,9 @@ export function Nav() {
           <a href="#integrations" className={LINK}>
             Integrations
           </a>
+          <a href="#pricing" className={LINK}>
+            Pricing
+          </a>
           <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
             Docs
           </a>
