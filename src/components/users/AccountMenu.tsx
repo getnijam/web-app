@@ -18,11 +18,12 @@ interface MeUser {
 }
 
 /**
- * Account avatar + dropdown for the public nav when signed in (name/email +
- * sign out). Mirrors the sidebar's hand-rolled popover — no dropdown primitive
- * in the kit. Signing out invalidates `/me`, so the nav reverts to guest links.
+ * Compact account avatar + dropdown (name/email + sign out). Signing out
+ * invalidates `/me`; `onSignedOut` lets the caller route away afterwards (the
+ * public nav stays put as a guest; authed pages redirect to /login). Uses a
+ * document listener for outside-click — see {@link useClickAway}.
  */
-export function HomeUserMenu({ user }: { user: MeUser }) {
+export function AccountMenu({ user, onSignedOut }: { user: MeUser; onSignedOut?: () => void }) {
   const [open, setOpen] = useState(false);
   const ref = useClickAway<HTMLDivElement>(() => setOpen(false));
   const queryClient = useQueryClient();
@@ -34,6 +35,7 @@ export function HomeUserMenu({ user }: { user: MeUser }) {
     onSuccess: async () => {
       setOpen(false);
       await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
+      onSignedOut?.();
     },
   });
 

@@ -2,11 +2,12 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
+import { useQuery } from '@tanstack/react-query';
+import { getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { Reveal } from '../Reveal';
-import { useHomeUser } from '../use-home-user';
 
 export function CTA() {
-  const user = useHomeUser();
+  const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
   return (
     <section className="bg-foreground text-background">
       <Reveal className="mx-auto max-w-6xl px-6 py-24 text-center">

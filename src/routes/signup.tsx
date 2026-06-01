@@ -142,6 +142,18 @@ function SignupPage() {
           <Button type="submit" size="lg" className="w-full" loading={mutation.isPending}>
             {mutation.isPending ? 'Creating account…' : 'Create account'}
           </Button>
+
+          <Text color="muted" align="center" className="text-xs">
+            By creating an account, you agree to our{' '}
+            <Link to="/terms" className="text-foreground underline-offset-4 hover:underline">
+              Terms
+            </Link>{' '}
+            and{' '}
+            <Link to="/privacy" className="text-foreground underline-offset-4 hover:underline">
+              Privacy Policy
+            </Link>
+            .
+          </Text>
         </Flex>
 
         <Text color="muted" align="center">

@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
+import { useQuery } from '@tanstack/react-query';
+import { getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { ProductMock } from './ProductMock';
 import { CIStrip } from './CIStrip';
-import { useHomeUser } from '../use-home-user';
 
 export function Hero() {
-  const user = useHomeUser();
+  const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
   return (
     <section className="mx-auto max-w-6xl px-6 pt-16 pb-16 md:pt-20">
       <Grid cols={[1, 1, 2]} className="items-center gap-12">

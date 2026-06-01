@@ -15,9 +15,9 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-6 py-14">
         <Grid cols={[1, 2, 4]} gap={8}>
           <div className="sm:col-span-2 md:col-span-1">
-            <a href="#top" aria-label="Nijam.dev home" className="inline-flex text-background">
+            <Link to="/" hash="top" aria-label="Nijam.dev home" className="inline-flex text-background">
               <Logo />
-            </a>
+            </Link>
             <Text className="mt-3.5 max-w-70 text-sm text-background/60">
               The reporting layer for Playwright. Reads the results your CI already produces — never
               runs your tests.
@@ -28,15 +28,15 @@ export function Footer() {
             <Text as="p" className={H5}>
               Product
             </Text>
-            <a href="#features" className={COL}>
+            <Link to="/" hash="features" className={COL}>
               Features
-            </a>
-            <a href="#flakiness" className={COL}>
+            </Link>
+            <Link to="/" hash="flakiness" className={COL}>
               Flakiness detector
-            </a>
-            <a href="#integrations" className={COL}>
+            </Link>
+            <Link to="/" hash="integrations" className={COL}>
               Integrations
-            </a>
+            </Link>
             <Link to="/login" className={COL}>
               Dashboard
             </Link>
@@ -60,6 +60,12 @@ export function Footer() {
             <a href={DOCS_URL} {...ext} className={COL}>
               Docs
             </a>
+            <Link to="/terms" className={COL}>
+              Terms of Service
+            </Link>
+            <Link to="/privacy" className={COL}>
+              Privacy Policy
+            </Link>
             <Link to="/signup" className={COL}>
               Start free
             </Link>

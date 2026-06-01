@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { Logo } from '@/components/auth/Logo';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl';
-import { HomeUserMenu } from './HomeUserMenu';
-import { useHomeUser } from '../use-home-user';
+import { AccountMenu } from '@/components/users/AccountMenu';
 import { cn } from '@/lib/utils';
 import { DOCS_URL } from '../config';
 
@@ -13,7 +14,9 @@ const LINK = 'rounded-md px-3 py-2 text-sm font-medium text-muted-foreground tra
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
-  const user = useHomeUser();
+  // Session, read optimistically (a 401 just means "guest"). Cached, so the
+  // other home sections that read it share this one request.
+  const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -31,22 +34,22 @@ export function Nav() {
       )}
     >
       <Flex align="center" gap={3} className="mx-auto h-16 w-full max-w-6xl px-6">
-        <a href="#top" aria-label="Nijam.dev home" className="shrink-0">
+        <Link to="/" hash="top" aria-label="Nijam.dev home" className="shrink-0">
           <Logo />
-        </a>
+        </Link>
         <Flex as="nav" align="center" gap={1} className="ml-4 hidden md:flex">
-          <a href="#features" className={LINK}>
+          <Link to="/" hash="features" className={LINK}>
             Features
-          </a>
-          <a href="#flakiness" className={LINK}>
+          </Link>
+          <Link to="/" hash="flakiness" className={LINK}>
             Flakiness
-          </a>
-          <a href="#integrations" className={LINK}>
+          </Link>
+          <Link to="/" hash="integrations" className={LINK}>
             Integrations
-          </a>
-          <a href="#pricing" className={LINK}>
+          </Link>
+          <Link to="/" hash="pricing" className={LINK}>
             Pricing
-          </a>
+          </Link>
           <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
             Docs
           </a>
@@ -58,7 +61,7 @@ export function Nav() {
               <Button asChild size="sm">
                 <Link to="/orgs">Go to dashboard</Link>
               </Button>
-              <HomeUserMenu user={user} />
+              <AccountMenu user={user} />
             </>
           ) : (
             <>

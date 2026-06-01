@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { PlusSignIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
-import { listOrgsOptions } from '@/client/@tanstack/react-query.gen';
+import { listOrgsOptions, getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { Logo } from '@/components/auth/Logo';
 import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl';
+import { AccountMenu } from '@/components/users/AccountMenu';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { CreateOrgDialog } from '@/components/orgs/CreateOrgDialog';
 
@@ -18,6 +19,8 @@ export const Route = createFileRoute('/_authed/orgs/')({ component: OrgsPicker }
 
 function OrgsPicker() {
   const { data, isLoading, error, refetch } = useQuery(listOrgsOptions());
+  const navigate = useNavigate();
+  const user = useQuery({ ...getMeOptions(), retry: false }).data?.user;
   const [dialogOpen, setDialogOpen] = useState(false);
   const orgs = data?.orgs ?? [];
 
@@ -25,7 +28,10 @@ function OrgsPicker() {
     <Flex direction="col" className="min-h-svh">
       <Flex as="header" align="center" justify="between" gap={4} className="border-b border-border px-6 py-3">
         <Logo />
-        <ThemeSegmentedControl />
+        <Flex align="center" gap={2}>
+          <ThemeSegmentedControl />
+          {user && <AccountMenu user={user} onSignedOut={() => navigate({ to: '/login' })} />}
+        </Flex>
       </Flex>
 
       <Flex direction="col" align="center" justify="center" className="flex-1 px-6 py-12">
