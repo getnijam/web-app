@@ -1,13 +1,11 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Logout01Icon } from '@hugeicons/core-free-icons';
-import { logout } from '@/client';
-import { getMeQueryKey } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { UserAvatar } from '@/components/users/UserAvatar';
 import { useClickAway } from '@/hooks/use-click-away';
+import { useLogout } from '@/hooks/use-logout';
 
 interface MeUser {
   id?: string;
@@ -18,23 +16,19 @@ interface MeUser {
 }
 
 /**
- * Compact account avatar + dropdown (name/email + sign out). Signing out
- * invalidates `/me`; `onSignedOut` lets the caller route away afterwards (the
- * public nav stays put as a guest; authed pages redirect to /login). Uses a
- * document listener for outside-click — see {@link useClickAway}.
+ * Compact account avatar + dropdown (name/email + sign out). `onSignedOut` lets
+ * the caller route away after logout (the public nav stays put as a guest;
+ * authed pages redirect to /login). Outside-click via {@link useClickAway}.
  */
 export function AccountMenu({ user, onSignedOut }: { user: MeUser; onSignedOut?: () => void }) {
   const [open, setOpen] = useState(false);
   const ref = useClickAway<HTMLDivElement>(() => setOpen(false));
-  const queryClient = useQueryClient();
   const email = user.email ?? '';
   const name = user.name ?? (email ? email.split('@')[0] : 'Account');
 
-  const logoutMutation = useMutation({
-    mutationFn: () => logout({ throwOnError: true }),
-    onSuccess: async () => {
+  const logoutMutation = useLogout({
+    onSuccess: () => {
       setOpen(false);
-      await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
       onSignedOut?.();
     },
   });

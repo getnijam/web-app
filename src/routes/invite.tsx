@@ -2,11 +2,9 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { UserGroupIcon } from '@hugeicons/core-free-icons';
-import { logout } from '@/client';
 import {
   previewInvitationOptions,
   getMeOptions,
-  getMeQueryKey,
   acceptInvitationMutation,
   listOrgsQueryKey,
 } from '@/client/@tanstack/react-query.gen';
@@ -17,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { LoadingState } from '@/components/states/LoadingState';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
+import { useLogout } from '@/hooks/use-logout';
 
 export const Route = createFileRoute('/invite')({
   component: InvitePage,
@@ -65,10 +64,7 @@ function InvitePage() {
       notify.error(isApiError(err) ? err.error.message : 'Could not accept the invitation.'),
   });
 
-  const signOut = useMutation({
-    mutationFn: () => logout({ throwOnError: true }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: getMeQueryKey() }),
-  });
+  const signOut = useLogout();
 
   // Invalid / missing token.
   if (!token || preview.isError) {

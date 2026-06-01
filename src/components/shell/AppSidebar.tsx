@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import {
   Home01Icon,
@@ -17,8 +17,7 @@ import {
   ArrowDown01Icon,
   Logout01Icon,
 } from '@hugeicons/core-free-icons';
-import { logout } from '@/client';
-import { getMeOptions, getMeQueryKey, getProjectOptions } from '@/client/@tanstack/react-query.gen';
+import { getMeOptions, getProjectOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import {
@@ -40,6 +39,7 @@ import { UserAvatar } from '@/components/users/UserAvatar';
 import { UserSettingsDialog } from '@/components/users/UserSettingsDialog';
 import { OrgSwitcher } from './OrgSwitcher';
 import { useShellNav, initialsFrom, type SubRoute } from './use-shell-nav';
+import { useLogout } from '@/hooks/use-logout';
 
 /**
  * Recolors shadcn's default active treatment to the brand primary and adds the
@@ -228,17 +228,10 @@ function ProfileButton() {
   // reused on mount instead of refetching (login/logout invalidate it explicitly).
   const me = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 });
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const logoutMutation = useMutation({
-    mutationFn: () => logout({ throwOnError: true }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
-      navigate({ to: '/login' });
-    },
-  });
+  const logoutMutation = useLogout({ onSuccess: () => navigate({ to: '/login' }) });
 
   const user = me.data?.user;
   const email = user?.email ?? '';
