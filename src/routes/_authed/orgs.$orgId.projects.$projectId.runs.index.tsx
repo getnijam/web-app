@@ -24,6 +24,7 @@ interface RunsSearch {
   status?: RunStatusFilter;
   branch?: string;
   user?: string;
+  environment?: string;
   page?: number;
 }
 
@@ -40,6 +41,10 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/r
         : 'all',
       branch: typeof search.branch === 'string' && search.branch ? search.branch : undefined,
       user: typeof search.user === 'string' && search.user ? search.user : undefined,
+      environment:
+        typeof search.environment === 'string' && search.environment
+          ? search.environment
+          : undefined,
       page: Number.isInteger(page) && page >= 1 ? page : 1,
     };
   },
@@ -62,6 +67,7 @@ function RunsPage() {
         status,
         branch: search.branch,
         user: search.user,
+        environment: search.environment,
         page,
         pageSize: PAGE_SIZE,
       },
@@ -75,7 +81,8 @@ function RunsPage() {
 
   const proj = project.data;
   const stats = proj.stats;
-  const filtersActive = status !== 'all' || !!search.branch || !!search.user;
+  const filtersActive =
+    status !== 'all' || !!search.branch || !!search.user || !!search.environment;
   const total = runs.data?.total ?? 0;
 
   // No runs at all (and no filters narrowing them away) → onboarding snippet.
@@ -92,6 +99,7 @@ function RunsPage() {
     status,
     branch: search.branch,
     user: search.user,
+    environment: search.environment,
   };
   const onFilterChange = (patch: Partial<RunFilterValues>) =>
     navigate({ search: (prev) => ({ ...prev, ...patch, page: 1 }) });
@@ -106,7 +114,7 @@ function RunsPage() {
       <Flex direction="col" gap={3}>
         <RunFilters
           values={values}
-          options={filters.data ?? { branches: [], users: [] }}
+          options={filters.data ?? { branches: [], users: [], environments: [], hasUnset: false }}
           total={total}
           projectTotal={stats?.runCount ?? total}
           onChange={onFilterChange}
@@ -131,7 +139,7 @@ function RunsPage() {
         ) : (
           <EmptyState
             title="No runs match these filters"
-            description="Try a different status, branch, or user."
+            description="Try a different status, branch, user, or environment."
           />
         )}
       </Flex>

@@ -61,6 +61,11 @@ export function RunRow({
                 {run.shardTotal} shards
               </span>
             )}
+            {run.environment && (
+              <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                {run.environment}
+              </span>
+            )}
           </Flex>
           <Flex align="center" gap={2.5} wrap className="min-w-0 text-xs text-muted-foreground">
             <span>{timeAgo(run.startedAt)}</span>

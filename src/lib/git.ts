@@ -55,6 +55,11 @@ export function gitFileUrl(
 ): string | null {
   const { repository, commitSha, ciProvider } = ref;
   if (!repository || !commitSha || !ciProvider || !file) return null;
+  // Only a repo-relative path yields a valid blob URL. Older runs stored an
+  // absolute machine path (e.g. /home/runner/work/…) when the reporter couldn't
+  // make it rootDir-relative — that produces …/blob/<sha>//home/… which 404s.
+  // Skip the link rather than send the user to a dead page.
+  if (file.startsWith('/') || /^[a-zA-Z]:[\\/]/.test(file) || file.startsWith('..')) return null;
   const blob = BLOB_PATH[ciProvider];
   const host = originFromUrl(ref.ciRunUrl) ?? DEFAULT_HOST[ciProvider];
   if (!blob || !host) return null;

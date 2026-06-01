@@ -20,11 +20,14 @@ const STATUS_OPTIONS: { value: RunStatusFilter; label: string }[] = [
 ];
 
 const ALL = '__all__';
+/** Mirrors the API's `UNSET_ENV` sentinel — selects runs with no environment. */
+const UNSET_ENV = '(unset)';
 
 export interface RunFilterValues {
   status: RunStatusFilter;
   branch?: string;
   user?: string;
+  environment?: string;
 }
 
 /** Status segmented control + branch/user selects + a live "N of M" count. */
@@ -93,6 +96,30 @@ export function RunFilters({
           ))}
         </SelectContent>
       </Select>
+
+      {options.environments.length > 0 && (
+        <Select
+          value={values.environment ?? ALL}
+          onValueChange={(v) => onChange({ environment: v === ALL ? undefined : v })}
+        >
+          <SelectTrigger size="sm" className="w-44">
+            <SelectValue placeholder="All environments" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL}>All environments</SelectItem>
+            {options.environments.map((e) => (
+              <SelectItem key={e} value={e}>
+                {e}
+              </SelectItem>
+            ))}
+            {options.hasUnset && (
+              <SelectItem value={UNSET_ENV} className="text-muted-foreground">
+                Unset
+              </SelectItem>
+            )}
+          </SelectContent>
+        </Select>
+      )}
 
       <Text as="span" className="ml-auto text-sm text-muted-foreground tabular-nums">
         {total} of {projectTotal} runs

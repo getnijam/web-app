@@ -339,6 +339,8 @@ export type RunFiltersResponse = {
         email: string;
         name: string | null;
     }>;
+    environments: Array<string>;
+    hasUnset: boolean;
 };
 
 export type RunSummary = {
@@ -1686,6 +1688,7 @@ export type ListProjectRunsData = {
         status?: 'all' | 'passed' | 'failed' | 'flaky';
         branch?: string;
         user?: string;
+        environment?: string;
         page?: number;
         pageSize?: number;
     };
