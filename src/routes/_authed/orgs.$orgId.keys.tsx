@@ -64,7 +64,7 @@ function SecretKeysPage() {
           </Text>
         </Flex>
         <a
-          href="https://www.npmjs.com/package/@nijam/pw-reporter"
+          href="https://docs.nijam.dev/reporter/ci-integration/"
           target="_blank"
           rel="noopener noreferrer"
           className="flex shrink-0 items-center gap-1 self-center rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent"
