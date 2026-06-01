@@ -1,16 +1,18 @@
+import type { ReactNode } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { GithubIcon, GitlabIcon, MicrosoftIcon, PipelineIcon } from '@hugeicons/core-free-icons';
+import { GithubIcon, GitlabIcon } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
+import { JenkinsLogo, CircleCiLogo, AzureLogo } from './ci-logos';
 
-// Brand icons where Hugeicons has them; a generic pipeline glyph otherwise
-// (Hugeicons has no Jenkins/CircleCI logo).
-const PROVIDERS = [
-  { name: 'GitHub Actions', icon: GithubIcon },
-  { name: 'Jenkins', icon: PipelineIcon },
-  { name: 'GitLab CI', icon: GitlabIcon },
-  { name: 'CircleCI', icon: PipelineIcon },
-  { name: 'Azure Pipelines', icon: MicrosoftIcon },
+// GitHub/GitLab from Hugeicons; the rest are inline brand SVGs (ci-logos) — all
+// tint to the surrounding `text-muted-foreground`, so the strip is one color.
+const PROVIDERS: { name: string; logo: ReactNode }[] = [
+  { name: 'GitHub Actions', logo: <HugeiconsIcon icon={GithubIcon} size={18} /> },
+  { name: 'Jenkins', logo: <JenkinsLogo className="size-4.5" /> },
+  { name: 'GitLab CI', logo: <HugeiconsIcon icon={GitlabIcon} size={18} /> },
+  { name: 'CircleCI', logo: <CircleCiLogo className="size-4.5" /> },
+  { name: 'Azure Pipelines', logo: <AzureLogo className="size-4.5" /> },
 ];
 
 export function CIStrip() {
@@ -27,7 +29,7 @@ export function CIStrip() {
             key={p.name}
             className="text-base font-semibold text-muted-foreground"
           >
-            <HugeiconsIcon icon={p.icon} size={18} />
+            {p.logo}
             {p.name}
           </Flex>
         ))}
