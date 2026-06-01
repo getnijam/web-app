@@ -7,8 +7,10 @@ import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
 import { ProductMock } from './ProductMock';
 import { CIStrip } from './CIStrip';
+import { useHomeUser } from '../use-home-user';
 
 export function Hero() {
+  const user = useHomeUser();
   return (
     <section className="mx-auto max-w-6xl px-6 pt-16 pb-16 md:pt-20">
       <Grid cols={[1, 1, 2]} className="items-center gap-12">
@@ -35,7 +37,11 @@ export function Hero() {
 
           <Flex gap={3} wrap className="mt-7">
             <Button asChild size="lg">
-              <Link to="/login">Log in to your dashboard</Link>
+              {user ? (
+                <Link to="/orgs">Go to dashboard</Link>
+              ) : (
+                <Link to="/login">Log in to your dashboard</Link>
+              )}
             </Button>
             <Button asChild variant="outline" size="lg">
               <a href="#features">See features</a>

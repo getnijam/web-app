@@ -29,7 +29,7 @@ const router = createRouter({
   // route loaders resolve — so a refresh shows a spinner, never a blank screen.
   defaultPendingComponent: () => (
     <div className="flex min-h-screen items-center justify-center bg-background">
-      <LoadingState />
+      <LoadingState message={null} />
     </div>
   ),
   defaultPendingMs: 0,

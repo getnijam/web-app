@@ -14,8 +14,10 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
+import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
 
 export const Route = createFileRoute('/login')({
+  beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   component: LoginPage,
   validateSearch: (search: Record<string, unknown>): { invite?: string } => ({
     invite: typeof search.invite === 'string' ? search.invite : undefined,

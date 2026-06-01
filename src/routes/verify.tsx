@@ -9,10 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { isApiError } from '@/lib/api-error';
+import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
 
 const VerifySearch = z.object({ token: z.string().optional() });
 
 export const Route = createFileRoute('/verify')({
+  beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   validateSearch: VerifySearch,
   component: VerifyPage,
 });

@@ -14,8 +14,12 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
+import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
 
-export const Route = createFileRoute('/forgot-password')({ component: ForgotPasswordPage });
+export const Route = createFileRoute('/forgot-password')({
+  beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
+  component: ForgotPasswordPage,
+});
 
 const ForgotSchema = z.object({
   email: z.string().email('Enter a valid email address.'),

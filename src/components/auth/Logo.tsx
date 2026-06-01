@@ -17,7 +17,7 @@ export function Logo({ className, label = 'Nijam.dev' }: { className?: string; l
         inline
         align="center"
         justify="center"
-        className="size-7.5 shrink-0 rounded-lg bg-brand text-primary-foreground shadow-sm"
+        className="size-7.5 shrink-0 rounded-mark bg-brand text-primary-foreground shadow-sm"
       >
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path

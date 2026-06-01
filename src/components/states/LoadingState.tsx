@@ -2,7 +2,7 @@ import { Loader2 } from 'lucide-react';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 
-export function LoadingState({ message = 'Loading…' }: { message?: string }) {
+export function LoadingState({ message }: { message?: string | null }) {
   return (
     <Flex
       direction="col"
@@ -11,8 +11,8 @@ export function LoadingState({ message = 'Loading…' }: { message?: string }) {
       gap={3}
       className="py-16 text-muted-foreground"
     >
-      <Loader2 className="h-6 w-6 animate-spin" />
-      <Text>{message}</Text>
+      <Loader2 className="h-7 w-7 animate-spin" />
+      {message && <Text>{message}</Text>}
     </Flex>
   );
 }

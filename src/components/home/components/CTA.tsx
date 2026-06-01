@@ -3,8 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Reveal } from '../Reveal';
+import { useHomeUser } from '../use-home-user';
 
 export function CTA() {
+  const user = useHomeUser();
   return (
     <section className="bg-foreground text-background">
       <Reveal className="mx-auto max-w-6xl px-6 py-24 text-center">
@@ -17,7 +19,11 @@ export function CTA() {
         </Text>
         <Flex justify="center" gap={3} wrap className="mt-7">
           <Button asChild size="lg">
-            <Link to="/login">Log in to your dashboard</Link>
+            {user ? (
+              <Link to="/orgs">Go to dashboard</Link>
+            ) : (
+              <Link to="/login">Log in to your dashboard</Link>
+            )}
           </Button>
           <Button
             asChild

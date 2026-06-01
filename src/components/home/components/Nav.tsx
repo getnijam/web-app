@@ -3,6 +3,9 @@ import { Link } from '@tanstack/react-router';
 import { Logo } from '@/components/auth/Logo';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
+import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl';
+import { HomeUserMenu } from './HomeUserMenu';
+import { useHomeUser } from '../use-home-user';
 import { cn } from '@/lib/utils';
 import { DOCS_URL } from '../config';
 
@@ -10,6 +13,7 @@ const LINK = 'rounded-md px-3 py-2 text-sm font-medium text-muted-foreground tra
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const user = useHomeUser();
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -48,12 +52,24 @@ export function Nav() {
           </a>
         </Flex>
         <Flex align="center" gap={2} className="ml-auto">
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/login">Log in</Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link to="/signup">Start free</Link>
-          </Button>
+          <ThemeSegmentedControl minified />
+          {user ? (
+            <>
+              <Button asChild size="sm">
+                <Link to="/orgs">Go to dashboard</Link>
+              </Button>
+              <HomeUserMenu user={user} />
+            </>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/login">Log in</Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link to="/signup">Start free</Link>
+              </Button>
+            </>
+          )}
         </Flex>
       </Flex>
     </Flex>

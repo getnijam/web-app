@@ -13,10 +13,12 @@ import { Label } from '@/components/ui/label';
 import { Flex } from '@/components/ui/flex';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
+import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
 
 const ResetSearch = z.object({ token: z.string().optional() });
 
 export const Route = createFileRoute('/reset-password')({
+  beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   validateSearch: ResetSearch,
   component: ResetPasswordPage,
 });

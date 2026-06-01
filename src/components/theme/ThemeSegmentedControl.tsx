@@ -1,7 +1,7 @@
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Sun03Icon, Moon02Icon, ComputerIcon } from '@hugeicons/core-free-icons';
 import { cn } from '@/lib/utils';
-import { useTheme, type Theme } from '@/components/theme/ThemeProvider';
+import { useTheme, THEMES, type Theme } from '@/components/theme/ThemeProvider';
 
 const OPTIONS: { value: Theme; label: string; icon: typeof Sun03Icon }[] = [
   { value: 'light', label: 'Light', icon: Sun03Icon },
@@ -10,11 +10,38 @@ const OPTIONS: { value: Theme; label: string; icon: typeof Sun03Icon }[] = [
 ];
 
 /**
- * Ternary theme control: Light / Dark / System segments. Styled to match the
- * design's `.seg` control (muted track, active segment lifts to the background).
+ * Theme control. Default: a Light / Dark / System segmented track. With
+ * `minified`, a single icon button showing the current mode that **cycles**
+ * Light → Dark → System on each click (for tight spots like the home nav).
  */
-export function ThemeSegmentedControl({ className }: { className?: string }) {
+export function ThemeSegmentedControl({
+  className,
+  minified = false,
+}: {
+  className?: string;
+  minified?: boolean;
+}) {
   const { theme, setTheme } = useTheme();
+
+  if (minified) {
+    const idx = THEMES.indexOf(theme);
+    const opt = OPTIONS[idx];
+    const next = THEMES[(idx + 1) % THEMES.length] ?? 'light';
+    return (
+      <button
+        type="button"
+        aria-label={`Theme: ${opt?.label ?? 'System'}. Switch to ${next}.`}
+        title={`Theme: ${opt?.label ?? 'System'}`}
+        onClick={() => setTheme(next)}
+        className={cn(
+          'inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-none',
+          className,
+        )}
+      >
+        <HugeiconsIcon icon={opt?.icon ?? ComputerIcon} size={18} strokeWidth={1.8} />
+      </button>
+    );
+  }
 
   return (
     <div
