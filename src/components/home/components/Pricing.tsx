@@ -39,14 +39,14 @@ const PLANS: Plan[] = [
   },
   {
     name: 'Pro',
-    price: '$10',
+    price: '$20',
     cadence: 'per month',
     blurb: 'For teams shipping every day — more volume, longer history, no seat limits.',
     featured: true,
     features: [
       <>
         <strong className="font-semibold text-foreground">10,000</strong> test results included,
-        then <strong className="font-semibold text-foreground">+$10</strong> per additional 10,000
+        then <strong className="font-semibold text-foreground">$0.002</strong> per additional test
       </>,
       'Unlimited members',
       '90-day history retention',

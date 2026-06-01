@@ -88,9 +88,16 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
       ),
   });
 
-  const testPercent = usagePercent(usage.tests, limits.tests);
+  // Pro is uncapped — once usage passes the included allotment, overage billing
+  // ($0.002/test) kicks in. Surface that instead of a silent full bar.
+  const included = limits.tests;
+  const overTests = pro ? Math.max(0, usage.tests - included) : 0;
+  const overActive = overTests > 0;
+  const testPercent = usagePercent(usage.tests, included);
   const testTone: MeterTone = pro
-    ? 'default'
+    ? overActive
+      ? 'warning'
+      : 'default'
     : billing.over
       ? 'danger'
       : testPercent >= 80
@@ -130,7 +137,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
           </Flex>
           <Flex align="baseline" gap={1}>
             <Text as="span" className="text-2xl font-bold tracking-tight">
-              {pro ? '$10' : '$0'}
+              {pro ? '$20' : '$0'}
             </Text>
             <Text as="span" className="text-xs text-muted-foreground">
               {pro ? '/mo + usage' : '/mo'}
@@ -143,12 +150,14 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
         <UsageMeter
           icon={TestTube01Icon}
           label="Test results"
-          value={pro ? `${formatCount(usage.tests)} used` : `${formatCount(usage.tests)} / ${formatCount(limits.tests)}`}
+          value={`${formatCount(usage.tests)} / ${formatCount(included)}${pro ? ' included' : ''}`}
           percent={testPercent}
           tone={testTone}
           hint={
             pro
-              ? `${formatCount(limits.tests)} included, then ${formatCents(1000)} per additional ${formatCount(10000)}. Resets ${formatResetDate(billing.resetsAt)}.`
+              ? overActive
+                ? `Included ${formatCount(included)} used up — extra tests now cost $0.002 each (${formatCount(overTests)} over this cycle), added to your next invoice. Resets ${formatResetDate(billing.resetsAt)}.`
+                : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Beyond that, $0.002 per test, billed at cycle end. Resets ${formatResetDate(billing.resetsAt)}.`
               : billing.over
                 ? billing.enforced
                   ? `Monthly limit reached — new reports are paused until ${formatResetDate(billing.resetsAt)}. Upgrade to keep reporting.`
@@ -193,7 +202,9 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
                 Estimated charge this period
               </Text>
               <Text as="span" className="text-xs text-muted-foreground">
-                Final amount is calculated at the end of your billing period.
+                {overActive
+                  ? `$20 base + ${formatCount(overTests)} over × $0.002. Final amount billed at period end.`
+                  : '$20 base. Final amount is calculated at the end of your billing period.'}
               </Text>
             </Flex>
             <Text as="span" className="text-xl font-bold tracking-tight">
@@ -240,8 +251,8 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
 
           <Flex align="center" justify="between" gap={3} wrap>
             <Text as="span" className="text-sm text-muted-foreground">
-              <strong className="font-semibold text-foreground">$10</strong>/mo, then $10 per
-              additional 10,000 tests.
+              <strong className="font-semibold text-foreground">$20</strong>/mo, then $0.002 per
+              test over 10,000.
             </Text>
             <Button
               loading={checkout.isPending}
