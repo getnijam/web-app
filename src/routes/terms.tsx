@@ -1,7 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { LegalLayout, Section, P, Bullets } from '@/components/legal/LegalLayout';
+import { seo } from '@/lib/seo';
 
-export const Route = createFileRoute('/terms')({ component: TermsPage });
+export const Route = createFileRoute('/terms')({
+  head: () =>
+    seo({
+      title: 'Terms of Service',
+      description: 'The terms governing your use of Nijam, the Nijam API, and @nijam/pw-reporter.',
+      path: '/terms',
+    }),
+  component: TermsPage,
+});
 
 const CONTACT = 'support@nijam.dev';
 

@@ -10,10 +10,12 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { isApiError } from '@/lib/api-error';
 import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
+import { seo } from '@/lib/seo';
 
 const VerifySearch = z.object({ token: z.string().optional() });
 
 export const Route = createFileRoute('/verify')({
+  head: () => seo({ title: 'Verify your email', path: '/verify', noindex: true }),
   beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   validateSearch: VerifySearch,
   component: VerifyPage,

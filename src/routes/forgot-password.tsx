@@ -15,8 +15,10 @@ import { Text } from '@/components/ui/text';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
 import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
+import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/forgot-password')({
+  head: () => seo({ title: 'Reset your password', path: '/forgot-password', noindex: true }),
   beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   component: ForgotPasswordPage,
 });

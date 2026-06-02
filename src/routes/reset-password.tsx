@@ -14,10 +14,12 @@ import { Flex } from '@/components/ui/flex';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
 import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
+import { seo } from '@/lib/seo';
 
 const ResetSearch = z.object({ token: z.string().optional() });
 
 export const Route = createFileRoute('/reset-password')({
+  head: () => seo({ title: 'Set a new password', path: '/reset-password', noindex: true }),
   beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   validateSearch: ResetSearch,
   component: ResetPasswordPage,

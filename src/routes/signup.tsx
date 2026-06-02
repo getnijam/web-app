@@ -15,8 +15,16 @@ import { Text } from '@/components/ui/text';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
 import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
+import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/signup')({
+  head: () =>
+    seo({
+      title: 'Create your account',
+      description: 'Sign up for Nijam and start tracking your Playwright runs, flakiness, and traces.',
+      path: '/signup',
+      noindex: true,
+    }),
   beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   component: SignupPage,
   validateSearch: (search: Record<string, unknown>): { email?: string } => ({

@@ -44,6 +44,11 @@ declare module '@tanstack/react-router' {
 const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('Root element #root not found');
 
+// Drop the static homepage SEO fallbacks from index.html (they exist for non-JS
+// scrapers). The router's per-route <HeadContent /> now owns the document head, so
+// removing these before mount prevents duplicate title/description/OG tags.
+document.querySelectorAll('head [data-seo-default]').forEach((el) => el.remove());
+
 createRoot(rootEl).render(
   <StrictMode>
     <ThemeProvider>

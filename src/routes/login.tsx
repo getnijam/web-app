@@ -15,8 +15,15 @@ import { Text } from '@/components/ui/text';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
 import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
+import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/login')({
+  head: () =>
+    seo({
+      title: 'Log in',
+      description: 'Sign in to Nijam to view your Playwright run history, flakiness, and traces.',
+      path: '/login',
+    }),
   beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   component: LoginPage,
   validateSearch: (search: Record<string, unknown>): { invite?: string } => ({

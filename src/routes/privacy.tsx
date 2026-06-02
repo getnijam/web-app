@@ -1,7 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { LegalLayout, Section, P, Bullets } from '@/components/legal/LegalLayout';
+import { seo } from '@/lib/seo';
 
-export const Route = createFileRoute('/privacy')({ component: PrivacyPage });
+export const Route = createFileRoute('/privacy')({
+  head: () =>
+    seo({
+      title: 'Privacy Policy',
+      description: 'How Nijam collects, uses, and protects your data.',
+      path: '/privacy',
+    }),
+  component: PrivacyPage,
+});
 
 const CONTACT = 'support@nijam.dev';
 

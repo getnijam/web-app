@@ -16,8 +16,10 @@ import { LoadingState } from '@/components/states/LoadingState';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { useLogout } from '@/hooks/use-logout';
+import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/invite')({
+  head: () => seo({ title: 'Accept your invitation', path: '/invite', noindex: true }),
   component: InvitePage,
   validateSearch: (search: Record<string, unknown>): { token?: string } => ({
     token: typeof search.token === 'string' ? search.token : undefined,
