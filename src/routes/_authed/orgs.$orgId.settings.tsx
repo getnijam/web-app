@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -12,6 +12,7 @@ import {
   updateOrgMutation,
   uploadOrgLogoMutation,
   deleteOrgLogoMutation,
+  deleteOrgMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -24,6 +25,7 @@ import { FieldError } from '@/components/auth/AuthLayout';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
+import { ConfirmDeleteDialog } from '@/components/settings/ConfirmDeleteDialog';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { privateSeo } from '@/lib/seo';
@@ -52,9 +54,11 @@ function OrgSettingsPage() {
 
 function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
   const isAdmin = org.role === 'admin';
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(Schema),
     defaultValues: {
@@ -115,6 +119,24 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
       notify.error("Couldn't remove logo", {
         description: 'Something went wrong. Please try again.',
       }),
+  });
+
+  const deleteOrg = useMutation({
+    ...deleteOrgMutation(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: listOrgsQueryKey() });
+      setDeleteOpen(false);
+      notify.success('Organization deleted', {
+        description: `${org.name} and all of its data have been permanently removed.`,
+      });
+      navigate({ to: '/orgs' });
+    },
+    onError: (err) => {
+      setDeleteOpen(false);
+      notify.error("Couldn't delete organization", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      });
+    },
   });
 
   return (
@@ -220,6 +242,37 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
           </SettingsRow>
         </SettingsPanel>
       </form>
+
+      {isAdmin && (
+        <SettingsPanel title="Danger zone" danger>
+          <SettingsRow
+            label="Delete organization"
+            hint="Permanently deletes this organization, its members, invitations, and logo. Delete all of its projects first."
+          >
+            <Flex>
+              <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
+                Delete organization
+              </Button>
+            </Flex>
+          </SettingsRow>
+        </SettingsPanel>
+      )}
+
+      <ConfirmDeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Delete this organization?"
+        description={
+          <>
+            {org.name}, along with its members, invitations, and logo, will be permanently deleted.
+            This can&rsquo;t be undone. Delete all of its projects first.
+          </>
+        }
+        confirmText={org.name}
+        confirmLabel="Delete organization"
+        loading={deleteOrg.isPending}
+        onConfirm={() => deleteOrg.mutate({ path: { orgId } })}
+      />
     </Flex>
   );
 }

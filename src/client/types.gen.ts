@@ -109,6 +109,10 @@ export type UpdateOrgBody = {
     contactEmail?: string;
 };
 
+export type OkResponse = {
+    ok: boolean;
+};
+
 export type MemberSummary = {
     userId: string;
     email: string;
@@ -121,10 +125,6 @@ export type MemberSummary = {
 
 export type MemberListResponse = {
     members: Array<MemberSummary>;
-};
-
-export type OkResponse = {
-    ok: boolean;
 };
 
 export type UpdateMemberRoleBody = {
@@ -432,6 +432,10 @@ export type RunDetailResponse = {
     run: RunSummary;
     summary: RunAggregate;
     files: Array<RunFileSummary>;
+};
+
+export type RunDeletedResponse = {
+    ok: true;
 };
 
 export type ArtifactSummary = {
@@ -855,6 +859,49 @@ export type CreateOrgResponses = {
 };
 
 export type CreateOrgResponse = CreateOrgResponses[keyof CreateOrgResponses];
+
+export type DeleteOrgData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}';
+};
+
+export type DeleteOrgErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Organization not found
+     */
+    404: ApiError;
+    /**
+     * Organization still has projects
+     */
+    409: ApiError;
+    /**
+     * Stored files could not be removed
+     */
+    502: ApiError;
+};
+
+export type DeleteOrgError = DeleteOrgErrors[keyof DeleteOrgErrors];
+
+export type DeleteOrgResponses = {
+    /**
+     * Deleted
+     */
+    200: OkResponse;
+};
+
+export type DeleteOrgResponse = DeleteOrgResponses[keyof DeleteOrgResponses];
 
 export type GetOrgData = {
     body?: never;
@@ -1487,9 +1534,17 @@ export type DeleteProjectErrors = {
      */
     401: ApiError;
     /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
      * Project not found
      */
     404: ApiError;
+    /**
+     * Stored files could not be removed
+     */
+    502: ApiError;
 };
 
 export type DeleteProjectError = DeleteProjectErrors[keyof DeleteProjectErrors];
@@ -1687,6 +1742,45 @@ export type CreateRunResponses = {
 };
 
 export type CreateRunResponse = CreateRunResponses[keyof CreateRunResponses];
+
+export type DeleteRunData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v1/runs/{id}';
+};
+
+export type DeleteRunErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Run not found
+     */
+    404: ApiError;
+    /**
+     * Stored files could not be removed
+     */
+    502: ApiError;
+};
+
+export type DeleteRunError = DeleteRunErrors[keyof DeleteRunErrors];
+
+export type DeleteRunResponses = {
+    /**
+     * Deleted
+     */
+    200: RunDeletedResponse;
+};
+
+export type DeleteRunResponse = DeleteRunResponses[keyof DeleteRunResponses];
 
 export type GetRunData = {
     body?: never;

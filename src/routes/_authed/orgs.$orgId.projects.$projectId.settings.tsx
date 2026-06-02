@@ -17,16 +17,8 @@ import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from '@/components/ui/alert-dialog';
+import { ConfirmDeleteDialog } from '@/components/settings/ConfirmDeleteDialog';
+import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState, ErrorBanner } from '@/components/states/ErrorState';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
@@ -69,6 +61,7 @@ function ProjectSettingsPage() {
 
 function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
   const { orgId } = Route.useParams();
+  const isAdmin = useIsOrgAdmin(orgId);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [formError, setFormError] = useState<string | null>(null);
@@ -208,42 +201,38 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
         </SettingsPanel>
       </form>
 
-      <SettingsPanel title="Danger zone">
-        <SettingsRow
-          label="Remove project"
-          hint="Permanently deletes this project and all its runs, executions, and artifacts."
-        >
-          <Flex>
-            <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-              <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
-                Remove project
-              </Button>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Remove this project?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    "{project.name}" and all its runs, executions, and artifacts will be permanently
-                    deleted. This can't be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    variant="destructive"
-                    disabled={remove.isPending}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      remove.mutate({ path: { id: project.id } });
-                    }}
-                  >
-                    Remove project
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Flex>
-        </SettingsRow>
-      </SettingsPanel>
+      {isAdmin && (
+        <>
+          <SettingsPanel title="Danger zone" danger>
+            <SettingsRow
+              label="Remove project"
+              hint="Permanently deletes this project and all its runs, executions, and artifacts (including stored files). This can't be undone."
+            >
+              <Flex>
+                <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
+                  Remove project
+                </Button>
+              </Flex>
+            </SettingsRow>
+          </SettingsPanel>
+
+          <ConfirmDeleteDialog
+            open={confirmOpen}
+            onOpenChange={setConfirmOpen}
+            title="Remove this project?"
+            description={
+              <>
+                {project.name} and all of its runs, executions, and artifacts — including files in
+                storage — will be permanently deleted. This can&rsquo;t be undone.
+              </>
+            }
+            confirmText={project.name}
+            confirmLabel="Remove project"
+            loading={remove.isPending}
+            onConfirm={() => remove.mutate({ path: { id: project.id } })}
+          />
+        </>
+      )}
     </Flex>
   );
 }
