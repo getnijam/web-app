@@ -94,7 +94,9 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
         queryKey: getProjectQueryKey({ path: { id: project.id } }),
       });
       await queryClient.invalidateQueries({ queryKey: listOrgProjectsQueryKey({ path: { orgId } }) });
-      notify.success('Project settings saved');
+      notify.success('Project settings saved', {
+        description: `Your changes to ${project.name} have been saved.`,
+      });
     },
     onError: (err) => {
       if (isApiError(err) && err.error.field) {
@@ -112,12 +114,16 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: listOrgProjectsQueryKey({ path: { orgId } }) });
       setConfirmOpen(false);
-      notify.success(`Project "${project.name}" removed`);
+      notify.success('Project removed', {
+        description: `${project.name} and all of its runs have been permanently deleted.`,
+      });
       navigate({ to: '/orgs/$orgId/projects', params: { orgId } });
     },
     onError: () => {
       setConfirmOpen(false);
-      notify.error('Could not remove the project.');
+      notify.error("Couldn't remove project", {
+        description: 'Something went wrong. Please try again.',
+      });
     },
   });
 

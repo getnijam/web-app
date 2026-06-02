@@ -16,12 +16,20 @@ import {
   createOrgInvitationMutation,
   revokeOrgInvitationMutation,
   removeOrgMemberMutation,
+  updateOrgMemberRoleMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -41,6 +49,7 @@ import { UserAvatar } from '@/components/users/UserAvatar';
 import { isApiError } from '@/lib/api-error';
 import { timeAgo } from '@/lib/format';
 import { notify } from '@/lib/notify';
+import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/users')({
@@ -50,6 +59,7 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/users')({
 
 function UsersPage() {
   const { orgId } = Route.useParams();
+  const isAdmin = useIsOrgAdmin(orgId);
   const me = useQuery({ ...getMeOptions(), retry: false });
   const members = useQuery(listOrgMembersOptions({ path: { orgId } }));
   const invites = useQuery(listOrgInvitationsOptions({ path: { orgId } }));
@@ -63,12 +73,19 @@ function UsersPage() {
         <Text variant="h1">Users</Text>
         <Text color="muted">
           {memberCount} {memberCount === 1 ? 'member' : 'members'}
-          {pendingCount > 0 &&
+          {isAdmin &&
+            pendingCount > 0 &&
             ` · ${pendingCount} pending ${pendingCount === 1 ? 'invitation' : 'invitations'}`}
         </Text>
       </Flex>
 
-      <InviteBar orgId={orgId} />
+      {isAdmin ? (
+        <InviteBar orgId={orgId} />
+      ) : (
+        <Text color="muted" className="text-sm">
+          Only admins can invite or manage members.
+        </Text>
+      )}
 
       <SettingsPanel title="Members">
         {members.isLoading ? (
@@ -84,29 +101,32 @@ function UsersPage() {
               orgId={orgId}
               member={m}
               isYou={m.userId === me.data?.user.id}
+              isAdmin={isAdmin}
             />
           ))
         )}
       </SettingsPanel>
 
-      <SettingsPanel title="Pending invitations">
-        {invites.isLoading ? (
-          <RowsSkeleton rows={2} />
-        ) : invites.error || !invites.data ? (
-          <div className="px-5 py-6">
-            <ErrorState error={invites.error} onRetry={() => invites.refetch()} />
-          </div>
-        ) : invites.data.invitations.length === 0 ? (
-          <EmptyState
-            title="No pending invitations"
-            description="Invite a teammate by email and they'll show up here until they accept."
-          />
-        ) : (
-          invites.data.invitations.map((inv) => (
-            <InviteRow key={inv.id} orgId={orgId} invite={inv} />
-          ))
-        )}
-      </SettingsPanel>
+      {isAdmin && (
+        <SettingsPanel title="Pending invitations">
+          {invites.isLoading ? (
+            <RowsSkeleton rows={2} />
+          ) : invites.error || !invites.data ? (
+            <div className="px-5 py-6">
+              <ErrorState error={invites.error} onRetry={() => invites.refetch()} />
+            </div>
+          ) : invites.data.invitations.length === 0 ? (
+            <EmptyState
+              title="No pending invitations"
+              description="Invite a teammate by email and they'll show up here until they accept."
+            />
+          ) : (
+            invites.data.invitations.map((inv) => (
+              <InviteRow key={inv.id} orgId={orgId} invite={inv} />
+            ))
+          )}
+        </SettingsPanel>
+      )}
     </Flex>
   );
 }
@@ -120,6 +140,7 @@ function InviteBar({ orgId }: { orgId: string }) {
   const queryClient = useQueryClient();
   const form = useForm<InviteForm>({ resolver: zodResolver(InviteSchema), defaultValues: { email: '' } });
   const email = form.watch('email');
+  const [role, setRole] = useState<'admin' | 'member'>('member');
 
   const invite = useMutation({
     ...createOrgInvitationMutation(),
@@ -128,7 +149,10 @@ function InviteBar({ orgId }: { orgId: string }) {
         queryKey: listOrgInvitationsQueryKey({ path: { orgId } }),
       });
       form.reset();
-      notify.success(`Invitation sent to ${created.email}`);
+      notify.success('Invitation sent', {
+        description: `${created.email} was invited as ${role === 'admin' ? 'an admin' : 'a member'}. The invite expires in 7 days.`,
+      });
+      setRole('member');
     },
     onError: (err) => {
       const msg = isApiError(err) ? err.error.message : 'Could not send the invitation.';
@@ -142,7 +166,9 @@ function InviteBar({ orgId }: { orgId: string }) {
       direction="col"
       gap={1.5}
       className="rounded-2xl border border-border bg-card p-4"
-      onSubmit={form.handleSubmit((data) => invite.mutate({ path: { orgId }, body: { email: data.email } }))}
+      onSubmit={form.handleSubmit((data) =>
+        invite.mutate({ path: { orgId }, body: { email: data.email, role } }),
+      )}
     >
       <Flex gap={2} align="start" className="w-full">
         <Flex direction="col" gap={1.5} className="min-w-0 flex-1">
@@ -154,6 +180,15 @@ function InviteBar({ orgId }: { orgId: string }) {
             {...form.register('email')}
           />
         </Flex>
+        <Select value={role} onValueChange={(v) => setRole(v as 'admin' | 'member')}>
+          <SelectTrigger aria-label="Role" className="w-32 shrink-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="member">Member</SelectItem>
+            <SelectItem value="admin">Admin</SelectItem>
+          </SelectContent>
+        </Select>
         <Button type="submit" loading={invite.isPending} disabled={!email.trim()}>
           <HugeiconsIcon icon={SentIcon} size={16} />
           Send invite
@@ -168,28 +203,48 @@ function MemberRow({
   orgId,
   member,
   isYou,
+  isAdmin,
 }: {
   orgId: string;
   member: MemberSummary;
   isYou: boolean;
+  isAdmin: boolean;
 }) {
   const queryClient = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const displayName = member.name?.trim() || member.email.split('@')[0];
 
   const remove = useMutation({
     ...removeOrgMemberMutation(),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: listOrgMembersQueryKey({ path: { orgId } }) });
       setConfirmOpen(false);
-      notify.success('Member removed');
+      notify.success('Member removed', {
+        description: `${displayName} (${member.email}) no longer has access to this organization.`,
+      });
     },
     onError: (err) => {
       setConfirmOpen(false);
-      notify.error(isApiError(err) ? err.error.message : 'Could not remove the member.');
+      notify.error("Couldn't remove member", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      });
     },
   });
 
-  const displayName = member.name?.trim() || member.email.split('@')[0];
+  const roleMutation = useMutation({
+    ...updateOrgMemberRoleMutation(),
+    onSuccess: async (_data, variables) => {
+      await queryClient.invalidateQueries({ queryKey: listOrgMembersQueryKey({ path: { orgId } }) });
+      const newRole = variables.body?.role === 'admin' ? 'Admin' : 'Member';
+      notify.success('Role updated', {
+        description: `${displayName}'s role updated to ${newRole} successfully.`,
+      });
+    },
+    onError: (err) =>
+      notify.error("Couldn't update role", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      }),
+  });
 
   return (
     <Flex align="center" gap={3} className="border-b border-border px-5 py-4 last:border-b-0">
@@ -215,7 +270,37 @@ function MemberRow({
           {member.email}
         </Text>
       </Flex>
-      {!isYou && (
+      {isAdmin && !isYou ? (
+        <Select
+          value={member.role}
+          onValueChange={(v) =>
+            roleMutation.mutate({
+              path: { orgId, userId: member.userId },
+              body: { role: v as 'admin' | 'member' },
+            })
+          }
+        >
+          <SelectTrigger
+            aria-label={`Role for ${displayName}`}
+            className="w-28 shrink-0"
+            disabled={roleMutation.isPending}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="member">Member</SelectItem>
+            <SelectItem value="admin">Admin</SelectItem>
+          </SelectContent>
+        </Select>
+      ) : (
+        <Badge
+          variant={member.role === 'admin' ? 'default' : 'secondary'}
+          className="shrink-0 capitalize"
+        >
+          {member.role}
+        </Badge>
+      )}
+      {isAdmin && !isYou && (
         <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
           <Button
             variant="ghost"
@@ -263,9 +348,14 @@ function InviteRow({ orgId, invite }: { orgId: string; invite: InvitationSummary
       await queryClient.invalidateQueries({
         queryKey: listOrgInvitationsQueryKey({ path: { orgId } }),
       });
-      notify.success('Invitation revoked');
+      notify.success('Invitation revoked', {
+        description: `The invitation to ${invite.email} was revoked and can no longer be used.`,
+      });
     },
-    onError: () => notify.error('Could not revoke the invitation.'),
+    onError: () =>
+      notify.error("Couldn't revoke invitation", {
+        description: 'Something went wrong. Please try again.',
+      }),
   });
 
   const expired = invite.status === 'expired';

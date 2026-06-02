@@ -51,6 +51,7 @@ function OrgSettingsPage() {
 }
 
 function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
+  const isAdmin = org.role === 'admin';
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [formError, setFormError] = useState<string | null>(null);
@@ -73,7 +74,9 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
     ...updateOrgMutation(),
     onSuccess: async () => {
       await invalidate();
-      notify.success('Organization settings saved');
+      notify.success('Organization settings saved', {
+        description: `Your changes to ${org.name} have been saved.`,
+      });
     },
     onError: (err) => {
       if (isApiError(err) && err.error.field) {
@@ -90,19 +93,28 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
     ...uploadOrgLogoMutation(),
     onSuccess: async () => {
       await invalidate();
-      notify.success('Logo updated');
+      notify.success('Logo updated', {
+        description: `${org.name}'s new logo is now live across Nijam.`,
+      });
     },
     onError: (err) =>
-      notify.error(isApiError(err) ? err.error.message : 'Could not upload the logo.'),
+      notify.error("Couldn't update logo", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      }),
   });
 
   const removeLogo = useMutation({
     ...deleteOrgLogoMutation(),
     onSuccess: async () => {
       await invalidate();
-      notify.success('Logo removed');
+      notify.success('Logo removed', {
+        description: `${org.name}'s logo has been removed.`,
+      });
     },
-    onError: () => notify.error('Could not remove the logo.'),
+    onError: () =>
+      notify.error("Couldn't remove logo", {
+        description: 'Something went wrong. Please try again.',
+      }),
   });
 
   return (
@@ -111,6 +123,12 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
         <Text variant="h1">Organization settings</Text>
         <Text color="muted">Manage your organization's profile and contact details.</Text>
       </Flex>
+
+      {!isAdmin && (
+        <Text color="muted" className="text-sm">
+          Only admins can edit organization settings.
+        </Text>
+      )}
 
       <form
         onSubmit={form.handleSubmit((data) => {
@@ -121,9 +139,11 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
         <SettingsPanel
           title="General"
           footer={
-            <Button type="submit" loading={save.isPending}>
-              Save changes
-            </Button>
+            isAdmin ? (
+              <Button type="submit" loading={save.isPending}>
+                Save changes
+              </Button>
+            ) : undefined
           }
         >
           {formError && (
@@ -147,51 +167,56 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
                     e.target.value = '';
                   }}
                 />
-                <Flex gap={2}>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    loading={uploadLogo.isPending}
-                    onClick={() => fileRef.current?.click()}
-                  >
-                    Upload logo
-                  </Button>
-                  {org.hasLogo && (
+                {isAdmin && (
+                  <Flex gap={2}>
                     <Button
                       type="button"
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
-                      loading={removeLogo.isPending}
-                      onClick={() => removeLogo.mutate({ path: { orgId } })}
+                      loading={uploadLogo.isPending}
+                      onClick={() => fileRef.current?.click()}
                     >
-                      Remove
+                      Upload logo
                     </Button>
-                  )}
-                </Flex>
-                <Text variant="caption" color="muted">
-                  PNG, JPEG, or WebP. Max 2 MB.
-                </Text>
+                    {org.hasLogo && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        loading={removeLogo.isPending}
+                        onClick={() => removeLogo.mutate({ path: { orgId } })}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </Flex>
+                )}
+                {isAdmin && (
+                  <Text variant="caption" color="muted">
+                    PNG, JPEG, or WebP. Max 2 MB.
+                  </Text>
+                )}
               </Flex>
             </Flex>
           </SettingsRow>
 
           <SettingsRow label="Organization name">
-            <Input {...form.register('name')} />
+            <Input disabled={!isAdmin} {...form.register('name')} />
             <FieldError message={form.formState.errors.name?.message} />
           </SettingsRow>
           <SettingsRow label="Description">
             <Textarea
               rows={3}
+              disabled={!isAdmin}
               placeholder="What does this team work on?"
               {...form.register('description')}
             />
           </SettingsRow>
           <SettingsRow label="Website">
-            <Input placeholder="https://" {...form.register('website')} />
+            <Input disabled={!isAdmin} placeholder="https://" {...form.register('website')} />
           </SettingsRow>
           <SettingsRow label="Contact email">
-            <Input placeholder="team@company.com" {...form.register('contactEmail')} />
+            <Input disabled={!isAdmin} placeholder="team@company.com" {...form.register('contactEmail')} />
           </SettingsRow>
         </SettingsPanel>
       </form>

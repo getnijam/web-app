@@ -83,7 +83,9 @@ function UserSettingsForm({
     ...updateMeMutation(),
     onSuccess: async () => {
       await invalidate();
-      notify.success('Profile updated');
+      notify.success('Profile updated', {
+        description: 'Your profile changes have been saved.',
+      });
       onOpenChange(false);
     },
     onError: (err) => {
@@ -101,19 +103,28 @@ function UserSettingsForm({
     ...uploadMyAvatarMutation(),
     onSuccess: async () => {
       await invalidate();
-      notify.success('Picture updated');
+      notify.success('Picture updated', {
+        description: 'Your new profile picture is now visible across Nijam.',
+      });
     },
     onError: (err) =>
-      notify.error(isApiError(err) ? err.error.message : 'Could not upload your picture.'),
+      notify.error("Couldn't update picture", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      }),
   });
 
   const removeAvatar = useMutation({
     ...deleteMyAvatarMutation(),
     onSuccess: async () => {
       await invalidate();
-      notify.success('Picture removed');
+      notify.success('Picture removed', {
+        description: 'Your profile picture has been removed.',
+      });
     },
-    onError: () => notify.error('Could not remove your picture.'),
+    onError: () =>
+      notify.error("Couldn't remove picture", {
+        description: 'Something went wrong. Please try again.',
+      }),
   });
 
   return (

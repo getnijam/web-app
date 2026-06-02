@@ -75,6 +75,7 @@ export type UpdateMeBody = {
 export type OrgSummary = {
     id: string;
     name: string;
+    role: 'admin' | 'member';
     hasLogo: boolean;
     logoUpdatedAt: string | null;
 };
@@ -89,6 +90,7 @@ export type OrgResponse = {
     description: string | null;
     website: string | null;
     contactEmail: string | null;
+    role: 'admin' | 'member';
     hasLogo: boolean;
     logoUpdatedAt: string | null;
 };
@@ -111,6 +113,7 @@ export type MemberSummary = {
     userId: string;
     email: string;
     name: string | null;
+    role: 'admin' | 'member';
     hasAvatar: boolean;
     avatarUpdatedAt: string | null;
     joinedAt: string;
@@ -122,6 +125,10 @@ export type MemberListResponse = {
 
 export type OkResponse = {
     ok: boolean;
+};
+
+export type UpdateMemberRoleBody = {
+    role: 'admin' | 'member';
 };
 
 export type InvitationSummary = {
@@ -138,6 +145,7 @@ export type InvitationListResponse = {
 
 export type CreateInviteBody = {
     email: string;
+    role?: 'admin' | 'member';
 };
 
 export type InvitePreviewResponse = {
@@ -164,7 +172,7 @@ export type BillingResponse = {
         tests: number;
         seats: number | null;
     };
-    estimateCents: number;
+    estimateCents: number | null;
     resetsAt: string;
     over: boolean;
     enforced: boolean;
@@ -894,6 +902,10 @@ export type UpdateOrgErrors = {
      */
     401: ApiError;
     /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
      * Not found
      */
     404: ApiError;
@@ -924,6 +936,10 @@ export type DeleteOrgLogoErrors = {
      * Not authenticated
      */
     401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
     /**
      * Not found
      */
@@ -961,6 +977,10 @@ export type UploadOrgLogoErrors = {
      * Not authenticated
      */
     401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
     /**
      * Not found
      */
@@ -1033,13 +1053,17 @@ export type RemoveOrgMemberData = {
 
 export type RemoveOrgMemberErrors = {
     /**
-     * Cannot remove self
+     * Cannot remove self / last admin
      */
     400: ApiError;
     /**
      * Not authenticated
      */
     401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
     /**
      * Not found
      */
@@ -1056,6 +1080,46 @@ export type RemoveOrgMemberResponses = {
 };
 
 export type RemoveOrgMemberResponse = RemoveOrgMemberResponses[keyof RemoveOrgMemberResponses];
+
+export type UpdateOrgMemberRoleData = {
+    body?: UpdateMemberRoleBody;
+    path: {
+        orgId: string;
+        userId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/members/{userId}';
+};
+
+export type UpdateOrgMemberRoleErrors = {
+    /**
+     * Cannot demote the last admin
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type UpdateOrgMemberRoleError = UpdateOrgMemberRoleErrors[keyof UpdateOrgMemberRoleErrors];
+
+export type UpdateOrgMemberRoleResponses = {
+    /**
+     * Updated
+     */
+    200: OkResponse;
+};
+
+export type UpdateOrgMemberRoleResponse = UpdateOrgMemberRoleResponses[keyof UpdateOrgMemberRoleResponses];
 
 export type ListOrgInvitationsData = {
     body?: never;
@@ -1107,6 +1171,10 @@ export type CreateOrgInvitationErrors = {
      */
     402: ApiError;
     /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
      * Not found
      */
     404: ApiError;
@@ -1142,6 +1210,10 @@ export type RevokeOrgInvitationErrors = {
      * Not authenticated
      */
     401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
     /**
      * Not found
      */
@@ -1275,6 +1347,10 @@ export type CreateBillingCheckoutErrors = {
      */
     401: ApiError;
     /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
      * Organization not found
      */
     404: ApiError;
@@ -1309,6 +1385,10 @@ export type CreateBillingPortalErrors = {
      * Not authenticated
      */
     401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
     /**
      * Organization not found
      */

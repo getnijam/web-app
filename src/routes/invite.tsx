@@ -59,11 +59,15 @@ function InvitePage() {
     ...acceptInvitationMutation(),
     onSuccess: async (res) => {
       await queryClient.invalidateQueries({ queryKey: listOrgsQueryKey() });
-      notify.success(`You've joined ${res.orgName}`);
+      notify.success(`Joined ${res.orgName}`, {
+        description: 'You now have access to the organization’s projects and runs.',
+      });
       navigate({ to: '/orgs/$orgId/projects', params: { orgId: res.orgId } });
     },
     onError: (err) =>
-      notify.error(isApiError(err) ? err.error.message : 'Could not accept the invitation.'),
+      notify.error("Couldn't accept invitation", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      }),
   });
 
   const signOut = useLogout();

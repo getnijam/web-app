@@ -27,6 +27,7 @@ import { UsageMeter, type MeterTone } from '@/components/billing/UsageMeter';
 import { formatCents, formatCount, formatResetDate, isPro, usagePercent } from '@/lib/billing';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
+import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/billing')({
@@ -67,6 +68,7 @@ const PRO_PERKS: { icon: IconSvgElement; label: string }[] = [
 ];
 
 function BillingView({ orgId, billing }: { orgId: string; billing: BillingResponse }) {
+  const isAdmin = useIsOrgAdmin(orgId);
   const pro = isPro(billing);
   const { usage, limits } = billing;
 
@@ -76,7 +78,9 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
       window.location.href = data.url; // leave the SPA for Polar's hosted checkout
     },
     onError: (err) =>
-      notify.error(isApiError(err) ? err.error.message : 'Could not start checkout. Please try again.'),
+      notify.error("Couldn't start checkout", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      }),
   });
 
   const portal = useMutation({
@@ -85,9 +89,9 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
       window.location.href = data.url;
     },
     onError: (err) =>
-      notify.error(
-        isApiError(err) ? err.error.message : 'Could not open the billing portal. Please try again.',
-      ),
+      notify.error("Couldn't open billing portal", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      }),
   });
 
   // Pro is uncapped — once usage passes the included allotment, overage billing
@@ -107,6 +111,33 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
         : 'default';
   const seatTone: MeterTone =
     !pro && limits.seats !== null && usage.seats >= limits.seats ? 'danger' : 'default';
+  const resets = formatResetDate(billing.resetsAt);
+
+  // Members never see amounts. When metered/over they get a "contact an admin" note.
+  const testHint = isAdmin
+    ? pro
+      ? overActive
+        ? `Included ${formatCount(included)} used up — extra tests now cost $0.002 each (${formatCount(overTests)} over this cycle), added to your next invoice. Resets ${resets}.`
+        : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Beyond that, $0.002 per test, billed at cycle end. Resets ${resets}.`
+      : billing.over
+        ? billing.enforced
+          ? `Monthly limit reached — new reports are paused until ${resets}. Upgrade to keep reporting.`
+          : 'Monthly limit reached — upgrade to Pro to report beyond the Free tier.'
+        : `Counts every reported attempt (retries and shards included). Resets ${resets}.`
+    : pro
+      ? overActive
+        ? `Metered usage is in effect — extra test runs are now billed. Contact an admin for billing details. Resets ${resets}.`
+        : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Resets ${resets}.`
+      : billing.over
+        ? `Monthly limit reached — contact an admin to upgrade. Resets ${resets}.`
+        : `Counts every reported attempt (retries and shards included). Resets ${resets}.`;
+
+  const seatHint =
+    pro || limits.seats === null
+      ? 'Unlimited members on Pro.'
+      : isAdmin
+        ? 'Free includes up to 2 members. Upgrade to Pro for unlimited.'
+        : 'Free includes up to 2 members.';
 
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-3xl">
@@ -137,14 +168,16 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
                 : `Up to ${formatCount(limits.seats ?? 2)} members · ${billing.retentionDays}-day history retention`}
             </Text>
           </Flex>
-          <Flex align="baseline" gap={1}>
-            <Text as="span" className="text-2xl font-bold tracking-tight">
-              {pro ? '$20' : '$0'}
-            </Text>
-            <Text as="span" className="text-xs text-muted-foreground">
-              {pro ? '/mo + usage' : '/mo'}
-            </Text>
-          </Flex>
+          {isAdmin && (
+            <Flex align="baseline" gap={1}>
+              <Text as="span" className="text-2xl font-bold tracking-tight">
+                {pro ? '$20' : '$0'}
+              </Text>
+              <Text as="span" className="text-xs text-muted-foreground">
+                {pro ? '/mo + usage' : '/mo'}
+              </Text>
+            </Flex>
+          )}
         </Flex>
       </SettingsPanel>
 
@@ -155,17 +188,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
           value={`${formatCount(usage.tests)} / ${formatCount(included)}${pro ? ' included' : ''}`}
           percent={testPercent}
           tone={testTone}
-          hint={
-            pro
-              ? overActive
-                ? `Included ${formatCount(included)} used up — extra tests now cost $0.002 each (${formatCount(overTests)} over this cycle), added to your next invoice. Resets ${formatResetDate(billing.resetsAt)}.`
-                : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Beyond that, $0.002 per test, billed at cycle end. Resets ${formatResetDate(billing.resetsAt)}.`
-              : billing.over
-                ? billing.enforced
-                  ? `Monthly limit reached — new reports are paused until ${formatResetDate(billing.resetsAt)}. Upgrade to keep reporting.`
-                  : 'Monthly limit reached — upgrade to Pro to report beyond the Free tier.'
-                : `Counts every reported attempt (retries and shards included). Resets ${formatResetDate(billing.resetsAt)}.`
-          }
+          hint={testHint}
         />
         <UsageMeter
           icon={UserMultiple02Icon}
@@ -177,15 +200,11 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
           }
           percent={limits.seats === null ? null : usagePercent(usage.seats, limits.seats)}
           tone={seatTone}
-          hint={
-            pro || limits.seats === null
-              ? 'Unlimited members on Pro.'
-              : 'Free includes up to 2 members. Upgrade to Pro for unlimited.'
-          }
+          hint={seatHint}
         />
       </SettingsPanel>
 
-      {pro ? (
+      {isAdmin && pro && (
         <SettingsPanel
           title="Subscription"
           footer={
@@ -210,11 +229,12 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
               </Text>
             </Flex>
             <Text as="span" className="text-xl font-bold tracking-tight">
-              {formatCents(billing.estimateCents)}
+              {formatCents(billing.estimateCents ?? 0)}
             </Text>
           </Flex>
         </SettingsPanel>
-      ) : (
+      )}
+      {isAdmin && !pro && (
         <Flex direction="col" gap={5} className="rounded-2xl border border-primary/40 bg-primary/5 p-6">
           <Flex align="center" gap={3}>
             <Flex
@@ -264,6 +284,11 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
             </Button>
           </Flex>
         </Flex>
+      )}
+      {!isAdmin && (
+        <Text color="muted" className="text-sm">
+          Only admins can change the plan or view charges. Contact an admin for billing details.
+        </Text>
       )}
     </Flex>
   );

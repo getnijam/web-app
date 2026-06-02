@@ -48,7 +48,9 @@ export function ArtifactsRow({
       else window.open(viewer, '_blank', 'noopener');
     } catch (err) {
       win?.close();
-      notify.error(isApiError(err) ? err.error.message : 'Could not open the trace.');
+      notify.error("Couldn't open trace", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      });
     } finally {
       setLoadingId(null);
     }

@@ -45,11 +45,15 @@ export function KeyRow({ orgId, secretKey }: { orgId: string; secretKey: SecretK
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: listSecretKeysQueryKey({ path: { orgId } }) });
       setConfirmOpen(false);
-      notify.success('Secret key revoked');
+      notify.success('Secret key revoked', {
+        description: `${secretKey.name} can no longer be used to upload runs.`,
+      });
     },
     onError: (err) => {
       setConfirmOpen(false);
-      notify.error(isApiError(err) ? err.error.message : 'Could not revoke the key.');
+      notify.error("Couldn't revoke key", {
+        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      });
     },
   });
 
