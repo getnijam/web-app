@@ -25,10 +25,14 @@ import { testStatusMeta } from '@/components/runs/test-status';
 import { displayFile } from '@/lib/format';
 import { gitFileUrl } from '@/lib/git';
 import { cn } from '@/lib/utils';
+import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute(
   '/_authed/orgs/$orgId/projects/$projectId/explorer_/$testId',
-)({ component: TestDetailPage });
+)({
+  head: () => privateSeo('Test detail'),
+  component: TestDetailPage,
+});
 
 function TestDetailPage() {
   const { orgId, projectId, testId } = Route.useParams();

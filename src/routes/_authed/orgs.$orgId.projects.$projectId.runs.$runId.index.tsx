@@ -16,8 +16,10 @@ import { runDisplayStatus, RUN_PILL } from '@/components/runs/run-status';
 import { cn } from '@/lib/utils';
 import { timeAgo, displayAuthor } from '@/lib/format';
 import { gitBranchUrl, gitProviderIcon } from '@/lib/git';
+import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/runs/$runId/')({
+  head: () => privateSeo('Run'),
   component: RunDetailPage,
 });
 

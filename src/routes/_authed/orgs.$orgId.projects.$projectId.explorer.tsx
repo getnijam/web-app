@@ -9,8 +9,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { TestRow } from '@/components/explorer/TestRow';
+import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/explorer')({
+  head: () => privateSeo('Test explorer'),
   component: ExplorerPage,
 });
 

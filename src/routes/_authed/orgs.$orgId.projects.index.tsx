@@ -15,8 +15,12 @@ import { ErrorState } from '@/components/states/ErrorState';
 import { ProjectCard } from '@/components/projects/ProjectCard';
 import { ProjectsSkeleton } from '@/components/projects/ProjectsSkeleton';
 import { NewProjectDialog } from '@/components/projects/NewProjectDialog';
+import { privateSeo } from '@/lib/seo';
 
-export const Route = createFileRoute('/_authed/orgs/$orgId/projects/')({ component: ProjectsPage });
+export const Route = createFileRoute('/_authed/orgs/$orgId/projects/')({
+  head: () => privateSeo('Projects'),
+  component: ProjectsPage,
+});
 
 function ProjectsPage() {
   const { orgId } = Route.useParams();

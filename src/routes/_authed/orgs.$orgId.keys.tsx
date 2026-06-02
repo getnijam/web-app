@@ -13,8 +13,12 @@ import { EmptyState } from '@/components/states/EmptyState';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { KeyRow } from '@/components/keys/KeyRow';
 import { CreateSecretKeyDialog } from '@/components/keys/CreateSecretKeyDialog';
+import { privateSeo } from '@/lib/seo';
 
-export const Route = createFileRoute('/_authed/orgs/$orgId/keys')({ component: SecretKeysPage });
+export const Route = createFileRoute('/_authed/orgs/$orgId/keys')({
+  head: () => privateSeo('API keys'),
+  component: SecretKeysPage,
+});
 
 function SecretKeysPage() {
   const { orgId } = Route.useParams();

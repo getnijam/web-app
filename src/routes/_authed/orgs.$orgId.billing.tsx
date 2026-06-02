@@ -27,8 +27,10 @@ import { UsageMeter, type MeterTone } from '@/components/billing/UsageMeter';
 import { formatCents, formatCount, formatResetDate, isPro, usagePercent } from '@/lib/billing';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
+import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/billing')({
+  head: () => privateSeo('Billing'),
   // `?upgraded=1` is set by the Polar checkout success redirect.
   validateSearch: (search: Record<string, unknown>): { upgraded?: boolean } =>
     search.upgraded === '1' || search.upgraded === true ? { upgraded: true } : {},

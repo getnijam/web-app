@@ -36,8 +36,10 @@ import { GlyphPicker } from '@/components/projects/GlyphPicker';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { ICON_KEYS, COLOR_KEYS, type IconKey, type ColorKey } from '@/lib/project-glyph';
+import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/settings')({
+  head: () => privateSeo('Project settings'),
   component: ProjectSettingsPage,
 });
 

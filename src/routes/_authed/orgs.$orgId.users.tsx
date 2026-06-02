@@ -41,8 +41,12 @@ import { UserAvatar } from '@/components/users/UserAvatar';
 import { isApiError } from '@/lib/api-error';
 import { timeAgo } from '@/lib/format';
 import { notify } from '@/lib/notify';
+import { privateSeo } from '@/lib/seo';
 
-export const Route = createFileRoute('/_authed/orgs/$orgId/users')({ component: UsersPage });
+export const Route = createFileRoute('/_authed/orgs/$orgId/users')({
+  head: () => privateSeo('Members'),
+  component: UsersPage,
+});
 
 function UsersPage() {
   const { orgId } = Route.useParams();

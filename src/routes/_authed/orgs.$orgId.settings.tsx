@@ -26,8 +26,10 @@ import { SettingsRow } from '@/components/settings/SettingsRow';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
+import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/settings')({
+  head: () => privateSeo('Organization settings'),
   component: OrgSettingsPage,
 });
 

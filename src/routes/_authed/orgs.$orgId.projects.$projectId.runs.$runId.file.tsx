@@ -23,8 +23,10 @@ import { AttemptBlock } from '@/components/runs/AttemptBlock';
 import { ArtifactPreviewModal } from '@/components/runs/ArtifactPreviewModal';
 import { testStatusMeta } from '@/components/runs/test-status';
 import { cn } from '@/lib/utils';
+import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/runs/$runId/file')({
+  head: () => privateSeo('Run file'),
   component: FileDetailPage,
   validateSearch: (search: Record<string, unknown>): { path: string } => ({
     path: typeof search.path === 'string' ? search.path : '',

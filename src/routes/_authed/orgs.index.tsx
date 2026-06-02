@@ -14,8 +14,12 @@ import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl'
 import { AccountMenu } from '@/components/users/AccountMenu';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { CreateOrgDialog } from '@/components/orgs/CreateOrgDialog';
+import { privateSeo } from '@/lib/seo';
 
-export const Route = createFileRoute('/_authed/orgs/')({ component: OrgsPicker });
+export const Route = createFileRoute('/_authed/orgs/')({
+  head: () => privateSeo('Organizations'),
+  component: OrgsPicker,
+});
 
 function OrgsPicker() {
   const { data, isLoading, error, refetch } = useQuery(listOrgsOptions());

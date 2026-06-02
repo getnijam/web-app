@@ -17,6 +17,7 @@ import { RunsPager } from '@/components/runs/RunsPager';
 import { RunRow } from '@/components/runs/RunRow';
 import { RunsPageSkeleton, RunsListSkeleton } from '@/components/runs/RunSkeletons';
 import { timeAgo, repoFromUrl } from '@/lib/format';
+import { privateSeo } from '@/lib/seo';
 
 // Fields are optional so navigating to this route (cards, sidebar, redirect)
 // needs no search params; they're normalized to concrete values at read-time.
@@ -32,6 +33,7 @@ const STATUSES: RunStatusFilter[] = ['all', 'passed', 'failed', 'flaky'];
 const PAGE_SIZE = 20;
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/runs/')({
+  head: () => privateSeo('Runs'),
   component: RunsPage,
   validateSearch: (search: Record<string, unknown>): RunsSearch => {
     const page = Number(search.page);

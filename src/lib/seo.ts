@@ -9,9 +9,9 @@ const SITE_URL = 'https://www.nijam.dev';
 const SITE_NAME = 'Nijam';
 const OG_IMAGE = `${SITE_URL}/og.png`;
 
-export const DEFAULT_TITLE = 'Nijam — test analytics for Playwright';
+export const DEFAULT_TITLE = 'Nijam — Playwright test analytics & flakiness dashboard';
 export const DEFAULT_DESCRIPTION =
-  'Nijam captures every Playwright run from CI and gives you run history, flakiness scoring, and failure traces. Think Sentry, for your Playwright suite.';
+  'The missing dashboard for your Playwright suite — run history, flakiness scoring, and failure traces from every CI run. Think Sentry, for Playwright.';
 
 interface SeoInput {
   /** Page-specific title; rendered as "<title> · Nijam". Omit for the site default. */
@@ -46,4 +46,22 @@ export function seo({ title, description, path = '', noindex = false }: SeoInput
   ];
 
   return { meta, links: [{ rel: 'canonical', href: url }] };
+}
+
+/**
+ * Minimal head for private (dashboard) pages: a page title + `noindex`. No OG or
+ * canonical — these pages are never indexed or shared, and a canonical on a
+ * noindexed page sends mixed signals to crawlers.
+ */
+export function privateSeo(title: string) {
+  return {
+    meta: [{ title: `${title} · ${SITE_NAME}` }, { name: 'robots', content: 'noindex, nofollow' }],
+  };
+}
+
+/** Site-wide fallback head (root route): a default indexable title + description. */
+export function baseHead() {
+  return {
+    meta: [{ title: DEFAULT_TITLE }, { name: 'description', content: DEFAULT_DESCRIPTION }],
+  };
 }
