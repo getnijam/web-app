@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import * as Sentry from '@sentry/react';
 import { logout } from '@/client';
 import { getMeQueryKey } from '@/client/@tanstack/react-query.gen';
 
@@ -13,6 +14,7 @@ export function useLogout({ onSuccess }: { onSuccess?: () => void } = {}) {
     mutationFn: () => logout({ throwOnError: true }),
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: getMeQueryKey() });
+      Sentry.setUser(null);
       onSuccess?.();
     },
   });

@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import * as Sentry from '@sentry/react';
 import { getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { privateSeo } from '@/lib/seo';
 
@@ -16,5 +19,15 @@ export const Route = createFileRoute('/_authed')({
       throw redirect({ to: '/login' });
     }
   },
-  component: () => <Outlet />,
+  component: AuthedLayout,
 });
+
+function AuthedLayout() {
+  // getMe is already in cache (beforeLoad ensured it) — tag Sentry events with the
+  // signed-in user so dashboard errors carry who hit them. Cleared on logout.
+  const user = useQuery({ ...getMeOptions(), retry: false }).data?.user;
+  useEffect(() => {
+    Sentry.setUser(user ? { id: user.id, email: user.email } : null);
+  }, [user]);
+  return <Outlet />;
+}

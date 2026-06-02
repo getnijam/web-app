@@ -7,8 +7,14 @@ import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
 import { LoadingState } from '@/components/states/LoadingState';
+import { FullPageError } from '@/components/states/FullPageError';
+import { initSentry } from '@/lib/sentry';
+import * as Sentry from '@sentry/react';
 import { routeTree } from './routeTree.gen';
 import './styles/globals.css';
+
+// Wire up error monitoring before anything renders (no-op in dev / without a DSN).
+initSentry();
 
 // Point the generated client at the API and send the session cookie.
 client.setConfig({
@@ -33,6 +39,10 @@ const router = createRouter({
     </div>
   ),
   defaultPendingMs: 0,
+  // Route render/loader crashes: report to Sentry + show a full-page error.
+  defaultErrorComponent: ({ error, reset }) => (
+    <FullPageError error={error} onReset={reset} capture />
+  ),
 });
 
 declare module '@tanstack/react-router' {
@@ -54,7 +64,13 @@ createRoot(rootEl).render(
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider delayDuration={200}>
-          <RouterProvider router={router} />
+          <Sentry.ErrorBoundary
+            fallback={({ error, resetError }) => (
+              <FullPageError error={error} onReset={resetError} />
+            )}
+          >
+            <RouterProvider router={router} />
+          </Sentry.ErrorBoundary>
         </TooltipProvider>
       </QueryClientProvider>
       <Toaster />
