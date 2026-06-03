@@ -79,14 +79,6 @@ function HomeNav({ orgId, active }: { orgId: string; active: SubRoute }) {
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
-        <SidebarMenuButton asChild isActive={active === 'org'} className={NAV_ACTIVE}>
-          <Link to="/orgs/$orgId/settings" params={{ orgId }}>
-            <NavGlyph icon={Building03Icon} active={active === 'org'} />
-            <span>Org settings</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <SidebarMenuItem>
         <SidebarMenuButton asChild isActive={active === 'users'} className={NAV_ACTIVE}>
           <Link to="/orgs/$orgId/users" params={{ orgId }}>
             <NavGlyph icon={UserMultiple02Icon} active={active === 'users'} />
@@ -103,18 +95,26 @@ function HomeNav({ orgId, active }: { orgId: string; active: SubRoute }) {
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
-        <SidebarMenuButton asChild isActive={active === 'billing'} className={NAV_ACTIVE}>
-          <Link to="/orgs/$orgId/billing" params={{ orgId }}>
-            <NavGlyph icon={CreditCardIcon} active={active === 'billing'} />
-            <span>Billing</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <SidebarMenuItem>
         <SidebarMenuButton asChild isActive={active === 'integrations'} className={NAV_ACTIVE}>
           <Link to="/orgs/$orgId/integrations" params={{ orgId }}>
             <NavGlyph icon={PlugSocketIcon} active={active === 'integrations'} />
             <span>Integrations</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton asChild isActive={active === 'org'} className={NAV_ACTIVE}>
+          <Link to="/orgs/$orgId/settings" params={{ orgId }}>
+            <NavGlyph icon={Building03Icon} active={active === 'org'} />
+            <span>Org settings</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton asChild isActive={active === 'billing'} className={NAV_ACTIVE}>
+          <Link to="/orgs/$orgId/billing" params={{ orgId }}>
+            <NavGlyph icon={CreditCardIcon} active={active === 'billing'} />
+            <span>Billing</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>

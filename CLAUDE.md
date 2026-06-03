@@ -13,7 +13,7 @@ Frontend for **Nijam** — a Vite SPA that talks to the Nijam API. The public su
 - **Server state**: TanStack Query, via Hey API's generated `*Options`/`*Mutation`/`*QueryKey` helpers (not literal hooks).
 - **API client**: Hey API generated (`@hey-api/openapi-ts` + `@hey-api/client-fetch`) into `src/client/` (committed; never hand-edit).
 - **UI**: shadcn/ui (`radix-luma` style, `hugeicons`) on the unified `radix-ui` package.
-- **Styling**: **Tailwind v4**, CSS-first (`@tailwindcss/vite`, no `tailwind.config.*`/PostCSS). Tokens live in `src/styles/globals.css` under `@theme inline`. Font: Geist.
+- **Styling**: **Tailwind v4**, CSS-first (`@tailwindcss/vite`, no `tailwind.config.*`/PostCSS). Tokens live in `src/styles/globals.css` under `@theme inline`. Font: **DM Sans** for all UI text (`--font-sans` + `--font-heading`); **Geist Mono** for code only (`--font-mono`).
 - **Forms**: react-hook-form + `@hookform/resolvers/zod`.
 - **License**: BSL 1.1.
 

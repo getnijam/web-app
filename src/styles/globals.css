@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/dm-sans';
 @import '@fontsource-variable/geist-mono';
 
 @custom-variant dark (&:is(.dark *));
@@ -64,8 +64,8 @@
   --sidebar-border: oklch(0.925 0.005 214.3);
   --sidebar-ring: oklch(0.723 0.014 214.4);
 
-  --font-sans: 'Space Grotesk Variable', sans-serif;
-  --font-heading: 'Geist Mono Variable', monospace;
+  --font-sans: 'DM Sans Variable', sans-serif;
+  --font-heading: 'DM Sans Variable', sans-serif;
 }
 
 .dark {
@@ -146,9 +146,9 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Preset b3yyQj6Nvv (radix-maia) typography: Space Grotesk body, Geist Mono headings. */
-  --font-sans: 'Space Grotesk Variable', sans-serif;
-  --font-heading: 'Geist Mono Variable', monospace;
+  /* Typography: DM Sans for all UI text (body + headings); Geist Mono for code only. */
+  --font-sans: 'DM Sans Variable', sans-serif;
+  --font-heading: 'DM Sans Variable', sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
 
   /* Page content width (the dashboard grid). Not in the default container scale,

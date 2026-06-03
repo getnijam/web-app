@@ -16,9 +16,8 @@
     "gen:api": "openapi-ts"
   },
   "dependencies": {
-    "@fontsource-variable/geist": "^5.2.9",
+    "@fontsource-variable/dm-sans": "^5.2.8",
     "@fontsource-variable/geist-mono": "^5.2.8",
-    "@fontsource-variable/space-grotesk": "^5.2.10",
     "@hey-api/client-fetch": "^0.8.4",
     "@hookform/resolvers": "^3.10.0",
     "@hugeicons/core-free-icons": "^4.2.0",
