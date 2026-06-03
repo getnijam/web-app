@@ -30,7 +30,7 @@ function SecretKeysPage() {
   const orgScoped = list.filter((k) => k.scope === 'org').length;
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-3xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex align="start" justify="between" gap={4}>
         <Flex direction="col" gap={1}>
           <Text variant="h1">Secret keys</Text>

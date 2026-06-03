@@ -527,6 +527,73 @@ export type SecretKeyDeletedResponse = {
     ok: true;
 };
 
+export type SlackStatusResponse = {
+    configured: boolean;
+    connected: boolean;
+    status: 'connected' | 'error';
+    teamName: string | null;
+    defaultChannel: {
+        id: string;
+        name: string;
+    } | null;
+    triggerMode: 'every' | 'fail' | 'failflaky' | 'regression';
+    detailLevel: 'compact' | 'full';
+    layout: 'classic' | 'blockkit';
+    connectedAt: string | null;
+    lastError: string | null;
+};
+
+export type SlackInstallUrlResponse = {
+    url: string;
+};
+
+export type UpdateSlackBody = {
+    defaultChannelId?: string;
+    defaultChannelName?: string;
+    triggerMode?: 'every' | 'fail' | 'failflaky' | 'regression';
+    detailLevel?: 'compact' | 'full';
+    layout?: 'classic' | 'blockkit';
+};
+
+export type SlackOkResponse = {
+    ok: true;
+};
+
+export type SlackChannelsResponse = {
+    channels: Array<{
+        id: string;
+        name: string;
+        isPrivate: boolean;
+    }>;
+};
+
+export type SlackTestBody = {
+    channelId?: string;
+};
+
+export type ProjectSlackResponse = {
+    slackConnected: boolean;
+    orgDefaultChannel: {
+        id: string;
+        name: string;
+    } | null;
+    enabled: boolean;
+    channel: {
+        id: string;
+        name: string;
+    } | null;
+    effectiveChannel: {
+        id: string;
+        name: string;
+    } | null;
+};
+
+export type UpdateProjectSlackBody = {
+    enabled: boolean;
+    channelId?: string | null;
+    channelName?: string | null;
+};
+
 export type SignupData = {
     body?: SignupBody;
     path?: never;
@@ -2220,6 +2287,294 @@ export type DeleteSecretKeyResponses = {
 };
 
 export type DeleteSecretKeyResponse = DeleteSecretKeyResponses[keyof DeleteSecretKeyResponses];
+
+export type DisconnectOrgSlackData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/slack';
+};
+
+export type DisconnectOrgSlackErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type DisconnectOrgSlackError = DisconnectOrgSlackErrors[keyof DisconnectOrgSlackErrors];
+
+export type DisconnectOrgSlackResponses = {
+    /**
+     * OK
+     */
+    200: SlackOkResponse;
+};
+
+export type DisconnectOrgSlackResponse = DisconnectOrgSlackResponses[keyof DisconnectOrgSlackResponses];
+
+export type GetOrgSlackIntegrationData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/slack';
+};
+
+export type GetOrgSlackIntegrationErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type GetOrgSlackIntegrationError = GetOrgSlackIntegrationErrors[keyof GetOrgSlackIntegrationErrors];
+
+export type GetOrgSlackIntegrationResponses = {
+    /**
+     * OK
+     */
+    200: SlackStatusResponse;
+};
+
+export type GetOrgSlackIntegrationResponse = GetOrgSlackIntegrationResponses[keyof GetOrgSlackIntegrationResponses];
+
+export type UpdateOrgSlackIntegrationData = {
+    body?: UpdateSlackBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/slack';
+};
+
+export type UpdateOrgSlackIntegrationErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found / not connected
+     */
+    404: ApiError;
+};
+
+export type UpdateOrgSlackIntegrationError = UpdateOrgSlackIntegrationErrors[keyof UpdateOrgSlackIntegrationErrors];
+
+export type UpdateOrgSlackIntegrationResponses = {
+    /**
+     * OK
+     */
+    200: SlackStatusResponse;
+};
+
+export type UpdateOrgSlackIntegrationResponse = UpdateOrgSlackIntegrationResponses[keyof UpdateOrgSlackIntegrationResponses];
+
+export type InstallOrgSlackData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/slack/install';
+};
+
+export type InstallOrgSlackErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+    /**
+     * Slack not configured
+     */
+    503: ApiError;
+};
+
+export type InstallOrgSlackError = InstallOrgSlackErrors[keyof InstallOrgSlackErrors];
+
+export type InstallOrgSlackResponses = {
+    /**
+     * OK
+     */
+    200: SlackInstallUrlResponse;
+};
+
+export type InstallOrgSlackResponse = InstallOrgSlackResponses[keyof InstallOrgSlackResponses];
+
+export type ListOrgSlackChannelsData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/slack/channels';
+};
+
+export type ListOrgSlackChannelsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+    /**
+     * Slack not connected
+     */
+    409: ApiError;
+};
+
+export type ListOrgSlackChannelsError = ListOrgSlackChannelsErrors[keyof ListOrgSlackChannelsErrors];
+
+export type ListOrgSlackChannelsResponses = {
+    /**
+     * OK
+     */
+    200: SlackChannelsResponse;
+};
+
+export type ListOrgSlackChannelsResponse = ListOrgSlackChannelsResponses[keyof ListOrgSlackChannelsResponses];
+
+export type TestOrgSlackData = {
+    body?: SlackTestBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/slack/test';
+};
+
+export type TestOrgSlackErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+    /**
+     * Not connected / no channel
+     */
+    409: ApiError;
+    /**
+     * Slack rejected the message
+     */
+    502: ApiError;
+};
+
+export type TestOrgSlackError = TestOrgSlackErrors[keyof TestOrgSlackErrors];
+
+export type TestOrgSlackResponses = {
+    /**
+     * Sent
+     */
+    200: SlackOkResponse;
+};
+
+export type TestOrgSlackResponse = TestOrgSlackResponses[keyof TestOrgSlackResponses];
+
+export type GetProjectSlackSettingsData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/integrations/slack';
+};
+
+export type GetProjectSlackSettingsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type GetProjectSlackSettingsError = GetProjectSlackSettingsErrors[keyof GetProjectSlackSettingsErrors];
+
+export type GetProjectSlackSettingsResponses = {
+    /**
+     * OK
+     */
+    200: ProjectSlackResponse;
+};
+
+export type GetProjectSlackSettingsResponse = GetProjectSlackSettingsResponses[keyof GetProjectSlackSettingsResponses];
+
+export type UpdateProjectSlackSettingsData = {
+    body?: UpdateProjectSlackBody;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/integrations/slack';
+};
+
+export type UpdateProjectSlackSettingsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type UpdateProjectSlackSettingsError = UpdateProjectSlackSettingsErrors[keyof UpdateProjectSlackSettingsErrors];
+
+export type UpdateProjectSlackSettingsResponses = {
+    /**
+     * OK
+     */
+    200: ProjectSlackResponse;
+};
+
+export type UpdateProjectSlackSettingsResponse = UpdateProjectSlackSettingsResponses[keyof UpdateProjectSlackSettingsResponses];
 
 export type ClientOptions = {
     baseUrl: 'http://localhost:8787' | (string & {});

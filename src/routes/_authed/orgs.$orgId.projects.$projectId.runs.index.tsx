@@ -90,7 +90,7 @@ function RunsPage() {
   // No runs at all (and no filters narrowing them away) → onboarding snippet.
   if (!runs.isLoading && !runs.error && total === 0 && !filtersActive) {
     return (
-      <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
+      <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
         <Header proj={proj} />
         <ReporterSnippet projectId={projectId} />
       </Flex>
@@ -108,7 +108,7 @@ function RunsPage() {
   const onPage = (page: number) => navigate({ search: (prev) => ({ ...prev, page }) });
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Header proj={proj} />
 
       {stats && <RunStats stats={stats} />}

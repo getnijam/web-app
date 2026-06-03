@@ -8,6 +8,7 @@ import {
   UserMultiple02Icon,
   SquareLock02Icon,
   CreditCardIcon,
+  PlugSocketIcon,
   ArrowLeft01Icon,
   PulseIcon,
   TestTube01Icon,
@@ -106,6 +107,14 @@ function HomeNav({ orgId, active }: { orgId: string; active: SubRoute }) {
           <Link to="/orgs/$orgId/billing" params={{ orgId }}>
             <NavGlyph icon={CreditCardIcon} active={active === 'billing'} />
             <span>Billing</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton asChild isActive={active === 'integrations'} className={NAV_ACTIVE}>
+          <Link to="/orgs/$orgId/integrations" params={{ orgId }}>
+            <NavGlyph icon={PlugSocketIcon} active={active === 'integrations'} />
+            <span>Integrations</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>

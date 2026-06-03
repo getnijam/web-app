@@ -29,7 +29,7 @@ export function SettingsRow({
           </Text>
         )}
       </Flex>
-      <Flex direction="col" gap={1.5} className="min-w-0">
+      <Flex direction="col" gap={1.5} className="min-w-0 md:items-end">
         {children}
       </Flex>
     </Grid>

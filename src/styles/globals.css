@@ -228,3 +228,18 @@
 @utility bg-overlay {
   background-color: var(--overlay);
 }
+
+/* Cursor-following glow "orb" for the hero (positioned + faded in Hero.tsx via a
+   ref). A soft, brand-tinted radial ball; size/blur/color live here so the call
+   site avoids one-off values. Decorative — paired with pointer-events-none. */
+@utility hero-orb {
+  width: 40rem;
+  height: 40rem;
+  background: radial-gradient(
+    circle at center,
+    color-mix(in oklab, var(--primary) 40%, transparent),
+    color-mix(in oklab, var(--info) 22%, transparent) 45%,
+    transparent 70%
+  );
+  filter: blur(64px);
+}

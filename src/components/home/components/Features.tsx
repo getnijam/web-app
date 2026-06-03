@@ -63,9 +63,8 @@ const FEATURES: Feature[] = [
   {
     icon: <HugeiconsIcon icon={BellIcon} size={22} />,
     tint: 'bg-success/15 text-success',
-    soon: true,
     title: 'Slack & integrations',
-    body: "Soon you'll auto-post passing, flaky and failing runs to Slack — with green / yellow / red status and every test linked back to its results on Nijam.",
+    body: 'Auto-post passing, flaky and failing runs to Slack — with green / yellow / red status and every test linked back to its results on Nijam.',
   },
 ];
 
@@ -83,7 +82,7 @@ export function Features() {
           </code>{' '}
           doesn't tell you
         </Text>
-        <Text className="mt-3.5 text-lg text-muted-foreground text-pretty">
+        <Text className="mt-3.5 text-lg text-pretty text-muted-foreground">
           Your CI runs the tests. Nijam remembers every run, so you can see what's flaky, what
           regressed, and exactly when it broke.
         </Text>
@@ -95,7 +94,12 @@ export function Features() {
             key={i}
             className="rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
           >
-            <Flex inline align="center" justify="center" className={cn('size-10.5 rounded-xl', f.tint)}>
+            <Flex
+              inline
+              align="center"
+              justify="center"
+              className={cn('size-10.5 rounded-xl', f.tint)}
+            >
               {f.icon}
             </Flex>
             <Text as="h3" className="mt-4 text-base font-semibold tracking-tight">

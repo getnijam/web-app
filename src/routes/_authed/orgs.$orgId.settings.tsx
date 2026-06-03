@@ -103,7 +103,9 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
     },
     onError: (err) =>
       notify.error("Couldn't update logo", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       }),
   });
 
@@ -134,13 +136,15 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
     onError: (err) => {
       setDeleteOpen(false);
       notify.error("Couldn't delete organization", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       });
     },
   });
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-3xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
         <Text variant="h1">Organization settings</Text>
         <Text color="muted">Manage your organization's profile and contact details.</Text>
@@ -175,7 +179,7 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
           )}
 
           <SettingsRow label="Logo" hint="Shown on reports and shared links.">
-            <Flex align="center" gap={4}>
+            <Flex align="center" gap={4} className="w-full">
               <OrgAvatar org={org} size="lg" />
               <Flex direction="col" gap={2} align="start">
                 <input
@@ -238,7 +242,11 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
             <Input disabled={!isAdmin} placeholder="https://" {...form.register('website')} />
           </SettingsRow>
           <SettingsRow label="Contact email">
-            <Input disabled={!isAdmin} placeholder="team@company.com" {...form.register('contactEmail')} />
+            <Input
+              disabled={!isAdmin}
+              placeholder="team@company.com"
+              {...form.register('contactEmail')}
+            />
           </SettingsRow>
         </SettingsPanel>
       </form>

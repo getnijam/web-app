@@ -42,14 +42,21 @@ function Row({
                 </span>
               )}
             </Text>
-            <Text as="h3" className="mt-3 text-2xl font-bold tracking-tight text-balance sm:text-3xl">
+            <Text
+              as="h3"
+              className="mt-3 text-2xl font-bold tracking-tight text-balance sm:text-3xl"
+            >
               {heading}
             </Text>
             <Text className="mt-3.5 max-w-md text-base text-muted-foreground">{body}</Text>
             <ul className="mt-5 space-y-2.5">
               {items.map((it, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm">
-                  <HugeiconsIcon icon={Tick02Icon} size={18} className="mt-0.5 shrink-0 text-success" />
+                  <HugeiconsIcon
+                    icon={Tick02Icon}
+                    size={18}
+                    className="mt-0.5 shrink-0 text-success"
+                  />
                   {it}
                 </li>
               ))}
@@ -97,9 +104,8 @@ export function HighlightRows() {
         <Row
           id="integrations"
           kicker="Integrations"
-          soon
           heading="Results land where your team already talks"
-          body="Slack delivery is on the way: connect a channel and Nijam will post a summary of every run by your rules — passing, flaky or failing — with each suite and test linked back to its results."
+          body="Connect a Slack channel and Nijam posts a summary of every run by your rules — passing, flaky or failing — with each suite and test linked back to its results."
           items={[
             'Post on failures, flaky runs or regressions',
             'Route each project to its own channel, or mute it',

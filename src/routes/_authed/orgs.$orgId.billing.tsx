@@ -140,7 +140,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
         : 'Free includes up to 2 members.';
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-3xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
         <Text variant="h1">Billing</Text>
         <Text color="muted">Your plan, usage, and limits for this organization.</Text>

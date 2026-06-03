@@ -68,7 +68,7 @@ function UsersPage() {
   const pendingCount = invites.data?.invitations.length ?? 0;
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-3xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
         <Text variant="h1">Users</Text>
         <Text color="muted">

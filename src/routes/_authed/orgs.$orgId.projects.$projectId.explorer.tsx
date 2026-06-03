@@ -31,7 +31,7 @@ function ExplorerPage() {
     : tests;
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
         <Text variant="h1">Test explorer</Text>
         <Text color="muted">

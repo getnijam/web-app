@@ -27,7 +27,9 @@ import { Route as AuthedOrgsOrgIdSettingsRouteImport } from './routes/_authed/or
 import { Route as AuthedOrgsOrgIdKeysRouteImport } from './routes/_authed/orgs.$orgId.keys'
 import { Route as AuthedOrgsOrgIdBillingRouteImport } from './routes/_authed/orgs.$orgId.billing'
 import { Route as AuthedOrgsOrgIdProjectsIndexRouteImport } from './routes/_authed/orgs.$orgId.projects.index'
+import { Route as AuthedOrgsOrgIdIntegrationsIndexRouteImport } from './routes/_authed/orgs.$orgId.integrations.index'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId'
+import { Route as AuthedOrgsOrgIdIntegrationsSlackRouteImport } from './routes/_authed/orgs.$orgId.integrations.slack'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdIndexRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.index'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdSettingsRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.settings'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdFlakyRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.flaky'
@@ -127,10 +129,22 @@ const AuthedOrgsOrgIdProjectsIndexRoute =
     path: '/projects/',
     getParentRoute: () => AuthedOrgsOrgIdRoute,
   } as any)
+const AuthedOrgsOrgIdIntegrationsIndexRoute =
+  AuthedOrgsOrgIdIntegrationsIndexRouteImport.update({
+    id: '/integrations/',
+    path: '/integrations/',
+    getParentRoute: () => AuthedOrgsOrgIdRoute,
+  } as any)
 const AuthedOrgsOrgIdProjectsProjectIdRoute =
   AuthedOrgsOrgIdProjectsProjectIdRouteImport.update({
     id: '/projects/$projectId',
     path: '/projects/$projectId',
+    getParentRoute: () => AuthedOrgsOrgIdRoute,
+  } as any)
+const AuthedOrgsOrgIdIntegrationsSlackRoute =
+  AuthedOrgsOrgIdIntegrationsSlackRouteImport.update({
+    id: '/integrations/slack',
+    path: '/integrations/slack',
     getParentRoute: () => AuthedOrgsOrgIdRoute,
   } as any)
 const AuthedOrgsOrgIdProjectsProjectIdIndexRoute =
@@ -199,7 +213,9 @@ export interface FileRoutesByFullPath {
   '/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
   '/orgs/$orgId/': typeof AuthedOrgsOrgIdIndexRoute
+  '/orgs/$orgId/integrations/slack': typeof AuthedOrgsOrgIdIntegrationsSlackRoute
   '/orgs/$orgId/projects/$projectId': typeof AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren
+  '/orgs/$orgId/integrations/': typeof AuthedOrgsOrgIdIntegrationsIndexRoute
   '/orgs/$orgId/projects/': typeof AuthedOrgsOrgIdProjectsIndexRoute
   '/orgs/$orgId/projects/$projectId/explorer': typeof AuthedOrgsOrgIdProjectsProjectIdExplorerRoute
   '/orgs/$orgId/projects/$projectId/flaky': typeof AuthedOrgsOrgIdProjectsProjectIdFlakyRoute
@@ -226,6 +242,8 @@ export interface FileRoutesByTo {
   '/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
   '/orgs/$orgId': typeof AuthedOrgsOrgIdIndexRoute
+  '/orgs/$orgId/integrations/slack': typeof AuthedOrgsOrgIdIntegrationsSlackRoute
+  '/orgs/$orgId/integrations': typeof AuthedOrgsOrgIdIntegrationsIndexRoute
   '/orgs/$orgId/projects': typeof AuthedOrgsOrgIdProjectsIndexRoute
   '/orgs/$orgId/projects/$projectId/explorer': typeof AuthedOrgsOrgIdProjectsProjectIdExplorerRoute
   '/orgs/$orgId/projects/$projectId/flaky': typeof AuthedOrgsOrgIdProjectsProjectIdFlakyRoute
@@ -255,7 +273,9 @@ export interface FileRoutesById {
   '/_authed/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/_authed/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
   '/_authed/orgs/$orgId/': typeof AuthedOrgsOrgIdIndexRoute
+  '/_authed/orgs/$orgId/integrations/slack': typeof AuthedOrgsOrgIdIntegrationsSlackRoute
   '/_authed/orgs/$orgId/projects/$projectId': typeof AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren
+  '/_authed/orgs/$orgId/integrations/': typeof AuthedOrgsOrgIdIntegrationsIndexRoute
   '/_authed/orgs/$orgId/projects/': typeof AuthedOrgsOrgIdProjectsIndexRoute
   '/_authed/orgs/$orgId/projects/$projectId/explorer': typeof AuthedOrgsOrgIdProjectsProjectIdExplorerRoute
   '/_authed/orgs/$orgId/projects/$projectId/flaky': typeof AuthedOrgsOrgIdProjectsProjectIdFlakyRoute
@@ -285,7 +305,9 @@ export interface FileRouteTypes {
     | '/orgs/$orgId/settings'
     | '/orgs/$orgId/users'
     | '/orgs/$orgId/'
+    | '/orgs/$orgId/integrations/slack'
     | '/orgs/$orgId/projects/$projectId'
+    | '/orgs/$orgId/integrations/'
     | '/orgs/$orgId/projects/'
     | '/orgs/$orgId/projects/$projectId/explorer'
     | '/orgs/$orgId/projects/$projectId/flaky'
@@ -312,6 +334,8 @@ export interface FileRouteTypes {
     | '/orgs/$orgId/settings'
     | '/orgs/$orgId/users'
     | '/orgs/$orgId'
+    | '/orgs/$orgId/integrations/slack'
+    | '/orgs/$orgId/integrations'
     | '/orgs/$orgId/projects'
     | '/orgs/$orgId/projects/$projectId/explorer'
     | '/orgs/$orgId/projects/$projectId/flaky'
@@ -340,7 +364,9 @@ export interface FileRouteTypes {
     | '/_authed/orgs/$orgId/settings'
     | '/_authed/orgs/$orgId/users'
     | '/_authed/orgs/$orgId/'
+    | '/_authed/orgs/$orgId/integrations/slack'
     | '/_authed/orgs/$orgId/projects/$projectId'
+    | '/_authed/orgs/$orgId/integrations/'
     | '/_authed/orgs/$orgId/projects/'
     | '/_authed/orgs/$orgId/projects/$projectId/explorer'
     | '/_authed/orgs/$orgId/projects/$projectId/flaky'
@@ -493,11 +519,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedOrgsOrgIdProjectsIndexRouteImport
       parentRoute: typeof AuthedOrgsOrgIdRoute
     }
+    '/_authed/orgs/$orgId/integrations/': {
+      id: '/_authed/orgs/$orgId/integrations/'
+      path: '/integrations'
+      fullPath: '/orgs/$orgId/integrations/'
+      preLoaderRoute: typeof AuthedOrgsOrgIdIntegrationsIndexRouteImport
+      parentRoute: typeof AuthedOrgsOrgIdRoute
+    }
     '/_authed/orgs/$orgId/projects/$projectId': {
       id: '/_authed/orgs/$orgId/projects/$projectId'
       path: '/projects/$projectId'
       fullPath: '/orgs/$orgId/projects/$projectId'
       preLoaderRoute: typeof AuthedOrgsOrgIdProjectsProjectIdRouteImport
+      parentRoute: typeof AuthedOrgsOrgIdRoute
+    }
+    '/_authed/orgs/$orgId/integrations/slack': {
+      id: '/_authed/orgs/$orgId/integrations/slack'
+      path: '/integrations/slack'
+      fullPath: '/orgs/$orgId/integrations/slack'
+      preLoaderRoute: typeof AuthedOrgsOrgIdIntegrationsSlackRouteImport
       parentRoute: typeof AuthedOrgsOrgIdRoute
     }
     '/_authed/orgs/$orgId/projects/$projectId/': {
@@ -601,7 +641,9 @@ interface AuthedOrgsOrgIdRouteChildren {
   AuthedOrgsOrgIdSettingsRoute: typeof AuthedOrgsOrgIdSettingsRoute
   AuthedOrgsOrgIdUsersRoute: typeof AuthedOrgsOrgIdUsersRoute
   AuthedOrgsOrgIdIndexRoute: typeof AuthedOrgsOrgIdIndexRoute
+  AuthedOrgsOrgIdIntegrationsSlackRoute: typeof AuthedOrgsOrgIdIntegrationsSlackRoute
   AuthedOrgsOrgIdProjectsProjectIdRoute: typeof AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren
+  AuthedOrgsOrgIdIntegrationsIndexRoute: typeof AuthedOrgsOrgIdIntegrationsIndexRoute
   AuthedOrgsOrgIdProjectsIndexRoute: typeof AuthedOrgsOrgIdProjectsIndexRoute
 }
 
@@ -611,8 +653,10 @@ const AuthedOrgsOrgIdRouteChildren: AuthedOrgsOrgIdRouteChildren = {
   AuthedOrgsOrgIdSettingsRoute: AuthedOrgsOrgIdSettingsRoute,
   AuthedOrgsOrgIdUsersRoute: AuthedOrgsOrgIdUsersRoute,
   AuthedOrgsOrgIdIndexRoute: AuthedOrgsOrgIdIndexRoute,
+  AuthedOrgsOrgIdIntegrationsSlackRoute: AuthedOrgsOrgIdIntegrationsSlackRoute,
   AuthedOrgsOrgIdProjectsProjectIdRoute:
     AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren,
+  AuthedOrgsOrgIdIntegrationsIndexRoute: AuthedOrgsOrgIdIntegrationsIndexRoute,
   AuthedOrgsOrgIdProjectsIndexRoute: AuthedOrgsOrgIdProjectsIndexRoute,
 }
 

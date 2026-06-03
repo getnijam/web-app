@@ -23,7 +23,7 @@ function FlakyPage() {
   const runs = `${runWindow} ${runWindow === 1 ? 'run' : 'runs'}`;
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
         <Text variant="h1">Flaky tests</Text>
         <Text color="muted">

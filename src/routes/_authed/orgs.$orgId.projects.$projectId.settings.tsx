@@ -25,6 +25,7 @@ import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { GlyphPicker } from '@/components/projects/GlyphPicker';
+import { ProjectSlackSettings } from '@/components/integrations/ProjectSlackSettings';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { ICON_KEYS, COLOR_KEYS, type IconKey, type ColorKey } from '@/lib/project-glyph';
@@ -50,9 +51,12 @@ const toColorKey = (v: string | null): ColorKey =>
 
 function ProjectSettingsPage() {
   const { projectId } = Route.useParams();
-  const { data: project, isLoading, error, refetch } = useQuery(
-    getProjectOptions({ path: { id: projectId } }),
-  );
+  const {
+    data: project,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery(getProjectOptions({ path: { id: projectId } }));
 
   if (isLoading) return <LoadingState />;
   if (error || !project) return <ErrorState error={error} onRetry={() => refetch()} />;
@@ -86,7 +90,9 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
       await queryClient.invalidateQueries({
         queryKey: getProjectQueryKey({ path: { id: project.id } }),
       });
-      await queryClient.invalidateQueries({ queryKey: listOrgProjectsQueryKey({ path: { orgId } }) });
+      await queryClient.invalidateQueries({
+        queryKey: listOrgProjectsQueryKey({ path: { orgId } }),
+      });
       notify.success('Project settings saved', {
         description: `Your changes to ${project.name} have been saved.`,
       });
@@ -105,7 +111,9 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
   const remove = useMutation({
     ...deleteProjectMutation(),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: listOrgProjectsQueryKey({ path: { orgId } }) });
+      await queryClient.invalidateQueries({
+        queryKey: listOrgProjectsQueryKey({ path: { orgId } }),
+      });
       setConfirmOpen(false);
       notify.success('Project removed', {
         description: `${project.name} and all of its runs have been permanently deleted.`,
@@ -128,7 +136,7 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
   }
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-3xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
         <Text variant="h1">Project settings</Text>
         <Text color="muted">Configure how this project's runs are displayed and ingested.</Text>
@@ -190,8 +198,11 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
           <SettingsRow label="Main branch">
             <Input className="font-mono" placeholder="main" {...form.register('defaultBranch')} />
           </SettingsRow>
-          <SettingsRow label="Project ID" hint="Use this value as projectId in your reporter config.">
-            <Flex gap={2}>
+          <SettingsRow
+            label="Project ID"
+            hint="Use this value as projectId in your reporter config."
+          >
+            <Flex gap={2} className="w-full">
               <Input readOnly value={project.id} className="font-mono" />
               <Button type="button" variant="outline" onClick={copyId} className="shrink-0">
                 {copied ? 'Copied' : 'Copy'}
@@ -200,6 +211,8 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
           </SettingsRow>
         </SettingsPanel>
       </form>
+
+      <ProjectSlackSettings orgId={orgId} projectId={project.id} projectName={project.name} />
 
       {isAdmin && (
         <>
