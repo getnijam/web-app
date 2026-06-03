@@ -15,7 +15,12 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-6 py-14">
         <Grid cols={[1, 2, 4]} gap={8}>
           <div className="sm:col-span-2 md:col-span-1">
-            <Link to="/" hash="top" aria-label="Nijam.dev home" className="inline-flex text-background">
+            <Link
+              to="/"
+              hash="top"
+              aria-label="Nijam.dev home"
+              className="inline-flex text-background"
+            >
               <Logo />
             </Link>
             <Text className="mt-3.5 max-w-70 text-sm text-background/60">
@@ -47,7 +52,12 @@ export function Footer() {
               Connect
             </Text>
             {['GitHub Actions', 'Jenkins', 'GitLab CI', 'CircleCI'].map((p) => (
-              <a key={p} href={DOCS_URL} {...ext} className={COL}>
+              <a
+                key={p}
+                href={`${DOCS_URL}/reporter/ci-integration/#supported-providers`}
+                {...ext}
+                className={COL}
+              >
                 {p}
               </a>
             ))}
