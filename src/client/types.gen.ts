@@ -334,6 +334,17 @@ export type FinalizeRunBody = {
     shardIndex?: number;
 };
 
+export type CompleteRunResponse = {
+    ok: true;
+    completed: boolean;
+};
+
+export type CompleteRunBody = {
+    projectId: string;
+    ciRunId: string;
+    ciRunAttempt?: string;
+};
+
 export type CreateExecutionsBody = {
     executions: Array<{
         id: string;
@@ -586,12 +597,14 @@ export type ProjectSlackResponse = {
         id: string;
         name: string;
     } | null;
+    branches: Array<string>;
 };
 
 export type UpdateProjectSlackBody = {
     enabled: boolean;
     channelId?: string | null;
     channelName?: string | null;
+    branches?: Array<string>;
 };
 
 export type SignupData = {
@@ -1912,6 +1925,35 @@ export type FinalizeRunResponses = {
 };
 
 export type FinalizeRunResponse = FinalizeRunResponses[keyof FinalizeRunResponses];
+
+export type CompleteRunData = {
+    body?: CompleteRunBody;
+    path?: never;
+    query?: never;
+    url: '/v1/runs/complete';
+};
+
+export type CompleteRunErrors = {
+    /**
+     * Invalid or missing API key
+     */
+    401: ApiError;
+    /**
+     * Project not found / out of scope
+     */
+    404: ApiError;
+};
+
+export type CompleteRunError = CompleteRunErrors[keyof CompleteRunErrors];
+
+export type CompleteRunResponses = {
+    /**
+     * OK
+     */
+    200: CompleteRunResponse;
+};
+
+export type CompleteRunResponse2 = CompleteRunResponses[keyof CompleteRunResponses];
 
 export type CreateExecutionsData = {
     body?: CreateExecutionsBody;

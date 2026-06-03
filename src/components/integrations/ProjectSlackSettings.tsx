@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ProjectSlackResponse } from '@/client';
 import {
+  getProjectRunFiltersOptions,
   getProjectSlackSettingsOptions,
   getProjectSlackSettingsQueryKey,
   listOrgSlackChannelsOptions,
@@ -19,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { TagInput } from '@/components/ui/tag-input';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
@@ -26,6 +28,10 @@ import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 
 const INHERIT = '__default__';
+
+// Always offered as a suggestion even before any run lands on it; other suggestions
+// come from the project's historic branches. Any branch can still be typed (creatable).
+const DEFAULT_BRANCH = 'main';
 
 export function ProjectSlackSettings({
   orgId,
@@ -54,6 +60,17 @@ interface Draft {
   enabled: boolean;
   channelId: string | null;
   channelName: string | null;
+  branches: string[];
+}
+
+const sameSet = (a: string[], b: string[]) => a.length === b.length && a.every((x) => b.includes(x));
+
+/** One-line summary of the saved routing, covering channel + branch filter. */
+function describeSettings(projectName: string, s: ProjectSlackResponse): string {
+  if (!s.enabled) return `${projectName} won't post to Slack.`;
+  const channel = s.channel ? `posts to #${s.channel.name}` : 'uses the organization default channel';
+  const branches = s.branches.length === 0 ? 'every branch' : s.branches.join(', ');
+  return `${projectName} ${channel} for ${branches}.`;
 }
 
 function ProjectSlackInner({
@@ -75,28 +92,34 @@ function ProjectSlackInner({
     ...listOrgSlackChannelsOptions({ path: { orgId } }),
     enabled: isAdmin && data.slackConnected,
   });
+  // Branch suggestions: the project's historic branches, with `main` always present.
+  const filters = useQuery({
+    ...getProjectRunFiltersOptions({ path: { projectId } }),
+    enabled: isAdmin && data.slackConnected,
+  });
+  const historicBranches = filters.data?.branches ?? [];
+  const branchSuggestions = historicBranches.includes(DEFAULT_BRANCH)
+    ? historicBranches
+    : [DEFAULT_BRANCH, ...historicBranches];
 
   // Edits stay local until Save commits them (matches the org Slack page).
   const [draft, setDraft] = useState<Draft>(() => ({
     enabled: data.enabled,
     channelId: data.channel?.id ?? null,
     channelName: data.channel?.name ?? null,
+    branches: data.branches,
   }));
 
   const dirty =
-    draft.enabled !== data.enabled || (draft.channelId ?? null) !== (data.channel?.id ?? null);
+    draft.enabled !== data.enabled ||
+    (draft.channelId ?? null) !== (data.channel?.id ?? null) ||
+    !sameSet(draft.branches, data.branches);
 
   const save = useMutation({
     ...updateProjectSlackSettingsMutation(),
     onSuccess: (updated) => {
       queryClient.setQueryData(queryKey, updated);
-      notify.success('Slack settings saved', {
-        description: !updated.enabled
-          ? `${projectName} won't post to Slack.`
-          : updated.channel
-            ? `${projectName} posts to #${updated.channel.name}.`
-            : `${projectName} uses the organization default channel.`,
-      });
+      notify.success('Slack settings saved', { description: describeSettings(projectName, updated) });
     },
     onError: (err) =>
       notify.error("Couldn't save Slack settings", {
@@ -109,7 +132,12 @@ function ProjectSlackInner({
   const handleSave = () =>
     save.mutate({
       path: { projectId },
-      body: { enabled: draft.enabled, channelId: draft.channelId, channelName: draft.channelName },
+      body: {
+        enabled: draft.enabled,
+        channelId: draft.channelId,
+        channelName: draft.channelName,
+        branches: draft.branches,
+      },
     });
 
   if (!data.slackConnected) {
@@ -215,6 +243,26 @@ function ProjectSlackInner({
         ) : (
           <Text className="text-sm">
             {data.channel ? `#${data.channel.name}` : `Default (${orgDefaultLabel})`}
+          </Text>
+        )}
+      </SettingsRow>
+
+      <SettingsRow
+        label="Branches"
+        hint="Only post runs from these branches. Leave empty to post on every branch."
+      >
+        {isAdmin ? (
+          <TagInput
+            value={draft.branches}
+            onChange={(branches) => setDraft((d) => ({ ...d, branches }))}
+            suggestions={branchSuggestions}
+            placeholder="All branches — type to filter"
+            disabled={!draft.enabled}
+            aria-label="Branch allow-list"
+          />
+        ) : (
+          <Text className="text-sm">
+            {data.branches.length ? data.branches.join(', ') : 'All branches'}
           </Text>
         )}
       </SettingsRow>
