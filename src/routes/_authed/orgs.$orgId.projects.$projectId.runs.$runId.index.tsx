@@ -30,7 +30,13 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/r
 
 function RunDetailPage() {
   const { orgId, projectId, runId } = Route.useParams();
-  const q = useQuery(getRunOptions({ path: { id: runId } }));
+  // While the run is in-progress, poll every 30s so Running→Failing→terminal updates
+  // live (sharded runs stay open until their post-matrix /complete step). Stops once
+  // finalized/canceled.
+  const q = useQuery({
+    ...getRunOptions({ path: { id: runId } }),
+    refetchInterval: (query) => (query.state.data?.run.finishedAt ? false : 30_000),
+  });
 
   if (q.isLoading) return <RunDetailSkeleton />;
   if (q.error || !q.data) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;

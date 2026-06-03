@@ -1,11 +1,13 @@
 import type { RunSummary } from '@/client';
 
-export type RunDisplayStatus = 'passed' | 'failed' | 'flaky' | 'running' | 'failing';
+export type RunDisplayStatus = 'passed' | 'failed' | 'flaky' | 'running' | 'failing' | 'canceled';
 
 /** Map a run to a display status (row bar / pill). Filtering itself is server-side. */
 export function runDisplayStatus(run: RunSummary): RunDisplayStatus {
   // Still running: red "Failing" once a failure has landed, else blue "Running".
   if (!run.finishedAt || run.status === 'running') return run.hadFailure ? 'failing' : 'running';
+  // Abandoned run auto-swept by the server (idle >1h, never finalized).
+  if (run.status === 'canceled') return 'canceled';
   if (run.status === 'passed') return (run.stats?.flaky ?? 0) > 0 ? 'flaky' : 'passed';
   return 'failed'; // failed | timedout | interrupted
 }
@@ -17,6 +19,7 @@ export const RUN_BAR_CLASS: Record<RunDisplayStatus, string> = {
   failed: 'bg-destructive',
   failing: 'bg-destructive',
   running: 'bg-info',
+  canceled: 'bg-muted-foreground',
 };
 
 /** Status-pill label + tinted classes. */
@@ -26,6 +29,7 @@ export const RUN_PILL: Record<RunDisplayStatus, { label: string; cls: string; do
   failed: { label: 'Failed', cls: 'bg-destructive/15 text-destructive', dot: 'bg-destructive' },
   failing: { label: 'Failing', cls: 'bg-destructive/15 text-destructive', dot: 'bg-destructive' },
   running: { label: 'Running', cls: 'bg-info/15 text-info', dot: 'bg-info' },
+  canceled: { label: 'Canceled', cls: 'bg-muted text-muted-foreground', dot: 'bg-muted-foreground' },
 };
 
 /** Wall-clock run duration in seconds, or null when still running. */
