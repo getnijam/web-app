@@ -93,6 +93,7 @@ export function CreateOrgDialog({
               id="org-name"
               autoFocus
               placeholder="e.g. Acme Inc."
+              data-testid="create-org-name"
               {...form.register('name')}
             />
             <FieldError message={form.formState.errors.name?.message} />
@@ -110,6 +111,7 @@ export function CreateOrgDialog({
             form="new-org-form"
             loading={mutation.isPending}
             disabled={!name?.trim()}
+            data-testid="create-org-submit"
           >
             Create organization
           </Button>

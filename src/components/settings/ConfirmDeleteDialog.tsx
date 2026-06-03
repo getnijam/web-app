@@ -24,6 +24,8 @@ interface ConfirmDeleteDialogProps {
   confirmLabel: string;
   loading?: boolean;
   onConfirm: () => void;
+  /** Namespace for child test ids: `${testId}-input` + `${testId}-confirm`. */
+  testId?: string;
 }
 
 /**
@@ -40,6 +42,7 @@ export function ConfirmDeleteDialog({
   confirmLabel,
   loading,
   onConfirm,
+  testId,
 }: ConfirmDeleteDialogProps) {
   const [value, setValue] = useState('');
   const matches = value.trim() === confirmText;
@@ -72,6 +75,7 @@ export function ConfirmDeleteDialog({
             onChange={(e) => setValue(e.target.value)}
             autoComplete="off"
             autoFocus
+            data-testid={testId ? `${testId}-input` : undefined}
           />
         </Flex>
 
@@ -84,6 +88,7 @@ export function ConfirmDeleteDialog({
               e.preventDefault();
               onConfirm();
             }}
+            data-testid={testId ? `${testId}-confirm` : undefined}
           >
             {confirmLabel}
           </AlertDialogAction>

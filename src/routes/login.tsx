@@ -81,7 +81,13 @@ function LoginPage() {
 
           <Flex direction="col" gap={1.5}>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" autoComplete="email" {...form.register('email')} />
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              data-testid="login-email"
+              {...form.register('email')}
+            />
             <FieldError message={form.formState.errors.email?.message} />
           </Flex>
 
@@ -99,12 +105,19 @@ function LoginPage() {
               id="password"
               type="password"
               autoComplete="current-password"
+              data-testid="login-password"
               {...form.register('password')}
             />
             <FieldError message={form.formState.errors.password?.message} />
           </Flex>
 
-          <Button type="submit" size="lg" className="w-full" loading={mutation.isPending}>
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            loading={mutation.isPending}
+            data-testid="login-submit"
+          >
             {mutation.isPending ? 'Signing in…' : 'Sign in'}
           </Button>
         </Flex>

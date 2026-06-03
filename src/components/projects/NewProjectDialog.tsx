@@ -124,6 +124,7 @@ export function NewProjectDialog({
               id="np-name"
               autoFocus
               placeholder="e.g. web-checkout"
+              data-testid="create-project-name"
               {...form.register('name')}
             />
             <FieldError message={form.formState.errors.name?.message} />
@@ -177,6 +178,7 @@ export function NewProjectDialog({
             form="new-project-form"
             loading={mutation.isPending}
             disabled={!name?.trim()}
+            data-testid="create-project-submit"
           >
             Create project
           </Button>

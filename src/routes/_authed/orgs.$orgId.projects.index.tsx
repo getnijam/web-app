@@ -57,7 +57,7 @@ function ProjectsPage() {
             {!isRefetching && <HugeiconsIcon icon={RefreshIcon} size={16} />}
             Refresh
           </Button>
-          <Button onClick={() => setDialogOpen(true)}>
+          <Button onClick={() => setDialogOpen(true)} data-testid="create-project-trigger">
             <HugeiconsIcon icon={PlusSignIcon} size={16} />
             New project
           </Button>

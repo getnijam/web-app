@@ -61,7 +61,11 @@ function OrgsPicker() {
                 Organizations hold your projects, runs, and team. You'll land here whenever you sign
                 in.
               </Text>
-              <Button onClick={() => setDialogOpen(true)} className="mt-1">
+              <Button
+                onClick={() => setDialogOpen(true)}
+                className="mt-1"
+                data-testid="create-org-trigger"
+              >
                 <HugeiconsIcon icon={PlusSignIcon} size={16} />
                 New organization
               </Button>
@@ -92,6 +96,7 @@ function OrgsPicker() {
                 variant="outline"
                 onClick={() => setDialogOpen(true)}
                 className="mt-1 self-start"
+                data-testid="create-org-trigger"
               >
                 <HugeiconsIcon icon={PlusSignIcon} size={16} />
                 New organization

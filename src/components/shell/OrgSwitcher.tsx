@@ -57,6 +57,7 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
                 setCreateOpen(true);
               }}
               className={menuItem}
+              data-testid="create-org-trigger"
             >
               <HugeiconsIcon icon={PlusSignIcon} size={16} className="text-muted-foreground" />
               New organization

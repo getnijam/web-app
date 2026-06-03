@@ -222,7 +222,11 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
               hint="Permanently deletes this project and all its runs, executions, and artifacts (including stored files). This can't be undone."
             >
               <Flex>
-                <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
+                <Button
+                  variant="destructive"
+                  onClick={() => setConfirmOpen(true)}
+                  data-testid="delete-project-trigger"
+                >
                   Remove project
                 </Button>
               </Flex>
@@ -243,6 +247,7 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
             confirmLabel="Remove project"
             loading={remove.isPending}
             onConfirm={() => remove.mutate({ path: { id: project.id } })}
+            testId="delete-project"
           />
         </>
       )}

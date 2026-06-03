@@ -258,7 +258,11 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
             hint="Permanently deletes this organization, its members, invitations, and logo. Delete all of its projects first."
           >
             <Flex>
-              <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
+              <Button
+                variant="destructive"
+                onClick={() => setDeleteOpen(true)}
+                data-testid="delete-org-trigger"
+              >
                 Delete organization
               </Button>
             </Flex>
@@ -280,6 +284,7 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
         confirmLabel="Delete organization"
         loading={deleteOrg.isPending}
         onConfirm={() => deleteOrg.mutate({ path: { orgId } })}
+        testId="delete-org"
       />
     </Flex>
   );
