@@ -242,4 +242,44 @@
     transparent 70%
   );
   filter: blur(64px);
+  /* Gentle breathing shimmer so the glow feels alive even when the cursor is
+     still (its position is driven separately via a JS transform). */
+  animation: hero-shimmer 6s ease-in-out infinite;
+}
+
+@keyframes hero-shimmer {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Faint full-bleed grid behind the hero, radial-masked so it's strongest behind
+   the content and fades out toward the edges. */
+@utility hero-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--foreground) 9%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--foreground) 9%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 3.5rem 3.5rem;
+  /* Full width; fade in just below the nav and out at the very bottom, so the grid
+     runs from the top of the hero down through the CI logos strip and ends there. */
+  mask-image: linear-gradient(to bottom, transparent, black 6%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 6%, black 90%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb {
+    animation: none;
+  }
 }

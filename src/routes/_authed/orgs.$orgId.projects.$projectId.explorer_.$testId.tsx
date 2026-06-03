@@ -53,7 +53,7 @@ function TestDetailPage() {
   const next = idx >= 0 && idx < tests.length - 1 ? tests[idx + 1] : undefined;
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-6xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex align="center" justify="between" gap={3}>
         <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
           <Link to="/orgs/$orgId/projects/$projectId/explorer" params={{ orgId, projectId }}>
@@ -187,7 +187,7 @@ function EmptyPanel({ children }: { children: React.ReactNode }) {
 
 function DetailSkeleton() {
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-6xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex align="center" justify="between">
         <Skeleton className="h-8 w-28 rounded-md" />
         <Skeleton className="h-8 w-20 rounded-md" />

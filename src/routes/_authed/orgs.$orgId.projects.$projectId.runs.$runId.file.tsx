@@ -54,7 +54,7 @@ function FileDetailPage() {
   const commit = runData.commitSha ? runData.commitSha.slice(0, 7) : '———';
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       {/* back bar */}
       <Flex align="center" justify="between" gap={3}>
         <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">

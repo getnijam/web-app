@@ -47,10 +47,12 @@ export function Hero() {
 
   return (
     <section ref={sectionRef} onPointerMove={moveOrb} className="relative overflow-hidden">
-      {/* Full-bleed glow layer — spans the whole page width and is clipped to
-          the hero (via the section) so the orb can roam the full width without
-          bleeding into the nav above or the section below. Moved by moveOrb(). */}
+      {/* Full-bleed background: a faint grid + a cursor-following glow that
+          shimmers over it. Spans the whole page width, clipped to the hero by the
+          section's overflow-hidden so it never bleeds into the nav above or the
+          section below. The orb is moved by moveOrb(). */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+        <div className="absolute inset-0 hero-grid" />
         <div
           ref={orbRef}
           className="absolute top-0 left-0 hero-orb transition-transform duration-300 ease-out motion-reduce:transition-none"

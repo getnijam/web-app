@@ -33,7 +33,7 @@ export function RunsListSkeleton({ rows = 6 }: { rows?: number }) {
 /** Full runs page: header + filter bar + list (used while the project loads). */
 export function RunsPageSkeleton() {
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={2}>
         <Skeleton className="h-7 w-40 rounded-md" />
         <Skeleton className="h-4 w-56 rounded-md" />
@@ -51,7 +51,7 @@ export function RunsPageSkeleton() {
 /** Run detail: back bar + header + summary bar + spec-files panel. */
 export function RunDetailSkeleton() {
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex align="center" justify="between">
         <Skeleton className="h-8 w-20 rounded-md" />
         <Skeleton className="h-8 w-40 rounded-md" />
@@ -98,7 +98,7 @@ export function RunDetailSkeleton() {
 /** File detail: back bar + header + a stack of test rows. */
 export function RunFileSkeleton() {
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex align="center" justify="between">
         <Skeleton className="h-8 w-24 rounded-md" />
         <Skeleton className="h-8 w-40 rounded-md" />

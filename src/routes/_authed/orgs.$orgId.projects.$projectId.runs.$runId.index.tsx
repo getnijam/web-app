@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowLeft01Icon, ArrowUpRight01Icon, GitBranchIcon } from '@hugeicons/core-free-icons';
+import {
+  ArrowLeft01Icon,
+  ArrowUpRight01Icon,
+  GitBranchIcon,
+  RefreshIcon,
+} from '@hugeicons/core-free-icons';
 import { getRunOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -36,7 +41,7 @@ function RunDetailPage() {
   const branchHref = gitBranchUrl(run);
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-4xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       {/* back bar */}
       <Flex align="center" justify="between" gap={3}>
         <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
@@ -56,57 +61,67 @@ function RunDetailPage() {
       </Flex>
 
       {/* header */}
-      <Flex direction="col" gap={2}>
-        <Flex align="center" gap={2.5} wrap>
-          <span
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold',
-              pill.cls,
-            )}
-          >
-            <span className={cn('size-1.75 rounded-full', pill.dot)} />
-            {pill.label}
-          </span>
-          <Text variant="code" className="text-lg font-semibold">
-            #{run.commitSha ? run.commitSha.slice(0, 7) : '———'}
-          </Text>
-          {run.shardTotal != null && run.shardTotal > 1 && (
-            <Text
-              as="span"
-              className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground"
+      <Flex align="start" justify="between" gap={4} className="flex-wrap">
+        <Flex direction="col" gap={2}>
+          <Flex align="center" gap={2.5} wrap>
+            <span
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold',
+                pill.cls,
+              )}
             >
-              {run.shardTotal} shards
+              <span className={cn('size-1.75 rounded-full', pill.dot)} />
+              {pill.label}
+            </span>
+            <Text variant="code" className="text-lg font-semibold">
+              #{run.commitSha ? run.commitSha.slice(0, 7) : '———'}
             </Text>
-          )}
-        </Flex>
-        <Flex align="center" gap={2.5} wrap className="text-sm text-muted-foreground">
-          <span>{timeAgo(run.startedAt)}</span>
-          <Flex align="center" gap={1}>
-            <HugeiconsIcon icon={GitBranchIcon} size={14} className="shrink-0" />
-            {run.branch && branchHref ? (
-              <a
-                href={branchHref}
-                target="_blank"
-                rel="noreferrer"
-                className="font-mono transition-colors hover:text-foreground hover:underline"
+            {run.shardTotal != null && run.shardTotal > 1 && (
+              <Text
+                as="span"
+                className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground"
               >
-                {run.branch}
-              </a>
-            ) : (
-              <span className="font-mono">{run.branch ?? 'no branch'}</span>
+                {run.shardTotal} shards
+              </Text>
             )}
           </Flex>
-          <Flex align="center" gap={1.5}>
-            <UserAvatar name={run.authorName} email={author} size="sm" />
-            <span>{author}</span>
-          </Flex>
-          {run.ciProvider && (
+          <Flex align="center" gap={2.5} wrap className="text-sm text-muted-foreground">
+            <span>{timeAgo(run.startedAt)}</span>
             <Flex align="center" gap={1}>
-              <HugeiconsIcon icon={gitProviderIcon(run.ciProvider)} size={14} className="shrink-0" />
-              <span>via {run.ciProvider}</span>
+              <HugeiconsIcon icon={GitBranchIcon} size={14} className="shrink-0" />
+              {run.branch && branchHref ? (
+                <a
+                  href={branchHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono transition-colors hover:text-foreground hover:underline"
+                >
+                  {run.branch}
+                </a>
+              ) : (
+                <span className="font-mono">{run.branch ?? 'no branch'}</span>
+              )}
             </Flex>
-          )}
+            <Flex align="center" gap={1.5}>
+              <UserAvatar name={run.authorName} email={author} size="sm" />
+              <span>{author}</span>
+            </Flex>
+            {run.ciProvider && (
+              <Flex align="center" gap={1}>
+                <HugeiconsIcon
+                  icon={gitProviderIcon(run.ciProvider)}
+                  size={14}
+                  className="shrink-0"
+                />
+                <span>via {run.ciProvider}</span>
+              </Flex>
+            )}
+          </Flex>
         </Flex>
+        <Button variant="outline" size="sm" loading={q.isRefetching} onClick={() => q.refetch()}>
+          {!q.isRefetching && <HugeiconsIcon icon={RefreshIcon} size={15} />}
+          Refresh
+        </Button>
       </Flex>
 
       <RunSummaryBar summary={summary} />
@@ -126,13 +141,7 @@ function RunDetailPage() {
           />
         ) : (
           files.map((f) => (
-            <SpecFileRow
-              key={f.file}
-              file={f}
-              orgId={orgId}
-              projectId={projectId}
-              runId={runId}
-            />
+            <SpecFileRow key={f.file} file={f} orgId={orgId} projectId={projectId} runId={runId} />
           ))
         )}
       </Flex>
