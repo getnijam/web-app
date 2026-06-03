@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 /** Full projects page: header + a grid of project-card skeletons. */
 export function ProjectsSkeleton({ count = 6 }: { count?: number }) {
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-content">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex align="end" justify="between" gap={4} wrap>
         <Flex direction="col" gap={2}>
           <Skeleton className="h-8 w-36 rounded-md" />

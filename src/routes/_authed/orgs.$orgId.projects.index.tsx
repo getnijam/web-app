@@ -1,12 +1,9 @@
 import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { RefreshIcon, PlusSignIcon } from '@hugeicons/core-free-icons';
-import {
-  listOrgProjectsOptions,
-  listOrgProjectsQueryKey,
-} from '@/client/@tanstack/react-query.gen';
+import { listOrgProjectsOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -24,8 +21,9 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/')({
 
 function ProjectsPage() {
   const { orgId } = Route.useParams();
-  const queryClient = useQueryClient();
-  const { data, isLoading, error, refetch } = useQuery(listOrgProjectsOptions({ path: { orgId } }));
+  const { data, isLoading, error, refetch, isRefetching } = useQuery(
+    listOrgProjectsOptions({ path: { orgId } }),
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
 
   if (isLoading) return <ProjectsSkeleton />;
@@ -35,7 +33,7 @@ function ProjectsPage() {
   const failing = projects.filter((p) => p.stats?.status === 'fail').length;
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-content">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex align="end" justify="between" gap={4} wrap>
         <Flex direction="col" gap={1}>
           <Text variant="h1">Projects</Text>
@@ -55,16 +53,9 @@ function ProjectsPage() {
               Failed
             </Flex>
           </Flex>
-          <Button
-            variant="outline"
-            onClick={() =>
-              queryClient.invalidateQueries({
-                queryKey: listOrgProjectsQueryKey({ path: { orgId } }),
-              })
-            }
-          >
-            <HugeiconsIcon icon={RefreshIcon} size={16} />
-            Sync
+          <Button variant="outline" loading={isRefetching} onClick={() => refetch()}>
+            {!isRefetching && <HugeiconsIcon icon={RefreshIcon} size={16} />}
+            Refresh
           </Button>
           <Button onClick={() => setDialogOpen(true)}>
             <HugeiconsIcon icon={PlusSignIcon} size={16} />
