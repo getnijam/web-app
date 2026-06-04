@@ -99,13 +99,7 @@ function TestLine({ t, detail }: { t: SampleTest; detail: PreviewDetail }) {
   );
 }
 
-function MessageBody({
-  state,
-  detail,
-}: {
-  state: PreviewState;
-  detail: PreviewDetail;
-}) {
+function MessageBody({ state, detail }: { state: PreviewState; detail: PreviewDetail }) {
   const m = meta(state);
   const s = SAMPLES[state];
   const shown = detail === 'full' ? s.tests : [];
@@ -137,12 +131,22 @@ function MessageBody({
       )}
 
       <Flex gap={2} className="flex-wrap pt-1">
-        <span className="inline-flex items-center rounded-md bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
+        <Flex
+          as="span"
+          inline
+          align="center"
+          className="rounded-md bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground"
+        >
           View run on Nijam
-        </span>
-        <span className="inline-flex items-center rounded-md border border-border bg-card px-2.5 py-1 text-xs font-semibold text-foreground">
+        </Flex>
+        <Flex
+          as="span"
+          inline
+          align="center"
+          className="rounded-md border border-border bg-card px-2.5 py-1 text-xs font-semibold text-foreground"
+        >
           View workflow ↗
-        </span>
+        </Flex>
       </Flex>
     </Flex>
   );

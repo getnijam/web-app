@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
@@ -15,10 +14,8 @@ import {
   RepeatIcon,
   Settings01Icon,
   Book02Icon,
-  ArrowDown01Icon,
-  Logout01Icon,
 } from '@hugeicons/core-free-icons';
-import { getMeOptions, getProjectOptions } from '@/client/@tanstack/react-query.gen';
+import { getProjectOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import {
@@ -36,10 +33,9 @@ import {
 import { cn } from '@/lib/utils';
 import { glyphFor } from '@/lib/project-glyph';
 import { Logo } from '@/components/auth/Logo';
-import { UserAvatar } from '@/components/users/UserAvatar';
+import { AccountMenu } from '@/components/users/AccountMenu';
 import { OrgSwitcher } from './OrgSwitcher';
 import { useShellNav, initialsFrom, type SubRoute } from './use-shell-nav';
-import { useLogout } from '@/hooks/use-logout';
 
 /**
  * Recolors shadcn's default active treatment to the brand primary and adds the
@@ -231,114 +227,9 @@ function ProjectNav({
   );
 }
 
-function ProfileButton() {
-  // Identity is session-stable; keep it fresh so the topbar gate's cached /me is
-  // reused on mount instead of refetching (login/logout invalidate it explicitly).
-  const me = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 });
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-
-  const logoutMutation = useLogout({ onSuccess: () => navigate({ to: '/login' }) });
-
-  const user = me.data?.user;
-  const email = user?.email ?? '';
-  const name = user?.name ?? (email ? email.split('@')[0] : 'Account');
-
-  return (
-    <div className="relative">
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 bottom-full left-0 z-50 mb-2 rounded-lg border border-border bg-popover p-1.5 shadow-xl">
-            <Flex
-              align="center"
-              gap={2.5}
-              className="mb-1.5 border-b border-border px-2 pt-2 pb-2.5"
-            >
-              <UserAvatar
-                size="sm"
-                className="size-7.5 rounded-full"
-                userId={user?.id}
-                email={email}
-                name={name}
-                hasAvatar={user?.hasAvatar}
-                avatarUpdatedAt={user?.avatarUpdatedAt}
-              />
-              <Flex direction="col" className="min-w-0 leading-tight">
-                <Text as="span" truncate className="text-sm font-semibold">
-                  {name}
-                </Text>
-                <Text as="span" truncate className="text-xs text-muted-foreground">
-                  {email}
-                </Text>
-              </Flex>
-            </Flex>
-            <button
-              type="button"
-              onClick={() => {
-                setOpen(false);
-                navigate({ to: '/account' });
-              }}
-              className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground transition-colors hover:bg-accent"
-            >
-              <HugeiconsIcon icon={Settings01Icon} size={16} strokeWidth={1.8} />
-              Account
-            </button>
-            <button
-              type="button"
-              onClick={() => logoutMutation.mutate()}
-              disabled={logoutMutation.isPending}
-              className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-destructive transition-colors hover:bg-accent disabled:opacity-60"
-            >
-              <HugeiconsIcon icon={Logout01Icon} size={16} strokeWidth={1.8} />
-              Log out
-            </button>
-          </div>
-        </>
-      )}
-
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className={cn(
-          'flex w-full items-center gap-2.5 rounded-lg border border-sidebar-border bg-card p-2 text-left transition-colors',
-          open && 'bg-accent',
-        )}
-      >
-        <UserAvatar
-          size="sm"
-          className="size-8 rounded-full text-sm"
-          userId={user?.id}
-          email={email}
-          name={name}
-          hasAvatar={user?.hasAvatar}
-          avatarUpdatedAt={user?.avatarUpdatedAt}
-        />
-        <Flex direction="col" className="min-w-0 leading-tight">
-          <Text as="span" truncate className="text-sm font-semibold">
-            {name}
-          </Text>
-          <Text as="span" truncate className="text-xs text-muted-foreground">
-            {email}
-          </Text>
-        </Flex>
-        <HugeiconsIcon
-          icon={ArrowDown01Icon}
-          size={16}
-          strokeWidth={1.8}
-          className={cn(
-            'ml-auto shrink-0 text-muted-foreground transition-transform',
-            open && 'rotate-180',
-          )}
-        />
-      </button>
-
-    </div>
-  );
-}
-
 export function AppSidebar() {
   const { orgId, inProject, projectId, active } = useShellNav();
+  const navigate = useNavigate();
 
   return (
     <Sidebar>
@@ -370,7 +261,7 @@ export function AppSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        <ProfileButton />
+        <AccountMenu variant="sidebar" onSignedOut={() => navigate({ to: '/login' })} />
       </SidebarFooter>
 
       <SidebarRail />

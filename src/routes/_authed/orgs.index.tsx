@@ -30,11 +30,17 @@ function OrgsPicker() {
 
   return (
     <Flex direction="col" className="min-h-svh">
-      <Flex as="header" align="center" justify="between" gap={4} className="border-b border-border px-6 py-3">
+      <Flex
+        as="header"
+        align="center"
+        justify="between"
+        gap={4}
+        className="border-b border-border px-6 py-3"
+      >
         <Logo />
         <Flex align="center" gap={2}>
           <ThemeSegmentedControl />
-          {user && <AccountMenu user={user} onSignedOut={() => navigate({ to: '/login' })} />}
+          {user && <AccountMenu variant="topnav" onSignedOut={() => navigate({ to: '/login' })} />}
         </Flex>
       </Flex>
 
@@ -73,11 +79,14 @@ function OrgsPicker() {
           ) : (
             <Flex direction="col" gap={3}>
               {orgs.map((org) => (
-                <Link
+                <Flex
+                  as={Link}
                   key={org.id}
                   to="/orgs/$orgId/projects"
-                  params={{ orgId: org.id }}
-                  className="group flex items-center gap-3 rounded-xl border border-border bg-card p-3 transition-colors hover:border-primary/45 hover:bg-accent"
+                  params={{ orgId: org.id } as never}
+                  align="center"
+                  gap={3}
+                  className="group rounded-xl border border-border bg-card p-3 transition-colors hover:border-primary/45 hover:bg-accent"
                 >
                   <OrgAvatar org={org} />
                   <Flex direction="col" className="min-w-0 flex-1">
@@ -90,7 +99,7 @@ function OrgsPicker() {
                     size={18}
                     className="text-muted-foreground"
                   />
-                </Link>
+                </Flex>
               ))}
               <Button
                 variant="outline"

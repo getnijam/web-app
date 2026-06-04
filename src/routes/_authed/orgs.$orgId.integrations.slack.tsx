@@ -57,14 +57,17 @@ function SlackPage() {
 
   return (
     <Flex direction="col" gap={5} className="mx-auto w-full max-w-5xl">
-      <Link
+      <Flex
+        as={Link}
         to="/orgs/$orgId/integrations"
-        params={{ orgId }}
-        className="flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        params={{ orgId } as never}
+        align="center"
+        gap={1.5}
+        className="w-fit text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
         Integrations
-      </Link>
+      </Flex>
 
       <SlackDetail orgId={orgId} />
     </Flex>

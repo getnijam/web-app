@@ -30,10 +30,13 @@ export function TestRow({
 }) {
   const meta = testStatusMeta(test.status);
   return (
-    <Link
+    <Flex
+      as={Link}
       to="/orgs/$orgId/projects/$projectId/explorer/$testId"
-      params={{ orgId, projectId, testId: test.testId }}
-      className="flex items-center gap-3 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
+      params={{ orgId, projectId, testId: test.testId } as never}
+      align="center"
+      gap={3}
+      className="border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
     >
       <HugeiconsIcon icon={meta.icon} size={18} className={cn('shrink-0', meta.color)} />
       <Flex direction="col" gap={0.5} className="min-w-0 flex-1 leading-tight">
@@ -55,10 +58,10 @@ export function TestRow({
           </span>
         )
       )}
-      <Text as="span" className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
+      <Text as="span" className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
         {formatMs(test.durationMs)}
       </Text>
       <HugeiconsIcon icon={ArrowRight01Icon} size={18} className="shrink-0 text-muted-foreground" />
-    </Link>
+    </Flex>
   );
 }

@@ -67,15 +67,18 @@ function SecretKeysPage() {
             runs, results and traces — they can't read data or change settings.
           </Text>
         </Flex>
-        <a
+        <Flex
+          as="a"
           href="https://docs.nijam.dev/reporter/ci-integration/"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex shrink-0 items-center gap-1 self-center rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent"
+          align="center"
+          gap={1}
+          className="shrink-0 self-center rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent"
         >
           Upload docs
           <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} />
-        </a>
+        </Flex>
       </Flex>
 
       <SettingsPanel title="Keys">

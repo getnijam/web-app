@@ -11,11 +11,12 @@ import {
   deleteMyAvatarMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
+import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { UserAvatar } from '@/components/users/UserAvatar';
-import { SettingsPanel } from '@/components/settings/SettingsPanel';
-import { SettingsRow } from '@/components/settings/SettingsRow';
+import { AccountSection } from '@/components/account/AccountSection';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
@@ -24,7 +25,7 @@ import { notify } from '@/lib/notify';
 const Schema = z.object({ name: z.string().max(80, 'Keep it under 80 characters.').optional() });
 type FormValues = z.infer<typeof Schema>;
 
-/** Profile panel: display picture, name, and the (read-only) sign-in email. */
+/** Profile: display picture, name, and the (read-only) sign-in email. */
 export function ProfileSection({ user }: { user: UserPublic }) {
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -80,30 +81,26 @@ export function ProfileSection({ user }: { user: UserPublic }) {
         save.mutate({ body: { name: name ? name : null } });
       })}
     >
-      <SettingsPanel
+      <AccountSection
         title="Profile"
         footer={
-          <Button type="submit" loading={save.isPending}>
+          <Button type="submit" size="sm" loading={save.isPending}>
             Save changes
           </Button>
         }
       >
-        {formError && (
-          <div className="px-5 pt-4">
-            <ErrorBanner>{formError}</ErrorBanner>
-          </div>
-        )}
+        {formError && <ErrorBanner>{formError}</ErrorBanner>}
 
-        <SettingsRow label="Picture" hint="Shown across Nijam. PNG, JPEG, or WebP, max 2 MB.">
-          <Flex align="center" gap={4} className="w-full md:justify-end">
-            <UserAvatar
-              size="lg"
-              userId={user.id}
-              email={user.email}
-              name={user.name}
-              hasAvatar={user.hasAvatar}
-              avatarUpdatedAt={user.avatarUpdatedAt}
-            />
+        <Flex align="center" gap={4}>
+          <UserAvatar
+            size="lg"
+            userId={user.id}
+            email={user.email}
+            name={user.name}
+            hasAvatar={user.hasAvatar}
+            avatarUpdatedAt={user.avatarUpdatedAt}
+          />
+          <Flex direction="col" gap={2} align="start">
             <input
               ref={fileRef}
               type="file"
@@ -123,7 +120,7 @@ export function ProfileSection({ user }: { user: UserPublic }) {
                 loading={uploadAvatar.isPending}
                 onClick={() => fileRef.current?.click()}
               >
-                Upload
+                Upload picture
               </Button>
               {user.hasAvatar && (
                 <Button
@@ -137,18 +134,26 @@ export function ProfileSection({ user }: { user: UserPublic }) {
                 </Button>
               )}
             </Flex>
+            <Text variant="caption" color="muted">
+              PNG, JPEG, or WebP. Max 2 MB.
+            </Text>
           </Flex>
-        </SettingsRow>
+        </Flex>
 
-        <SettingsRow label="Name">
-          <Input placeholder="Your name" {...form.register('name')} />
+        <Flex direction="col" gap={1.5}>
+          <Label htmlFor="acct-name">Name</Label>
+          <Input id="acct-name" placeholder="Your name" {...form.register('name')} />
           <FieldError message={form.formState.errors.name?.message} />
-        </SettingsRow>
+        </Flex>
 
-        <SettingsRow label="Email" hint="Your sign-in email. It can't be changed.">
-          <Input value={user.email} disabled readOnly />
-        </SettingsRow>
-      </SettingsPanel>
+        <Flex direction="col" gap={1.5}>
+          <Label htmlFor="acct-email">Email</Label>
+          <Input id="acct-email" value={user.email} disabled readOnly />
+          <Text variant="caption" color="muted">
+            Your sign-in email. It can't be changed.
+          </Text>
+        </Flex>
+      </AccountSection>
     </form>
   );
 }

@@ -15,14 +15,16 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-6 py-14">
         <Grid cols={[1, 2, 4]} gap={8}>
           <div className="sm:col-span-2 md:col-span-1">
-            <Link
+            <Flex
+              as={Link}
               to="/"
               hash="top"
               aria-label="Nijam.dev home"
-              className="inline-flex text-background"
+              inline
+              className="text-background"
             >
               <Logo />
-            </Link>
+            </Flex>
             <Text className="mt-3.5 max-w-70 text-sm text-background/60">
               The reporting layer for Playwright. Reads the results your CI already produces — never
               runs your tests.

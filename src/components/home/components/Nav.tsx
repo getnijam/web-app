@@ -61,7 +61,7 @@ export function Nav() {
               <Button asChild size="sm">
                 <Link to="/orgs">Go to dashboard</Link>
               </Button>
-              <AccountMenu user={user} />
+              <AccountMenu variant="topnav" />
             </>
           ) : (
             <>

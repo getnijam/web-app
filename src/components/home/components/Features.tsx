@@ -105,9 +105,14 @@ export function Features() {
             <Text as="h3" className="mt-4 text-base font-semibold tracking-tight">
               {f.title}
               {f.soon && (
-                <span className="ml-2 inline-flex items-center rounded-full border border-info/30 bg-info/10 px-2 py-0.5 align-middle text-xs font-medium text-info">
+                <Flex
+                  as="span"
+                  inline
+                  align="center"
+                  className="ml-2 rounded-full border border-info/30 bg-info/10 px-2 py-0.5 align-middle text-xs font-medium text-info"
+                >
                   Coming soon
-                </span>
+                </Flex>
               )}
             </Text>
             <Text className="mt-2 text-sm text-muted-foreground">{f.body}</Text>

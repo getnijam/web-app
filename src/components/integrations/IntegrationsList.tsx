@@ -120,14 +120,22 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
           <Flex align="center" className="border-b border-border px-5 py-3">
             <Text variant="h4">Connected</Text>
           </Flex>
-          <Link
+          <Flex
+            as={Link}
             to="/orgs/$orgId/integrations/slack"
-            params={{ orgId }}
-            className="flex items-center gap-3.5 px-5 py-4 transition-colors hover:bg-accent"
+            params={{ orgId } as never}
+            align="center"
+            gap={3.5}
+            className="px-5 py-4 transition-colors hover:bg-accent"
           >
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+            <Flex
+              as="span"
+              align="center"
+              justify="center"
+              className="size-9 shrink-0 rounded-lg bg-primary/10"
+            >
               <SlackLogo size={22} />
-            </span>
+            </Flex>
             <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
               <Flex align="center" gap={2}>
                 <Text as="span" className="text-sm font-semibold">
@@ -155,7 +163,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
               size={18}
               className="shrink-0 text-muted-foreground"
             />
-          </Link>
+          </Flex>
         </Flex>
       ) : (
         <Flex
@@ -164,9 +172,14 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
           gap={3}
           className="rounded-2xl border border-border bg-card px-6 py-10 text-center"
         >
-          <span className="flex size-14 items-center justify-center rounded-2xl bg-primary/10">
+          <Flex
+            as="span"
+            align="center"
+            justify="center"
+            className="size-14 rounded-2xl bg-primary/10"
+          >
             <SlackLogo size={32} />
-          </span>
+          </Flex>
           <Text variant="h4">Connect your first integration</Text>
           <Text color="muted" className="max-w-md text-sm">
             Connect Slack to start posting passing, flaky and failing runs straight into your
@@ -186,9 +199,14 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
         <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
           {!connected && (
             <CardRow>
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <Flex
+                as="span"
+                align="center"
+                justify="center"
+                className="size-9 shrink-0 rounded-lg bg-primary/10"
+              >
                 <SlackLogo size={22} />
-              </span>
+              </Flex>
               <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
                 <Text as="span" className="text-sm font-semibold">
                   Slack
@@ -202,9 +220,14 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
           )}
           {COMING_SOON.map((c) => (
             <CardRow key={c.key}>
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+              <Flex
+                as="span"
+                align="center"
+                justify="center"
+                className="size-9 shrink-0 rounded-lg bg-muted"
+              >
                 {c.logo}
-              </span>
+              </Flex>
               <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
                 <Text as="span" className="text-sm font-semibold">
                   {c.name}

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { UnfoldMoreIcon, PlusSignIcon, Building03Icon } from '@hugeicons/core-free-icons';
 import { listOrgsOptions, getOrgOptions } from '@/client/@tanstack/react-query.gen';
+import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
@@ -11,7 +12,7 @@ import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { CreateOrgDialog } from '@/components/orgs/CreateOrgDialog';
 
 const menuItem =
-  'flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent';
+  'w-full rounded-md px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent';
 
 /** Current-org chip + dropdown to switch orgs, create one, or go to the picker. */
 export function OrgSwitcher({ orgId }: { orgId: string }) {
@@ -33,48 +34,62 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
             </Text>
             <Flex direction="col" gap={0.5} className="max-h-64 overflow-y-auto">
               {(list.data?.orgs ?? []).map((o) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={o.id}
                   type="button"
                   onClick={() => {
                     setOpen(false);
                     navigate({ to: '/orgs/$orgId/projects', params: { orgId: o.id } });
                   }}
-                  className={cn(menuItem, o.id === orgId && 'bg-accent')}
+                  className={cn(
+                    'h-auto justify-start gap-2.5',
+                    menuItem,
+                    o.id === orgId && 'bg-accent',
+                  )}
                 >
                   <OrgAvatar org={o} size="sm" />
                   <Text as="span" truncate className="min-w-0 flex-1">
                     {o.name}
                   </Text>
-                </button>
+                </Button>
               ))}
             </Flex>
             <div className="my-1 h-px bg-border" />
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={() => {
                 setOpen(false);
                 setCreateOpen(true);
               }}
-              className={menuItem}
+              className={cn('h-auto justify-start gap-2.5', menuItem)}
               data-testid="create-org-trigger"
             >
               <HugeiconsIcon icon={PlusSignIcon} size={16} className="text-muted-foreground" />
               New organization
-            </button>
-            <Link to="/orgs" onClick={() => setOpen(false)} className={menuItem}>
+            </Button>
+            <Flex
+              as={Link}
+              to="/orgs"
+              onClick={() => setOpen(false)}
+              align="center"
+              gap={2.5}
+              className={menuItem}
+            >
               <HugeiconsIcon icon={Building03Icon} size={16} className="text-muted-foreground" />
               All organizations
-            </Link>
+            </Flex>
           </div>
         </>
       )}
 
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          'flex w-full items-center gap-2.5 rounded-lg p-2 text-left transition-colors hover:bg-sidebar-accent',
+          'h-auto w-full justify-start gap-2.5 rounded-lg p-2 text-left hover:bg-sidebar-accent',
           open && 'bg-sidebar-accent',
         )}
       >
@@ -92,7 +107,7 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
           </Text>
         </Flex>
         <HugeiconsIcon icon={UnfoldMoreIcon} size={16} className="shrink-0 text-muted-foreground" />
-      </button>
+      </Button>
 
       <CreateOrgDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>

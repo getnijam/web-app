@@ -342,10 +342,13 @@ function SlackDetailInner({
                     className="gap-2"
                   >
                     {TRIGGERS.map((t) => (
-                      <label
+                      <Flex
+                        as="label"
                         key={t.key}
+                        align="start"
+                        gap={3}
                         className={cn(
-                          'flex items-start gap-3 rounded-xl border border-border px-4 py-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5',
+                          'rounded-xl border border-border px-4 py-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5',
                           isAdmin && 'cursor-pointer',
                         )}
                       >
@@ -358,7 +361,7 @@ function SlackDetailInner({
                             {t.desc}
                           </Text>
                         </Flex>
-                      </label>
+                      </Flex>
                     ))}
                   </RadioGroup>
                 </div>

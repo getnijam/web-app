@@ -66,7 +66,9 @@ export function RunRow({
     onError: (err) => {
       setDeleteOpen(false);
       notify.error("Couldn't delete run", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       });
     },
   });
@@ -95,15 +97,16 @@ export function RunRow({
               <Text as="span" variant="code" className="font-medium">
                 #{run.commitSha ? run.commitSha.slice(0, 7) : '———'}
               </Text>
-              <span
-                className={cn(
-                  'inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold',
-                  pill.cls,
-                )}
+              <Flex
+                as="span"
+                inline
+                align="center"
+                gap={1.5}
+                className={cn('shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold', pill.cls)}
               >
                 <span className={cn('size-1.75 rounded-full', pill.dot)} />
                 {pill.label}
-              </span>
+              </Flex>
               {run.shardTotal != null && run.shardTotal > 1 && (
                 <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
                   {run.shardTotal} shards
@@ -130,7 +133,7 @@ export function RunRow({
 
           <Flex align="center" gap={4} className="shrink-0">
             {dur !== null && (
-              <Text as="span" className="font-mono text-xs tabular-nums text-muted-foreground">
+              <Text as="span" className="font-mono text-xs text-muted-foreground tabular-nums">
                 {formatDuration(dur)}
               </Text>
             )}

@@ -69,15 +69,15 @@ function ScopeCard({
   onSelect: () => void;
 }) {
   return (
-    <button
+    <Button
+      variant="ghost"
       type="button"
       disabled={disabled}
       onClick={onSelect}
       className={cn(
-        'relative flex flex-col gap-1.5 rounded-xl border p-3.5 text-left transition-colors',
-        'disabled:cursor-not-allowed disabled:opacity-50',
+        'relative h-auto w-full flex-col items-start justify-start gap-1.5 rounded-xl border p-3.5 text-left',
         selected
-          ? 'border-primary bg-primary/8 ring-1 ring-primary'
+          ? 'border-primary bg-primary/8 ring-1 ring-primary hover:bg-primary/8'
           : 'border-border hover:border-primary/40 hover:bg-accent',
       )}
     >
@@ -102,7 +102,7 @@ function ScopeCard({
       <Text as="span" className="text-xs text-muted-foreground">
         {description}
       </Text>
-    </button>
+    </Button>
   );
 }
 
@@ -126,7 +126,10 @@ export function CreateSecretKeyDialog({
   const [copied, setCopied] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const form = useForm<CreateForm>({ resolver: zodResolver(CreateSchema), defaultValues: { name: '' } });
+  const form = useForm<CreateForm>({
+    resolver: zodResolver(CreateSchema),
+    defaultValues: { name: '' },
+  });
   const name = form.watch('name');
 
   function reset() {
@@ -146,7 +149,9 @@ export function CreateSecretKeyDialog({
   const mutation = useMutation({
     ...createSecretKeyMutation(),
     onSuccess: async (res) => {
-      await queryClient.invalidateQueries({ queryKey: listSecretKeysQueryKey({ path: { orgId } }) });
+      await queryClient.invalidateQueries({
+        queryKey: listSecretKeysQueryKey({ path: { orgId } }),
+      });
       setCreated(res);
       setStep('reveal');
     },
@@ -154,7 +159,9 @@ export function CreateSecretKeyDialog({
       if (isApiError(err) && err.error.field) {
         form.setError('name', { message: err.error.message });
       } else {
-        setFormError(isApiError(err) ? err.error.message : 'Could not create the key. Please try again.');
+        setFormError(
+          isApiError(err) ? err.error.message : 'Could not create the key. Please try again.',
+        );
       }
     },
   });
@@ -282,7 +289,12 @@ export function CreateSecretKeyDialog({
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" form="create-key-form" loading={mutation.isPending} disabled={!canSubmit}>
+              <Button
+                type="submit"
+                form="create-key-form"
+                loading={mutation.isPending}
+                disabled={!canSubmit}
+              >
                 Create key
               </Button>
             </DialogFooter>
@@ -302,7 +314,12 @@ export function CreateSecretKeyDialog({
                   <Label>Your new secret key</Label>
                   <Flex gap={2}>
                     <Input readOnly value={created.token} className="font-mono" />
-                    <Button type="button" variant="outline" onClick={copyToken} className="shrink-0">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={copyToken}
+                      className="shrink-0"
+                    >
                       <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} size={15} />
                       {copied ? 'Copied' : 'Copy'}
                     </Button>

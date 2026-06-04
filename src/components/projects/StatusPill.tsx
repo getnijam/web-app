@@ -1,3 +1,4 @@
+import { Flex } from '@/components/ui/flex';
 import { cn } from '@/lib/utils';
 
 export type PillStatus = 'pass' | 'fail' | 'flaky' | 'new';
@@ -12,14 +13,15 @@ const MAP: Record<PillStatus, { label: string; cls: string; dot: string }> = {
 export function StatusPill({ status }: { status: PillStatus }) {
   const { label, cls, dot } = MAP[status];
   return (
-    <span
-      className={cn(
-        'inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.75 text-xs font-semibold',
-        cls,
-      )}
+    <Flex
+      as="span"
+      inline
+      align="center"
+      gap={1.5}
+      className={cn('shrink-0 rounded-full px-2 py-0.75 text-xs font-semibold', cls)}
     >
       <span className={cn('size-1.75 rounded-full', dot)} />
       {label}
-    </span>
+    </Flex>
   );
 }

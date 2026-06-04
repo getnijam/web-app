@@ -70,15 +70,16 @@ function RunDetailPage() {
       <Flex align="start" justify="between" gap={4} className="flex-wrap">
         <Flex direction="col" gap={2}>
           <Flex align="center" gap={2.5} wrap>
-            <span
-              className={cn(
-                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold',
-                pill.cls,
-              )}
+            <Flex
+              as="span"
+              inline
+              align="center"
+              gap={1.5}
+              className={cn('rounded-full px-2.5 py-1 text-xs font-semibold', pill.cls)}
             >
               <span className={cn('size-1.75 rounded-full', pill.dot)} />
               {pill.label}
-            </span>
+            </Flex>
             <Text variant="code" className="text-lg font-semibold">
               #{run.commitSha ? run.commitSha.slice(0, 7) : '———'}
             </Text>

@@ -27,9 +27,7 @@ import { gitFileUrl } from '@/lib/git';
 import { cn } from '@/lib/utils';
 import { privateSeo } from '@/lib/seo';
 
-export const Route = createFileRoute(
-  '/_authed/orgs/$orgId/projects/$projectId/explorer_/$testId',
-)({
+export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/explorer_/$testId')({
   head: () => privateSeo('Test detail'),
   component: TestDetailPage,
 });
@@ -87,14 +85,14 @@ function TestDetailPage() {
               </>
             )}
             <span>·</span>
-            <span
-              className={cn(
-                'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold',
-                meta.pill,
-              )}
+            <Flex
+              as="span"
+              inline
+              align="center"
+              className={cn('rounded-full px-2 py-0.5 text-xs font-semibold', meta.pill)}
             >
               {meta.label}
-            </span>
+            </Flex>
           </Flex>
         </Flex>
         {viewSrc && (
@@ -161,13 +159,10 @@ function SourcePanel({ source, test }: { source: TestSourceRef | null; test: Tes
     return <EmptyPanel>Source not uploaded — enable uploadSource in the reporter.</EmptyPanel>;
   }
   if (src.isLoading) return <Skeleton className="h-96 w-full rounded-2xl" />;
-  if (src.error || !src.data) return <EmptyPanel>Source not available for this version.</EmptyPanel>;
+  if (src.error || !src.data)
+    return <EmptyPanel>Source not available for this version.</EmptyPanel>;
   return (
-    <CodeBlock
-      code={src.data.content}
-      name={displayFile(test.file)}
-      highlightLine={source.line}
-    />
+    <CodeBlock code={src.data.content} name={displayFile(test.file)} highlightLine={source.line} />
   );
 }
 

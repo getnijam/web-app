@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { client } from '@/client/client.gen';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import { Flex } from '@/components/ui/flex';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
 import { LoadingState } from '@/components/states/LoadingState';
@@ -34,9 +35,9 @@ const router = createRouter({
   // Covers the window after React mounts while the auth gate (/v1/auth/me) and
   // route loaders resolve — so a refresh shows a spinner, never a blank screen.
   defaultPendingComponent: () => (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <Flex align="center" justify="center" className="min-h-screen bg-background">
       <LoadingState message={null} />
-    </div>
+    </Flex>
   ),
   defaultPendingMs: 0,
   // Route render/loader crashes: report to Sentry + show a full-page error.

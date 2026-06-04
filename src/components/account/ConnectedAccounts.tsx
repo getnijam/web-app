@@ -11,7 +11,7 @@ import {
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
-import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { AccountSection } from '@/components/account/AccountSection';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 
@@ -27,7 +27,9 @@ export function ConnectedAccounts({ user }: { user: UserPublic }) {
   const queryClient = useQueryClient();
   const accountsQuery = useQuery(listMyOAuthAccountsOptions());
   const accounts = accountsQuery.data?.accounts ?? [];
-  const next = '/account';
+  // Return to the current page after the connect round-trip; the account menu mounted
+  // there re-opens this dialog (via ?connected / ?connectError).
+  const next = window.location.pathname;
 
   const unlink = useMutation({
     ...unlinkMyOAuthAccountMutation(),
@@ -49,70 +51,56 @@ export function ConnectedAccounts({ user }: { user: UserPublic }) {
   // The account's only way to sign in: no password and a single linked provider.
   const onlyMethod = !user.hasPassword && accounts.length <= 1;
 
-  if (accountsQuery.isLoading) {
-    return (
-      <SettingsPanel title="Connected accounts">
-        <Flex justify="center" className="px-5 py-8">
-          <Text color="muted" className="text-sm">
-            Loading…
-          </Text>
-        </Flex>
-      </SettingsPanel>
-    );
-  }
-
   return (
-    <SettingsPanel title="Connected accounts">
-      {PROVIDERS.map((p) => {
-        const linked = accounts.find((a) => a.provider === p.id);
-        const isLastMethod = onlyMethod && Boolean(linked);
-        return (
-          <Flex
-            key={p.id}
-            align="center"
-            justify="between"
-            gap={4}
-            className="border-b border-border px-5 py-4 last:border-b-0"
-          >
-            <Flex align="center" gap={3} className="min-w-0">
-              <HugeiconsIcon icon={p.icon} size={22} className="shrink-0" />
-              <Flex direction="col" className="min-w-0">
-                <Text as="span" className="text-sm font-semibold">
-                  {p.label}
-                </Text>
-                <Text as="span" truncate className="text-xs text-muted-foreground">
-                  {linked ? linked.email : 'Not connected'}
-                </Text>
+    <AccountSection title="Connected accounts">
+      {accountsQuery.isLoading ? (
+        <Text color="muted" className="text-sm">
+          Loading…
+        </Text>
+      ) : (
+        PROVIDERS.map((p) => {
+          const linked = accounts.find((a) => a.provider === p.id);
+          const isLastMethod = onlyMethod && Boolean(linked);
+          return (
+            <Flex key={p.id} align="center" justify="between" gap={3}>
+              <Flex align="center" gap={3} className="min-w-0">
+                <HugeiconsIcon icon={p.icon} size={20} className="shrink-0" />
+                <Flex direction="col" className="min-w-0">
+                  <Text as="span" className="text-sm font-medium">
+                    {p.label}
+                  </Text>
+                  <Text as="span" truncate className="text-xs text-muted-foreground">
+                    {linked ? linked.email : 'Not connected'}
+                  </Text>
+                </Flex>
               </Flex>
+              {linked ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isLastMethod}
+                  loading={unlink.isPending && unlink.variables?.path.provider === p.id}
+                  onClick={() => unlink.mutate({ path: { provider: p.id } })}
+                >
+                  Disconnect
+                </Button>
+              ) : (
+                <Button asChild variant="outline" size="sm">
+                  <a href={`${API_BASE}/v1/auth/oauth/${p.id}/link?next=${encodeURIComponent(next)}`}>
+                    Connect
+                  </a>
+                </Button>
+              )}
             </Flex>
-            {linked ? (
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={isLastMethod}
-                loading={unlink.isPending && unlink.variables?.path.provider === p.id}
-                onClick={() => unlink.mutate({ path: { provider: p.id } })}
-              >
-                Disconnect
-              </Button>
-            ) : (
-              <Button asChild variant="outline" size="sm">
-                <a href={`${API_BASE}/v1/auth/oauth/${p.id}/link?next=${encodeURIComponent(next)}`}>
-                  Connect
-                </a>
-              </Button>
-            )}
-          </Flex>
-        );
-      })}
+          );
+        })
+      )}
 
       {onlyMethod && accounts.length > 0 && (
-        <Flex className="px-5 py-3">
-          <Text className="text-xs text-muted-foreground">
-            This is your only way to sign in — set a password above before disconnecting it.
-          </Text>
-        </Flex>
+        <Text className="text-xs text-muted-foreground">
+          This is your only way to sign in — set a password above before disconnecting it.
+        </Text>
       )}
-    </SettingsPanel>
+    </AccountSection>
   );
 }

@@ -37,9 +37,14 @@ function Row({
             <Text className="text-xs font-semibold tracking-wide text-primary uppercase">
               {kicker}
               {soon && (
-                <span className="ml-2 inline-flex items-center rounded-full border border-info/30 bg-info/10 px-2 py-0.5 align-middle text-xs font-medium tracking-normal text-info normal-case">
+                <Flex
+                  as="span"
+                  inline
+                  align="center"
+                  className="ml-2 rounded-full border border-info/30 bg-info/10 px-2 py-0.5 align-middle text-xs font-medium tracking-normal text-info normal-case"
+                >
                   Coming soon
-                </span>
+                </Flex>
               )}
             </Text>
             <Text
@@ -51,14 +56,14 @@ function Row({
             <Text className="mt-3.5 max-w-md text-base text-muted-foreground">{body}</Text>
             <ul className="mt-5 space-y-2.5">
               {items.map((it, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-sm">
+                <Flex as="li" key={i} align="start" gap={2.5} className="text-sm">
                   <HugeiconsIcon
                     icon={Tick02Icon}
                     size={18}
                     className="mt-0.5 shrink-0 text-success"
                   />
                   {it}
-                </li>
+                </Flex>
               ))}
             </ul>
           </div>

@@ -8,16 +8,22 @@ const ERROR = `Error: expect(received).toHaveText(expected)
   Received: "$79.00"
     at order-total (checkout.spec.ts:42)`;
 
-const CHIP = 'inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs';
+const CHIP = 'rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs';
 
 export function FailureCard() {
   return (
     <div className="rounded-2xl border border-border bg-card p-4.5 shadow-sm">
       <Flex align="center" gap={2.5} className="mb-3">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-semibold text-destructive">
+        <Flex
+          as="span"
+          inline
+          align="center"
+          gap={1.5}
+          className="rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-semibold text-destructive"
+        >
           <span className="size-1.5 rounded-full bg-destructive" />
           Failed
-        </span>
+        </Flex>
         <Text as="span" className="font-mono text-sm font-semibold">
           checkout.spec.ts
         </Text>
@@ -28,12 +34,16 @@ export function FailureCard() {
       </pre>
 
       <Flex gap={2} wrap className="mt-3">
-        <span className={CHIP}>
+        <Flex as="span" inline align="center" gap={1.5} className={CHIP}>
           <HugeiconsIcon icon={WorkflowSquare01Icon} size={14} className="text-muted-foreground" />
           trace.zip
-        </span>
-        <span className={CHIP}>2 screenshots</span>
-        <span className={CHIP}>video.webm</span>
+        </Flex>
+        <Flex as="span" inline align="center" gap={1.5} className={CHIP}>
+          2 screenshots
+        </Flex>
+        <Flex as="span" inline align="center" gap={1.5} className={CHIP}>
+          video.webm
+        </Flex>
       </Flex>
 
       <Flex

@@ -17,10 +17,13 @@ export function ProjectCard({ project, orgId }: { project: ProjectSummary; orgId
   const hasRuns = stats !== null && project.chartRuns.length > 0;
 
   return (
-    <Link
+    <Flex
+      as={Link}
       to="/orgs/$orgId/projects/$projectId/runs"
-      params={{ orgId, projectId: project.id }}
-      className="group flex flex-col gap-3.5 rounded-2xl border border-border bg-card p-4.5 transition-all hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg"
+      params={{ orgId, projectId: project.id } as never}
+      direction="col"
+      gap={3.5}
+      className="group rounded-2xl border border-border bg-card p-4.5 transition-all hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg"
     >
       {/* header */}
       <Flex align="start" gap={3}>
@@ -117,6 +120,6 @@ export function ProjectCard({ project, orgId }: { project: ProjectSummary; orgId
         )}
         <span className="ml-auto text-xs">{formatDate(project.createdAt)}</span>
       </Flex>
-    </Link>
+    </Flex>
   );
 }

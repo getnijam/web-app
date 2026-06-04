@@ -71,9 +71,14 @@ function PlanCard({ plan }: { plan: Plan }) {
           {plan.name}
         </Text>
         {plan.featured && (
-          <span className="inline-flex items-center rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
+          <Flex
+            as="span"
+            inline
+            align="center"
+            className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary"
+          >
             Most popular
-          </span>
+          </Flex>
         )}
       </Flex>
 
@@ -86,7 +91,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         </Text>
       </Flex>
 
-      <Text className="mt-3 text-sm text-muted-foreground text-pretty">{plan.blurb}</Text>
+      <Text className="mt-3 text-sm text-pretty text-muted-foreground">{plan.blurb}</Text>
 
       <Button
         asChild
@@ -124,7 +129,7 @@ export function Pricing() {
         <Text as="h2" className="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
           Start free. Upgrade when your suite grows.
         </Text>
-        <Text className="mt-3.5 text-lg text-muted-foreground text-pretty">
+        <Text className="mt-3.5 text-lg text-pretty text-muted-foreground">
           One simple plan when you outgrow the free tier — no per-seat pricing, no surprises. You're
           only charged for the test volume you actually report.
         </Text>
@@ -138,7 +143,10 @@ export function Pricing() {
         ))}
       </Grid>
 
-      <Text align="center" className="mx-auto mt-8 max-w-xl text-xs text-muted-foreground text-pretty">
+      <Text
+        align="center"
+        className="mx-auto mt-8 max-w-xl text-xs text-pretty text-muted-foreground"
+      >
         Prices shown in USD and billed monthly. At checkout you're charged in your local currency
         with taxes handled for you. One test result = one reported test attempt (retries and shards
         count).

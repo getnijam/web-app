@@ -5,6 +5,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { FileZipIcon, ArrowUpRight01Icon, PlayIcon } from '@hugeicons/core-free-icons';
 import type { ArtifactSummary } from '@/client';
 import { getArtifactUrlOptions } from '@/client/@tanstack/react-query.gen';
+import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { isApiError } from '@/lib/api-error';
@@ -49,7 +50,9 @@ export function ArtifactsRow({
     } catch (err) {
       win?.close();
       notify.error("Couldn't open trace", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       });
     } finally {
       setLoadingId(null);
@@ -63,12 +66,14 @@ export function ArtifactsRow({
       </Text>
       <Flex gap={2.5} wrap align="center">
         {traces.map((t) => (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             key={t.id}
             type="button"
             disabled={loadingId === t.id}
             onClick={() => openTrace(t.id)}
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs transition-colors hover:bg-accent disabled:opacity-60"
+            className="h-auto gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs hover:bg-accent disabled:opacity-60"
           >
             <HugeiconsIcon icon={FileZipIcon} size={15} className="text-muted-foreground" />
             <span className="font-mono">View trace</span>
@@ -76,9 +81,13 @@ export function ArtifactsRow({
             {loadingId === t.id ? (
               <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
             ) : (
-              <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} className="text-muted-foreground" />
+              <HugeiconsIcon
+                icon={ArrowUpRight01Icon}
+                size={14}
+                className="text-muted-foreground"
+              />
             )}
-          </button>
+          </Button>
         ))}
 
         {screenshots.map((s) => (

@@ -44,7 +44,7 @@ export function RunHistory({
         <Text as="span" className="text-sm font-semibold">
           Run history
         </Text>
-        <Text as="span" className="shrink-0 text-xs tabular-nums text-muted-foreground">
+        <Text as="span" className="shrink-0 text-xs text-muted-foreground tabular-nums">
           {passed} / {history.length} passed
         </Text>
       </Flex>
@@ -56,10 +56,7 @@ export function RunHistory({
             <span
               key={h.runId}
               title={`${h.status} · ${timeAgo(h.startedAt)}`}
-              className={cn(
-                'h-8 max-w-2.5 flex-1 rounded-full',
-                STATUS_BG[h.status] ?? 'bg-muted',
-              )}
+              className={cn('h-8 max-w-2.5 flex-1 rounded-full', STATUS_BG[h.status] ?? 'bg-muted')}
             />
           ))}
         </Flex>
@@ -68,12 +65,15 @@ export function RunHistory({
       {newest.map((h) => {
         const meta = testStatusMeta(h.status);
         return (
-          <Link
+          <Flex
+            as={Link}
             key={h.runId}
             to="/orgs/$orgId/projects/$projectId/runs/$runId/file"
-            params={{ orgId, projectId, runId: h.runId }}
-            search={{ path: file }}
-            className="flex items-stretch gap-3 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
+            params={{ orgId, projectId, runId: h.runId } as never}
+            search={{ path: file } as never}
+            align="stretch"
+            gap={3}
+            className="border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
           >
             <span className={cn('w-1 shrink-0 rounded-full', STATUS_BG[h.status] ?? 'bg-muted')} />
             <Flex direction="col" gap={1} className="min-w-0 flex-1">
@@ -82,17 +82,17 @@ export function RunHistory({
                   #{h.commitSha ? h.commitSha.slice(0, 7) : '———'}
                 </Text>
                 <Flex align="center" gap={2.5} className="shrink-0">
-                  <span className="font-mono text-xs tabular-nums text-muted-foreground">
+                  <span className="font-mono text-xs text-muted-foreground tabular-nums">
                     {formatMs(h.durationMs)}
                   </span>
-                  <span
-                    className={cn(
-                      'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold',
-                      meta.pill,
-                    )}
+                  <Flex
+                    as="span"
+                    inline
+                    align="center"
+                    className={cn('rounded-full px-2 py-0.5 text-xs font-semibold', meta.pill)}
                   >
                     {meta.label}
-                  </span>
+                  </Flex>
                 </Flex>
               </Flex>
               <span className="text-xs text-muted-foreground">{formatDateTime(h.startedAt)}</span>
@@ -101,7 +101,7 @@ export function RunHistory({
                 <span className="truncate font-mono">{h.branch ?? 'no branch'}</span>
               </Flex>
             </Flex>
-          </Link>
+          </Flex>
         );
       })}
     </Flex>

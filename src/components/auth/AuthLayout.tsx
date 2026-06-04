@@ -13,13 +13,15 @@ export function AuthLayout({ children }: { children: ReactNode }) {
     <Grid cols={[1, 1, 1, 2]} className="min-h-svh">
       <Flex direction="col" className="px-6 py-10 sm:px-10">
         <Flex align="center" justify="between" gap={4}>
-          <Link
+          <Flex
+            as={Link}
             to="/"
             aria-label="Nijam.dev home"
-            className="inline-flex w-fit rounded-md transition-opacity hover:opacity-80"
+            inline
+            className="w-fit rounded-md transition-opacity hover:opacity-80"
           >
             <Logo />
-          </Link>
+          </Flex>
           <ThemeSegmentedControl />
         </Flex>
         <Flex

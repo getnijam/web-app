@@ -36,11 +36,14 @@ export function SpecFileRow({
 }) {
   const st = fileStatus(file);
   return (
-    <Link
+    <Flex
+      as={Link}
       to="/orgs/$orgId/projects/$projectId/runs/$runId/file"
-      params={{ orgId, projectId, runId }}
-      search={{ path: file.file }}
-      className="flex items-center gap-3 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
+      params={{ orgId, projectId, runId } as never}
+      search={{ path: file.file } as never}
+      align="center"
+      gap={3}
+      className="border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
     >
       <Flex
         align="center"
@@ -59,6 +62,6 @@ export function SpecFileRow({
         skipped={file.skipped}
       />
       <HugeiconsIcon icon={ArrowRight01Icon} size={18} className="shrink-0 text-muted-foreground" />
-    </Link>
+    </Flex>
   );
 }

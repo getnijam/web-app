@@ -68,9 +68,13 @@ export function ProductMock() {
         <span className="size-2.75 rounded-full bg-destructive/70" />
         <span className="size-2.75 rounded-full bg-warning/70" />
         <span className="size-2.75 rounded-full bg-success/70" />
-        <span className="ml-2.5 flex h-6 flex-1 items-center rounded-md border border-border bg-background px-2.5 font-mono text-xs text-muted-foreground">
+        <Flex
+          as="span"
+          align="center"
+          className="ml-2.5 h-6 flex-1 rounded-md border border-border bg-background px-2.5 font-mono text-xs text-muted-foreground"
+        >
           nijam.dev/p/web-checkout/runs
-        </span>
+        </Flex>
       </Flex>
 
       <div className="p-4">
@@ -95,7 +99,9 @@ export function ProductMock() {
               </Text>
               <Text as="p" className="mt-0.5 text-2xl font-bold tracking-tight">
                 {m.v}
-                {m.s && <small className="text-sm font-semibold text-muted-foreground">{m.s}</small>}
+                {m.s && (
+                  <small className="text-sm font-semibold text-muted-foreground">{m.s}</small>
+                )}
               </Text>
             </div>
           ))}
@@ -127,12 +133,16 @@ export function ProductMock() {
                   {r.time}
                 </Text>
               </div>
-              <Flex align="center" gap={2} className="ml-auto text-xs text-muted-foreground tabular-nums">
+              <Flex
+                align="center"
+                gap={2}
+                className="ml-auto text-xs text-muted-foreground tabular-nums"
+              >
                 {r.counts.map((c, i) => (
-                  <span key={i} className="inline-flex items-center gap-1">
+                  <Flex as="span" key={i} inline align="center" gap={1}>
                     <span className={cn('size-1.75 rounded-full', c.dot)} />
                     {c.n}
-                  </span>
+                  </Flex>
                 ))}
                 <span className={cn('rounded-full px-2 py-0.5 text-xs font-semibold', r.pill)}>
                   {r.label}

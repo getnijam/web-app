@@ -1,6 +1,7 @@
 import { Bar, BarChart } from 'recharts';
 import type { RunBar } from '@/client';
 import { ChartContainer, ChartTooltip, type ChartConfig } from '@/components/ui/chart';
+import { Flex } from '@/components/ui/flex';
 import { formatDuration } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -40,7 +41,12 @@ export function RunChart({ runs, height = 78 }: { runs: RunBar[]; height?: numbe
         <Bar dataKey="passed" stackId="run" fill="var(--color-passed)" isAnimationActive={false} />
         <Bar dataKey="flaky" stackId="run" fill="var(--color-flaky)" isAnimationActive={false} />
         <Bar dataKey="failed" stackId="run" fill="var(--color-failed)" isAnimationActive={false} />
-        <Bar dataKey="skipped" stackId="run" fill="var(--color-skipped)" isAnimationActive={false} />
+        <Bar
+          dataKey="skipped"
+          stackId="run"
+          fill="var(--color-skipped)"
+          isAnimationActive={false}
+        />
         <ChartTooltip cursor content={<RunTooltip />} />
       </BarChart>
     </ChartContainer>
@@ -69,12 +75,12 @@ function RunTooltip({
         <TipRow dotClass="bg-muted-foreground" label="Skipped" value={run.skipped} />
       )}
       {run.durationSec !== null && (
-        <div className="mt-1 flex items-center gap-1.5 text-muted-foreground">
+        <Flex align="center" gap={1.5} className="mt-1 text-muted-foreground">
           Duration
           <b className="ml-auto font-semibold text-foreground tabular-nums">
             {formatDuration(run.durationSec)}
           </b>
-        </div>
+        </Flex>
       )}
     </div>
   );
@@ -82,10 +88,10 @@ function RunTooltip({
 
 function TipRow({ dotClass, label, value }: { dotClass: string; label: string; value: number }) {
   return (
-    <div className="flex items-center gap-1.5 leading-relaxed">
+    <Flex align="center" gap={1.5} className="leading-relaxed">
       <span className={cn('size-2 rounded-sm', dotClass)} />
       {label}
       <b className="ml-auto font-semibold tabular-nums">{value}</b>
-    </div>
+    </Flex>
   );
 }

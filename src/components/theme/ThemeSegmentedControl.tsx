@@ -1,5 +1,7 @@
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Sun03Icon, Moon02Icon, ComputerIcon } from '@hugeicons/core-free-icons';
+import { Button } from '@/components/ui/button';
+import { Flex } from '@/components/ui/flex';
 import { cn } from '@/lib/utils';
 import { useTheme, THEMES, type Theme } from '@/components/theme/ThemeProvider';
 
@@ -28,31 +30,34 @@ export function ThemeSegmentedControl({
     const opt = OPTIONS[idx];
     const next = THEMES[(idx + 1) % THEMES.length] ?? 'light';
     return (
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         type="button"
         aria-label={`Theme: ${opt?.label ?? 'System'}. Switch to ${next}.`}
         title={`Theme: ${opt?.label ?? 'System'}`}
         onClick={() => setTheme(next)}
-        className={cn(
-          'inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-none',
-          className,
-        )}
+        className={cn('size-9 rounded-md text-muted-foreground', className)}
       >
         <HugeiconsIcon icon={opt?.icon ?? ComputerIcon} size={18} strokeWidth={1.8} />
-      </button>
+      </Button>
     );
   }
 
   return (
-    <div
+    <Flex
+      inline
       role="radiogroup"
       aria-label="Theme"
-      className={cn('inline-flex gap-0.5 rounded-lg bg-muted p-0.75', className)}
+      gap={0.5}
+      className={cn('rounded-lg bg-muted p-0.75', className)}
     >
       {OPTIONS.map(({ value, label, icon }) => {
         const active = theme === value;
         return (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             key={value}
             type="button"
             role="radio"
@@ -60,17 +65,17 @@ export function ThemeSegmentedControl({
             title={label}
             onClick={() => setTheme(value)}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm font-medium transition-colors',
+              'h-auto gap-1.5 rounded-md px-2.5 py-1 text-sm font-medium',
               active
-                ? 'bg-background font-semibold text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground',
+                ? 'bg-background font-semibold text-foreground shadow-sm hover:bg-background'
+                : 'text-muted-foreground hover:bg-transparent hover:text-foreground',
             )}
           >
             <HugeiconsIcon icon={icon} size={15} strokeWidth={1.8} />
             {active && <span>{label}</span>}
-          </button>
+          </Button>
         );
       })}
-    </div>
+    </Flex>
   );
 }

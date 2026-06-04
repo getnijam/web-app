@@ -5,11 +5,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { UserPublic } from '@/client';
 import { getMeQueryKey, updateMyPasswordMutation } from '@/client/@tanstack/react-query.gen';
-import { Text } from '@/components/ui/text';
+import { Flex } from '@/components/ui/flex';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SettingsPanel } from '@/components/settings/SettingsPanel';
-import { SettingsRow } from '@/components/settings/SettingsRow';
+import { Label } from '@/components/ui/label';
+import { AccountSection } from '@/components/account/AccountSection';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
@@ -69,45 +69,56 @@ export function PasswordSection({ user }: { user: UserPublic }) {
         });
       })}
     >
-      <SettingsPanel
+      <AccountSection
         title="Password"
+        description={
+          user.hasPassword
+            ? undefined
+            : 'You sign in with Google or GitHub. Set a password to also sign in with your email.'
+        }
         footer={
-          <Button type="submit" loading={save.isPending}>
+          <Button type="submit" size="sm" loading={save.isPending}>
             {user.hasPassword ? 'Change password' : 'Set password'}
           </Button>
         }
       >
-        {formError && (
-          <div className="px-5 pt-4">
-            <ErrorBanner>{formError}</ErrorBanner>
-          </div>
-        )}
-
-        {!user.hasPassword && (
-          <div className="px-5 pt-4">
-            <Text className="text-sm text-muted-foreground">
-              You sign in with Google or GitHub. Set a password to also sign in with your email.
-            </Text>
-          </div>
-        )}
+        {formError && <ErrorBanner>{formError}</ErrorBanner>}
 
         {user.hasPassword && (
-          <SettingsRow label="Current password">
-            <Input type="password" autoComplete="current-password" {...form.register('currentPassword')} />
+          <Flex direction="col" gap={1.5}>
+            <Label htmlFor="acct-current-pw">Current password</Label>
+            <Input
+              id="acct-current-pw"
+              type="password"
+              autoComplete="current-password"
+              {...form.register('currentPassword')}
+            />
             <FieldError message={form.formState.errors.currentPassword?.message} />
-          </SettingsRow>
+          </Flex>
         )}
 
-        <SettingsRow label="New password">
-          <Input type="password" autoComplete="new-password" {...form.register('newPassword')} />
+        <Flex direction="col" gap={1.5}>
+          <Label htmlFor="acct-new-pw">New password</Label>
+          <Input
+            id="acct-new-pw"
+            type="password"
+            autoComplete="new-password"
+            {...form.register('newPassword')}
+          />
           <FieldError message={form.formState.errors.newPassword?.message} />
-        </SettingsRow>
+        </Flex>
 
-        <SettingsRow label="Confirm new password">
-          <Input type="password" autoComplete="new-password" {...form.register('confirm')} />
+        <Flex direction="col" gap={1.5}>
+          <Label htmlFor="acct-confirm-pw">Confirm new password</Label>
+          <Input
+            id="acct-confirm-pw"
+            type="password"
+            autoComplete="new-password"
+            {...form.register('confirm')}
+          />
           <FieldError message={form.formState.errors.confirm?.message} />
-        </SettingsRow>
-      </SettingsPanel>
+        </Flex>
+      </AccountSection>
     </form>
   );
 }
