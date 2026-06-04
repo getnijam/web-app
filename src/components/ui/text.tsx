@@ -93,6 +93,14 @@ export type TextProps<T extends React.ElementType = 'p'> = TextVariantProps & {
  * both produce an `<h2>` with h2 styles, and `as` always wins when both differ
  * (e.g. an `<h2>` styled as a `display` headline: `<Text as="h2" variant="display">`).
  */
+// Default the visual variant from the element: headings get their level's styles,
+// inline elements inherit size, everything else falls back to `body`.
+function defaultVariant(as: React.ElementType | undefined): TextVariant {
+  if (typeof as === 'string' && HEADING_TAG.test(as)) return as as TextVariant;
+  if (as === 'span' || as === 'label') return 'inherit';
+  return 'body';
+}
+
 export function Text<T extends React.ElementType = 'p'>({
   as,
   variant,
@@ -103,15 +111,7 @@ export function Text<T extends React.ElementType = 'p'>({
   className,
   ...props
 }: TextProps<T>) {
-  // Default the visual variant from the element: headings get their level's
-  // styles, inline elements inherit size, everything else falls back to `body`.
-  const resolvedVariant: TextVariant =
-    variant ??
-    (typeof as === 'string' && HEADING_TAG.test(as)
-      ? (as as TextVariant)
-      : as === 'span' || as === 'label'
-        ? 'inherit'
-        : 'body');
+  const resolvedVariant: TextVariant = variant ?? defaultVariant(as);
   const Comp = (as ?? variantElement[resolvedVariant]) as React.ElementType;
 
   return (

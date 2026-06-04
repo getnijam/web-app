@@ -122,6 +122,31 @@ function RunsPage() {
     navigate({ search: (prev) => ({ ...prev, ...patch, page: 1 }) });
   const onPage = (page: number) => navigate({ search: (prev) => ({ ...prev, page }) });
 
+  const renderRuns = () => {
+    if (runs.isLoading) return <RunsListSkeleton />;
+    if (runs.error) return <ErrorState error={runs.error} onRetry={() => runs.refetch()} />;
+    if (runs.data && runs.data.runs.length > 0)
+      return (
+        <>
+          <Flex
+            direction="col"
+            className="overflow-hidden rounded-2xl border border-border bg-card"
+          >
+            {runs.data.runs.map((run) => (
+              <RunRow key={run.id} run={run} orgId={orgId} projectId={projectId} />
+            ))}
+          </Flex>
+          <RunsPager page={runs.data.page} totalPages={runs.data.totalPages} onPage={onPage} />
+        </>
+      );
+    return (
+      <EmptyState
+        title="No runs match these filters"
+        description="Try a different status, branch, user, or environment."
+      />
+    );
+  };
+
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Header proj={proj} onRefresh={refresh} refreshing={refreshing} />
@@ -137,28 +162,7 @@ function RunsPage() {
           onChange={onFilterChange}
         />
 
-        {runs.isLoading ? (
-          <RunsListSkeleton />
-        ) : runs.error ? (
-          <ErrorState error={runs.error} onRetry={() => runs.refetch()} />
-        ) : runs.data && runs.data.runs.length > 0 ? (
-          <>
-            <Flex
-              direction="col"
-              className="overflow-hidden rounded-2xl border border-border bg-card"
-            >
-              {runs.data.runs.map((run) => (
-                <RunRow key={run.id} run={run} orgId={orgId} projectId={projectId} />
-              ))}
-            </Flex>
-            <RunsPager page={runs.data.page} totalPages={runs.data.totalPages} onPage={onPage} />
-          </>
-        ) : (
-          <EmptyState
-            title="No runs match these filters"
-            description="Try a different status, branch, user, or environment."
-          />
-        )}
+        {renderRuns()}
       </Flex>
     </Flex>
   );

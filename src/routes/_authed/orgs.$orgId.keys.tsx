@@ -29,6 +29,30 @@ function SecretKeysPage() {
   const total = list.length;
   const orgScoped = list.filter((k) => k.scope === 'org').length;
 
+  const renderKeys = () => {
+    if (keys.isLoading) return <RowsSkeleton rows={3} />;
+    if (keys.error || !keys.data)
+      return (
+        <div className="px-5 py-6">
+          <ErrorState error={keys.error} onRetry={() => keys.refetch()} />
+        </div>
+      );
+    if (list.length === 0)
+      return (
+        <EmptyState
+          title="No secret keys yet"
+          description="Create a key to let your CI upload results and traces to Nijam."
+          action={
+            <Button variant="outline" onClick={() => setCreateOpen(true)}>
+              <HugeiconsIcon icon={Add01Icon} size={16} />
+              Create key
+            </Button>
+          }
+        />
+      );
+    return list.map((k) => <KeyRow key={k.id} orgId={orgId} secretKey={k} />);
+  };
+
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex align="start" justify="between" gap={4}>
@@ -81,28 +105,7 @@ function SecretKeysPage() {
         </Flex>
       </Flex>
 
-      <SettingsPanel title="Keys">
-        {keys.isLoading ? (
-          <RowsSkeleton rows={3} />
-        ) : keys.error || !keys.data ? (
-          <div className="px-5 py-6">
-            <ErrorState error={keys.error} onRetry={() => keys.refetch()} />
-          </div>
-        ) : list.length === 0 ? (
-          <EmptyState
-            title="No secret keys yet"
-            description="Create a key to let your CI upload results and traces to Nijam."
-            action={
-              <Button variant="outline" onClick={() => setCreateOpen(true)}>
-                <HugeiconsIcon icon={Add01Icon} size={16} />
-                Create key
-              </Button>
-            }
-          />
-        ) : (
-          list.map((k) => <KeyRow key={k.id} orgId={orgId} secretKey={k} />)
-        )}
-      </SettingsPanel>
+      <SettingsPanel title="Keys">{renderKeys()}</SettingsPanel>
 
       <CreateSecretKeyDialog open={createOpen} onOpenChange={setCreateOpen} orgId={orgId} />
     </Flex>

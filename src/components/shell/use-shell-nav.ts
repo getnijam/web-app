@@ -34,6 +34,14 @@ const PROJECT_SUB: Record<string, SubRoute> = {
   settings: 'psettings',
 };
 
+const ORG_SUB: Record<string, SubRoute> = {
+  settings: 'org',
+  users: 'users',
+  keys: 'keys',
+  billing: 'billing',
+  integrations: 'integrations',
+};
+
 export interface ShellNav {
   /** The current org id from the route. */
   orgId: string;
@@ -68,18 +76,7 @@ export function useShellNav(): ShellNav {
   }
 
   const seg = segments[2]; // after orgs/<orgId>
-  const active: SubRoute =
-    seg === 'settings'
-      ? 'org'
-      : seg === 'users'
-        ? 'users'
-        : seg === 'keys'
-          ? 'keys'
-          : seg === 'billing'
-            ? 'billing'
-            : seg === 'integrations'
-              ? 'integrations'
-              : 'home';
+  const active: SubRoute = ORG_SUB[seg ?? ''] ?? 'home';
   return { orgId, inProject: false, active };
 }
 

@@ -28,6 +28,65 @@ function OrgsPicker() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const orgs = data?.orgs ?? [];
 
+  const renderOrgs = () => {
+    if (isLoading) return <LoadingState />;
+    if (error) return <ErrorState error={error} onRetry={() => refetch()} />;
+    if (orgs.length === 0)
+      return (
+        <Flex
+          direction="col"
+          align="center"
+          gap={3}
+          className="rounded-2xl border border-dashed border-border py-16 text-center"
+        >
+          <Text weight="semibold">Create your first organization</Text>
+          <Text color="muted" className="max-w-sm">
+            Organizations hold your projects, runs, and team. You'll land here whenever you sign in.
+          </Text>
+          <Button
+            onClick={() => setDialogOpen(true)}
+            className="mt-1"
+            data-testid="create-org-trigger"
+          >
+            <HugeiconsIcon icon={PlusSignIcon} size={16} />
+            New organization
+          </Button>
+        </Flex>
+      );
+    return (
+      <Flex direction="col" gap={3}>
+        {orgs.map((org) => (
+          <Flex
+            as={Link}
+            key={org.id}
+            to="/orgs/$orgId/projects"
+            params={{ orgId: org.id } as never}
+            align="center"
+            gap={3}
+            className="group rounded-xl border border-border bg-card p-3 transition-colors hover:border-primary/45 hover:bg-accent"
+          >
+            <OrgAvatar org={org} />
+            <Flex direction="col" className="min-w-0 flex-1">
+              <Text as="span" truncate weight="semibold">
+                {org.name}
+              </Text>
+            </Flex>
+            <HugeiconsIcon icon={ArrowRight01Icon} size={18} className="text-muted-foreground" />
+          </Flex>
+        ))}
+        <Button
+          variant="outline"
+          onClick={() => setDialogOpen(true)}
+          className="mt-1 self-start"
+          data-testid="create-org-trigger"
+        >
+          <HugeiconsIcon icon={PlusSignIcon} size={16} />
+          New organization
+        </Button>
+      </Flex>
+    );
+  };
+
   return (
     <Flex direction="col" className="min-h-svh">
       <Flex
@@ -51,67 +110,7 @@ function OrgsPicker() {
             <Text color="muted">Select an organization to continue, or create a new one.</Text>
           </Flex>
 
-          {isLoading ? (
-            <LoadingState />
-          ) : error ? (
-            <ErrorState error={error} onRetry={() => refetch()} />
-          ) : orgs.length === 0 ? (
-            <Flex
-              direction="col"
-              align="center"
-              gap={3}
-              className="rounded-2xl border border-dashed border-border py-16 text-center"
-            >
-              <Text weight="semibold">Create your first organization</Text>
-              <Text color="muted" className="max-w-sm">
-                Organizations hold your projects, runs, and team. You'll land here whenever you sign
-                in.
-              </Text>
-              <Button
-                onClick={() => setDialogOpen(true)}
-                className="mt-1"
-                data-testid="create-org-trigger"
-              >
-                <HugeiconsIcon icon={PlusSignIcon} size={16} />
-                New organization
-              </Button>
-            </Flex>
-          ) : (
-            <Flex direction="col" gap={3}>
-              {orgs.map((org) => (
-                <Flex
-                  as={Link}
-                  key={org.id}
-                  to="/orgs/$orgId/projects"
-                  params={{ orgId: org.id } as never}
-                  align="center"
-                  gap={3}
-                  className="group rounded-xl border border-border bg-card p-3 transition-colors hover:border-primary/45 hover:bg-accent"
-                >
-                  <OrgAvatar org={org} />
-                  <Flex direction="col" className="min-w-0 flex-1">
-                    <Text as="span" truncate weight="semibold">
-                      {org.name}
-                    </Text>
-                  </Flex>
-                  <HugeiconsIcon
-                    icon={ArrowRight01Icon}
-                    size={18}
-                    className="text-muted-foreground"
-                  />
-                </Flex>
-              ))}
-              <Button
-                variant="outline"
-                onClick={() => setDialogOpen(true)}
-                className="mt-1 self-start"
-                data-testid="create-org-trigger"
-              >
-                <HugeiconsIcon icon={PlusSignIcon} size={16} />
-                New organization
-              </Button>
-            </Flex>
-          )}
+          {renderOrgs()}
         </Flex>
       </Flex>
 

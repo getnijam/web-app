@@ -22,6 +22,31 @@ function FlakyPage() {
   const runWindow = q.data?.runWindow ?? 0;
   const runs = `${runWindow} ${runWindow === 1 ? 'run' : 'runs'}`;
 
+  const renderContent = () => {
+    if (q.isLoading) return <FlakySkeleton />;
+    if (q.error) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
+    if (tests.length === 0)
+      return (
+        <EmptyState
+          title="No flaky tests"
+          description="Nothing flaked across the recent runs — nice and stable."
+        />
+      );
+    return (
+      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+        {tests.map((t) => (
+          <TestRow
+            key={t.testId}
+            test={t}
+            orgId={orgId}
+            projectId={projectId}
+            flakeCount={t.flakeCount}
+          />
+        ))}
+      </Flex>
+    );
+  };
+
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
@@ -33,28 +58,7 @@ function FlakyPage() {
         </Text>
       </Flex>
 
-      {q.isLoading ? (
-        <FlakySkeleton />
-      ) : q.error ? (
-        <ErrorState error={q.error} onRetry={() => q.refetch()} />
-      ) : tests.length === 0 ? (
-        <EmptyState
-          title="No flaky tests"
-          description="Nothing flaked across the recent runs — nice and stable."
-        />
-      ) : (
-        <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-          {tests.map((t) => (
-            <TestRow
-              key={t.testId}
-              test={t}
-              orgId={orgId}
-              projectId={projectId}
-              flakeCount={t.flakeCount}
-            />
-          ))}
-        </Flex>
-      )}
+      {renderContent()}
     </Flex>
   );
 }

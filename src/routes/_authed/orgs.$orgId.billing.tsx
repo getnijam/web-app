@@ -79,7 +79,9 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
     },
     onError: (err) =>
       notify.error("Couldn't start checkout", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       }),
   });
 
@@ -90,7 +92,9 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
     },
     onError: (err) =>
       notify.error("Couldn't open billing portal", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       }),
   });
 
@@ -100,44 +104,40 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   const overTests = pro ? Math.max(0, usage.tests - included) : 0;
   const overActive = overTests > 0;
   const testPercent = usagePercent(usage.tests, included);
-  const testTone: MeterTone = pro
-    ? overActive
-      ? 'warning'
-      : 'default'
-    : billing.over
-      ? 'danger'
-      : testPercent >= 80
-        ? 'warning'
-        : 'default';
+  let testTone: MeterTone = 'default';
+  if (pro) testTone = overActive ? 'warning' : 'default';
+  else if (billing.over) testTone = 'danger';
+  else if (testPercent >= 80) testTone = 'warning';
   const seatTone: MeterTone =
     !pro && limits.seats !== null && usage.seats >= limits.seats ? 'danger' : 'default';
   const resets = formatResetDate(billing.resetsAt);
 
   // Members never see amounts. When metered/over they get a "contact an admin" note.
-  const testHint = isAdmin
-    ? pro
-      ? overActive
+  let testHint: string;
+  if (isAdmin) {
+    if (pro)
+      testHint = overActive
         ? `Included ${formatCount(included)} used up — extra tests now cost $0.002 each (${formatCount(overTests)} over this cycle), added to your next invoice. Resets ${resets}.`
-        : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Beyond that, $0.002 per test, billed at cycle end. Resets ${resets}.`
-      : billing.over
-        ? billing.enforced
-          ? `Monthly limit reached — new reports are paused until ${resets}. Upgrade to keep reporting.`
-          : 'Monthly limit reached — upgrade to Pro to report beyond the Free tier.'
-        : `Counts every reported attempt (retries and shards included). Resets ${resets}.`
-    : pro
-      ? overActive
-        ? `Metered usage is in effect — extra test runs are now billed. Contact an admin for billing details. Resets ${resets}.`
-        : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Resets ${resets}.`
-      : billing.over
-        ? `Monthly limit reached — contact an admin to upgrade. Resets ${resets}.`
-        : `Counts every reported attempt (retries and shards included). Resets ${resets}.`;
+        : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Beyond that, $0.002 per test, billed at cycle end. Resets ${resets}.`;
+    else if (billing.over)
+      testHint = billing.enforced
+        ? `Monthly limit reached — new reports are paused until ${resets}. Upgrade to keep reporting.`
+        : 'Monthly limit reached — upgrade to Pro to report beyond the Free tier.';
+    else
+      testHint = `Counts every reported attempt (retries and shards included). Resets ${resets}.`;
+  } else if (pro)
+    testHint = overActive
+      ? `Metered usage is in effect — extra test runs are now billed. Contact an admin for billing details. Resets ${resets}.`
+      : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Resets ${resets}.`;
+  else if (billing.over)
+    testHint = `Monthly limit reached — contact an admin to upgrade. Resets ${resets}.`;
+  else testHint = `Counts every reported attempt (retries and shards included). Resets ${resets}.`;
 
-  const seatHint =
-    pro || limits.seats === null
-      ? 'Unlimited members on Pro.'
-      : isAdmin
-        ? 'Free includes up to 2 members. Upgrade to Pro for unlimited.'
-        : 'Free includes up to 2 members.';
+  let seatHint = 'Unlimited members on Pro.';
+  if (!(pro || limits.seats === null))
+    seatHint = isAdmin
+      ? 'Free includes up to 2 members. Upgrade to Pro for unlimited.'
+      : 'Free includes up to 2 members.';
 
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
@@ -235,7 +235,11 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
         </SettingsPanel>
       )}
       {isAdmin && !pro && (
-        <Flex direction="col" gap={5} className="rounded-2xl border border-primary/40 bg-primary/5 p-6">
+        <Flex
+          direction="col"
+          gap={5}
+          className="rounded-2xl border border-primary/40 bg-primary/5 p-6"
+        >
           <Flex align="center" gap={3}>
             <Flex
               inline

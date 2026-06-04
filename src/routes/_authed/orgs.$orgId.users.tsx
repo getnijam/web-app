@@ -67,6 +67,45 @@ function UsersPage() {
   const memberCount = members.data?.members.length ?? 0;
   const pendingCount = invites.data?.invitations.length ?? 0;
 
+  const renderMembers = () => {
+    if (members.isLoading) return <RowsSkeleton rows={3} round />;
+    if (members.error || !members.data)
+      return (
+        <div className="px-5 py-6">
+          <ErrorState error={members.error} onRetry={() => members.refetch()} />
+        </div>
+      );
+    return members.data.members.map((m) => (
+      <MemberRow
+        key={m.userId}
+        orgId={orgId}
+        member={m}
+        isYou={m.userId === me.data?.user.id}
+        isAdmin={isAdmin}
+      />
+    ));
+  };
+
+  const renderInvites = () => {
+    if (invites.isLoading) return <RowsSkeleton rows={2} />;
+    if (invites.error || !invites.data)
+      return (
+        <div className="px-5 py-6">
+          <ErrorState error={invites.error} onRetry={() => invites.refetch()} />
+        </div>
+      );
+    if (invites.data.invitations.length === 0)
+      return (
+        <EmptyState
+          title="No pending invitations"
+          description="Invite a teammate by email and they'll show up here until they accept."
+        />
+      );
+    return invites.data.invitations.map((inv) => (
+      <InviteRow key={inv.id} orgId={orgId} invite={inv} />
+    ));
+  };
+
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
@@ -87,46 +126,9 @@ function UsersPage() {
         </Text>
       )}
 
-      <SettingsPanel title="Members">
-        {members.isLoading ? (
-          <RowsSkeleton rows={3} round />
-        ) : members.error || !members.data ? (
-          <div className="px-5 py-6">
-            <ErrorState error={members.error} onRetry={() => members.refetch()} />
-          </div>
-        ) : (
-          members.data.members.map((m) => (
-            <MemberRow
-              key={m.userId}
-              orgId={orgId}
-              member={m}
-              isYou={m.userId === me.data?.user.id}
-              isAdmin={isAdmin}
-            />
-          ))
-        )}
-      </SettingsPanel>
+      <SettingsPanel title="Members">{renderMembers()}</SettingsPanel>
 
-      {isAdmin && (
-        <SettingsPanel title="Pending invitations">
-          {invites.isLoading ? (
-            <RowsSkeleton rows={2} />
-          ) : invites.error || !invites.data ? (
-            <div className="px-5 py-6">
-              <ErrorState error={invites.error} onRetry={() => invites.refetch()} />
-            </div>
-          ) : invites.data.invitations.length === 0 ? (
-            <EmptyState
-              title="No pending invitations"
-              description="Invite a teammate by email and they'll show up here until they accept."
-            />
-          ) : (
-            invites.data.invitations.map((inv) => (
-              <InviteRow key={inv.id} orgId={orgId} invite={inv} />
-            ))
-          )}
-        </SettingsPanel>
-      )}
+      {isAdmin && <SettingsPanel title="Pending invitations">{renderInvites()}</SettingsPanel>}
     </Flex>
   );
 }
@@ -138,7 +140,10 @@ type InviteForm = z.infer<typeof InviteSchema>;
 
 function InviteBar({ orgId }: { orgId: string }) {
   const queryClient = useQueryClient();
-  const form = useForm<InviteForm>({ resolver: zodResolver(InviteSchema), defaultValues: { email: '' } });
+  const form = useForm<InviteForm>({
+    resolver: zodResolver(InviteSchema),
+    defaultValues: { email: '' },
+  });
   const email = form.watch('email');
   const [role, setRole] = useState<'admin' | 'member'>('member');
 
@@ -217,7 +222,9 @@ function MemberRow({
   const remove = useMutation({
     ...removeOrgMemberMutation(),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: listOrgMembersQueryKey({ path: { orgId } }) });
+      await queryClient.invalidateQueries({
+        queryKey: listOrgMembersQueryKey({ path: { orgId } }),
+      });
       setConfirmOpen(false);
       notify.success('Member removed', {
         description: `${displayName} (${member.email}) no longer has access to this organization.`,
@@ -226,7 +233,9 @@ function MemberRow({
     onError: (err) => {
       setConfirmOpen(false);
       notify.error("Couldn't remove member", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       });
     },
   });
@@ -234,7 +243,9 @@ function MemberRow({
   const roleMutation = useMutation({
     ...updateOrgMemberRoleMutation(),
     onSuccess: async (_data, variables) => {
-      await queryClient.invalidateQueries({ queryKey: listOrgMembersQueryKey({ path: { orgId } }) });
+      await queryClient.invalidateQueries({
+        queryKey: listOrgMembersQueryKey({ path: { orgId } }),
+      });
       const newRole = variables.body?.role === 'admin' ? 'Admin' : 'Member';
       notify.success('Role updated', {
         description: `${displayName}'s role updated to ${newRole} successfully.`,
@@ -242,7 +253,9 @@ function MemberRow({
     },
     onError: (err) =>
       notify.error("Couldn't update role", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       }),
   });
 

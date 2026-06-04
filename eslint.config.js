@@ -31,6 +31,9 @@ export default defineConfig([
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
       ],
+      // No ternary hell: a single `cond ? a : b` only — never nest. Reach for a
+      // lookup object, an early-return helper, or `if`/`else` instead.
+      'no-nested-ternary': 'error',
     },
   },
 

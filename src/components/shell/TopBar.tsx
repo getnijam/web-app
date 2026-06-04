@@ -56,6 +56,49 @@ function Breadcrumbs() {
   const commit = run.data?.run.commitSha ? `#${run.data.run.commitSha.slice(0, 7)}` : 'Run';
   const fileName = filePath ? (filePath.split('/').pop() ?? filePath) : '';
 
+  // The crumbs after the project link: a run-detail page shows the commit (and
+  // file, on the file view); any other section shows its title.
+  const leafCrumbs = () => {
+    if (!onRunLeaf) {
+      return (
+        <>
+          <Sep />
+          <Text as="span" className="shrink-0 font-semibold">
+            {ROUTE_TITLES[active]}
+          </Text>
+        </>
+      );
+    }
+    if (isFile) {
+      return (
+        <>
+          {/* No "Runs" crumb — the project link above already points to the runs list. */}
+          <Sep />
+          <Link
+            to="/orgs/$orgId/projects/$projectId/runs/$runId"
+            params={{ orgId, projectId: projectId!, runId: runId! }}
+            className="shrink-0 font-mono text-muted-foreground hover:text-foreground"
+          >
+            {commit}
+          </Link>
+          <Sep />
+          <Text as="span" truncate className="min-w-0 font-mono font-semibold">
+            {fileName}
+          </Text>
+        </>
+      );
+    }
+    return (
+      <>
+        {/* No "Runs" crumb — the project link above already points to the runs list. */}
+        <Sep />
+        <Text as="span" className="shrink-0 font-mono font-semibold">
+          {commit}
+        </Text>
+      </>
+    );
+  };
+
   return (
     <Flex align="center" gap={2} className="min-w-0 text-sm">
       <Flex
@@ -78,40 +121,7 @@ function Breadcrumbs() {
         {projectName}
       </Link>
 
-      {onRunLeaf ? (
-        isFile ? (
-          <>
-            {/* No "Runs" crumb — the project link above already points to the runs list. */}
-            <Sep />
-            <Link
-              to="/orgs/$orgId/projects/$projectId/runs/$runId"
-              params={{ orgId, projectId: projectId!, runId: runId! }}
-              className="shrink-0 font-mono text-muted-foreground hover:text-foreground"
-            >
-              {commit}
-            </Link>
-            <Sep />
-            <Text as="span" truncate className="min-w-0 font-mono font-semibold">
-              {fileName}
-            </Text>
-          </>
-        ) : (
-          <>
-            {/* No "Runs" crumb — the project link above already points to the runs list. */}
-            <Sep />
-            <Text as="span" className="shrink-0 font-mono font-semibold">
-              {commit}
-            </Text>
-          </>
-        )
-      ) : (
-        <>
-          <Sep />
-          <Text as="span" className="shrink-0 font-semibold">
-            {ROUTE_TITLES[active]}
-          </Text>
-        </>
-      )}
+      {leafCrumbs()}
     </Flex>
   );
 }

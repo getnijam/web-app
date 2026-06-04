@@ -252,7 +252,9 @@ export function AppSidebar() {
         <Flex align="center" className="px-2 py-1">
           <Logo label="Nijam.dev" />
         </Flex>
-        <OrgSwitcher orgId={orgId} />
+        {/* Inside a project the project chip + "Back to projects" carry the context,
+            so the org switcher is redundant — hide it there. */}
+        {!inProject && <OrgSwitcher orgId={orgId} />}
       </SidebarHeader>
 
       <SidebarContent onClick={closeMobileOnNav}>

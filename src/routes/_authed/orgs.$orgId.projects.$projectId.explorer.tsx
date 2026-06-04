@@ -30,6 +30,40 @@ function ExplorerPage() {
       )
     : tests;
 
+  const renderContent = () => {
+    if (q.isLoading) return <ExplorerSkeleton />;
+    if (q.error) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
+    if (tests.length === 0)
+      return (
+        <EmptyState
+          title="No test cases yet"
+          description="Run your suite and your tests will show up here."
+        />
+      );
+    return (
+      <Flex direction="col" gap={4}>
+        <Input
+          type="search"
+          placeholder="Find a test…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        {filtered.length === 0 ? (
+          <EmptyState title="No matches" description="No test matches your search." />
+        ) : (
+          <Flex
+            direction="col"
+            className="overflow-hidden rounded-2xl border border-border bg-card"
+          >
+            {filtered.map((t) => (
+              <TestRow key={t.testId} test={t} orgId={orgId} projectId={projectId} />
+            ))}
+          </Flex>
+        )}
+      </Flex>
+    );
+  };
+
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
@@ -40,34 +74,7 @@ function ExplorerPage() {
         </Text>
       </Flex>
 
-      {q.isLoading ? (
-        <ExplorerSkeleton />
-      ) : q.error ? (
-        <ErrorState error={q.error} onRetry={() => q.refetch()} />
-      ) : tests.length === 0 ? (
-        <EmptyState
-          title="No test cases yet"
-          description="Run your suite and your tests will show up here."
-        />
-      ) : (
-        <Flex direction="col" gap={4}>
-          <Input
-            type="search"
-            placeholder="Find a test…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          {filtered.length === 0 ? (
-            <EmptyState title="No matches" description="No test matches your search." />
-          ) : (
-            <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-              {filtered.map((t) => (
-                <TestRow key={t.testId} test={t} orgId={orgId} projectId={projectId} />
-              ))}
-            </Flex>
-          )}
-        </Flex>
-      )}
+      {renderContent()}
     </Flex>
   );
 }
