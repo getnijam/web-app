@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
@@ -29,6 +30,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { glyphFor } from '@/lib/project-glyph';
@@ -230,6 +232,19 @@ function ProjectNav({
 export function AppSidebar() {
   const { orgId, inProject, projectId, active } = useShellNav();
   const navigate = useNavigate();
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  // On mobile the sidebar is an off-canvas sheet; tapping a nav link should
+  // dismiss it. Delegate at the content/footer level so every link is covered,
+  // but ignore non-link clicks (e.g. the project chip). The OrgSwitcher and
+  // AccountMenu live outside this and intentionally stay open — tapping them
+  // opens their own dropdowns, which would be unusable if the sheet closed.
+  const closeMobile = () => {
+    if (isMobile) setOpenMobile(false);
+  };
+  const closeMobileOnNav = (e: MouseEvent) => {
+    if ((e.target as HTMLElement).closest('a')) closeMobile();
+  };
 
   return (
     <Sidebar>
@@ -240,7 +255,7 @@ export function AppSidebar() {
         <OrgSwitcher orgId={orgId} />
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent onClick={closeMobileOnNav}>
         <SidebarGroup>
           {inProject && projectId ? (
             <ProjectNav orgId={orgId} projectId={projectId} active={active} />
@@ -254,7 +269,12 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild title="Nijam documentation">
-              <a href="https://docs.nijam.dev" target="_blank" rel="noreferrer">
+              <a
+                href="https://docs.nijam.dev"
+                target="_blank"
+                rel="noreferrer"
+                onClick={closeMobile}
+              >
                 <NavGlyph icon={Book02Icon} active={false} />
                 <span>Docs</span>
               </a>

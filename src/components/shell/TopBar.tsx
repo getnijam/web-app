@@ -1,5 +1,7 @@
 import { Link, useParams, useRouterState, useSearch } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Home01Icon } from '@hugeicons/core-free-icons';
 import { getProjectOptions, getRunOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -32,6 +34,16 @@ function Breadcrumbs() {
   });
 
   if (!inProject) {
+    // The Projects (home) root is shown as an icon to save space; other top-level
+    // pages keep their text title.
+    if (active === 'home') {
+      return (
+        <Flex as="span" align="center" className="text-foreground">
+          <HugeiconsIcon icon={Home01Icon} size={16} strokeWidth={1.8} className="shrink-0" />
+          <span className="sr-only">Projects</span>
+        </Flex>
+      );
+    }
     return (
       <Text as="span" className="text-sm font-semibold">
         {ROUTE_TITLES[active]}
@@ -46,13 +58,17 @@ function Breadcrumbs() {
 
   return (
     <Flex align="center" gap={2} className="min-w-0 text-sm">
-      <Link
+      <Flex
+        as={Link}
         to="/orgs/$orgId/projects"
-        params={{ orgId }}
+        params={{ orgId } as never}
+        align="center"
+        aria-label="Projects"
+        title="Projects"
         className="shrink-0 text-muted-foreground hover:text-foreground"
       >
-        Projects
-      </Link>
+        <HugeiconsIcon icon={Home01Icon} size={16} strokeWidth={1.8} />
+      </Flex>
       <Sep />
       <Link
         to="/orgs/$orgId/projects/$projectId/runs"
@@ -112,7 +128,9 @@ export function TopBar() {
       <Breadcrumbs />
 
       <Flex align="center" gap={2.5} className="ml-auto">
-        <ThemeSegmentedControl />
+        {/* Mobile: the cycling icon-only button (same as the home nav); ≥md: the full track. */}
+        <ThemeSegmentedControl minified className="md:hidden" />
+        <ThemeSegmentedControl className="hidden md:inline-flex" />
       </Flex>
     </Flex>
   );
