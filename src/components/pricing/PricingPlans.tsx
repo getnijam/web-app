@@ -7,7 +7,7 @@ import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
-import { Reveal } from '../Reveal';
+import { Reveal } from '@/components/home/Reveal';
 
 type Plan = {
   name: string;
@@ -121,36 +121,15 @@ function PlanCard({ plan }: { plan: Plan }) {
   );
 }
 
-export function Pricing() {
+/** The Free + Pro plan cards. Used on the dedicated /pricing page. */
+export function PricingPlans() {
   return (
-    <section id="pricing" className="mx-auto max-w-6xl px-6 py-24">
-      <Reveal className="mx-auto mb-12 max-w-2xl text-center">
-        <Text className="text-xs font-semibold tracking-wide text-primary uppercase">Pricing</Text>
-        <Text as="h2" className="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-          Start free. Upgrade when your suite grows.
-        </Text>
-        <Text className="mt-3.5 text-lg text-pretty text-muted-foreground">
-          One simple plan when you outgrow the free tier — no per-seat pricing, no surprises. You're
-          only charged for the test volume you actually report.
-        </Text>
-      </Reveal>
-
-      <Grid cols={[1, 2]} gap={6} className="mx-auto max-w-3xl">
-        {PLANS.map((p) => (
-          <Reveal key={p.name}>
-            <PlanCard plan={p} />
-          </Reveal>
-        ))}
-      </Grid>
-
-      <Text
-        align="center"
-        className="mx-auto mt-8 max-w-xl text-xs text-pretty text-muted-foreground"
-      >
-        Prices shown in USD and billed monthly. At checkout you're charged in your local currency
-        with taxes handled for you. One test result = one reported test attempt (retries and shards
-        count).
-      </Text>
-    </section>
+    <Grid cols={[1, 2]} gap={6} className="mx-auto max-w-3xl">
+      {PLANS.map((p) => (
+        <Reveal key={p.name}>
+          <PlanCard plan={p} />
+        </Reveal>
+      ))}
+    </Grid>
   );
 }

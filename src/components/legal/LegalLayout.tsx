@@ -1,20 +1,25 @@
 import type { ReactNode } from 'react';
 import { Nav } from '@/components/home/components/Nav';
 import { Footer } from '@/components/home/components/Footer';
+import { CTA } from '@/components/home/components/CTA';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 
-/** Legal pages reuse the home chrome (Nav + Footer) with a readable prose column. */
+/** Legal pages reuse the home chrome (Nav + closing CTA + Footer) with a readable prose column. */
 export function LegalLayout({
   title,
   updated,
   intro,
   children,
+  ctaTitle,
+  ctaDescription,
 }: {
   title: string;
   updated: string;
   intro: ReactNode;
   children: ReactNode;
+  ctaTitle?: string;
+  ctaDescription?: ReactNode;
 }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -26,7 +31,7 @@ export function LegalLayout({
         <Text as="p" className="mt-2 text-sm text-muted-foreground">
           Last updated {updated}
         </Text>
-        <Text as="p" className="mt-6 leading-relaxed text-muted-foreground text-pretty">
+        <Text as="p" className="mt-6 leading-relaxed text-pretty text-muted-foreground">
           {intro}
         </Text>
 
@@ -34,6 +39,7 @@ export function LegalLayout({
           {children}
         </Flex>
       </main>
+      <CTA title={ctaTitle} description={ctaDescription} />
       <Footer />
     </div>
   );
@@ -56,7 +62,7 @@ export function Section({ title, children }: { title: string; children: ReactNod
 /** A body paragraph. */
 export function P({ children }: { children: ReactNode }) {
   return (
-    <Text as="p" className="text-sm leading-relaxed text-muted-foreground text-pretty">
+    <Text as="p" className="text-sm leading-relaxed text-pretty text-muted-foreground">
       {children}
     </Text>
   );
@@ -67,7 +73,7 @@ export function Bullets({ items }: { items: ReactNode[] }) {
   return (
     <ul className="list-disc space-y-2 pl-5 marker:text-muted-foreground/50">
       {items.map((item, i) => (
-        <Text as="li" key={i} className="text-sm leading-relaxed text-muted-foreground text-pretty">
+        <Text as="li" key={i} className="text-sm leading-relaxed text-pretty text-muted-foreground">
           {item}
         </Text>
       ))}

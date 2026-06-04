@@ -28,6 +28,8 @@ function TermsPage() {
           Nijam on behalf of an organization, you’re agreeing on its behalf.
         </>
       }
+      ctaTitle="Ready to put your test results to work?"
+      ctaDescription="Point your CI at Nijam and turn the results you already produce into flakiness detection and failure analytics — no agents, no re-runs."
     >
       <Section title="1. The Service">
         <P>

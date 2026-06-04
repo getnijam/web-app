@@ -44,6 +44,9 @@ export function Footer() {
             <Link to="/" hash="integrations" className={COL}>
               Integrations
             </Link>
+            <Link to="/pricing" className={COL}>
+              Pricing
+            </Link>
             <Link to="/login" className={COL}>
               Dashboard
             </Link>

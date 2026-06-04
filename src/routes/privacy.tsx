@@ -27,6 +27,8 @@ function PrivacyPage() {
           run a test-analytics service — and nothing more.
         </>
       }
+      ctaTitle="Your tests, your data, your dashboard"
+      ctaDescription="Nijam only reads the results your CI already uploads — connect a project and see it working in minutes."
     >
       <Section title="1. Information we collect">
         <P>
