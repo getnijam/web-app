@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Logout01Icon } from '@hugeicons/core-free-icons';
+import { Logout01Icon, Settings01Icon } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { UserAvatar } from '@/components/users/UserAvatar';
@@ -65,6 +66,14 @@ export function AccountMenu({ user, onSignedOut }: { user: MeUser; onSignedOut?:
               {email}
             </Text>
           </Flex>
+          <Link
+            to="/account"
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          >
+            <HugeiconsIcon icon={Settings01Icon} size={16} strokeWidth={1.8} />
+            Account settings
+          </Link>
           <button
             type="button"
             onClick={() => logoutMutation.mutate()}

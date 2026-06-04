@@ -4,7 +4,10 @@
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   denied: 'Sign-in was cancelled.',
   unverified_email:
-    "Your email isn't verified with that provider. Verify it there, then try signing in again.",
+    "Your email isn't verified with that provider. Verify it there, then try again.",
+  in_use: 'That account is already linked to a different Nijam user.',
+  email_mismatch:
+    'That account uses a different email than your Nijam account. Connect one that uses the same email.',
   invalid: 'That sign-in link expired or was invalid. Please try again.',
   unavailable: 'Social sign-in isn’t available right now. Please use your email and password.',
   failed: 'We couldn’t sign you in. Please try again.',

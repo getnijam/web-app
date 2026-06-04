@@ -37,7 +37,6 @@ import { cn } from '@/lib/utils';
 import { glyphFor } from '@/lib/project-glyph';
 import { Logo } from '@/components/auth/Logo';
 import { UserAvatar } from '@/components/users/UserAvatar';
-import { UserSettingsDialog } from '@/components/users/UserSettingsDialog';
 import { OrgSwitcher } from './OrgSwitcher';
 import { useShellNav, initialsFrom, type SubRoute } from './use-shell-nav';
 import { useLogout } from '@/hooks/use-logout';
@@ -238,7 +237,6 @@ function ProfileButton() {
   const me = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 });
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const logoutMutation = useLogout({ onSuccess: () => navigate({ to: '/login' }) });
 
@@ -279,12 +277,12 @@ function ProfileButton() {
               type="button"
               onClick={() => {
                 setOpen(false);
-                setSettingsOpen(true);
+                navigate({ to: '/account' });
               }}
               className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground transition-colors hover:bg-accent"
             >
               <HugeiconsIcon icon={Settings01Icon} size={16} strokeWidth={1.8} />
-              User settings
+              Account
             </button>
             <button
               type="button"
@@ -335,7 +333,6 @@ function ProfileButton() {
         />
       </button>
 
-      <UserSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
   );
 }

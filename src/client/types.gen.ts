@@ -31,6 +31,7 @@ export type UserPublic = {
     emailVerifiedAt: string | null;
     hasAvatar: boolean;
     avatarUpdatedAt: string | null;
+    hasPassword: boolean;
     createdAt: string;
 };
 
@@ -66,6 +67,25 @@ export type ResetResponse = {
 export type ResetPasswordBody = {
     token: string;
     password: string;
+};
+
+export type OAuthAccountInfo = {
+    provider: 'google' | 'github';
+    email: string;
+    createdAt: string;
+};
+
+export type OAuthAccountsResponse = {
+    accounts: Array<OAuthAccountInfo>;
+};
+
+export type AuthOkResponse = {
+    ok: true;
+};
+
+export type UpdatePasswordBody = {
+    currentPassword?: string;
+    newPassword: string;
 };
 
 export type UpdateMeBody = {
@@ -767,6 +787,91 @@ export type ResetPasswordResponses = {
 };
 
 export type ResetPasswordResponse = ResetPasswordResponses[keyof ResetPasswordResponses];
+
+export type ListMyOAuthAccountsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/oauth';
+};
+
+export type ListMyOAuthAccountsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+};
+
+export type ListMyOAuthAccountsError = ListMyOAuthAccountsErrors[keyof ListMyOAuthAccountsErrors];
+
+export type ListMyOAuthAccountsResponses = {
+    /**
+     * OK
+     */
+    200: OAuthAccountsResponse;
+};
+
+export type ListMyOAuthAccountsResponse = ListMyOAuthAccountsResponses[keyof ListMyOAuthAccountsResponses];
+
+export type UnlinkMyOAuthAccountData = {
+    body?: never;
+    path: {
+        provider: 'google' | 'github';
+    };
+    query?: never;
+    url: '/v1/auth/me/oauth/{provider}';
+};
+
+export type UnlinkMyOAuthAccountErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Last login method
+     */
+    409: ApiError;
+};
+
+export type UnlinkMyOAuthAccountError = UnlinkMyOAuthAccountErrors[keyof UnlinkMyOAuthAccountErrors];
+
+export type UnlinkMyOAuthAccountResponses = {
+    /**
+     * OK
+     */
+    200: AuthOkResponse;
+};
+
+export type UnlinkMyOAuthAccountResponse = UnlinkMyOAuthAccountResponses[keyof UnlinkMyOAuthAccountResponses];
+
+export type UpdateMyPasswordData = {
+    body?: UpdatePasswordBody;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/password';
+};
+
+export type UpdateMyPasswordErrors = {
+    /**
+     * Wrong current password
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+};
+
+export type UpdateMyPasswordError = UpdateMyPasswordErrors[keyof UpdateMyPasswordErrors];
+
+export type UpdateMyPasswordResponses = {
+    /**
+     * OK
+     */
+    200: AuthOkResponse;
+};
+
+export type UpdateMyPasswordResponse = UpdateMyPasswordResponses[keyof UpdateMyPasswordResponses];
 
 export type GetMeData = {
     body?: never;

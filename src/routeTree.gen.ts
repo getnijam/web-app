@@ -19,6 +19,7 @@ import { Route as InviteRouteImport } from './routes/invite'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthedAccountRouteImport } from './routes/_authed/account'
 import { Route as AuthedOrgsIndexRouteImport } from './routes/_authed/orgs.index'
 import { Route as AuthedOrgsOrgIdRouteImport } from './routes/_authed/orgs.$orgId'
 import { Route as AuthedOrgsOrgIdIndexRouteImport } from './routes/_authed/orgs.$orgId.index'
@@ -87,6 +88,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthedAccountRoute = AuthedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthedRouteRoute,
 } as any)
 const AuthedOrgsIndexRoute = AuthedOrgsIndexRouteImport.update({
   id: '/orgs/',
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
+  '/account': typeof AuthedAccountRoute
   '/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/orgs/': typeof AuthedOrgsIndexRoute
   '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
+  '/account': typeof AuthedAccountRoute
   '/orgs': typeof AuthedOrgsIndexRoute
   '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
   '/orgs/$orgId/keys': typeof AuthedOrgsOrgIdKeysRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
+  '/_authed/account': typeof AuthedAccountRoute
   '/_authed/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/_authed/orgs/': typeof AuthedOrgsIndexRoute
   '/_authed/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
@@ -298,6 +307,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/verify'
+    | '/account'
     | '/orgs/$orgId'
     | '/orgs/'
     | '/orgs/$orgId/billing'
@@ -328,6 +338,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/verify'
+    | '/account'
     | '/orgs'
     | '/orgs/$orgId/billing'
     | '/orgs/$orgId/keys'
@@ -357,6 +368,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/verify'
+    | '/_authed/account'
     | '/_authed/orgs/$orgId'
     | '/_authed/orgs/'
     | '/_authed/orgs/$orgId/billing'
@@ -462,6 +474,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authed/account': {
+      id: '/_authed/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthedAccountRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
     '/_authed/orgs/': {
       id: '/_authed/orgs/'
@@ -665,11 +684,13 @@ const AuthedOrgsOrgIdRouteWithChildren = AuthedOrgsOrgIdRoute._addFileChildren(
 )
 
 interface AuthedRouteRouteChildren {
+  AuthedAccountRoute: typeof AuthedAccountRoute
   AuthedOrgsOrgIdRoute: typeof AuthedOrgsOrgIdRouteWithChildren
   AuthedOrgsIndexRoute: typeof AuthedOrgsIndexRoute
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
+  AuthedAccountRoute: AuthedAccountRoute,
   AuthedOrgsOrgIdRoute: AuthedOrgsOrgIdRouteWithChildren,
   AuthedOrgsIndexRoute: AuthedOrgsIndexRoute,
 }
