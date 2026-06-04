@@ -7,6 +7,7 @@ import { MailCheck } from 'lucide-react';
 import { z } from 'zod';
 import { signup } from '@/client';
 import { AuthLayout, AuthHeading, FieldError } from '@/components/auth/AuthLayout';
+import { OAuthButtons } from '@/components/auth/OAuthButtons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -112,6 +113,8 @@ function SignupPage() {
           title="Create your account"
           description="Start tracking your Playwright runs in minutes."
         />
+
+        <OAuthButtons />
 
         <Flex
           as="form"

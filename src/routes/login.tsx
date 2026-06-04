@@ -7,6 +7,8 @@ import { z } from 'zod';
 import { login } from '@/client';
 import { getMeQueryKey } from '@/client/@tanstack/react-query.gen';
 import { AuthLayout, AuthHeading, FieldError } from '@/components/auth/AuthLayout';
+import { OAuthButtons } from '@/components/auth/OAuthButtons';
+import { oauthErrorMessage } from '@/lib/oauth-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +16,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
-import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
+import { redirectAuthedToDashboard, safeNextPath } from '@/lib/auth-redirect';
 import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/login')({
@@ -24,10 +26,17 @@ export const Route = createFileRoute('/login')({
       description: 'Sign in to Nijam to view your Playwright run history, flakiness, and traces.',
       path: '/login',
     }),
-  beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
+  beforeLoad: ({ context, search }) =>
+    redirectAuthedToDashboard(context.queryClient, search.nextUrl),
   component: LoginPage,
-  validateSearch: (search: Record<string, unknown>): { invite?: string } => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { invite?: string; oauthError?: string; nextUrl?: string } => ({
     invite: typeof search.invite === 'string' ? search.invite : undefined,
+    oauthError: typeof search.oauthError === 'string' ? search.oauthError : undefined,
+    // The page to return to after sign-in (set by the _authed gate). Validated to a
+    // same-origin relative path so it can't be used as an open redirect.
+    nextUrl: safeNextPath(search.nextUrl),
   }),
 });
 
@@ -40,8 +49,12 @@ type LoginForm = z.infer<typeof LoginSchema>;
 function LoginPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { invite } = Route.useSearch();
-  const [formError, setFormError] = useState<string | null>(null);
+  const { invite, oauthError, nextUrl } = Route.useSearch();
+  // Where to land after sign-in: the invite flow wins (resumes acceptance), else the
+  // page they were headed to (?nextUrl from the gate), else the org picker. The same
+  // target is carried through OAuth via the start route's `next`.
+  const postLogin = invite ? `/invite?token=${invite}` : (nextUrl ?? '/orgs');
+  const [formError, setFormError] = useState<string | null>(() => oauthErrorMessage(oauthError));
 
   const form = useForm<LoginForm>({ resolver: zodResolver(LoginSchema) });
 
@@ -50,7 +63,7 @@ function LoginPage() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
       if (invite) navigate({ to: '/invite', search: { token: invite } });
-      else navigate({ to: '/orgs' });
+      else navigate({ to: nextUrl ?? '/orgs' });
     },
     onError: (err: unknown) => {
       if (isApiError(err) && err.error.field) {
@@ -67,6 +80,8 @@ function LoginPage() {
     <AuthLayout>
       <Flex direction="col" gap={6}>
         <AuthHeading title="Sign in" description="Welcome back. Sign in to your Nijam account." />
+
+        <OAuthButtons next={postLogin} />
 
         <Flex
           as="form"
