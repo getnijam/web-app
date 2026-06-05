@@ -14,7 +14,7 @@ export const Route = createFileRoute('/pricing')({
     seo({
       title: 'Pricing',
       description:
-        'Simple, volume-based pricing for Nijam — start free, then $20/month on Pro with unlimited members. Estimate your monthly bill by team size.',
+        'Simple, volume-based pricing for Nijam — start free, then $20/month on Pro with unlimited members and an early-bird half-price metered rate. Estimate your monthly bill by team size.',
       path: '/pricing',
     }),
   component: PricingPage,
@@ -62,8 +62,8 @@ function PricingPage() {
             </Text>
             <Text className="mt-3 text-base text-pretty text-muted-foreground">
               Drag the slider to set your monthly test volume and enter your team size. Up to 2
-              members and 1,000 test results stays free; beyond that, Pro is $20/mo plus $0.002 per
-              extra test result.
+              members and 1,000 test results stays free; beyond that, Pro is $20/mo plus an
+              early-bird $0.001 per extra test result (half the standard $0.002).
             </Text>
           </Reveal>
 

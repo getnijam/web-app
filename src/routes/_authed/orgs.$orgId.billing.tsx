@@ -8,6 +8,7 @@ import {
   UserMultiple02Icon,
   Calendar03Icon,
   TestTube01Icon,
+  DiscountTag01Icon,
 } from '@hugeicons/core-free-icons';
 import type { BillingResponse } from '@/client';
 import {
@@ -99,7 +100,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   });
 
   // Pro is uncapped — once usage passes the included allotment, overage billing
-  // ($0.002/test) kicks in. Surface that instead of a silent full bar.
+  // ($0.001/test early-bird rate) kicks in. Surface that instead of a silent full bar.
   const included = limits.tests;
   const overTests = pro ? Math.max(0, usage.tests - included) : 0;
   const overActive = overTests > 0;
@@ -117,8 +118,8 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   if (isAdmin) {
     if (pro)
       testHint = overActive
-        ? `Included ${formatCount(included)} used up — extra tests now cost $0.002 each (${formatCount(overTests)} over this cycle), added to your next invoice. Resets ${resets}.`
-        : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Beyond that, $0.002 per test, billed at cycle end. Resets ${resets}.`;
+        ? `Included ${formatCount(included)} used up — extra tests now cost $0.001 each (${formatCount(overTests)} over this cycle), added to your next invoice. Resets ${resets}.`
+        : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Beyond that, $0.001 per test, billed at cycle end. Resets ${resets}.`;
     else if (billing.over)
       testHint = billing.enforced
         ? `Monthly limit reached — new reports are paused until ${resets}. Upgrade to keep reporting.`
@@ -224,7 +225,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
               </Text>
               <Text as="span" className="text-xs text-muted-foreground">
                 {overActive
-                  ? `$20 base + ${formatCount(overTests)} over × $0.002. Final amount billed at period end.`
+                  ? `$20 base + ${formatCount(overTests)} over × $0.001. Final amount billed at period end.`
                   : '$20 base. Final amount is calculated at the end of your billing period.'}
               </Text>
             </Flex>
@@ -277,8 +278,10 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
 
           <Flex align="center" justify="between" gap={3} wrap>
             <Text as="span" className="text-sm text-muted-foreground">
-              <strong className="font-semibold text-foreground">$20</strong>/mo, then $0.002 per
-              test over 10,000.
+              <strong className="font-semibold text-foreground">$20</strong>/mo, then{' '}
+              <span className="line-through">$0.002</span>{' '}
+              <strong className="font-semibold text-foreground">$0.001</strong> per test over
+              10,000.
             </Text>
             <Button
               loading={checkout.isPending}
@@ -286,6 +289,19 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
             >
               Upgrade to Pro
             </Button>
+          </Flex>
+
+          <Flex align="start" gap={2} className="text-xs text-primary">
+            <HugeiconsIcon
+              icon={DiscountTag01Icon}
+              size={15}
+              strokeWidth={2}
+              className="mt-0.5 shrink-0"
+            />
+            <Text as="span" className="text-pretty">
+              Early bird: upgrade now to lock the half-price $0.001/test metered rate for at least 2
+              years.
+            </Text>
           </Flex>
         </Flex>
       )}

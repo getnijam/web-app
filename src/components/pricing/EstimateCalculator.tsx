@@ -8,12 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 
 // Free covers small teams within the volume cap; past either limit you're on the
-// flat Pro plan, which bills $0.002 per test result over the 10k included.
+// flat Pro plan, which bills an early-bird $0.001 per test result over the 10k included
+// (half the standard $0.002). Base ($20) is unchanged.
 const FREE_MEMBER_LIMIT = 2;
 const FREE_TEST_LIMIT = 1_000;
 const PRO_BASE = 20;
 const PRO_INCLUDED_TESTS = 10_000;
-const OVERAGE_RATE = 0.002;
+const OVERAGE_RATE = 0.001;
 
 const MIN_USERS = 1;
 const MAX_USERS = 9_999;

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Tick02Icon } from '@hugeicons/core-free-icons';
+import { Tick02Icon, DiscountTag01Icon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
@@ -17,6 +17,8 @@ type Plan = {
   features: ReactNode[];
   cta: string;
   featured?: boolean;
+  /** Early-bird offer callout, rendered as a highlighted strip under the price. */
+  earlyBird?: ReactNode;
 };
 
 const PLANS: Plan[] = [
@@ -43,10 +45,19 @@ const PLANS: Plan[] = [
     cadence: 'per month',
     blurb: 'For teams shipping every day — more volume, longer history, no seat limits.',
     featured: true,
+    earlyBird: (
+      <>
+        <strong className="font-semibold">Early bird — 50% off usage.</strong> Register now as a Pro
+        org and lock the half-price <strong className="font-semibold">$0.001</strong>/test metered
+        rate for at least 2 years.
+      </>
+    ),
     features: [
       <>
         <strong className="font-semibold text-foreground">10,000</strong> test results included,
-        then <strong className="font-semibold text-foreground">$0.002</strong> per additional test
+        then{' '}
+        <span className="text-muted-foreground line-through">$0.002</span>{' '}
+        <strong className="font-semibold text-foreground">$0.001</strong> per additional test
       </>,
       'Unlimited members',
       '90-day history retention',
@@ -92,6 +103,24 @@ function PlanCard({ plan }: { plan: Plan }) {
       </Flex>
 
       <Text className="mt-3 text-sm text-pretty text-muted-foreground">{plan.blurb}</Text>
+
+      {plan.earlyBird && (
+        <Flex
+          align="start"
+          gap={2.5}
+          className="mt-4 rounded-xl border border-primary/30 bg-primary/5 px-3.5 py-3"
+        >
+          <HugeiconsIcon
+            icon={DiscountTag01Icon}
+            size={17}
+            strokeWidth={2}
+            className="mt-0.5 shrink-0 text-primary"
+          />
+          <Text as="span" className="text-xs text-pretty text-primary">
+            {plan.earlyBird}
+          </Text>
+        </Flex>
+      )}
 
       <Button
         asChild
