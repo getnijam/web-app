@@ -5,7 +5,7 @@ import {
   ICON_KEYS,
   COLOR_KEYS,
   ICON_GLYPHS,
-  COLOR_GRADIENTS,
+  COLOR_BACKGROUNDS,
   type IconKey,
   type ColorKey,
 } from '@/lib/project-glyph';
@@ -31,7 +31,7 @@ export function GlyphPicker({
         align="center"
         justify="center"
         className="size-14.5 shrink-0 rounded-xl text-primary-foreground shadow-inner"
-        style={{ background: COLOR_GRADIENTS[color] }}
+        style={{ background: COLOR_BACKGROUNDS[color] }}
       >
         <HugeiconsIcon icon={ICON_GLYPHS[icon]} size={22} strokeWidth={1.9} />
       </Flex>
@@ -57,7 +57,7 @@ export function GlyphPicker({
         </Flex>
         {/* ml-1 offsets the selected swatch's ring so its left edge lines up with
             the icon grid above (the ring-offset overflows ~4px). */}
-        <Flex gap={2} className="ml-1">
+        <Flex wrap gap={2} className="ml-1">
           {COLOR_KEYS.map((key) => (
             <button
               key={key}
@@ -69,7 +69,7 @@ export function GlyphPicker({
                 'size-5 shrink-0 rounded-full transition-shadow',
                 color === key && cn('ring-2 ring-foreground ring-offset-2', ringOffsetClass),
               )}
-              style={{ background: COLOR_GRADIENTS[key] }}
+              style={{ background: COLOR_BACKGROUNDS[key] }}
             />
           ))}
         </Flex>

@@ -1,12 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { listProjectFlakyTestsOptions } from '@/client/@tanstack/react-query.gen';
+import {
+  listProjectFlakyTestsOptions,
+  getProjectFlakyTrendOptions,
+} from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { TestRow } from '@/components/explorer/TestRow';
+import { FlakyTrendChart } from '@/components/flaky/FlakyTrendChart';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/flaky')({
@@ -17,6 +21,7 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/f
 function FlakyPage() {
   const { orgId, projectId } = Route.useParams();
   const q = useQuery(listProjectFlakyTestsOptions({ path: { projectId } }));
+  const trend = useQuery(getProjectFlakyTrendOptions({ path: { projectId } }));
 
   const tests = q.data?.tests ?? [];
   const runWindow = q.data?.runWindow ?? 0;
@@ -33,16 +38,23 @@ function FlakyPage() {
         />
       );
     return (
-      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-        {tests.map((t) => (
-          <TestRow
-            key={t.testId}
-            test={t}
-            orgId={orgId}
-            projectId={projectId}
-            flakeCount={t.flakeCount}
-          />
-        ))}
+      <Flex direction="col" gap={6}>
+        <FlakyTrendChart
+          flakyTestCount={tests.length}
+          points={trend.data?.points ?? []}
+          loading={trend.isLoading}
+        />
+        <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+          {tests.map((t) => (
+            <TestRow
+              key={t.testId}
+              test={t}
+              orgId={orgId}
+              projectId={projectId}
+              flakeCount={t.flakeCount}
+            />
+          ))}
+        </Flex>
       </Flex>
     );
   };

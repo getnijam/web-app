@@ -48,7 +48,7 @@ export function NewProjectDialog({
 }) {
   const queryClient = useQueryClient();
   const [formError, setFormError] = useState<string | null>(null);
-  const [icon, setIcon] = useState<IconKey>('layers');
+  const [icon, setIcon] = useState<IconKey>('design');
   const [color, setColor] = useState<ColorKey>('emerald');
   const form = useForm<CreateForm>({
     resolver: zodResolver(CreateSchema),
@@ -58,7 +58,7 @@ export function NewProjectDialog({
 
   function close() {
     form.reset({ defaultBranch: 'main' });
-    setIcon('layers');
+    setIcon('design');
     setColor('emerald');
     setFormError(null);
     onOpenChange(false);

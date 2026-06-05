@@ -4,9 +4,8 @@ import type { SecretKeySummary } from '@/client';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { glyphFor } from '@/lib/project-glyph';
-import { initialsFrom } from '@/components/shell/use-shell-nav';
 
-/** Small project glyph tile (icon or initials over the project's gradient). */
+/** Small project glyph tile (icon over the project's fill color). */
 export function ProjectGlyphMini({
   project,
 }: {
@@ -18,15 +17,9 @@ export function ProjectGlyphMini({
       align="center"
       justify="center"
       className="size-5 shrink-0 rounded text-primary-foreground"
-      style={{ background: glyph.gradient }}
+      style={{ background: glyph.background }}
     >
-      {glyph.icon ? (
-        <HugeiconsIcon icon={glyph.icon} size={12} strokeWidth={2} />
-      ) : (
-        <Text as="span" className="font-mono text-xs leading-none">
-          {initialsFrom(project.name).slice(0, 1)}
-        </Text>
-      )}
+      <HugeiconsIcon icon={glyph.icon} size={12} strokeWidth={2} />
     </Flex>
   );
 }

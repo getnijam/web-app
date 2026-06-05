@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ReporterSnippet } from '@/components/projects/ReporterSnippet';
+import { ProjectIdChip } from '@/components/projects/ProjectIdChip';
 import { RunStats } from '@/components/runs/RunStats';
 import {
   RunFilters,
@@ -187,9 +188,10 @@ function Header({
 
   return (
     <Flex align="start" justify="between" gap={4} className="flex-wrap">
-      <Flex direction="col" gap={1}>
+      <Flex direction="col" gap={1} className="min-w-0">
         <Text variant="h1">Runs</Text>
         {parts.length > 0 && <Text color="muted">{parts.join(' · ')}</Text>}
+        <ProjectIdChip value={proj.id} className="mt-1 w-fit max-w-full" />
       </Flex>
       <Button variant="outline" size="sm" loading={refreshing} onClick={onRefresh}>
         {!refreshing && <HugeiconsIcon icon={RefreshIcon} size={15} />}

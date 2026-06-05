@@ -81,6 +81,9 @@ export function Footer() {
             <Link to="/privacy" className={COL}>
               Privacy Policy
             </Link>
+            <Link to="/security" className={COL}>
+              Security
+            </Link>
             <Link to="/signup" className={COL}>
               Start free
             </Link>

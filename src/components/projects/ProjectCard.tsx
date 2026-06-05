@@ -5,7 +5,6 @@ import type { ProjectSummary } from '@/client';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { glyphFor } from '@/lib/project-glyph';
-import { initialsFrom } from '@/components/shell/use-shell-nav';
 import { timeAgo, formatDate, repoFromUrl } from '@/lib/format';
 import { RunChart } from './RunChart';
 import { StatusPill } from './StatusPill';
@@ -30,14 +29,10 @@ export function ProjectCard({ project, orgId }: { project: ProjectSummary; orgId
         <Flex
           align="center"
           justify="center"
-          className="size-9.5 shrink-0 rounded-lg font-mono text-base font-bold text-primary-foreground"
-          style={{ background: glyph.gradient }}
+          className="size-9.5 shrink-0 rounded-lg text-primary-foreground"
+          style={{ background: glyph.background }}
         >
-          {glyph.icon ? (
-            <HugeiconsIcon icon={glyph.icon} size={18} strokeWidth={1.9} />
-          ) : (
-            initialsFrom(project.name)
-          )}
+          <HugeiconsIcon icon={glyph.icon} size={18} strokeWidth={1.9} />
         </Flex>
         <Flex direction="col" className="min-w-0 flex-1">
           <Text as="span" truncate className="text-base font-semibold tracking-tight">

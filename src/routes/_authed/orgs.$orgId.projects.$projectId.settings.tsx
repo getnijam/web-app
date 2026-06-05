@@ -45,7 +45,7 @@ const Schema = z.object({
 type FormValues = z.infer<typeof Schema>;
 
 const toIconKey = (v: string | null): IconKey =>
-  (ICON_KEYS as readonly string[]).includes(v ?? '') ? (v as IconKey) : 'layers';
+  (ICON_KEYS as readonly string[]).includes(v ?? '') ? (v as IconKey) : 'design';
 const toColorKey = (v: string | null): ColorKey =>
   (COLOR_KEYS as readonly string[]).includes(v ?? '') ? (v as ColorKey) : 'emerald';
 

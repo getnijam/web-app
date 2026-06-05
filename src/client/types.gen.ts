@@ -207,7 +207,6 @@ export type ProjectStats = {
     passRate: number;
     runCount: number;
     testsCount: number;
-    flakyCount: number;
     avgDurationSec: number | null;
     lastRunAt: string;
     ciProvider: string | null;
@@ -243,8 +242,8 @@ export type CreateProjectBody = {
     description?: string;
     repositoryUrl?: string;
     defaultBranch?: string;
-    icon?: 'layers' | 'flask' | 'git' | 'code' | 'docs' | 'flow' | 'pulse' | 'home';
-    color?: 'emerald' | 'indigo' | 'amber' | 'sky' | 'pink' | 'teal';
+    icon?: 'dashboard' | 'browser' | 'support' | 'finance' | 'testing' | 'education' | 'travel' | 'mobile' | 'gaming' | 'blockchain' | 'design' | 'database';
+    color?: 'emerald' | 'indigo' | 'amber' | 'sky' | 'pink' | 'teal' | 'rose' | 'violet' | 'orange';
 };
 
 export type ProjectListResponse = {
@@ -256,8 +255,8 @@ export type UpdateProjectBody = {
     description?: string;
     repositoryUrl?: string;
     defaultBranch?: string;
-    icon?: 'layers' | 'flask' | 'git' | 'code' | 'docs' | 'flow' | 'pulse' | 'home';
-    color?: 'emerald' | 'indigo' | 'amber' | 'sky' | 'pink' | 'teal';
+    icon?: 'dashboard' | 'browser' | 'support' | 'finance' | 'testing' | 'education' | 'travel' | 'mobile' | 'gaming' | 'blockchain' | 'design' | 'database';
+    color?: 'emerald' | 'indigo' | 'amber' | 'sky' | 'pink' | 'teal' | 'rose' | 'violet' | 'orange';
 };
 
 export type ProjectDeletedResponse = {
@@ -288,6 +287,15 @@ export type FlakyTestSummary = TestCaseSummary & {
 export type FlakyTestsResponse = {
     tests: Array<FlakyTestSummary>;
     runWindow: number;
+};
+
+export type FlakyTrendPoint = {
+    date: string;
+    count: number;
+};
+
+export type FlakyTrendResponse = {
+    points: Array<FlakyTrendPoint>;
 };
 
 export type TestHistoryEntry = {
@@ -321,6 +329,7 @@ export type TestDetailResponse = {
 
 export type RunCreatedResponse = {
     id: string;
+    url: string;
 };
 
 export type CreateRunBody = {
@@ -1866,6 +1875,37 @@ export type ListProjectFlakyTestsResponses = {
 };
 
 export type ListProjectFlakyTestsResponse = ListProjectFlakyTestsResponses[keyof ListProjectFlakyTestsResponses];
+
+export type GetProjectFlakyTrendData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/flaky-trend';
+};
+
+export type GetProjectFlakyTrendErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Project not found
+     */
+    404: ApiError;
+};
+
+export type GetProjectFlakyTrendError = GetProjectFlakyTrendErrors[keyof GetProjectFlakyTrendErrors];
+
+export type GetProjectFlakyTrendResponses = {
+    /**
+     * OK
+     */
+    200: FlakyTrendResponse;
+};
+
+export type GetProjectFlakyTrendResponse = GetProjectFlakyTrendResponses[keyof GetProjectFlakyTrendResponses];
 
 export type GetProjectTestData = {
     body?: never;

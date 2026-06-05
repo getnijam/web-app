@@ -26,7 +26,6 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
@@ -139,9 +138,9 @@ function ProjectSwitcherChip({ projectId }: { projectId: string }) {
           'size-6.5 shrink-0 rounded-lg font-mono text-xs font-bold',
           glyph ? 'text-primary-foreground' : 'bg-primary/15 text-primary',
         )}
-        style={glyph ? { background: glyph.gradient } : undefined}
+        style={glyph ? { background: glyph.background } : undefined}
       >
-        {glyph?.icon ? (
+        {glyph ? (
           <HugeiconsIcon icon={glyph.icon} size={14} strokeWidth={1.9} />
         ) : (
           initialsFrom(name)
@@ -168,9 +167,6 @@ function ProjectNav({
   projectId: string;
   active: SubRoute;
 }) {
-  const project = useQuery(getProjectOptions({ path: { id: projectId } }));
-  const flakyCount = project.data?.stats?.flakyCount ?? 0;
-
   return (
     <Flex direction="col" gap={1.5}>
       <SidebarMenu>
@@ -210,11 +206,6 @@ function ProjectNav({
               <span>Flaky tests</span>
             </Link>
           </SidebarMenuButton>
-          {flakyCount > 0 && (
-            <SidebarMenuBadge className="bg-destructive/15 font-semibold text-destructive">
-              {flakyCount}
-            </SidebarMenuBadge>
-          )}
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton asChild isActive={active === 'psettings'} className={NAV_ACTIVE}>

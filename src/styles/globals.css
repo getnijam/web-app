@@ -44,14 +44,17 @@
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
 
-  /* Project-glyph palette (decorative; same in light/dark). Referenced via
-     var(--glyph-*) so components never inline raw hex. */
-  --glyph-emerald: linear-gradient(150deg, #10b981, #0ea5a4);
-  --glyph-indigo: linear-gradient(150deg, #6366f1, #8b5cf6);
-  --glyph-amber: linear-gradient(150deg, #f59e0b, #ef4444);
-  --glyph-sky: linear-gradient(150deg, #0ea5e9, #2563eb);
-  --glyph-pink: linear-gradient(150deg, #ec4899, #8b5cf6);
-  --glyph-teal: linear-gradient(150deg, #14b8a6, #22c55e);
+  /* Project-glyph palette (decorative; same in light/dark). Flat fills,
+     referenced via var(--glyph-*) so components never inline raw hex. */
+  --glyph-emerald: #10b981;
+  --glyph-indigo: #6366f1;
+  --glyph-amber: #f59e0b;
+  --glyph-sky: #0ea5e9;
+  --glyph-pink: #ec4899;
+  --glyph-teal: #14b8a6;
+  --glyph-rose: #f43f5e;
+  --glyph-violet: #8b5cf6;
+  --glyph-orange: #f97316;
   /* Modal scrim. */
   --overlay: oklch(0 0 0 / 0.6);
 
