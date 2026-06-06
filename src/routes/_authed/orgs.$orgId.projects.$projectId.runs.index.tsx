@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ReporterSnippet } from '@/components/projects/ReporterSnippet';
-import { ProjectIdChip } from '@/components/projects/ProjectIdChip';
 import { RunStats } from '@/components/runs/RunStats';
 import {
   RunFilters,
@@ -108,7 +107,7 @@ function RunsPage() {
     return (
       <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
         <Header proj={proj} onRefresh={refresh} refreshing={refreshing} />
-        <ReporterSnippet projectId={projectId} />
+        <ReporterSnippet orgId={orgId} projectId={projectId} />
       </Flex>
     );
   }
@@ -182,16 +181,16 @@ function Header({
   const parts = [
     repo,
     proj.stats ? `last run ${timeAgo(proj.stats.lastRunAt)}` : null,
-    proj.defaultBranch ? `on ${proj.defaultBranch}` : null,
+    // Only as a qualifier for the last run — a lone "on main" (no runs yet) reads oddly.
+    proj.stats && proj.defaultBranch ? `on ${proj.defaultBranch}` : null,
     proj.stats?.ciProvider ? `via ${proj.stats.ciProvider}` : null,
   ].filter(Boolean);
 
   return (
     <Flex align="start" justify="between" gap={4} className="flex-wrap">
-      <Flex direction="col" gap={1} className="min-w-0">
+      <Flex direction="col" gap={1}>
         <Text variant="h1">Runs</Text>
         {parts.length > 0 && <Text color="muted">{parts.join(' · ')}</Text>}
-        <ProjectIdChip value={proj.id} className="mt-1 w-fit max-w-full" />
       </Flex>
       <Button variant="outline" size="sm" loading={refreshing} onClick={onRefresh}>
         {!refreshing && <HugeiconsIcon icon={RefreshIcon} size={15} />}
