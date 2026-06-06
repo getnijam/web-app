@@ -35,14 +35,13 @@ try {
 type ReporterEntry = readonly [string] | readonly [string, Record<string, unknown>];
 
 const reporter: ReporterEntry[] = [['list']];
+
 if (process.env.NIJAM_API_KEY && process.env.NIJAM_PROJECT_ID) {
   reporter.push([
     '@nijam/pw-reporter',
     {
       apiKey: process.env.NIJAM_API_KEY,
       projectId: process.env.NIJAM_PROJECT_ID,
-      // Omitted/blank → the reporter defaults to https://api.nijam.dev.
-      apiUrl: process.env.NIJAM_API_URL,
     },
   ]);
 }
@@ -56,7 +55,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter,
   use: {
-    baseURL: process.env.NIJAM_E2E_BASE_URL ?? 'https://www.nijam.dev',
+    baseURL: process.env.NIJAM_E2E_BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },

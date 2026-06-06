@@ -99,7 +99,7 @@ function ScopeCard({
       <Text as="span" weight="semibold" className="text-sm">
         {title}
       </Text>
-      <Text as="span" className="text-xs text-muted-foreground">
+      <Text as="span" className="text-xs text-muted-foreground text-wrap">
         {description}
       </Text>
     </Button>
