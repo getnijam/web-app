@@ -9,6 +9,7 @@ import { Reveal } from '../Reveal';
 import { FlakyList } from './FlakyList';
 import { FailureCard } from './FailureCard';
 import { SlackCard } from './SlackCard';
+import { GitHubCard } from './GitHubCard';
 
 function Row({
   id,
@@ -118,6 +119,21 @@ export function HighlightRows() {
           ]}
         >
           <SlackCard />
+        </Row>
+
+        <Row
+          flip
+          id="github"
+          kicker="GitHub checks"
+          heading="Every pull request gets a verdict"
+          body="Install the GitHub App and Nijam posts a status check on each PR — green when it passes, red when it fails — plus a results comment it keeps up to date as you push."
+          items={[
+            'Pass / fail status check on the PR head commit',
+            'A sticky results comment, updated in place each run',
+            'Mute a project or limit it to specific branches',
+          ]}
+        >
+          <GitHubCard />
         </Row>
       </Flex>
     </section>

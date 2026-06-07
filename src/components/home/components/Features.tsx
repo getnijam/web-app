@@ -7,6 +7,7 @@ import {
   Clock01Icon,
   WorkflowSquare01Icon,
   BellIcon,
+  GitPullRequestIcon,
 } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
@@ -63,8 +64,14 @@ const FEATURES: Feature[] = [
   {
     icon: <HugeiconsIcon icon={BellIcon} size={22} />,
     tint: 'bg-success/15 text-success',
-    title: 'Slack & integrations',
+    title: 'Slack notifications',
     body: 'Auto-post passing, flaky and failing runs to Slack — with green / yellow / red status and every test linked back to its results on Nijam.',
+  },
+  {
+    icon: <HugeiconsIcon icon={GitPullRequestIcon} size={22} />,
+    tint: 'bg-foreground/10 text-foreground',
+    title: 'GitHub checks & comments',
+    body: 'Install the GitHub App and every pull request gets a Nijam status check — green when it passes, red when it fails — plus a results comment that updates in place on each run.',
   },
 ];
 
