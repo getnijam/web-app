@@ -46,6 +46,11 @@ if (process.env.NIJAM_API_KEY && process.env.NIJAM_PROJECT_ID) {
   ]);
 }
 
+// In CI, also emit the HTML report so the workflow can upload it as an artifact.
+if (process.env.CI) {
+  reporter.push(['html', { open: 'never' }]);
+}
+
 export default defineConfig({
   testDir: './e2e',
   // The lifecycle spec is a single ordered chain (create → delete), so no parallelism.
