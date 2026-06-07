@@ -32,6 +32,7 @@ import { Route as AuthedOrgsOrgIdProjectsIndexRouteImport } from './routes/_auth
 import { Route as AuthedOrgsOrgIdIntegrationsIndexRouteImport } from './routes/_authed/orgs.$orgId.integrations.index'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId'
 import { Route as AuthedOrgsOrgIdIntegrationsSlackRouteImport } from './routes/_authed/orgs.$orgId.integrations.slack'
+import { Route as AuthedOrgsOrgIdIntegrationsGithubRouteImport } from './routes/_authed/orgs.$orgId.integrations.github'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdIndexRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.index'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdSettingsRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.settings'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdFlakyRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId.flaky'
@@ -159,6 +160,12 @@ const AuthedOrgsOrgIdIntegrationsSlackRoute =
     path: '/integrations/slack',
     getParentRoute: () => AuthedOrgsOrgIdRoute,
   } as any)
+const AuthedOrgsOrgIdIntegrationsGithubRoute =
+  AuthedOrgsOrgIdIntegrationsGithubRouteImport.update({
+    id: '/integrations/github',
+    path: '/integrations/github',
+    getParentRoute: () => AuthedOrgsOrgIdRoute,
+  } as any)
 const AuthedOrgsOrgIdProjectsProjectIdIndexRoute =
   AuthedOrgsOrgIdProjectsProjectIdIndexRouteImport.update({
     id: '/',
@@ -227,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
   '/orgs/$orgId/': typeof AuthedOrgsOrgIdIndexRoute
+  '/orgs/$orgId/integrations/github': typeof AuthedOrgsOrgIdIntegrationsGithubRoute
   '/orgs/$orgId/integrations/slack': typeof AuthedOrgsOrgIdIntegrationsSlackRoute
   '/orgs/$orgId/projects/$projectId': typeof AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren
   '/orgs/$orgId/integrations/': typeof AuthedOrgsOrgIdIntegrationsIndexRoute
@@ -258,6 +266,7 @@ export interface FileRoutesByTo {
   '/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
   '/orgs/$orgId': typeof AuthedOrgsOrgIdIndexRoute
+  '/orgs/$orgId/integrations/github': typeof AuthedOrgsOrgIdIntegrationsGithubRoute
   '/orgs/$orgId/integrations/slack': typeof AuthedOrgsOrgIdIntegrationsSlackRoute
   '/orgs/$orgId/integrations': typeof AuthedOrgsOrgIdIntegrationsIndexRoute
   '/orgs/$orgId/projects': typeof AuthedOrgsOrgIdProjectsIndexRoute
@@ -291,6 +300,7 @@ export interface FileRoutesById {
   '/_authed/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/_authed/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
   '/_authed/orgs/$orgId/': typeof AuthedOrgsOrgIdIndexRoute
+  '/_authed/orgs/$orgId/integrations/github': typeof AuthedOrgsOrgIdIntegrationsGithubRoute
   '/_authed/orgs/$orgId/integrations/slack': typeof AuthedOrgsOrgIdIntegrationsSlackRoute
   '/_authed/orgs/$orgId/projects/$projectId': typeof AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren
   '/_authed/orgs/$orgId/integrations/': typeof AuthedOrgsOrgIdIntegrationsIndexRoute
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/orgs/$orgId/settings'
     | '/orgs/$orgId/users'
     | '/orgs/$orgId/'
+    | '/orgs/$orgId/integrations/github'
     | '/orgs/$orgId/integrations/slack'
     | '/orgs/$orgId/projects/$projectId'
     | '/orgs/$orgId/integrations/'
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
     | '/orgs/$orgId/settings'
     | '/orgs/$orgId/users'
     | '/orgs/$orgId'
+    | '/orgs/$orgId/integrations/github'
     | '/orgs/$orgId/integrations/slack'
     | '/orgs/$orgId/integrations'
     | '/orgs/$orgId/projects'
@@ -388,6 +400,7 @@ export interface FileRouteTypes {
     | '/_authed/orgs/$orgId/settings'
     | '/_authed/orgs/$orgId/users'
     | '/_authed/orgs/$orgId/'
+    | '/_authed/orgs/$orgId/integrations/github'
     | '/_authed/orgs/$orgId/integrations/slack'
     | '/_authed/orgs/$orgId/projects/$projectId'
     | '/_authed/orgs/$orgId/integrations/'
@@ -580,6 +593,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedOrgsOrgIdIntegrationsSlackRouteImport
       parentRoute: typeof AuthedOrgsOrgIdRoute
     }
+    '/_authed/orgs/$orgId/integrations/github': {
+      id: '/_authed/orgs/$orgId/integrations/github'
+      path: '/integrations/github'
+      fullPath: '/orgs/$orgId/integrations/github'
+      preLoaderRoute: typeof AuthedOrgsOrgIdIntegrationsGithubRouteImport
+      parentRoute: typeof AuthedOrgsOrgIdRoute
+    }
     '/_authed/orgs/$orgId/projects/$projectId/': {
       id: '/_authed/orgs/$orgId/projects/$projectId/'
       path: '/'
@@ -681,6 +701,7 @@ interface AuthedOrgsOrgIdRouteChildren {
   AuthedOrgsOrgIdSettingsRoute: typeof AuthedOrgsOrgIdSettingsRoute
   AuthedOrgsOrgIdUsersRoute: typeof AuthedOrgsOrgIdUsersRoute
   AuthedOrgsOrgIdIndexRoute: typeof AuthedOrgsOrgIdIndexRoute
+  AuthedOrgsOrgIdIntegrationsGithubRoute: typeof AuthedOrgsOrgIdIntegrationsGithubRoute
   AuthedOrgsOrgIdIntegrationsSlackRoute: typeof AuthedOrgsOrgIdIntegrationsSlackRoute
   AuthedOrgsOrgIdProjectsProjectIdRoute: typeof AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren
   AuthedOrgsOrgIdIntegrationsIndexRoute: typeof AuthedOrgsOrgIdIntegrationsIndexRoute
@@ -693,6 +714,8 @@ const AuthedOrgsOrgIdRouteChildren: AuthedOrgsOrgIdRouteChildren = {
   AuthedOrgsOrgIdSettingsRoute: AuthedOrgsOrgIdSettingsRoute,
   AuthedOrgsOrgIdUsersRoute: AuthedOrgsOrgIdUsersRoute,
   AuthedOrgsOrgIdIndexRoute: AuthedOrgsOrgIdIndexRoute,
+  AuthedOrgsOrgIdIntegrationsGithubRoute:
+    AuthedOrgsOrgIdIntegrationsGithubRoute,
   AuthedOrgsOrgIdIntegrationsSlackRoute: AuthedOrgsOrgIdIntegrationsSlackRoute,
   AuthedOrgsOrgIdProjectsProjectIdRoute:
     AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren,

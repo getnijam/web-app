@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -5,6 +6,8 @@ import { ArrowRight01Icon, WebhookIcon } from '@hugeicons/core-free-icons';
 import {
   getOrgSlackIntegrationOptions,
   installOrgSlackMutation,
+  getOrgGithubIntegrationOptions,
+  installOrgGithubMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -17,6 +20,7 @@ import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 import { SlackLogo } from './SlackLogo';
+import { GitHubLogo } from './GitHubLogo';
 import { TeamsLogo } from './TeamsLogo';
 import { DiscordLogo } from './DiscordLogo';
 
@@ -27,9 +31,6 @@ const TRIGGER_SUMMARY: Record<string, string> = {
   regression: 'regressions',
 };
 
-// Other destinations — not yet available (mirrors the design's catalog). Brand
-// logos sit on a neutral tile so their own colors read true; the webhook uses
-// the Hugeicons glyph tinted with a token.
 const COMING_SOON = [
   {
     key: 'teams',
@@ -51,7 +52,22 @@ const COMING_SOON = [
   },
 ];
 
-function CardRow({ children }: { children: React.ReactNode }) {
+interface Entry {
+  key: string;
+  name: string;
+  to: string;
+  desc: string;
+  connectedBlurb: string;
+  logo: (size: number) => ReactNode;
+  configured: boolean;
+  connected: boolean;
+  status: 'connected' | 'error' | null;
+  connectLabel: string;
+  connect: () => void;
+  installing: boolean;
+}
+
+function CardRow({ children }: { children: ReactNode }) {
   return (
     <Flex align="center" gap={3.5} className="border-b border-border px-5 py-4 last:border-b-0">
       {children}
@@ -61,9 +77,10 @@ function CardRow({ children }: { children: React.ReactNode }) {
 
 export function IntegrationsList({ orgId }: { orgId: string }) {
   const isAdmin = useIsOrgAdmin(orgId);
-  const status = useQuery(getOrgSlackIntegrationOptions({ path: { orgId } }));
+  const slack = useQuery(getOrgSlackIntegrationOptions({ path: { orgId } }));
+  const github = useQuery(getOrgGithubIntegrationOptions({ path: { orgId } }));
 
-  const install = useMutation({
+  const slackInstall = useMutation({
     ...installOrgSlackMutation(),
     onSuccess: (res) => {
       window.location.href = res.url;
@@ -75,117 +92,162 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
           : 'Something went wrong. Please try again.',
       }),
   });
+  const githubInstall = useMutation({
+    ...installOrgGithubMutation(),
+    onSuccess: (res) => {
+      window.location.href = res.url;
+    },
+    onError: (err) =>
+      notify.error("Couldn't connect GitHub", {
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
+      }),
+  });
 
-  if (status.isLoading) return <LoadingState />;
-  if (status.error || !status.data) {
-    return <ErrorState error={status.error} onRetry={() => status.refetch()} />;
+  if (slack.isLoading || github.isLoading) return <LoadingState />;
+  if (slack.error || !slack.data || github.error || !github.data) {
+    return (
+      <ErrorState
+        error={slack.error ?? github.error}
+        onRetry={() => {
+          void slack.refetch();
+          void github.refetch();
+        }}
+      />
+    );
   }
 
-  const data = status.data;
-  const connected = data.connected;
-  const channelLabel = data.defaultChannel ? `#${data.defaultChannel.name}` : 'a channel';
-  const summary = TRIGGER_SUMMARY[data.triggerMode] ?? 'failures or flaky tests';
+  const slackData = slack.data;
+  const githubData = github.data;
+  const slackChannel = slackData.defaultChannel ? `#${slackData.defaultChannel.name}` : 'a channel';
+  const slackSummary = TRIGGER_SUMMARY[slackData.triggerMode] ?? 'failures or flaky tests';
 
-  const connectButton = isAdmin ? (
-    <Button
-      variant={connected ? 'outline' : 'default'}
-      loading={install.isPending}
-      disabled={!data.configured}
-      onClick={() => install.mutate({ path: { orgId } })}
-    >
-      <SlackLogo size={16} />
-      {connected ? 'Reconnect' : 'Add to Slack'}
-    </Button>
-  ) : (
-    <Text className="text-sm text-muted-foreground">Ask an admin to connect.</Text>
-  );
+  const entries: Entry[] = [
+    {
+      key: 'slack',
+      name: 'Slack',
+      to: '/orgs/$orgId/integrations/slack',
+      desc: 'Post run summaries into your Slack channels.',
+      connectedBlurb: `Posting ${slackSummary} to ${slackChannel} · ${slackData.teamName ?? ''}`,
+      logo: (s) => <SlackLogo size={s} />,
+      configured: slackData.configured,
+      connected: slackData.connected,
+      status: slackData.status,
+      connectLabel: slackData.connected ? 'Reconnect' : 'Add to Slack',
+      connect: () => slackInstall.mutate({ path: { orgId } }),
+      installing: slackInstall.isPending,
+    },
+    {
+      key: 'github',
+      name: 'GitHub',
+      to: '/orgs/$orgId/integrations/github',
+      desc: 'Post a PR check and results comment when tests run on a pull request.',
+      connectedBlurb: githubData.accountLogin
+        ? `Posting PR checks & comments · ${githubData.accountLogin}`
+        : 'Posting PR checks & comments',
+      logo: (s) => <GitHubLogo size={s} />,
+      configured: githubData.configured,
+      connected: githubData.connected,
+      status: githubData.status,
+      connectLabel: githubData.connected ? 'Reconnect' : 'Install GitHub App',
+      connect: () => githubInstall.mutate({ path: { orgId } }),
+      installing: githubInstall.isPending,
+    },
+  ];
+
+  const connected = entries.filter((e) => e.connected);
+  const available = entries.filter((e) => !e.connected);
+
+  const connectButton = (e: Entry) => {
+    if (!isAdmin)
+      return <Text className="text-sm text-muted-foreground">Ask an admin to connect.</Text>;
+    if (!e.configured)
+      return (
+        <Text className="text-sm text-muted-foreground">Not available on this server yet.</Text>
+      );
+    return (
+      <Button
+        variant={e.connected ? 'outline' : 'default'}
+        loading={e.installing}
+        onClick={e.connect}
+      >
+        {e.logo(16)}
+        {e.connectLabel}
+      </Button>
+    );
+  };
 
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
         <Text variant="h1">Integrations</Text>
         <Text color="muted">
-          Send test-run notifications to the tools your team already lives in.
+          Connect Nijam to the tools your team already lives in — Slack notifications and GitHub PR
+          checks &amp; comments.
         </Text>
       </Flex>
 
-      {!data.configured && (
-        <Text color="muted" className="text-sm">
-          Slack isn&rsquo;t available on this server yet.
-        </Text>
-      )}
-
-      {connected ? (
-        <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-          <Flex align="center" className="border-b border-border px-5 py-3">
-            <Text variant="h4">Connected</Text>
-          </Flex>
-          <Flex
-            as={Link}
-            to="/orgs/$orgId/integrations/slack"
-            params={{ orgId } as never}
-            align="center"
-            gap={3.5}
-            className="px-5 py-4 transition-colors hover:bg-accent"
-          >
-            <Flex
-              as="span"
-              align="center"
-              justify="center"
-              className="size-9 shrink-0 rounded-lg bg-primary/10"
-            >
-              <SlackLogo size={22} />
-            </Flex>
-            <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
-              <Flex align="center" gap={2}>
-                <Text as="span" className="text-sm font-semibold">
-                  Slack
-                </Text>
-                <Badge
-                  variant={data.status === 'error' ? 'destructive' : 'secondary'}
-                  className="gap-1"
-                >
-                  <span
-                    className={cn(
-                      'size-1.5 rounded-full',
-                      data.status === 'error' ? 'bg-destructive' : 'bg-success',
-                    )}
-                  />
-                  {data.status === 'error' ? 'Needs attention' : 'Connected'}
-                </Badge>
-              </Flex>
-              <Text as="span" className="truncate text-xs text-muted-foreground">
-                Posting {summary} to {channelLabel} · {data.teamName}
-              </Text>
-            </Flex>
-            <HugeiconsIcon
-              icon={ArrowRight01Icon}
-              size={18}
-              className="shrink-0 text-muted-foreground"
-            />
-          </Flex>
-        </Flex>
-      ) : (
-        <Flex
-          direction="col"
-          align="center"
-          gap={3}
-          className="rounded-2xl border border-border bg-card px-6 py-10 text-center"
-        >
-          <Flex
+      {connected.length > 0 && (
+        <Flex direction="col" gap={2}>
+          <Text
             as="span"
-            align="center"
-            justify="center"
-            className="size-14 rounded-2xl bg-primary/10"
+            className="px-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase"
           >
-            <SlackLogo size={32} />
-          </Flex>
-          <Text variant="h4">Connect your first integration</Text>
-          <Text color="muted" className="max-w-md text-sm">
-            Connect Slack to start posting passing, flaky and failing runs straight into your
-            team&rsquo;s channels — every message links back to its results on Nijam.
+            Connected
           </Text>
-          {connectButton}
+          <Flex
+            direction="col"
+            className="overflow-hidden rounded-2xl border border-border bg-card"
+          >
+            {connected.map((e) => (
+              <Flex
+                key={e.key}
+                as={Link}
+                to={e.to}
+                params={{ orgId } as never}
+                align="center"
+                gap={3.5}
+                className="border-b border-border px-5 py-4 transition-colors last:border-b-0 hover:bg-accent"
+              >
+                <Flex
+                  as="span"
+                  align="center"
+                  justify="center"
+                  className="size-9 shrink-0 rounded-lg bg-muted"
+                >
+                  {e.logo(22)}
+                </Flex>
+                <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
+                  <Flex align="center" gap={2}>
+                    <Text as="span" className="text-sm font-semibold">
+                      {e.name}
+                    </Text>
+                    <Badge
+                      variant={e.status === 'error' ? 'destructive' : 'secondary'}
+                      className="gap-1"
+                    >
+                      <span
+                        className={cn(
+                          'size-1.5 rounded-full',
+                          e.status === 'error' ? 'bg-destructive' : 'bg-success',
+                        )}
+                      />
+                      {e.status === 'error' ? 'Needs attention' : 'Connected'}
+                    </Badge>
+                  </Flex>
+                  <Text as="span" className="truncate text-xs text-muted-foreground">
+                    {e.connectedBlurb}
+                  </Text>
+                </Flex>
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  size={18}
+                  className="shrink-0 text-muted-foreground"
+                />
+              </Flex>
+            ))}
+          </Flex>
         </Flex>
       )}
 
@@ -197,27 +259,27 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
           Available
         </Text>
         <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-          {!connected && (
-            <CardRow>
+          {available.map((e) => (
+            <CardRow key={e.key}>
               <Flex
                 as="span"
                 align="center"
                 justify="center"
-                className="size-9 shrink-0 rounded-lg bg-primary/10"
+                className="size-9 shrink-0 rounded-lg bg-muted"
               >
-                <SlackLogo size={22} />
+                {e.logo(22)}
               </Flex>
               <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
                 <Text as="span" className="text-sm font-semibold">
-                  Slack
+                  {e.name}
                 </Text>
                 <Text as="span" className="text-xs text-muted-foreground">
-                  Post run summaries into your Slack channels.
+                  {e.desc}
                 </Text>
               </Flex>
-              {connectButton}
+              {connectButton(e)}
             </CardRow>
-          )}
+          ))}
           {COMING_SOON.map((c) => (
             <CardRow key={c.key}>
               <Flex

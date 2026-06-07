@@ -338,7 +338,7 @@ export type CreateRunBody = {
     startedAt: string;
     commitSha?: string;
     branch?: string;
-    prNumber?: number;
+    prNumber?: number | null;
     repository?: string;
     authorEmail?: string;
     authorName?: string;
@@ -633,6 +633,45 @@ export type UpdateProjectSlackBody = {
     enabled: boolean;
     channelId?: string | null;
     channelName?: string | null;
+    branches?: Array<string>;
+};
+
+export type GitHubStatusResponse = {
+    configured: boolean;
+    connected: boolean;
+    status: 'connected' | 'error';
+    accountLogin: string | null;
+    postChecks: boolean;
+    postComments: boolean;
+    connectedAt: string | null;
+    lastError: string | null;
+};
+
+export type GitHubInstallUrlResponse = {
+    url: string;
+};
+
+export type UpdateGitHubBody = {
+    postChecks?: boolean;
+    postComments?: boolean;
+};
+
+export type GitHubOkResponse = {
+    ok: true;
+};
+
+export type GitHubReposResponse = {
+    repositories: Array<string>;
+};
+
+export type ProjectGitHubResponse = {
+    githubConnected: boolean;
+    enabled: boolean;
+    branches: Array<string>;
+};
+
+export type UpdateProjectGitHubBody = {
+    enabled: boolean;
     branches?: Array<string>;
 };
 
@@ -2762,6 +2801,247 @@ export type UpdateProjectSlackSettingsResponses = {
 };
 
 export type UpdateProjectSlackSettingsResponse = UpdateProjectSlackSettingsResponses[keyof UpdateProjectSlackSettingsResponses];
+
+export type DisconnectOrgGithubData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/github';
+};
+
+export type DisconnectOrgGithubErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type DisconnectOrgGithubError = DisconnectOrgGithubErrors[keyof DisconnectOrgGithubErrors];
+
+export type DisconnectOrgGithubResponses = {
+    /**
+     * OK
+     */
+    200: GitHubOkResponse;
+};
+
+export type DisconnectOrgGithubResponse = DisconnectOrgGithubResponses[keyof DisconnectOrgGithubResponses];
+
+export type GetOrgGithubIntegrationData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/github';
+};
+
+export type GetOrgGithubIntegrationErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type GetOrgGithubIntegrationError = GetOrgGithubIntegrationErrors[keyof GetOrgGithubIntegrationErrors];
+
+export type GetOrgGithubIntegrationResponses = {
+    /**
+     * OK
+     */
+    200: GitHubStatusResponse;
+};
+
+export type GetOrgGithubIntegrationResponse = GetOrgGithubIntegrationResponses[keyof GetOrgGithubIntegrationResponses];
+
+export type UpdateOrgGithubIntegrationData = {
+    body?: UpdateGitHubBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/github';
+};
+
+export type UpdateOrgGithubIntegrationErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not connected
+     */
+    409: ApiError;
+};
+
+export type UpdateOrgGithubIntegrationError = UpdateOrgGithubIntegrationErrors[keyof UpdateOrgGithubIntegrationErrors];
+
+export type UpdateOrgGithubIntegrationResponses = {
+    /**
+     * OK
+     */
+    200: GitHubStatusResponse;
+};
+
+export type UpdateOrgGithubIntegrationResponse = UpdateOrgGithubIntegrationResponses[keyof UpdateOrgGithubIntegrationResponses];
+
+export type InstallOrgGithubData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/github/install';
+};
+
+export type InstallOrgGithubErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+    /**
+     * GitHub not configured
+     */
+    503: ApiError;
+};
+
+export type InstallOrgGithubError = InstallOrgGithubErrors[keyof InstallOrgGithubErrors];
+
+export type InstallOrgGithubResponses = {
+    /**
+     * OK
+     */
+    200: GitHubInstallUrlResponse;
+};
+
+export type InstallOrgGithubResponse = InstallOrgGithubResponses[keyof InstallOrgGithubResponses];
+
+export type ListOrgGithubReposData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/github/repos';
+};
+
+export type ListOrgGithubReposErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not connected
+     */
+    409: ApiError;
+};
+
+export type ListOrgGithubReposError = ListOrgGithubReposErrors[keyof ListOrgGithubReposErrors];
+
+export type ListOrgGithubReposResponses = {
+    /**
+     * OK
+     */
+    200: GitHubReposResponse;
+};
+
+export type ListOrgGithubReposResponse = ListOrgGithubReposResponses[keyof ListOrgGithubReposResponses];
+
+export type GetProjectGithubSettingsData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/integrations/github';
+};
+
+export type GetProjectGithubSettingsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type GetProjectGithubSettingsError = GetProjectGithubSettingsErrors[keyof GetProjectGithubSettingsErrors];
+
+export type GetProjectGithubSettingsResponses = {
+    /**
+     * OK
+     */
+    200: ProjectGitHubResponse;
+};
+
+export type GetProjectGithubSettingsResponse = GetProjectGithubSettingsResponses[keyof GetProjectGithubSettingsResponses];
+
+export type UpdateProjectGithubSettingsData = {
+    body?: UpdateProjectGitHubBody;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/integrations/github';
+};
+
+export type UpdateProjectGithubSettingsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type UpdateProjectGithubSettingsError = UpdateProjectGithubSettingsErrors[keyof UpdateProjectGithubSettingsErrors];
+
+export type UpdateProjectGithubSettingsResponses = {
+    /**
+     * OK
+     */
+    200: ProjectGitHubResponse;
+};
+
+export type UpdateProjectGithubSettingsResponse = UpdateProjectGithubSettingsResponses[keyof UpdateProjectGithubSettingsResponses];
 
 export type ClientOptions = {
     baseUrl: 'http://localhost:8787' | (string & {});

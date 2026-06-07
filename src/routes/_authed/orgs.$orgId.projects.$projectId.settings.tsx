@@ -26,6 +26,7 @@ import { SettingsRow } from '@/components/settings/SettingsRow';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { GlyphPicker } from '@/components/projects/GlyphPicker';
 import { ProjectSlackSettings } from '@/components/integrations/ProjectSlackSettings';
+import { ProjectGitHubSettings } from '@/components/integrations/ProjectGitHubSettings';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { ICON_KEYS, COLOR_KEYS, type IconKey, type ColorKey } from '@/lib/project-glyph';
@@ -213,6 +214,8 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
       </form>
 
       <ProjectSlackSettings orgId={orgId} projectId={project.id} projectName={project.name} />
+
+      <ProjectGitHubSettings orgId={orgId} projectId={project.id} projectName={project.name} />
 
       {isAdmin && (
         <>
