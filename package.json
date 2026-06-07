@@ -46,8 +46,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@hey-api/openapi-ts": "^0.64.4",
-    "@nijam/pw-reporter": "^0.1.0-alpha.15",
+    "@hey-api/openapi-ts": "^0.98.1",
+    "@nijam/pw-reporter": "^0.1.0-alpha.18",
     "@playwright/test": "^1.60.0",
     "@sentry/vite-plugin": "^5.3.0",
     "@stylistic/eslint-plugin": "^5.10.0",

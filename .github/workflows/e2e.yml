@@ -44,6 +44,8 @@ jobs:
         env:
           # The exact preview URL Vercel generated for this deployment.
           NIJAM_E2E_BASE_URL: ${{ github.event.deployment_status.environment_url }}
+          # Bypass Vercel Deployment Protection on the preview (sent as an HTTP header).
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           # Required, or both specs skip themselves (the check would be a green no-op).
           NIJAM_E2E_EMAIL: ${{ secrets.NIJAM_E2E_EMAIL }}
           NIJAM_E2E_PASSWORD: ${{ secrets.NIJAM_E2E_PASSWORD }}

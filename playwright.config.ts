@@ -51,6 +51,17 @@ if (process.env.CI) {
   reporter.push(['html', { open: 'never' }]);
 }
 
+// Vercel Deployment Protection gates preview URLs behind Vercel auth. When a bypass
+// secret is set, send it on every request so Playwright can reach the preview (and
+// `set-bypass-cookie` so the bypass sticks across navigations). Harmless to other
+// origins like the API, which ignore the unknown header.
+const extraHTTPHeaders = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+  ? {
+      'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+      'x-vercel-set-bypass-cookie': 'true',
+    }
+  : undefined;
+
 export default defineConfig({
   testDir: './e2e',
   // The lifecycle spec is a single ordered chain (create → delete), so no parallelism.
@@ -61,6 +72,7 @@ export default defineConfig({
   reporter,
   use: {
     baseURL: process.env.NIJAM_E2E_BASE_URL,
+    extraHTTPHeaders,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
