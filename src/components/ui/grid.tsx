@@ -95,6 +95,7 @@ const gapMap: Record<string, string> = {
   '3': 'gap-3',
   '4': 'gap-4',
   '4.5': 'gap-4.5',
+  '5': 'gap-5',
   '6': 'gap-6',
   '8': 'gap-8',
 };

@@ -1,32 +1,33 @@
 name: E2E (Vercel preview)
 
-# Vercel posts a `deployment_status` to GitHub when a deployment goes live. We run
-# the Playwright suite against the preview URL it generated for the PR's commit.
-# Note: deployment_status workflows always run the file from the DEFAULT branch, so
-# changes to this file only take effect once merged to main.
+# Runs on every PR: start immediately, wait for Vercel's preview deployment of
+# the PR head to go live, then run the Playwright suite against its URL.
+# Because the trigger is `pull_request`, branch + PR metadata exist natively
+# (GITHUB_HEAD_REF, refs/pull/<n>/merge) and the Nijam reporter picks them up
+# with zero config — and edits to this file take effect on the PR that makes
+# them, not only after merging to main.
 on:
-  deployment_status:
+  pull_request:
 
-# One run per deployment; newer deployments cancel older in-flight runs for the SHA.
+# One run per PR; a newer push cancels the older in-flight run.
 concurrency:
-  group: e2e-${{ github.event.deployment.sha }}
+  group: e2e-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   e2e:
     name: Playwright (chromium)
-    # Only successful, non-production (preview) Vercel deployments that expose a URL.
-    if: >-
-      github.event.deployment_status.state == 'success' &&
-      github.event.deployment_status.environment != 'Production' &&
-      github.event.deployment_status.environment_url != ''
+    # Fork PRs get no secrets and no Vercel preview — skip them.
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
-      - name: Check out the deployed commit
+      - name: Check out the PR head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.deployment.sha }}
+          # The real branch commit (what Vercel deploys), not the synthetic
+          # merge commit — keeps the reported commit/author accurate.
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -40,10 +41,47 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
+      # Vercel creates a GitHub deployment for the pushed commit and posts
+      # statuses as the build progresses. Poll (~10 min budget) until the
+      # preview is live and grab its URL. Transient API hiccups are swallowed —
+      # only a failed deployment or the timeout fails the job.
+      - name: Wait for the Vercel preview to go live
+        id: preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          for i in $(seq 1 60); do
+            deployment_id=$(gh api "repos/$GITHUB_REPOSITORY/deployments?sha=$SHA&environment=Preview&per_page=1" \
+              --jq '.[0].id // empty' 2>/dev/null || true)
+            if [ -n "$deployment_id" ]; then
+              status_json=$(gh api "repos/$GITHUB_REPOSITORY/deployments/$deployment_id/statuses?per_page=1" \
+                --jq '.[0] // {}' 2>/dev/null || echo '{}')
+              state=$(jq -r '.state // empty' <<<"$status_json")
+              url=$(jq -r '.environment_url // empty' <<<"$status_json")
+              case "$state" in
+                success)
+                  if [ -n "$url" ]; then
+                    echo "Preview live after ~$((i * 10))s: $url"
+                    echo "url=$url" >> "$GITHUB_OUTPUT"
+                    exit 0
+                  fi
+                  ;;
+                failure|error)
+                  echo "Vercel preview deployment for $SHA failed (state: $state)." >&2
+                  exit 1
+                  ;;
+              esac
+            fi
+            sleep 10
+          done
+          echo "Timed out waiting for a Vercel preview deployment for $SHA." >&2
+          exit 1
+
       - name: Run E2E against the Vercel preview
         env:
-          # The exact preview URL Vercel generated for this deployment.
-          NIJAM_E2E_BASE_URL: ${{ github.event.deployment_status.environment_url }}
+          # The exact preview URL Vercel generated for this PR's head commit.
+          NIJAM_E2E_BASE_URL: ${{ steps.preview.outputs.url }}
           # Bypass Vercel Deployment Protection on the preview (sent as an HTTP header).
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           # Required, or both specs skip themselves (the check would be a green no-op).

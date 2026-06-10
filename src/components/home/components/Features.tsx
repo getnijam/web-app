@@ -15,23 +15,29 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { Reveal } from '../Reveal';
 
-type Feature = { icon: ReactNode; tint: string; title: ReactNode; body: ReactNode; soon?: boolean };
+type Feature = {
+  icon: typeof Activity03Icon;
+  tint: string;
+  title: ReactNode;
+  body: ReactNode;
+  soon?: boolean;
+};
 
 const FEATURES: Feature[] = [
   {
-    icon: <HugeiconsIcon icon={Activity03Icon} size={22} />,
+    icon: Activity03Icon,
     tint: 'bg-warning/15 text-warning',
     title: 'Flakiness detector',
     body: "Automatically surfaces tests that pass and fail without a code change, ranked by how much instability they're adding to your suite.",
   },
   {
-    icon: <HugeiconsIcon icon={AnalyticsUpIcon} size={22} />,
+    icon: AnalyticsUpIcon,
     tint: 'bg-primary/15 text-primary',
     title: 'Test analytics',
     body: 'Pass rates, durations and volume trends across every run, branch and spec file — so you can see the suite getting healthier or slower over time.',
   },
   {
-    icon: <HugeiconsIcon icon={Alert02Icon} size={22} />,
+    icon: Alert02Icon,
     tint: 'bg-destructive/15 text-destructive',
     title: (
       <>
@@ -41,7 +47,7 @@ const FEATURES: Feature[] = [
     body: 'The error, stack trace, screenshots, video and the full Playwright trace — captured and attached to every failing attempt.',
   },
   {
-    icon: <HugeiconsIcon icon={Clock01Icon} size={22} />,
+    icon: Clock01Icon,
     tint: 'bg-info/15 text-info',
     title: (
       <>
@@ -51,7 +57,7 @@ const FEATURES: Feature[] = [
     body: 'Pinpoint the first run a test started failing and the commit that introduced it — no more bisecting through CI logs by hand.',
   },
   {
-    icon: <HugeiconsIcon icon={WorkflowSquare01Icon} size={22} />,
+    icon: WorkflowSquare01Icon,
     tint: 'bg-primary/15 text-primary',
     title: 'Traces & artifacts',
     body: (
@@ -62,13 +68,13 @@ const FEATURES: Feature[] = [
     ),
   },
   {
-    icon: <HugeiconsIcon icon={BellIcon} size={22} />,
+    icon: BellIcon,
     tint: 'bg-success/15 text-success',
     title: 'Slack notifications',
     body: 'Auto-post passing, flaky and failing runs to Slack — with green / yellow / red status and every test linked back to its results on Nijam.',
   },
   {
-    icon: <HugeiconsIcon icon={GitPullRequestIcon} size={22} />,
+    icon: GitPullRequestIcon,
     tint: 'bg-foreground/10 text-foreground',
     title: 'GitHub checks & comments',
     body: 'Install the GitHub App and every pull request gets a Nijam status check — green when it passes, red when it fails — plus a results comment that updates in place on each run.',
@@ -78,7 +84,7 @@ const FEATURES: Feature[] = [
 export function Features() {
   return (
     <section id="features" className="mx-auto max-w-6xl px-6 py-24">
-      <Reveal className="mx-auto mb-12 max-w-2xl text-center">
+      <Reveal className="mx-auto mb-14 max-w-2xl text-center">
         <Text className="text-xs font-semibold tracking-wide text-primary uppercase">
           What you've been missing
         </Text>
@@ -95,21 +101,21 @@ export function Features() {
         </Text>
       </Reveal>
 
-      <Grid cols={[1, 2, 3]} gap={4}>
+      <Grid cols={[1, 2, 3]} gap={5}>
         {FEATURES.map((f, i) => (
           <Reveal
             key={i}
-            className="rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
+            className="rounded-2xl border border-border bg-card p-7 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
           >
             <Flex
               inline
               align="center"
               justify="center"
-              className={cn('size-10.5 rounded-xl', f.tint)}
+              className={cn('size-11 rounded-xl', f.tint)}
             >
-              {f.icon}
+              <HugeiconsIcon icon={f.icon} size={23} />
             </Flex>
-            <Text as="h3" className="mt-4 text-base font-semibold tracking-tight">
+            <Text as="h3" className="mt-6 text-lg font-semibold tracking-tight">
               {f.title}
               {f.soon && (
                 <Flex
@@ -122,7 +128,9 @@ export function Features() {
                 </Flex>
               )}
             </Text>
-            <Text className="mt-2 text-sm text-muted-foreground">{f.body}</Text>
+            <Text className="mt-2.5 text-base leading-relaxed text-pretty text-muted-foreground">
+              {f.body}
+            </Text>
           </Reveal>
         ))}
       </Grid>
