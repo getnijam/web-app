@@ -260,8 +260,8 @@
   }
 }
 
-/* Faint full-bleed grid behind the hero, radial-masked so it's strongest behind
-   the content and fades out toward the edges. */
+/* Faint full-bleed grid behind the hero, softly fading in from the top of the
+   viewport (behind the floating nav) and back out at the very bottom. */
 @utility hero-grid {
   background-image:
     linear-gradient(
@@ -275,10 +275,10 @@
       transparent 1px
     );
   background-size: 3.5rem 3.5rem;
-  /* Full width; fade in just below the nav and out at the very bottom, so the grid
-     runs from the top of the hero down through the CI logos strip and ends there. */
-  mask-image: linear-gradient(to bottom, transparent, black 6%, black 90%, transparent);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black 6%, black 90%, transparent);
+  /* Symmetric soft edges: fade in over the top (nav region) the same way the
+     grid fades out after the CI logos strip at the bottom. */
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

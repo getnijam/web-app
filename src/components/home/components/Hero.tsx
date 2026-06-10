@@ -46,11 +46,14 @@ export function Hero() {
   };
 
   return (
-    <section ref={sectionRef} onPointerMove={moveOrb} className="relative overflow-hidden">
+    <section ref={sectionRef} onPointerMove={moveOrb} className="relative -mt-18 overflow-hidden">
       {/* Full-bleed background: a faint grid + a cursor-following glow that
-          shimmers over it. Spans the whole page width, clipped to the hero by the
-          section's overflow-hidden so it never bleeds into the nav above or the
-          section below. The orb is moved by moveOrb(). */}
+          shimmers over it. The section is pulled up behind the (transparent)
+          floating nav by -mt-18 — slightly more than the nav's height — so the
+          grid and glow start at the very top of the viewport; the inner
+          container's pt compensates, keeping the content where it was. The
+          section's overflow-hidden still clips the backdrop from the section
+          below. The orb is moved by moveOrb(). */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute inset-0 hero-grid" />
         <div
@@ -59,7 +62,7 @@ export function Hero() {
         />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6 pt-16 pb-16 md:pt-20">
+      <div className="relative z-10 mx-auto max-w-6xl px-6 pt-34 pb-16 md:pt-38">
         <Grid cols={[1, 1, 2]} className="items-center gap-12">
           <div>
             <Flex
