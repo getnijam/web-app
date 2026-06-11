@@ -5,7 +5,6 @@ import { Home01Icon } from '@hugeicons/core-free-icons';
 import { getProjectOptions, getRunOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
-import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl';
 import { useShellNav, ROUTE_TITLES } from './use-shell-nav';
@@ -133,8 +132,9 @@ export function TopBar() {
       align="center"
       className="h-15 shrink-0 gap-3.5 border-b border-border bg-background/85 px-7 backdrop-blur"
     >
-      <SidebarTrigger className="-ml-1 text-muted-foreground" />
-      <Separator orientation="vertical" className="h-5" />
+      {/* Desktop toggles via the sidebar's edge handle (AppShell); the top-bar
+          trigger is the mobile affordance, where the sidebar is a sheet. */}
+      <SidebarTrigger className="-ml-1 text-muted-foreground md:hidden" />
       <Breadcrumbs />
 
       <Flex align="center" gap={2.5} className="ml-auto">

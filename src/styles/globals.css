@@ -75,6 +75,9 @@
   --sidebar-accent-foreground: oklch(0.218 0.008 223.9);
   --sidebar-border: oklch(0.925 0.005 214.3);
   --sidebar-ring: oklch(0.723 0.014 214.4);
+  /* Fill for the sidebar's edge-toggle handle = the sidebar's border colour. The
+     light border token is opaque, so track it directly. */
+  --sidebar-toggle: var(--sidebar-border);
 
   --font-sans: 'DM Sans Variable', sans-serif;
   --font-heading: 'DM Sans Variable', sans-serif;
@@ -117,6 +120,9 @@
   --sidebar-accent-foreground: oklch(0.987 0.002 197.1);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.56 0.021 213.5);
+  /* The dark border token is translucent (10% white), which can't serve as an
+     opaque fill; pin its effective solid colour (≈10% white over the content). */
+  --sidebar-toggle: #222424;
 }
 
 /* Map the design tokens to Tailwind utilities (bg-background, border-border, …). */
@@ -157,6 +163,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-toggle: var(--sidebar-toggle);
 
   /* Typography: DM Sans for all UI text (body + headings); Geist Mono for code only. */
   --font-sans: 'DM Sans Variable', sans-serif;
