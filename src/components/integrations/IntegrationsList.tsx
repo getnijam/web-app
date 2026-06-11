@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowRight01Icon, WebhookIcon } from '@hugeicons/core-free-icons';
+import { AiChat02Icon, ArrowRight01Icon, WebhookIcon } from '@hugeicons/core-free-icons';
 import {
   getOrgSlackIntegrationOptions,
   installOrgSlackMutation,
@@ -183,8 +183,8 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
       <Flex direction="col" gap={1}>
         <Text variant="h1">Integrations</Text>
         <Text color="muted">
-          Connect Nijam to the tools your team already lives in — Slack notifications and GitHub PR
-          checks &amp; comments.
+          Connect Nijam to the tools your team already lives in — Slack notifications, GitHub PR
+          checks &amp; comments, and AI agents via MCP.
         </Text>
       </Flex>
 
@@ -280,6 +280,32 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
               {connectButton(e)}
             </CardRow>
           ))}
+          {/* The MCP server has no server-side connection state — the setup
+              (a read key + a copy-paste command) lives on the keys page. */}
+          <CardRow>
+            <Flex
+              as="span"
+              align="center"
+              justify="center"
+              className="size-9 shrink-0 rounded-lg bg-muted"
+            >
+              <HugeiconsIcon icon={AiChat02Icon} size={20} className="text-muted-foreground" />
+            </Flex>
+            <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
+              <Text as="span" className="text-sm font-semibold">
+                MCP server
+              </Text>
+              <Text as="span" className="text-xs text-muted-foreground">
+                Let AI agents query your runs — failures, history, flakiness — from any MCP-capable
+                client.
+              </Text>
+            </Flex>
+            <Button asChild variant="outline">
+              <Link to="/orgs/$orgId/keys/mcp" params={{ orgId } as never}>
+                Set up
+              </Link>
+            </Button>
+          </CardRow>
           {COMING_SOON.map((c) => (
             <CardRow key={c.key}>
               <Flex

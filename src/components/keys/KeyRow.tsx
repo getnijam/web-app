@@ -39,20 +39,27 @@ function MaskedValue({ prefix, last4 }: { prefix: string; last4: string }) {
 export function KeyRow({ orgId, secretKey }: { orgId: string; secretKey: SecretKeySummary }) {
   const queryClient = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const isIngest = secretKey.kind === 'ingest';
 
   const revoke = useMutation({
     ...deleteSecretKeyMutation(),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: listSecretKeysQueryKey({ path: { orgId } }) });
+      await queryClient.invalidateQueries({
+        queryKey: listSecretKeysQueryKey({ path: { orgId } }),
+      });
       setConfirmOpen(false);
       notify.success('Secret key revoked', {
-        description: `${secretKey.name} can no longer be used to upload runs.`,
+        description: isIngest
+          ? `${secretKey.name} can no longer be used to upload runs.`
+          : `${secretKey.name} can no longer be used to read test data.`,
       });
     },
     onError: (err) => {
       setConfirmOpen(false);
       notify.error("Couldn't revoke key", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       });
     },
   });
@@ -106,8 +113,11 @@ export function KeyRow({ orgId, secretKey }: { orgId: string; secretKey: SecretK
               <Text as="span" className="font-mono">
                 {secretKey.prefix}••••{secretKey.last4}
               </Text>
-              ) will stop working immediately — any CI pipeline using it will fail to upload results
-              and traces. This can't be undone.
+              ) will stop working immediately —{' '}
+              {isIngest
+                ? 'any CI pipeline using it will fail to upload results and traces.'
+                : 'any MCP agent or integration using it will lose read access.'}{' '}
+              This can't be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

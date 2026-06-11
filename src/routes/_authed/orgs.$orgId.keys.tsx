@@ -1,113 +1,57 @@
-import { useState } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, Outlet, Link, useRouterState } from '@tanstack/react-router';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Add01Icon, CloudUploadIcon, ArrowUpRight01Icon } from '@hugeicons/core-free-icons';
-import { listSecretKeysOptions } from '@/client/@tanstack/react-query.gen';
+import { CloudUploadIcon, AiChat02Icon } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
-import { Button } from '@/components/ui/button';
-import { RowsSkeleton } from '@/components/states/RowsSkeleton';
-import { ErrorState } from '@/components/states/ErrorState';
-import { EmptyState } from '@/components/states/EmptyState';
-import { SettingsPanel } from '@/components/settings/SettingsPanel';
-import { KeyRow } from '@/components/keys/KeyRow';
-import { CreateSecretKeyDialog } from '@/components/keys/CreateSecretKeyDialog';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/keys')({
-  head: () => privateSeo('API keys'),
-  component: SecretKeysPage,
+  head: () => privateSeo('Secret keys'),
+  component: SecretKeysLayout,
 });
 
-function SecretKeysPage() {
+/**
+ * Secret-keys shell: heading + a line-variant tab bar that routes between the
+ * two strictly-separated key kinds (`/keys/ingestion`, `/keys/mcp`). The tabs
+ * are real router links (`TabsTrigger asChild` → `<Link>`); the active tab is
+ * driven by the URL, not local state, so deep-linking and back/forward work.
+ * Plain `variant="line"` — the component's own underline indicator, no overrides.
+ */
+function SecretKeysLayout() {
   const { orgId } = Route.useParams();
-  const keys = useQuery(listSecretKeysOptions({ path: { orgId } }));
-  const [createOpen, setCreateOpen] = useState(false);
-
-  const list = keys.data?.keys ?? [];
-  const total = list.length;
-  const orgScoped = list.filter((k) => k.scope === 'org').length;
-
-  const renderKeys = () => {
-    if (keys.isLoading) return <RowsSkeleton rows={3} />;
-    if (keys.error || !keys.data)
-      return (
-        <div className="px-5 py-6">
-          <ErrorState error={keys.error} onRetry={() => keys.refetch()} />
-        </div>
-      );
-    if (list.length === 0)
-      return (
-        <EmptyState
-          title="No secret keys yet"
-          description="Create a key to let your CI upload results and traces to Nijam."
-          action={
-            <Button variant="outline" onClick={() => setCreateOpen(true)}>
-              <HugeiconsIcon icon={Add01Icon} size={16} />
-              Create key
-            </Button>
-          }
-        />
-      );
-    return list.map((k) => <KeyRow key={k.id} orgId={orgId} secretKey={k} />);
-  };
+  const active = useRouterState({
+    select: (s) => (s.location.pathname.endsWith('/mcp') ? 'mcp' : 'ingestion'),
+  });
 
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
-      <Flex align="start" justify="between" gap={4}>
-        <Flex direction="col" gap={1}>
-          <Text variant="h1">Secret keys</Text>
-          <Text color="muted">
-            {total} active {total === 1 ? 'key' : 'keys'}
-            {orgScoped > 0 && ` · ${orgScoped} org-scoped`} · used by CI to upload results & traces
-          </Text>
-        </Flex>
-        <Button className="shrink-0" onClick={() => setCreateOpen(true)}>
-          <HugeiconsIcon icon={Add01Icon} size={16} />
-          Create key
-        </Button>
+      <Flex direction="col" gap={1}>
+        <Text variant="h1">Secret keys</Text>
+        <Text color="muted">
+          Ingestion keys upload your runs from CI; read keys let AI agents query them over MCP. The
+          two are strictly separated — a leaked key of one kind can never do the other&rsquo;s job.
+        </Text>
       </Flex>
 
-      {/* Ingestion-only note */}
-      <Flex
-        align="start"
-        gap={3}
-        className="rounded-2xl border border-info/25 bg-info/8 px-4 py-3.5"
-      >
-        <Flex
-          align="center"
-          justify="center"
-          className="size-9 shrink-0 rounded-lg bg-info/15 text-info"
-        >
-          <HugeiconsIcon icon={CloudUploadIcon} size={18} strokeWidth={1.8} />
-        </Flex>
-        <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
-          <Text as="span" weight="semibold" className="text-sm">
-            Ingestion only
-          </Text>
-          <Text as="span" className="text-sm text-muted-foreground">
-            Secret keys authenticate uploads from your CI provider. They grant write access to push
-            runs, results and traces — they can't read data or change settings.
-          </Text>
-        </Flex>
-        <Flex
-          as="a"
-          href="https://docs.nijam.dev/reporter/ci-integration/"
-          target="_blank"
-          rel="noopener noreferrer"
-          align="center"
-          gap={1}
-          className="shrink-0 self-center rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent"
-        >
-          Upload docs
-          <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} />
-        </Flex>
-      </Flex>
+      <Tabs value={active}>
+        <TabsList variant="line" className="justify-start gap-5">
+          <TabsTrigger value="ingestion" asChild className="flex-none px-1 after:bg-primary">
+            <Link to="/orgs/$orgId/keys/ingestion" params={{ orgId }}>
+              <HugeiconsIcon icon={CloudUploadIcon} size={16} />
+              Ingestion keys
+            </Link>
+          </TabsTrigger>
+          <TabsTrigger value="mcp" asChild className="flex-none px-1 after:bg-primary">
+            <Link to="/orgs/$orgId/keys/mcp" params={{ orgId }}>
+              <HugeiconsIcon icon={AiChat02Icon} size={16} />
+              Read keys (MCP)
+            </Link>
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-      <SettingsPanel title="Keys">{renderKeys()}</SettingsPanel>
-
-      <CreateSecretKeyDialog open={createOpen} onOpenChange={setCreateOpen} orgId={orgId} />
+      <Outlet />
     </Flex>
   );
 }

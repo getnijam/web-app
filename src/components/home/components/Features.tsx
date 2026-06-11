@@ -8,6 +8,7 @@ import {
   WorkflowSquare01Icon,
   BellIcon,
   GitPullRequestIcon,
+  AiChat02Icon,
 } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
@@ -78,6 +79,12 @@ const FEATURES: Feature[] = [
     tint: 'bg-foreground/10 text-foreground',
     title: 'GitHub checks & comments',
     body: 'Install the GitHub App and every pull request gets a Nijam status check — green when it passes, red when it fails — plus a results comment that updates in place on each run.',
+  },
+  {
+    icon: AiChat02Icon,
+    tint: 'bg-info/15 text-info',
+    title: 'MCP for AI agents',
+    body: 'Point any MCP-capable agent — Claude Code, Cursor, Codex — at your runs and ask why a suite is red, whether a test is flaky, or when it broke, answered from your real history.',
   },
 ];
 

@@ -51,8 +51,8 @@ const PILLARS: Pillar[] = [
   {
     icon: <HugeiconsIcon icon={Key01Icon} size={22} />,
     tint: 'bg-warning/15 text-warning',
-    title: 'Write-only ingest keys',
-    body: 'Your CI authenticates with scoped secret keys that can only submit results — never read your data. Each key is shown once, stored as a SHA-256 hash, and revocable at any time.',
+    title: 'Split secret keys',
+    body: 'CI uploads use write-only ingestion keys that can never read data — a leaked CI key exposes nothing. MCP/agent reads use separate read-only keys that can never write. Each key is shown once, stored as a SHA-256 hash, and revocable at any time.',
   },
   {
     icon: <HugeiconsIcon icon={Shield01Icon} size={22} />,
@@ -172,11 +172,15 @@ function SecurityPage() {
 
             <Section title="API access & ingest keys">
               <P>
-                Your CI sends results using a secret key as a bearer token. These keys are{' '}
-                <b>write/ingest-only</b> — they can submit runs, test results, and artifacts, but
-                can never read your data or change settings. A key is scoped to a single
-                organization or project, shown in full exactly once at creation, stored only as a
-                SHA-256 hash, and can be revoked at any time.
+                Secret keys come in two strictly separated kinds. <b>Ingestion keys</b> (
+                <code className="font-mono">nij_sk_…</code>) are what your CI uses as a bearer token
+                — they can submit runs, results, and artifacts but <b>can never read your data</b>,
+                so the key most exposed to leaks (the one in CI config) unlocks nothing.{' '}
+                <b>Read keys</b> (<code className="font-mono">nij_rk_…</code>) power the Nijam MCP
+                server and other read integrations — they can read test data within their scope but
+                can never write. Neither kind can change settings, manage members, or touch billing.
+                Each key is scoped to a single organization or project, shown in full exactly once
+                at creation, stored only as a SHA-256 hash, and can be revoked at any time.
               </P>
             </Section>
 

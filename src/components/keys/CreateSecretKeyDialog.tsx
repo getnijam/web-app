@@ -51,6 +51,7 @@ const CreateSchema = z.object({
 });
 type CreateForm = z.infer<typeof CreateSchema>;
 type Scope = 'org' | 'project';
+type Kind = 'ingest' | 'read';
 
 /** One of the two scope choices (Organization / Single project). */
 function ScopeCard({
@@ -99,7 +100,7 @@ function ScopeCard({
       <Text as="span" weight="semibold" className="text-sm">
         {title}
       </Text>
-      <Text as="span" className="text-xs text-muted-foreground text-wrap">
+      <Text as="span" className="text-xs text-wrap text-muted-foreground">
         {description}
       </Text>
     </Button>
@@ -110,10 +111,13 @@ export function CreateSecretKeyDialog({
   open,
   onOpenChange,
   orgId,
+  kind,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   orgId: string;
+  /** Pre-bound by the section whose Create button opened the dialog. */
+  kind: Kind;
 }) {
   const queryClient = useQueryClient();
   const projectsQuery = useQuery(listOrgProjectsOptions({ path: { orgId } }));
@@ -166,7 +170,7 @@ export function CreateSecretKeyDialog({
     },
   });
 
-  const canSubmit = !!name.trim() && (scope === 'org' || !!projectId);
+  const canSubmit = !!name.trim() && (kind === 'read' || scope === 'org' || !!projectId);
 
   function selectProjectScope() {
     setScope('project');
@@ -187,9 +191,13 @@ export function CreateSecretKeyDialog({
         {step === 'form' ? (
           <>
             <DialogHeader>
-              <DialogTitle>Create secret key</DialogTitle>
+              <DialogTitle>
+                {kind === 'ingest' ? 'Create ingestion key' : 'Create read key (MCP)'}
+              </DialogTitle>
               <DialogDescription>
-                Used by your CI to upload test results and traces to Nijam.
+                {kind === 'ingest'
+                  ? 'Used by your CI to upload test results and traces. Can never read data.'
+                  : 'Used by MCP agents to read your test data. Read-only, always org-wide.'}
               </DialogDescription>
             </DialogHeader>
 
@@ -204,8 +212,9 @@ export function CreateSecretKeyDialog({
                   path: { orgId },
                   body: {
                     name: data.name,
-                    scope,
-                    ...(scope === 'project' ? { projectId } : {}),
+                    scope: kind === 'read' ? 'org' : scope,
+                    kind,
+                    ...(kind === 'ingest' && scope === 'project' ? { projectId } : {}),
                   },
                 });
               })}
@@ -225,31 +234,38 @@ export function CreateSecretKeyDialog({
                 <FieldError message={form.formState.errors.name?.message} />
               </Flex>
 
-              <Flex direction="col" gap={2}>
-                <Label>Scope</Label>
-                <Grid cols={2} gap={3}>
-                  <ScopeCard
-                    selected={scope === 'org'}
-                    icon={Building03Icon}
-                    title="Organization"
-                    description="Upload traces & results across every project in the org."
-                    onSelect={() => setScope('org')}
-                  />
-                  <ScopeCard
-                    selected={scope === 'project'}
-                    disabled={projects.length === 0}
-                    icon={Layers01Icon}
-                    title="Single project"
-                    description="Restrict uploads to exactly one project."
-                    onSelect={selectProjectScope}
-                  />
-                </Grid>
-                {projects.length === 0 && (
-                  <Text as="span" className="text-xs text-muted-foreground">
-                    Create a project first to scope a key to it.
-                  </Text>
-                )}
-              </Flex>
+              {kind === 'ingest' ? (
+                <Flex direction="col" gap={2}>
+                  <Label>Scope</Label>
+                  <Grid cols={2} gap={3}>
+                    <ScopeCard
+                      selected={scope === 'org'}
+                      icon={Building03Icon}
+                      title="Organization"
+                      description="Every project in the org."
+                      onSelect={() => setScope('org')}
+                    />
+                    <ScopeCard
+                      selected={scope === 'project'}
+                      disabled={projects.length === 0}
+                      icon={Layers01Icon}
+                      title="Single project"
+                      description="Exactly one project."
+                      onSelect={selectProjectScope}
+                    />
+                  </Grid>
+                  {projects.length === 0 && (
+                    <Text as="span" className="text-xs text-muted-foreground">
+                      Create a project first to scope a key to it.
+                    </Text>
+                  )}
+                </Flex>
+              ) : (
+                <Text as="span" className="text-xs text-muted-foreground">
+                  Read keys always cover every project in the organization, so agents can resolve
+                  "my project" on their own.
+                </Text>
+              )}
 
               {scope === 'project' && (
                 <Flex direction="col" gap={1.5}>
@@ -338,8 +354,10 @@ export function CreateSecretKeyDialog({
                     className="mt-0.5 shrink-0 text-warning"
                   />
                   <Text as="span" className="text-sm text-muted-foreground">
-                    Store this key in your CI provider's secrets. Nijam keeps only a hashed
-                    fingerprint and can't recover the value.
+                    {created.kind === 'ingest'
+                      ? "Store this key in your CI provider's secrets."
+                      : "Store this key in your MCP client's config or a secret manager."}{' '}
+                    Nijam keeps only a hashed fingerprint and can't recover the value.
                   </Text>
                 </Flex>
 
@@ -350,6 +368,14 @@ export function CreateSecretKeyDialog({
                     </Text>
                     <Text as="span" truncate weight="medium" className="text-sm">
                       {created.name}
+                    </Text>
+                  </Flex>
+                  <Flex align="center" justify="between" gap={3}>
+                    <Text as="span" className="text-sm text-muted-foreground">
+                      Type
+                    </Text>
+                    <Text as="span" weight="medium" className="text-sm">
+                      {created.kind === 'ingest' ? 'Ingestion (write-only)' : 'Read (MCP)'}
                     </Text>
                   </Flex>
                   <Flex align="center" justify="between" gap={3}>
