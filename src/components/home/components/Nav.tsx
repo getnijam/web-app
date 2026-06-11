@@ -13,40 +13,31 @@ import { AccountMenu } from '@/components/users/AccountMenu';
 import { cn } from '@/lib/utils';
 import { DOCS_URL } from '../config';
 
+// Quiet link that lights up in brand color on hover (no hover pill) — the
+// reframe.shadcn.io treatment, shared by the desktop bar and the mobile menu.
 const LINK =
-  'rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground';
-
-// Guest links keep the quiet default but light up in brand color (no hover
-// pill) — the reframe.shadcn.io treatment.
-const GUEST_LINK =
   'rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary';
 
-function NavLinks({
-  linkClassName,
-  onNavigate,
-}: {
-  linkClassName: string;
-  onNavigate?: () => void;
-}) {
+function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
-      <Link to="/" hash="features" className={linkClassName} onClick={onNavigate}>
+      <Link to="/" hash="features" className={LINK} onClick={onNavigate}>
         Features
       </Link>
-      <Link to="/" hash="flakiness" className={linkClassName} onClick={onNavigate}>
+      <Link to="/" hash="flakiness" className={LINK} onClick={onNavigate}>
         Flakiness
       </Link>
-      <Link to="/" hash="integrations" className={linkClassName} onClick={onNavigate}>
+      <Link to="/" hash="integrations" className={LINK} onClick={onNavigate}>
         Integrations
       </Link>
-      <Link to="/pricing" className={linkClassName} onClick={onNavigate}>
+      <Link to="/pricing" className={LINK} onClick={onNavigate}>
         Pricing
       </Link>
       <a
         href={DOCS_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className={linkClassName}
+        className={LINK}
         onClick={onNavigate}
       >
         Docs
@@ -55,8 +46,16 @@ function NavLinks({
   );
 }
 
+/**
+ * Home/marketing nav: one floating bordered card under the top edge, modeled on
+ * reframe.shadcn.io — the SAME shell for everyone. Only the right-side cluster
+ * changes with the session: a skeleton while /me loads, signed-in (dashboard +
+ * account menu) or guest (log in + start free). On mobile the links collapse
+ * into a hamburger menu that expands inside the card.
+ */
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   // Session, read optimistically (a 401 just means "guest"). Cached, so the
   // other home sections that read it share this one request.
   const me = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 });
@@ -67,28 +66,33 @@ export function Nav() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  if (user) return <SignedInNav scrolled={scrolled} />;
-  return <GuestNav scrolled={scrolled} loading={me.isLoading} />;
-}
-
-/**
- * Guest (and session-loading) nav: a floating bordered card under the top
- * edge with links centered and a pill CTA on the right — modeled on
- * reframe.shadcn.io. On mobile the links collapse into a hamburger menu that
- * expands inside the card.
- */
-function GuestNav({ scrolled, loading }: { scrolled: boolean; loading: boolean }) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
 
+  // Right-side cluster (after the theme toggle, before the hamburger) plus any
+  // overflow shown only inside the mobile menu — both vary with auth state.
+  // (Computed up-front to keep the JSX free of nested ternaries.)
   let actions: ReactNode;
-  if (loading) {
+  let menuExtras: ReactNode = null;
+  if (me.isLoading) {
     actions = (
       <Flex align="center" gap={2}>
         <Skeleton className="h-8 w-14" />
         <Skeleton className="h-8 w-20 rounded-full" />
       </Flex>
+    );
+  } else if (user) {
+    actions = (
+      <>
+        <Button asChild size="sm" className="hidden rounded-full px-4 sm:inline-flex">
+          <Link to="/orgs">Go to dashboard</Link>
+        </Button>
+        <AccountMenu variant="topnav" />
+      </>
+    );
+    menuExtras = (
+      <Link to="/orgs" className={cn(LINK, 'sm:hidden')} onClick={closeMenu}>
+        Go to dashboard
+      </Link>
     );
   } else {
     actions = (
@@ -100,6 +104,11 @@ function GuestNav({ scrolled, loading }: { scrolled: boolean; loading: boolean }
           <Link to="/signup">Start free</Link>
         </Button>
       </>
+    );
+    menuExtras = (
+      <Link to="/login" className={cn(LINK, 'sm:hidden')} onClick={closeMenu}>
+        Log in
+      </Link>
     );
   }
 
@@ -126,7 +135,7 @@ function GuestNav({ scrolled, loading }: { scrolled: boolean; loading: boolean }
               <Logo />
             </Link>
             <Flex align="center" gap={1} className="ml-4 hidden md:flex">
-              <NavLinks linkClassName={GUEST_LINK} />
+              <NavLinks />
             </Flex>
             <Flex align="center" gap={2} className="ml-auto shrink-0">
               <ThemeSegmentedControl minified />
@@ -146,44 +155,12 @@ function GuestNav({ scrolled, loading }: { scrolled: boolean; loading: boolean }
           </Flex>
           {menuOpen && (
             <Flex direction="col" gap={1} className="w-full pt-2 pb-1 md:hidden">
-              <NavLinks linkClassName={GUEST_LINK} onNavigate={closeMenu} />
-              <Link to="/login" className={cn(GUEST_LINK, 'sm:hidden')} onClick={closeMenu}>
-                Log in
-              </Link>
+              <NavLinks onNavigate={closeMenu} />
+              {menuExtras}
             </Flex>
           )}
         </Flex>
       </div>
     </header>
-  );
-}
-
-/** Signed-in nav: the original full-width sticky bar with dashboard actions. */
-function SignedInNav({ scrolled }: { scrolled: boolean }) {
-  return (
-    <Flex
-      as="header"
-      align="center"
-      className={cn(
-        'sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md transition-colors',
-        scrolled ? 'border-border' : 'border-transparent',
-      )}
-    >
-      <Flex align="center" gap={3} className="mx-auto h-16 w-full max-w-6xl px-6">
-        <Link to="/" hash="top" aria-label="Nijam.dev home" className="flex shrink-0 items-center">
-          <Logo />
-        </Link>
-        <Flex as="nav" align="center" gap={1} className="ml-4 hidden md:flex">
-          <NavLinks linkClassName={LINK} />
-        </Flex>
-        <Flex align="center" gap={2} className="ml-auto">
-          <ThemeSegmentedControl minified />
-          <Button asChild size="sm">
-            <Link to="/orgs">Go to dashboard</Link>
-          </Button>
-          <AccountMenu variant="topnav" />
-        </Flex>
-      </Flex>
-    </Flex>
   );
 }

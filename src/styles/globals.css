@@ -13,6 +13,15 @@
  */
 @custom-variant data-active (&[data-active="true"]);
 
+/*
+ * Radix exposes orientation as `data-orientation="horizontal|vertical"`, but the
+ * shadcn preset's components (e.g. ui/tabs) ship `data-horizontal:`/`data-vertical:`
+ * shorthands — presence-based by default in Tailwind, so they'd never match.
+ * Map them to the attribute value Radix actually sets.
+ */
+@custom-variant data-horizontal (&[data-orientation="horizontal"]);
+@custom-variant data-vertical (&[data-orientation="vertical"]);
+
 :root {
   --radius: 0.625rem;
 
