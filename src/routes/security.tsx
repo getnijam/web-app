@@ -31,7 +31,7 @@ export const Route = createFileRoute('/security')({
 });
 
 const CONTACT = 'support@nijam.dev';
-const UPDATED = 'June 5, 2026';
+const UPDATED = 'June 11, 2026';
 
 type Pillar = { icon: ReactNode; tint: string; title: string; body: string };
 
@@ -184,6 +184,37 @@ function SecurityPage() {
               </P>
             </Section>
 
+            <Section title="Third-party integrations">
+              <P>
+                Integrations are opt-in, connected by an organization admin through an HMAC-signed
+                flow, and can be disconnected at any time. We hold as little as possible to make
+                each one work:
+              </P>
+              <Bullets
+                items={[
+                  <>
+                    <b>GitHub</b> — the Nijam GitHub App posts a status check and a single sticky
+                    comment on the pull request for a run. We store <b>no GitHub token</b>: access
+                    uses short-lived installation tokens minted on demand and signed by the App’s
+                    private key, and the App holds only the permissions it needs — writing commit
+                    checks and pull-request comments. It never reads your source code.
+                  </>,
+                  <>
+                    <b>Slack</b> — posts run notifications to the channel you choose. The bot token
+                    is encrypted at rest with <b>AES-256-GCM</b> and is never returned to clients or
+                    written to logs.
+                  </>,
+                  <>
+                    <b>MCP / AI agents</b> — a read-only <code className="font-mono">nij_rk_…</code>{' '}
+                    key lets an MCP client query your runs. The server runs locally as a subprocess
+                    of your client, so the key stays on your machine and we only ever see the read
+                    requests it makes. What an agent then does with the data it retrieves is
+                    governed by that agent and its model provider — both of which you choose.
+                  </>,
+                ]}
+              />
+            </Section>
+
             <Section title="Access control & tenant isolation">
               <P>
                 Projects belong to organizations, and every read is scoped to your membership in
@@ -240,8 +271,8 @@ function SecurityPage() {
                     payments.
                   </>,
                   <>
-                    <b>Slack</b> and <b>Google/GitHub</b> — only for the integrations and sign-in
-                    methods you choose to enable.
+                    <b>Slack</b> and the <b>Nijam GitHub App</b> — only for the integrations you
+                    connect; and <b>Google</b>/<b>GitHub</b> for the sign-in methods you use.
                   </>,
                 ]}
               />
