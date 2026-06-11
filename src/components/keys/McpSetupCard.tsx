@@ -28,7 +28,7 @@ const CLIENTS: Array<{
   {
     id: 'claude-code',
     label: 'Claude Code',
-    command: `claude mcp add nijam -e NIJAM_API_KEY=${KEY_PLACEHOLDER} -- npx -y @nijam/mcp-server`,
+    command: `claude mcp add -s user nijam -e NIJAM_API_KEY=${KEY_PLACEHOLDER} -- npx -y @nijam/mcp-server`,
   },
   {
     id: 'cursor',
