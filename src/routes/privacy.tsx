@@ -18,7 +18,7 @@ function PrivacyPage() {
   return (
     <LegalLayout
       title="Privacy Policy"
-      updated="June 4, 2026"
+      updated="June 11, 2026"
       intro={
         <>
           This Privacy Policy explains what information Nijam collects when you use the dashboard at
@@ -64,6 +64,16 @@ function PrivacyPage() {
           security and reliability. Your theme preference is stored locally in your browser, not on
           our servers.
         </P>
+        <P>
+          <strong className="font-semibold text-foreground">Integrations you connect.</strong> If
+          you sign in with Google or GitHub, we receive basic profile information (email, name, and
+          avatar) from that provider. If you connect the Nijam GitHub App, we store the installation
+          identifier, the connected account, and the repositories you grant, and we receive
+          pull-request and commit metadata for the runs we post checks and comments on. If you
+          connect Slack, we store the workspace and channel you select plus an encrypted bot token.
+          If you point an AI agent at Nijam over MCP, the test data it requests is returned to that
+          agent and its model provider.
+        </P>
       </Section>
 
       <Section title="2. How we use your information">
@@ -73,6 +83,7 @@ function PrivacyPage() {
             'to authenticate you, secure accounts, enforce plan limits, and prevent abuse;',
             'to process payments and manage subscriptions for paid plans;',
             'to send transactional email (verification, password reset, organization invitations);',
+            'to power the integrations you enable — posting run checks and comments to GitHub, notifications to Slack, and answering MCP queries made with read keys;',
             'to operate, debug, and improve the Service and keep it reliable.',
           ]}
         />
@@ -91,9 +102,17 @@ function PrivacyPage() {
             'Neon — managed PostgreSQL database hosting;',
             'Cloudflare R2 — storage for artifacts (traces, screenshots, videos) and uploaded images;',
             'Vercel and Railway — hosting for the web app and API;',
+            'Slack — delivering run notifications to your workspace, if you connect it;',
+            'GitHub — posting checks and pull-request comments via the Nijam GitHub App, if you connect it;',
             'Sentry — error monitoring and diagnostics, with personal data scrubbed before it is sent.',
           ]}
         />
+        <P>
+          When you sign in with Google or GitHub, or connect Slack or the GitHub App, you also share
+          data with those providers under their own terms. And if you connect an AI agent over MCP,
+          the test data it queries is sent to that agent and its model provider — both chosen and
+          controlled by you, not by Nijam.
+        </P>
         <P>
           We may also disclose information if required by law or to protect the rights, safety, and
           security of Nijam, our users, or the public.
@@ -116,7 +135,7 @@ function PrivacyPage() {
             'Passwords are hashed with argon2id; verification, reset, session, and ingest tokens are stored only as SHA-256 hashes — never in plaintext.',
             'Data is encrypted in transit over HTTPS.',
             'Artifact storage is private; files are served only through short-lived, signed URLs.',
-            'Ingest (secret) keys are write-only and shown once at creation; we store only their hash.',
+            'Secret keys come in two kinds — write-only ingestion keys and read-only read keys; each is shown once at creation and stored only as a SHA-256 hash.',
           ]}
         />
         <P>

@@ -18,7 +18,7 @@ function TermsPage() {
   return (
     <LegalLayout
       title="Terms of Service"
-      updated="June 4, 2026"
+      updated="June 11, 2026"
       intro={
         <>
           These Terms of Service (“Terms”) govern your access to and use of Nijam — the
@@ -44,7 +44,7 @@ function TermsPage() {
         <Bullets
           items={[
             'You must be at least 16 years old and able to form a binding contract to use the Service.',
-            'You’re responsible for the information you provide, for keeping your credentials secure, and for all activity under your account and your ingest (secret) keys.',
+            'You’re responsible for the information you provide, for keeping your credentials and secret keys (both ingestion and read keys) secure, and for all activity under your account and those keys.',
             'Notify us promptly at the contact below if you suspect unauthorized use of your account or keys.',
           ]}
         />
@@ -72,13 +72,33 @@ function TermsPage() {
         />
       </Section>
 
-      <Section title="5. Your content & data">
+      <Section title="5. Your content, integrations & API access">
         <P>
           You retain all rights to the data you send to Nijam — test results, run metadata, and,
           unless you disable source uploads, your test source files and the Playwright artifacts
           your configuration produces (traces, screenshots, and videos). You grant Nijam a limited
           license to host, process, and display that data solely to operate and provide the Service
           to you.
+        </P>
+        <P>
+          You access the API with two kinds of{' '}
+          <strong className="font-semibold text-foreground">secret keys</strong>: write-only
+          ingestion keys (<code className="font-mono">nij_sk_…</code>) that send runs from your CI,
+          and read-only read keys (<code className="font-mono">nij_rk_…</code>) that let AI agents
+          query your data over MCP. You’re responsible for keeping these keys safe and for all
+          activity under them, and you should revoke any key from the dashboard immediately if it
+          may be exposed.
+        </P>
+        <P>
+          You may connect optional integrations. When you install the{' '}
+          <strong className="font-semibold text-foreground">Nijam GitHub App</strong> or connect{' '}
+          <strong className="font-semibold text-foreground">Slack</strong>, you authorize Nijam to
+          post run checks, pull-request comments, and notifications on your behalf, and your use of
+          those platforms stays governed by their own terms. When you point an{' '}
+          <strong className="font-semibold text-foreground">AI agent</strong> at Nijam over MCP, you
+          control what you connect, and the data you expose to it is sent to that agent and its
+          model provider — you’re responsible for that choice. You can disconnect any integration or
+          revoke a key at any time.
         </P>
         <P>
           The reporter, <code className="font-mono">@nijam/pw-reporter</code>, is open source under
