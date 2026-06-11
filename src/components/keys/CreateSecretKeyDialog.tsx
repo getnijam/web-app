@@ -229,6 +229,7 @@ export function CreateSecretKeyDialog({
                   id="key-name"
                   autoFocus
                   placeholder="e.g. GitHub Actions · CI"
+                  data-testid="create-key-name"
                   {...form.register('name')}
                 />
                 <FieldError message={form.formState.errors.name?.message} />
@@ -310,6 +311,7 @@ export function CreateSecretKeyDialog({
                 form="create-key-form"
                 loading={mutation.isPending}
                 disabled={!canSubmit}
+                data-testid="create-key-submit"
               >
                 Create key
               </Button>
@@ -388,7 +390,7 @@ export function CreateSecretKeyDialog({
               </Flex>
 
               <DialogFooter>
-                <Button type="button" onClick={close}>
+                <Button type="button" onClick={close} data-testid="create-key-done">
                   Done
                 </Button>
               </DialogFooter>

@@ -125,6 +125,7 @@ export function KeyRow({ orgId, secretKey }: { orgId: string; secretKey: SecretK
             <AlertDialogAction
               variant="destructive"
               disabled={revoke.isPending}
+              data-testid="revoke-key-confirm"
               onClick={(e) => {
                 e.preventDefault();
                 revoke.mutate({ path: { orgId, keyId: secretKey.id } });

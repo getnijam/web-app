@@ -48,7 +48,12 @@ export function SecretKeySection({
   const list = (keys.data?.keys ?? []).filter((k) => k.kind === kind);
 
   const createButton = (
-    <Button size="sm" className="shrink-0" onClick={() => setCreateOpen(true)}>
+    <Button
+      size="sm"
+      className="shrink-0"
+      data-testid="create-key-trigger"
+      onClick={() => setCreateOpen(true)}
+    >
       <HugeiconsIcon icon={Add01Icon} size={15} />
       Create key
     </Button>
