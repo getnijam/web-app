@@ -110,7 +110,7 @@ export function SecretKeySection({
         </Flex>
       </Flex>
 
-      <SettingsPanel title="Keys" action={createButton}>
+      <SettingsPanel title={kind === 'read' ? 'Your read keys' : 'Keys'} action={createButton}>
         {renderBody()}
       </SettingsPanel>
 
