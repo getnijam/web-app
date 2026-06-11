@@ -38,8 +38,30 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browser
+      # Cache the browser so we don't re-fetch Chromium (~150MB) every run. The key
+      # is the Playwright version pinned in package-lock.json + the browser set we
+      # install (chromium), so it only changes when you bump Playwright or add a
+      # browser — an unchanged PR restores the cached binary instead of downloading.
+      - name: Resolve Playwright version
+        id: pw
+        run: echo "version=$(node -p 'require("./package-lock.json").packages["node_modules/@playwright/test"].version')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.pw.outputs.version }}-chromium
+
+      # Cache miss: download the browser + its OS libs. Cache hit: binaries are
+      # restored, but apt-level deps aren't cached, so install just those.
+      - name: Install Playwright browser + OS deps (cache miss)
+        if: steps.pw-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS deps (cache hit)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       # Vercel creates a GitHub deployment for the pushed commit and posts
       # statuses as the build progresses. Poll (~10 min budget) until the
