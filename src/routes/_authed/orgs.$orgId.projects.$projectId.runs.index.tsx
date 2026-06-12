@@ -22,8 +22,18 @@ import {
 } from '@/components/runs/RunFilters';
 import { RunsPager } from '@/components/runs/RunsPager';
 import { RunRow } from '@/components/runs/RunRow';
-import { RunsPageSkeleton, RunsListSkeleton } from '@/components/runs/RunSkeletons';
+import {
+  RunsPageSkeleton,
+  RunsListSkeleton,
+  RunFiltersSkeleton,
+} from '@/components/runs/RunSkeletons';
 import { timeAgo, repoFromUrl } from '@/lib/format';
+import {
+  validateDateRangeSearch,
+  searchToRange,
+  rangeToSearch,
+  rangeToQuery,
+} from '@/lib/date-range';
 import { privateSeo } from '@/lib/seo';
 
 // Fields are optional so navigating to this route (cards, sidebar, redirect)
@@ -33,6 +43,9 @@ interface RunsSearch {
   branch?: string;
   user?: string;
   environment?: string;
+  /** Inclusive run-date range as YYYY-MM-DD (local calendar days). */
+  from?: string;
+  to?: string;
   page?: number;
 }
 
@@ -44,6 +57,7 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/r
   component: RunsPage,
   validateSearch: (search: Record<string, unknown>): RunsSearch => {
     const page = Number(search.page);
+    const { from, to } = validateDateRangeSearch(search);
     return {
       status: STATUSES.includes(search.status as RunStatusFilter)
         ? (search.status as RunStatusFilter)
@@ -54,6 +68,8 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/r
         typeof search.environment === 'string' && search.environment
           ? search.environment
           : undefined,
+      from,
+      to,
       page: Number.isInteger(page) && page >= 1 ? page : 1,
     };
   },
@@ -77,6 +93,7 @@ function RunsPage() {
         branch: search.branch,
         user: search.user,
         environment: search.environment,
+        ...rangeToQuery({ from: search.from, to: search.to }),
         page,
         pageSize: PAGE_SIZE,
       },
@@ -91,7 +108,12 @@ function RunsPage() {
   const proj = project.data;
   const stats = proj.stats;
   const filtersActive =
-    status !== 'all' || !!search.branch || !!search.user || !!search.environment;
+    status !== 'all' ||
+    !!search.branch ||
+    !!search.user ||
+    !!search.environment ||
+    !!search.from ||
+    !!search.to;
   const total = runs.data?.total ?? 0;
   // Manual refresh of the project stats + filters + run list. Spins only on a
   // user/background refetch (isRefetching), never on the initial skeleton load.
@@ -154,13 +176,23 @@ function RunsPage() {
       {stats && <RunStats stats={stats} />}
 
       <Flex direction="col" gap={3}>
-        <RunFilters
-          values={values}
-          options={filters.data ?? { branches: [], users: [], environments: [], hasUnset: false }}
-          total={total}
-          projectTotal={stats?.runCount ?? total}
-          onChange={onFilterChange}
-        />
+        {/* Filter options come from the backend — skeleton the bar until they load,
+            then keep it available regardless of the run list (re)fetching. */}
+        {filters.isLoading ? (
+          <RunFiltersSkeleton />
+        ) : (
+          <RunFilters
+            values={values}
+            options={filters.data ?? { branches: [], users: [], environments: [], hasUnset: false }}
+            total={total}
+            projectTotal={stats?.runCount ?? total}
+            onChange={onFilterChange}
+            dateRange={searchToRange({ from: search.from, to: search.to })}
+            onDateRangeChange={(range) =>
+              navigate({ search: (prev) => ({ ...prev, ...rangeToSearch(range), page: 1 }) })
+            }
+          />
+        )}
 
         {renderRuns()}
       </Flex>

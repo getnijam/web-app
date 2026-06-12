@@ -10,11 +10,13 @@ import {
   CreditCardIcon,
   PlugSocketIcon,
   ArrowLeft01Icon,
-  PulseIcon,
-  TestTube01Icon,
-  RepeatIcon,
+  Task01Icon,
+  TestTubesIcon,
+  AlertSquareIcon,
+  CancelSquareIcon,
   Settings01Icon,
   Book02Icon,
+  SquareArrowUpRightIcon,
 } from '@hugeicons/core-free-icons';
 import { getProjectOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
@@ -24,6 +26,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -95,22 +98,6 @@ function HomeNav({ orgId, active }: { orgId: string; active: SubRoute }) {
           <Link to="/orgs/$orgId/integrations" params={{ orgId }}>
             <NavGlyph icon={PlugSocketIcon} active={active === 'integrations'} />
             <span>Integrations</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild isActive={active === 'org'} className={NAV_ACTIVE}>
-          <Link to="/orgs/$orgId/settings" params={{ orgId }}>
-            <NavGlyph icon={Building03Icon} active={active === 'org'} />
-            <span>Org settings</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild isActive={active === 'billing'} className={NAV_ACTIVE}>
-          <Link to="/orgs/$orgId/billing" params={{ orgId }}>
-            <NavGlyph icon={CreditCardIcon} active={active === 'billing'} />
-            <span>Billing</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -186,37 +173,88 @@ function ProjectNav({
         <SidebarMenuItem>
           <SidebarMenuButton asChild isActive={active === 'runs'} className={NAV_ACTIVE}>
             <Link to="/orgs/$orgId/projects/$projectId/runs" params={{ orgId, projectId }}>
-              <NavGlyph icon={PulseIcon} active={active === 'runs'} />
+              <NavGlyph icon={Task01Icon} active={active === 'runs'} />
               <span>Runs</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild isActive={active === 'explorer'} className={NAV_ACTIVE}>
-            <Link to="/orgs/$orgId/projects/$projectId/explorer" params={{ orgId, projectId }}>
-              <NavGlyph icon={TestTube01Icon} active={active === 'explorer'} />
-              <span>Test explorer</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild isActive={active === 'flaky'} className={NAV_ACTIVE}>
-            <Link to="/orgs/$orgId/projects/$projectId/flaky" params={{ orgId, projectId }}>
-              <NavGlyph icon={RepeatIcon} active={active === 'flaky'} />
-              <span>Flaky tests</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild isActive={active === 'psettings'} className={NAV_ACTIVE}>
-            <Link to="/orgs/$orgId/projects/$projectId/settings" params={{ orgId, projectId }}>
-              <NavGlyph icon={Settings01Icon} active={active === 'psettings'} />
-              <span>Project settings</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
       </SidebarMenu>
+
+      <div>
+        <SidebarGroupLabel>Explorer</SidebarGroupLabel>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={active === 'explorer'} className={NAV_ACTIVE}>
+              <Link to="/orgs/$orgId/projects/$projectId/explorer" params={{ orgId, projectId }}>
+                <NavGlyph icon={TestTubesIcon} active={active === 'explorer'} />
+                <span>Test explorer</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={active === 'flaky'} className={NAV_ACTIVE}>
+              <Link to="/orgs/$orgId/projects/$projectId/flaky" params={{ orgId, projectId }}>
+                <NavGlyph icon={AlertSquareIcon} active={active === 'flaky'} />
+                <span>Flaky tests</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={active === 'failing'} className={NAV_ACTIVE}>
+              <Link to="/orgs/$orgId/projects/$projectId/failing" params={{ orgId, projectId }}>
+                <NavGlyph icon={CancelSquareIcon} active={active === 'failing'} />
+                <span>Failing tests</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </div>
     </Flex>
+  );
+}
+
+/**
+ * The settings entry, pinned to the sidebar footer above Docs: project settings
+ * inside a project, org settings otherwise. `onNavigate` closes the mobile sheet.
+ */
+function SettingsNavItem({
+  inProject,
+  orgId,
+  projectId,
+  active,
+  onNavigate,
+}: {
+  inProject: boolean;
+  orgId: string;
+  projectId?: string;
+  active: SubRoute;
+  onNavigate: () => void;
+}) {
+  if (inProject && projectId) {
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton asChild isActive={active === 'psettings'} className={NAV_ACTIVE}>
+          <Link
+            to="/orgs/$orgId/projects/$projectId/settings"
+            params={{ orgId, projectId }}
+            onClick={onNavigate}
+          >
+            <NavGlyph icon={Settings01Icon} active={active === 'psettings'} />
+            <span>Project settings</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  }
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={active === 'org'} className={NAV_ACTIVE}>
+        <Link to="/orgs/$orgId/settings" params={{ orgId }} onClick={onNavigate}>
+          <NavGlyph icon={Building03Icon} active={active === 'org'} />
+          <span>Org settings</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 }
 
@@ -260,6 +298,23 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
+          <SettingsNavItem
+            inProject={inProject}
+            orgId={orgId}
+            projectId={projectId}
+            active={active}
+            onNavigate={closeMobile}
+          />
+          {!inProject && (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={active === 'billing'} className={NAV_ACTIVE}>
+                <Link to="/orgs/$orgId/billing" params={{ orgId }} onClick={closeMobile}>
+                  <NavGlyph icon={CreditCardIcon} active={active === 'billing'} />
+                  <span>Billing</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
           <SidebarMenuItem>
             <SidebarMenuButton asChild title="Nijam documentation">
               <a
@@ -270,6 +325,12 @@ export function AppSidebar() {
               >
                 <NavGlyph icon={Book02Icon} active={false} />
                 <span>Docs</span>
+                <HugeiconsIcon
+                  icon={SquareArrowUpRightIcon}
+                  size={14}
+                  strokeWidth={1.8}
+                  className="ml-auto shrink-0 text-muted-foreground"
+                />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

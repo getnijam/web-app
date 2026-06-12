@@ -1,13 +1,9 @@
+import type { DateRange } from 'react-day-picker';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { FilterCombobox, type ComboboxOption } from '@/components/ui/combobox';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
+import { DateRangeFilter } from '@/components/explorer/DateRangeFilter';
 import type { RunFiltersResponse } from '@/client';
 
 export type RunStatusFilter = 'all' | 'passed' | 'failed' | 'flaky';
@@ -19,7 +15,6 @@ const STATUS_OPTIONS: { value: RunStatusFilter; label: string }[] = [
   { value: 'flaky', label: 'Flaky' },
 ];
 
-const ALL = '__all__';
 /** Mirrors the API's `UNSET_ENV` sentinel — selects runs with no environment. */
 const UNSET_ENV = '(unset)';
 
@@ -30,96 +25,85 @@ export interface RunFilterValues {
   environment?: string;
 }
 
-/** Status segmented control + branch/user selects + a live "N of M" count. */
+/** Status segmented control + branch/user/date filters + a live "N of M" count. */
 export function RunFilters({
   values,
   options,
   total,
   projectTotal,
   onChange,
+  dateRange,
+  onDateRangeChange,
 }: {
   values: RunFilterValues;
   options: RunFiltersResponse;
   total: number;
   projectTotal: number;
   onChange: (patch: Partial<RunFilterValues>) => void;
+  dateRange: DateRange | undefined;
+  onDateRangeChange: (range: DateRange | undefined) => void;
 }) {
+  const branchOptions: ComboboxOption[] = options.branches.map((b) => ({
+    value: b,
+    label: b,
+    className: 'font-mono',
+  }));
+  const userOptions: ComboboxOption[] = options.users.map((u) => ({
+    value: u.email,
+    label: u.name?.trim() || u.email,
+  }));
+  const envOptions: ComboboxOption[] = [
+    ...options.environments.map((e) => ({ value: e, label: e })),
+    ...(options.hasUnset
+      ? [{ value: UNSET_ENV, label: 'Unset', className: 'text-muted-foreground' }]
+      : []),
+  ];
+
   return (
     <Flex align="center" gap={3} wrap>
       <Tabs
         value={values.status}
         onValueChange={(v) => onChange({ status: (v || 'all') as RunStatusFilter })}
       >
-        <TabsList className="rounded-lg">
+        <TabsList>
           {STATUS_OPTIONS.map((o) => (
-            <TabsTrigger
-              key={o.value}
-              value={o.value}
-              className="rounded-md px-3 data-[state=active]:font-semibold data-[state=active]:shadow-sm"
-            >
+            <TabsTrigger key={o.value} value={o.value}>
               {o.label}
             </TabsTrigger>
           ))}
         </TabsList>
       </Tabs>
 
-      <Select
-        value={values.branch ?? ALL}
-        onValueChange={(v) => onChange({ branch: v === ALL ? undefined : v })}
-      >
-        <SelectTrigger size="sm" className="w-44">
-          <SelectValue placeholder="All branches" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value={ALL}>All branches</SelectItem>
-          {options.branches.map((b) => (
-            <SelectItem key={b} value={b} className="font-mono">
-              {b}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <FilterCombobox
+        value={values.branch}
+        onChange={(v) => onChange({ branch: v })}
+        options={branchOptions}
+        placeholder="All branches"
+        emptyText="No branches"
+        width="w-44"
+      />
 
-      <Select
-        value={values.user ?? ALL}
-        onValueChange={(v) => onChange({ user: v === ALL ? undefined : v })}
-      >
-        <SelectTrigger size="sm" className="w-48">
-          <SelectValue placeholder="All users" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value={ALL}>All users</SelectItem>
-          {options.users.map((u) => (
-            <SelectItem key={u.email} value={u.email}>
-              {u.name?.trim() || u.email}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <FilterCombobox
+        value={values.user}
+        onChange={(v) => onChange({ user: v })}
+        options={userOptions}
+        placeholder="All users"
+        emptyText="No users"
+        width="w-48"
+      />
 
       {options.environments.length > 0 && (
-        <Select
-          value={values.environment ?? ALL}
-          onValueChange={(v) => onChange({ environment: v === ALL ? undefined : v })}
-        >
-          <SelectTrigger size="sm" className="w-44">
-            <SelectValue placeholder="All environments" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL}>All environments</SelectItem>
-            {options.environments.map((e) => (
-              <SelectItem key={e} value={e}>
-                {e}
-              </SelectItem>
-            ))}
-            {options.hasUnset && (
-              <SelectItem value={UNSET_ENV} className="text-muted-foreground">
-                Unset
-              </SelectItem>
-            )}
-          </SelectContent>
-        </Select>
+        <FilterCombobox
+          value={values.environment}
+          onChange={(v) => onChange({ environment: v })}
+          options={envOptions}
+          placeholder="All environments"
+          emptyText="No environments"
+          width="w-44"
+        />
       )}
+
+      <DateRangeFilter value={dateRange} onChange={onDateRangeChange} />
 
       <Text as="span" className="ml-auto text-sm text-muted-foreground tabular-nums">
         {total} of {projectTotal} runs

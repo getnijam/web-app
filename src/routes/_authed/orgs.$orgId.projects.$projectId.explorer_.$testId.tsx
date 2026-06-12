@@ -21,19 +21,41 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/states/ErrorState';
 import { CodeBlock } from '@/components/explorer/CodeBlock';
 import { RunHistory } from '@/components/explorer/RunHistory';
+import type { TestDetailOrigin } from '@/components/explorer/TestRow';
 import { testStatusMeta } from '@/components/runs/test-status';
 import { displayFile } from '@/lib/format';
 import { gitFileUrl } from '@/lib/git';
 import { cn } from '@/lib/utils';
 import { privateSeo } from '@/lib/seo';
 
+interface TestDetailSearch {
+  /** The list this detail was opened from — drives the back link. */
+  from: TestDetailOrigin;
+}
+
+/** Back-link target per origin list. */
+const BACK_TARGETS = {
+  explorer: { to: '/orgs/$orgId/projects/$projectId/explorer', label: 'Test explorer' },
+  flaky: { to: '/orgs/$orgId/projects/$projectId/flaky', label: 'Flaky tests' },
+  failing: { to: '/orgs/$orgId/projects/$projectId/failing', label: 'Failing tests' },
+} as const;
+
+const ORIGINS: TestDetailOrigin[] = ['explorer', 'flaky', 'failing'];
+
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/explorer_/$testId')({
   head: () => privateSeo('Test detail'),
   component: TestDetailPage,
+  validateSearch: (search: Record<string, unknown>): TestDetailSearch => ({
+    from: ORIGINS.includes(search.from as TestDetailOrigin)
+      ? (search.from as TestDetailOrigin)
+      : 'explorer',
+  }),
 });
 
 function TestDetailPage() {
   const { orgId, projectId, testId } = Route.useParams();
+  const { from } = Route.useSearch();
+  const back = BACK_TARGETS[from];
   const q = useQuery(getProjectTestOptions({ path: { projectId, testId } }));
   const list = useQuery(listProjectTestsOptions({ path: { projectId } }));
 
@@ -54,14 +76,26 @@ function TestDetailPage() {
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex align="center" justify="between" gap={3}>
         <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
-          <Link to="/orgs/$orgId/projects/$projectId/explorer" params={{ orgId, projectId }}>
+          <Link to={back.to} params={{ orgId, projectId }}>
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
-            Test explorer
+            {back.label}
           </Link>
         </Button>
         <Flex align="center" gap={1.5}>
-          <StepButton testId={prev?.testId} dir="prev" orgId={orgId} projectId={projectId} />
-          <StepButton testId={next?.testId} dir="next" orgId={orgId} projectId={projectId} />
+          <StepButton
+            testId={prev?.testId}
+            dir="prev"
+            orgId={orgId}
+            projectId={projectId}
+            from={from}
+          />
+          <StepButton
+            testId={next?.testId}
+            dir="next"
+            orgId={orgId}
+            projectId={projectId}
+            from={from}
+          />
         </Flex>
       </Flex>
 
@@ -122,11 +156,13 @@ function StepButton({
   dir,
   orgId,
   projectId,
+  from,
 }: {
   testId: string | undefined;
   dir: 'prev' | 'next';
   orgId: string;
   projectId: string;
+  from: TestDetailOrigin;
 }) {
   const icon = dir === 'prev' ? ArrowLeft01Icon : ArrowRight01Icon;
   const label = dir === 'prev' ? 'Previous test' : 'Next test';
@@ -142,6 +178,7 @@ function StepButton({
       <Link
         to="/orgs/$orgId/projects/$projectId/explorer/$testId"
         params={{ orgId, projectId, testId }}
+        search={{ from }}
       >
         <HugeiconsIcon icon={icon} size={16} />
       </Link>

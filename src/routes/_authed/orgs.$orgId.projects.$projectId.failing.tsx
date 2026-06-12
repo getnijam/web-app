@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { listProjectFlakyTestsOptions } from '@/client/@tanstack/react-query.gen';
+import { listProjectFailingTestsOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Input } from '@/components/ui/input';
@@ -19,18 +19,18 @@ import {
 import { testMatchesQuery } from '@/lib/test-search';
 import { privateSeo } from '@/lib/seo';
 
-export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/flaky')({
-  head: () => privateSeo('Flaky tests'),
+export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/failing')({
+  head: () => privateSeo('Failing tests'),
   validateSearch: validateDateRangeSearch,
-  component: FlakyPage,
+  component: FailingPage,
 });
 
-function FlakyPage() {
+function FailingPage() {
   const { orgId, projectId } = Route.useParams();
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const q = useQuery({
-    ...listProjectFlakyTestsOptions({ path: { projectId }, query: rangeToQuery(search) }),
+    ...listProjectFailingTestsOptions({ path: { projectId }, query: rangeToQuery(search) }),
     // Retain the prior data across a filter change so the filter row stays mounted
     // (it keys off `tests.length`); the list itself still shows a skeleton while the
     // new data loads — see `isPlaceholderData` in renderList.
@@ -53,18 +53,20 @@ function FlakyPage() {
   // Default window is the last 2 weeks; a date filter overrides it (the pill shows
   // the chosen range, so the subtitle drops the window phrase).
   const windowSuffix = filterActive ? '' : ' in the last 2 weeks';
-  const summary = `${tests.length} flaky ${tests.length === 1 ? 'test' : 'tests'}${windowSuffix}`;
+  const summary = `${tests.length} failing ${tests.length === 1 ? 'test' : 'tests'}${windowSuffix}, most recent first`;
   const placeholder = filterActive
-    ? 'Tests with inconsistent results in the selected range.'
-    : 'Tests with inconsistent results in the last 2 weeks.';
+    ? 'Tests that failed in the selected range, the latest failures first.'
+    : 'Tests that failed in the last 2 weeks, the latest failures first.';
 
   const renderList = () => {
     if (q.error) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
-    if (q.isLoading || q.isPlaceholderData) return <FlakySkeleton />;
+    if (q.isLoading || q.isPlaceholderData) return <FailingSkeleton />;
     if (tests.length === 0)
-      return <EmptyState title="No flaky tests" description="Nothing flaked — nice and stable." />;
+      return (
+        <EmptyState title="No failing tests" description="Nothing failed — your suite is green." />
+      );
     if (filtered.length === 0)
-      return <EmptyState title="No matches" description="No flaky test matches your search." />;
+      return <EmptyState title="No matches" description="No failing test matches your search." />;
     return (
       <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
         {filtered.map((t) => (
@@ -73,8 +75,8 @@ function FlakyPage() {
             test={t}
             orgId={orgId}
             projectId={projectId}
-            flakeCount={t.flakeCount}
-            from="flaky"
+            failCount={t.failCount}
+            from="failing"
           />
         ))}
       </Flex>
@@ -84,7 +86,7 @@ function FlakyPage() {
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
-        <Text variant="h1">Flaky tests</Text>
+        <Text variant="h1">Failing tests</Text>
         <Text color="muted">{q.data ? summary : placeholder}</Text>
       </Flex>
 
@@ -111,7 +113,7 @@ function FlakyPage() {
   );
 }
 
-function FlakySkeleton() {
+function FailingSkeleton() {
   return (
     <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
       {Array.from({ length: 6 }).map((_, i) => (

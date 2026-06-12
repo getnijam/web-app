@@ -1,4 +1,6 @@
 import { Link } from '@tanstack/react-router';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { SquareArrowUpRightIcon } from '@hugeicons/core-free-icons';
 import { Logo } from '@/components/auth/Logo';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
@@ -7,7 +9,18 @@ import { DOCS_URL } from '../config';
 
 const ext = { target: '_blank', rel: 'noopener noreferrer' } as const;
 const COL = 'block py-1 text-sm text-background/80 transition-colors hover:text-background';
+// External links carry a new-tab affordance: each on its own line (like COL),
+// laid out as a flex row so the icon sits next to the label.
+const COL_EXT =
+  'flex w-fit items-center gap-1 py-1 text-sm text-background/80 transition-colors hover:text-background';
 const H5 = 'mb-3.5 text-xs font-bold tracking-wide text-background/60 uppercase';
+
+/** New-tab indicator for the footer's external links. */
+function ExtIcon() {
+  return (
+    <HugeiconsIcon icon={SquareArrowUpRightIcon} size={12} strokeWidth={1.8} className="shrink-0" />
+  );
+}
 
 export function Footer() {
   return (
@@ -61,9 +74,10 @@ export function Footer() {
                 key={p}
                 href={`${DOCS_URL}/reporter/ci-integration/#supported-providers`}
                 {...ext}
-                className={COL}
+                className={COL_EXT}
               >
                 {p}
+                <ExtIcon />
               </a>
             ))}
           </div>
@@ -72,8 +86,9 @@ export function Footer() {
             <Text as="p" className={H5}>
               Resources
             </Text>
-            <a href={DOCS_URL} {...ext} className={COL}>
+            <a href={DOCS_URL} {...ext} className={COL_EXT}>
               Docs
+              <ExtIcon />
             </a>
             <Link to="/terms" className={COL}>
               Terms of Service

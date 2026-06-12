@@ -11,6 +11,7 @@ export type SubRoute =
   | 'runs'
   | 'explorer'
   | 'flaky'
+  | 'failing'
   | 'psettings';
 
 /** Human labels per sub-route. */
@@ -24,6 +25,7 @@ export const ROUTE_TITLES: Record<SubRoute, string> = {
   runs: 'Runs',
   explorer: 'Test explorer',
   flaky: 'Flaky tests',
+  failing: 'Failing tests',
   psettings: 'Settings',
 };
 
@@ -31,6 +33,7 @@ const PROJECT_SUB: Record<string, SubRoute> = {
   runs: 'runs',
   explorer: 'explorer',
   flaky: 'flaky',
+  failing: 'failing',
   settings: 'psettings',
 };
 

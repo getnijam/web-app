@@ -30,6 +30,22 @@ export function RunsListSkeleton({ rows = 6 }: { rows?: number }) {
   );
 }
 
+/**
+ * The filter bar's loading state — shown while the backend-sourced filter options
+ * (branches/users/environments) load, so the bar reads as "loading" rather than
+ * briefly empty. Pills mirror the status tabs + selects + date pill.
+ */
+export function RunFiltersSkeleton() {
+  return (
+    <Flex align="center" gap={3} wrap>
+      <Skeleton className="h-8 w-72 rounded-lg" />
+      <Skeleton className="h-8 w-44 rounded-4xl" />
+      <Skeleton className="h-8 w-48 rounded-4xl" />
+      <Skeleton className="h-8 w-57.5 rounded-4xl" />
+    </Flex>
+  );
+}
+
 /** Full runs page: header + filter bar + list (used while the project loads). */
 export function RunsPageSkeleton() {
   return (
@@ -38,11 +54,7 @@ export function RunsPageSkeleton() {
         <Skeleton className="h-7 w-40 rounded-md" />
         <Skeleton className="h-4 w-56 rounded-md" />
       </Flex>
-      <Flex align="center" gap={3} wrap>
-        <Skeleton className="h-9 w-72 rounded-lg" />
-        <Skeleton className="h-9 w-44 rounded-lg" />
-        <Skeleton className="h-9 w-48 rounded-lg" />
-      </Flex>
+      <RunFiltersSkeleton />
       <RunsListSkeleton />
     </Flex>
   );

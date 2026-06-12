@@ -30,7 +30,12 @@ function ExplorerPage() {
       )
     : tests;
 
-  const renderContent = () => {
+  // The search is client-side, so it stays available during the first load (the
+  // list shows a skeleton below); it's only hidden once we know the project has
+  // no tests at all.
+  const showSearch = !q.error && (q.isLoading || tests.length > 0);
+
+  const renderList = () => {
     if (q.isLoading) return <ExplorerSkeleton />;
     if (q.error) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
     if (tests.length === 0)
@@ -40,26 +45,13 @@ function ExplorerPage() {
           description="Run your suite and your tests will show up here."
         />
       );
+    if (filtered.length === 0)
+      return <EmptyState title="No matches" description="No test matches your search." />;
     return (
-      <Flex direction="col" gap={4}>
-        <Input
-          type="search"
-          placeholder="Find a test…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        {filtered.length === 0 ? (
-          <EmptyState title="No matches" description="No test matches your search." />
-        ) : (
-          <Flex
-            direction="col"
-            className="overflow-hidden rounded-2xl border border-border bg-card"
-          >
-            {filtered.map((t) => (
-              <TestRow key={t.testId} test={t} orgId={orgId} projectId={projectId} />
-            ))}
-          </Flex>
-        )}
+      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+        {filtered.map((t) => (
+          <TestRow key={t.testId} test={t} orgId={orgId} projectId={projectId} />
+        ))}
       </Flex>
     );
   };
@@ -74,32 +66,39 @@ function ExplorerPage() {
         </Text>
       </Flex>
 
-      {renderContent()}
+      <Flex direction="col" gap={4}>
+        {showSearch && (
+          <Input
+            type="search"
+            placeholder="Find a test…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        )}
+        {renderList()}
+      </Flex>
     </Flex>
   );
 }
 
 function ExplorerSkeleton() {
   return (
-    <Flex direction="col" gap={4}>
-      <Skeleton className="h-9 w-full rounded-lg" />
-      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <Flex
-            key={i}
-            align="center"
-            gap={3}
-            className="border-b border-border px-4 py-3 last:border-b-0"
-          >
-            <Skeleton className="size-5 rounded-full" />
-            <Flex direction="col" gap={1.5} className="min-w-0 flex-1">
-              <Skeleton className="h-4 w-64 rounded-md" />
-              <Skeleton className="h-3 w-40 rounded-md" />
-            </Flex>
-            <Skeleton className="h-3 w-10 rounded-md" />
+    <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <Flex
+          key={i}
+          align="center"
+          gap={3}
+          className="border-b border-border px-4 py-3 last:border-b-0"
+        >
+          <Skeleton className="size-5 rounded-full" />
+          <Flex direction="col" gap={1.5} className="min-w-0 flex-1">
+            <Skeleton className="h-4 w-64 rounded-md" />
+            <Skeleton className="h-3 w-40 rounded-md" />
           </Flex>
-        ))}
-      </Flex>
+          <Skeleton className="h-3 w-10 rounded-md" />
+        </Flex>
+      ))}
     </Flex>
   );
 }

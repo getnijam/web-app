@@ -306,6 +306,15 @@ export type FlakyTestsResponse = {
     runWindow: number;
 };
 
+export type FailingTestSummary = TestCaseSummary & {
+    failCount: number;
+};
+
+export type FailingTestsResponse = {
+    tests: Array<FailingTestSummary>;
+    runWindow: number;
+};
+
 export type FlakyTrendPoint = {
     date: string;
     count: number;
@@ -1934,7 +1943,10 @@ export type ListProjectFlakyTestsData = {
     path: {
         projectId: string;
     };
-    query?: never;
+    query?: {
+        from?: string;
+        to?: string;
+    };
     url: '/v1/projects/{projectId}/flaky-tests';
 };
 
@@ -1959,6 +1971,40 @@ export type ListProjectFlakyTestsResponses = {
 };
 
 export type ListProjectFlakyTestsResponse = ListProjectFlakyTestsResponses[keyof ListProjectFlakyTestsResponses];
+
+export type ListProjectFailingTestsData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: {
+        from?: string;
+        to?: string;
+    };
+    url: '/v1/projects/{projectId}/failing-tests';
+};
+
+export type ListProjectFailingTestsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Project not found
+     */
+    404: ApiError;
+};
+
+export type ListProjectFailingTestsError = ListProjectFailingTestsErrors[keyof ListProjectFailingTestsErrors];
+
+export type ListProjectFailingTestsResponses = {
+    /**
+     * OK
+     */
+    200: FailingTestsResponse;
+};
+
+export type ListProjectFailingTestsResponse = ListProjectFailingTestsResponses[keyof ListProjectFailingTestsResponses];
 
 export type GetProjectFlakyTrendData = {
     body?: never;
@@ -2340,6 +2386,8 @@ export type ListProjectRunsData = {
         branch?: string;
         user?: string;
         environment?: string;
+        from?: string;
+        to?: string;
         page?: number;
         pageSize?: number;
     };
