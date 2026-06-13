@@ -1,30 +1,36 @@
-import { HugeiconsIcon } from '@hugeicons/react';
 import { Flex } from '@/components/ui/flex';
 import { cn } from '@/lib/utils';
 import {
   ICON_KEYS,
   COLOR_KEYS,
-  ICON_GLYPHS,
   COLOR_BACKGROUNDS,
   type IconKey,
   type ColorKey,
 } from '@/lib/project-glyph';
+import type { TestFramework } from '@/lib/test-framework';
+import { ProjectGlyphIcon } from '@/components/projects/ProjectGlyphIcon';
 
-/** Project glyph picker: live preview tile + 8-icon grid + 6 color swatches. */
+/** Project glyph picker: live preview tile + icon grid + color swatches. The grid
+ *  leads with the matching framework's glyph (and only that one — never another
+ *  framework's), followed by the standard glyphs. */
 export function GlyphPicker({
   icon,
   color,
+  framework,
   onIconChange,
   onColorChange,
   ringOffsetClass = 'ring-offset-popover',
 }: {
   icon: IconKey;
   color: ColorKey;
+  /** The project's framework — its glyph is offered first; other frameworks' aren't. */
+  framework: TestFramework;
   onIconChange: (icon: IconKey) => void;
   onColorChange: (color: ColorKey) => void;
   /** Match the surface behind the selected color swatch's ring (popover vs card). */
   ringOffsetClass?: string;
 }) {
+  const iconKeys: IconKey[] = [framework, ...ICON_KEYS];
   return (
     <Flex align="center" className="gap-3.5">
       <Flex
@@ -33,11 +39,11 @@ export function GlyphPicker({
         className="size-14.5 shrink-0 rounded-xl text-primary-foreground shadow-inner"
         style={{ background: COLOR_BACKGROUNDS[color] }}
       >
-        <HugeiconsIcon icon={ICON_GLYPHS[icon]} size={22} strokeWidth={1.9} />
+        <ProjectGlyphIcon iconKey={icon} size={22} strokeWidth={1.9} />
       </Flex>
       <Flex direction="col" gap={2} className="min-w-0 flex-1">
         <Flex wrap gap={1.5}>
-          {ICON_KEYS.map((key) => (
+          {iconKeys.map((key) => (
             <button
               key={key}
               type="button"
@@ -51,7 +57,7 @@ export function GlyphPicker({
                   : 'border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground',
               )}
             >
-              <HugeiconsIcon icon={ICON_GLYPHS[key]} size={18} strokeWidth={1.8} />
+              <ProjectGlyphIcon iconKey={key} size={18} strokeWidth={1.8} />
             </button>
           ))}
         </Flex>

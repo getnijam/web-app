@@ -25,11 +25,13 @@ import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { GlyphPicker } from '@/components/projects/GlyphPicker';
+import { FRAMEWORK_LABELS, type TestFramework } from '@/lib/test-framework';
+import { FrameworkLogo } from '@/components/projects/framework-logos';
 import { ProjectSlackSettings } from '@/components/integrations/ProjectSlackSettings';
 import { ProjectGitHubSettings } from '@/components/integrations/ProjectGitHubSettings';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
-import { ICON_KEYS, COLOR_KEYS, type IconKey, type ColorKey } from '@/lib/project-glyph';
+import { ALL_ICON_KEYS, COLOR_KEYS, type IconKey, type ColorKey } from '@/lib/project-glyph';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/settings')({
@@ -46,7 +48,7 @@ const Schema = z.object({
 type FormValues = z.infer<typeof Schema>;
 
 const toIconKey = (v: string | null): IconKey =>
-  (ICON_KEYS as readonly string[]).includes(v ?? '') ? (v as IconKey) : 'design';
+  (ALL_ICON_KEYS as readonly string[]).includes(v ?? '') ? (v as IconKey) : 'design';
 const toColorKey = (v: string | null): ColorKey =>
   (COLOR_KEYS as readonly string[]).includes(v ?? '') ? (v as ColorKey) : 'emerald';
 
@@ -74,6 +76,8 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
   const [color, setColor] = useState<ColorKey>(toColorKey(project.color));
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  // null = legacy project → treat as Playwright. Immutable, so derived not stateful.
+  const framework = (project.testFramework ?? 'playwright') as TestFramework;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(Schema),
@@ -177,6 +181,7 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
             <GlyphPicker
               icon={icon}
               color={color}
+              framework={framework}
               onIconChange={setIcon}
               onColorChange={setColor}
               ringOffsetClass="ring-offset-card"
@@ -198,6 +203,21 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
           </SettingsRow>
           <SettingsRow label="Main branch">
             <Input className="font-mono" placeholder="main" {...form.register('defaultBranch')} />
+          </SettingsRow>
+          <SettingsRow
+            label="Test framework"
+            hint="Set when the project was created and can't be changed."
+          >
+            <Flex
+              align="center"
+              gap={2.5}
+              className="h-9 w-full rounded-md border border-input bg-muted/40 px-3"
+            >
+              <FrameworkLogo framework={framework} size={18} />
+              <Text as="span" className="text-sm">
+                {FRAMEWORK_LABELS[framework]}
+              </Text>
+            </Flex>
           </SettingsRow>
           <SettingsRow
             label="Project ID"

@@ -36,6 +36,7 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { glyphFor } from '@/lib/project-glyph';
+import { ProjectGlyphIcon } from '@/components/projects/ProjectGlyphIcon';
 import { Logo } from '@/components/auth/Logo';
 import { AccountMenu } from '@/components/users/AccountMenu';
 import { OrgSwitcher } from './OrgSwitcher';
@@ -128,7 +129,7 @@ function ProjectSwitcherChip({ projectId }: { projectId: string }) {
         style={glyph ? { background: glyph.background } : undefined}
       >
         {glyph ? (
-          <HugeiconsIcon icon={glyph.icon} size={14} strokeWidth={1.9} />
+          <ProjectGlyphIcon iconKey={glyph.iconKey} size={14} strokeWidth={1.9} />
         ) : (
           initialsFrom(name)
         )}

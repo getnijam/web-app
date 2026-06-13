@@ -236,6 +236,7 @@ export type ProjectSummary = {
     defaultBranch: string | null;
     icon: string | null;
     color: string | null;
+    testFramework: 'playwright' | 'pytest' | 'vitest';
     createdAt: string;
     stats: ProjectStats;
     chartRuns: Array<RunBar>;
@@ -246,8 +247,9 @@ export type CreateProjectBody = {
     description?: string;
     repositoryUrl?: string;
     defaultBranch?: string;
-    icon?: 'dashboard' | 'browser' | 'support' | 'finance' | 'testing' | 'education' | 'travel' | 'mobile' | 'gaming' | 'blockchain' | 'design' | 'database';
+    icon?: 'dashboard' | 'browser' | 'support' | 'finance' | 'testing' | 'education' | 'travel' | 'mobile' | 'gaming' | 'blockchain' | 'design' | 'database' | 'playwright' | 'pytest' | 'vitest';
     color?: 'emerald' | 'indigo' | 'amber' | 'sky' | 'pink' | 'teal' | 'rose' | 'violet' | 'orange';
+    testFramework?: 'playwright' | 'pytest' | 'vitest';
 };
 
 export type ProjectListResponse = {
@@ -272,7 +274,7 @@ export type UpdateProjectBody = {
     description?: string;
     repositoryUrl?: string;
     defaultBranch?: string;
-    icon?: 'dashboard' | 'browser' | 'support' | 'finance' | 'testing' | 'education' | 'travel' | 'mobile' | 'gaming' | 'blockchain' | 'design' | 'database';
+    icon?: 'dashboard' | 'browser' | 'support' | 'finance' | 'testing' | 'education' | 'travel' | 'mobile' | 'gaming' | 'blockchain' | 'design' | 'database' | 'playwright' | 'pytest' | 'vitest';
     color?: 'emerald' | 'indigo' | 'amber' | 'sky' | 'pink' | 'teal' | 'rose' | 'violet' | 'orange';
 };
 

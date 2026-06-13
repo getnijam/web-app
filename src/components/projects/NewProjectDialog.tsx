@@ -23,6 +23,8 @@ import { FieldError } from '@/components/auth/AuthLayout';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { GlyphPicker } from '@/components/projects/GlyphPicker';
+import { FrameworkPicker } from '@/components/projects/FrameworkPicker';
+import { type TestFramework } from '@/lib/test-framework';
 import { type IconKey, type ColorKey } from '@/lib/project-glyph';
 
 const CreateSchema = z.object({
@@ -48,18 +50,28 @@ export function NewProjectDialog({
 }) {
   const queryClient = useQueryClient();
   const [formError, setFormError] = useState<string | null>(null);
-  const [icon, setIcon] = useState<IconKey>('design');
+  // Default the icon to the framework's glyph (framework defaults to playwright).
+  const [icon, setIcon] = useState<IconKey>('playwright');
   const [color, setColor] = useState<ColorKey>('emerald');
+  const [testFramework, setTestFramework] = useState<TestFramework>('playwright');
   const form = useForm<CreateForm>({
     resolver: zodResolver(CreateSchema),
     defaultValues: { defaultBranch: 'main' },
   });
   const name = form.watch('name');
 
+  // Switching framework re-defaults the project icon to that framework's glyph (the
+  // user can still pick a different icon afterward).
+  function changeFramework(next: TestFramework) {
+    setTestFramework(next);
+    setIcon(next);
+  }
+
   function close() {
     form.reset({ defaultBranch: 'main' });
-    setIcon('design');
+    setIcon('playwright');
     setColor('emerald');
+    setTestFramework('playwright');
     setFormError(null);
     onOpenChange(false);
   }
@@ -110,6 +122,7 @@ export function NewProjectDialog({
                 defaultBranch: blankToUndefined(data.defaultBranch),
                 icon,
                 color,
+                testFramework,
               },
             });
           })}
@@ -130,10 +143,22 @@ export function NewProjectDialog({
             <FieldError message={form.formState.errors.name?.message} />
           </Flex>
 
+          {/* Test framework — chosen once, locked after creation. */}
+          <Flex direction="col" gap={2}>
+            <Label>Test framework</Label>
+            <FrameworkPicker value={testFramework} onChange={changeFramework} />
+          </Flex>
+
           {/* icon + color picker */}
           <Flex direction="col" gap={2}>
             <Label>Icon</Label>
-            <GlyphPicker icon={icon} color={color} onIconChange={setIcon} onColorChange={setColor} />
+            <GlyphPicker
+              icon={icon}
+              color={color}
+              framework={testFramework}
+              onIconChange={setIcon}
+              onColorChange={setColor}
+            />
           </Flex>
 
           <Flex direction="col" gap={1.5}>

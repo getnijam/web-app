@@ -328,12 +328,12 @@ export const updateProject = <ThrowOnError extends boolean = false>(options: Opt
 export const listProjectTests = <ThrowOnError extends boolean = false>(options: Options<ListProjectTestsData, ThrowOnError>): RequestResult<ListProjectTestsResponses, ListProjectTestsErrors, ThrowOnError> => (options.client ?? client).get<ListProjectTestsResponses, ListProjectTestsErrors, ThrowOnError>({ url: '/v1/projects/{projectId}/tests', ...options });
 
 /**
- * List tests that were flaky in the last 10 finalized runs
+ * List tests that were flaky in the last 2 weeks (or a given date range)
  */
 export const listProjectFlakyTests = <ThrowOnError extends boolean = false>(options: Options<ListProjectFlakyTestsData, ThrowOnError>): RequestResult<ListProjectFlakyTestsResponses, ListProjectFlakyTestsErrors, ThrowOnError> => (options.client ?? client).get<ListProjectFlakyTestsResponses, ListProjectFlakyTestsErrors, ThrowOnError>({ url: '/v1/projects/{projectId}/flaky-tests', ...options });
 
 /**
- * List tests that failed in the last 15 finalized runs
+ * List tests that failed in the last 2 weeks (or a given date range)
  */
 export const listProjectFailingTests = <ThrowOnError extends boolean = false>(options: Options<ListProjectFailingTestsData, ThrowOnError>): RequestResult<ListProjectFailingTestsResponses, ListProjectFailingTestsErrors, ThrowOnError> => (options.client ?? client).get<ListProjectFailingTestsResponses, ListProjectFailingTestsErrors, ThrowOnError>({ url: '/v1/projects/{projectId}/failing-tests', ...options });
 

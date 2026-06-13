@@ -717,7 +717,7 @@ export const listProjectTestsOptions = (options: Options<ListProjectTestsData>) 
 export const listProjectFlakyTestsQueryKey = (options: Options<ListProjectFlakyTestsData>) => createQueryKey('listProjectFlakyTests', options);
 
 /**
- * List tests that were flaky in the last 10 finalized runs
+ * List tests that were flaky in the last 2 weeks (or a given date range)
  */
 export const listProjectFlakyTestsOptions = (options: Options<ListProjectFlakyTestsData>) => queryOptions<ListProjectFlakyTestsResponse, ListProjectFlakyTestsError, ListProjectFlakyTestsResponse, ReturnType<typeof listProjectFlakyTestsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -735,7 +735,7 @@ export const listProjectFlakyTestsOptions = (options: Options<ListProjectFlakyTe
 export const listProjectFailingTestsQueryKey = (options: Options<ListProjectFailingTestsData>) => createQueryKey('listProjectFailingTests', options);
 
 /**
- * List tests that failed in the last 15 finalized runs
+ * List tests that failed in the last 2 weeks (or a given date range)
  */
 export const listProjectFailingTestsOptions = (options: Options<ListProjectFailingTestsData>) => queryOptions<ListProjectFailingTestsResponse, ListProjectFailingTestsError, ListProjectFailingTestsResponse, ReturnType<typeof listProjectFailingTestsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {

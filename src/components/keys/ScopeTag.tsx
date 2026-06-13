@@ -4,6 +4,7 @@ import type { SecretKeySummary } from '@/client';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { glyphFor } from '@/lib/project-glyph';
+import { ProjectGlyphIcon } from '@/components/projects/ProjectGlyphIcon';
 
 /** Small project glyph tile (icon over the project's fill color). */
 export function ProjectGlyphMini({
@@ -19,7 +20,7 @@ export function ProjectGlyphMini({
       className="size-5 shrink-0 rounded text-primary-foreground"
       style={{ background: glyph.background }}
     >
-      <HugeiconsIcon icon={glyph.icon} size={12} strokeWidth={2} />
+      <ProjectGlyphIcon iconKey={glyph.iconKey} size={12} strokeWidth={2} />
     </Flex>
   );
 }

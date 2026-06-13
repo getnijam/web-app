@@ -129,7 +129,11 @@ function RunsPage() {
     return (
       <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
         <Header proj={proj} onRefresh={refresh} refreshing={refreshing} />
-        <ReporterSnippet orgId={orgId} projectId={projectId} />
+        <ReporterSnippet
+          orgId={orgId}
+          projectId={projectId}
+          framework={proj.testFramework ?? 'playwright'}
+        />
       </Flex>
     );
   }
