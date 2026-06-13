@@ -33,7 +33,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
           {children}
         </Flex>
         <Text variant="caption" color="muted">
-          © Nijam — test analytics for Playwright
+          © Nijam — test analytics for Playwright, pytest &amp; Vitest
         </Text>
       </Flex>
       <AuthBrandPanel />

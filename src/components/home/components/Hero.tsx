@@ -72,20 +72,20 @@ export function Hero() {
               className="rounded-full border border-primary/25 bg-primary/10 px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-primary"
             >
               <span className="size-1.5 rounded-full bg-primary ring-4 ring-primary/20" />
-              Built for Playwright
+              Playwright · pytest · Vitest
             </Flex>
 
             <Text
               as="h1"
               className="mt-5 text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl"
             >
-              The missing <span className="text-primary">Playwright dashboard</span>
+              The missing <span className="text-primary">test dashboard</span>
             </Text>
 
             <Text className="mt-5 max-w-xl text-lg text-pretty text-muted-foreground">
-              Nijam reads the test results your CI already uploads and turns them into flakiness
-              detection, failure analytics, and a clear answer to <em>why</em> — and{' '}
-              <em>since when</em> — your tests started failing.
+              Nijam reads the test results your CI already uploads — from Playwright, pytest, or
+              Vitest — and turns them into flakiness detection, failure analytics, and a clear answer
+              to <em>why</em> — and <em>since when</em> — your tests started failing.
             </Text>
 
             <Flex gap={3} wrap className="mt-7">

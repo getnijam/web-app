@@ -22,7 +22,8 @@ export const Route = createFileRoute('/signup')({
   head: () =>
     seo({
       title: 'Create your account',
-      description: 'Sign up for Nijam and start tracking your Playwright runs, flakiness, and traces.',
+      description:
+        'Sign up for Nijam and start tracking your Playwright, pytest, and Vitest runs, flakiness, and failures.',
       path: '/signup',
       noindex: true,
     }),
@@ -111,7 +112,7 @@ function SignupPage() {
       <Flex direction="col" gap={6}>
         <AuthHeading
           title="Create your account"
-          description="Start tracking your Playwright runs in minutes."
+          description="Start tracking your Playwright, pytest & Vitest runs in minutes."
         />
 
         <OAuthButtons />

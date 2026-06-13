@@ -24,7 +24,7 @@ export const Route = createFileRoute('/security')({
     seo({
       title: 'Security',
       description:
-        'How Nijam protects your Playwright test data — encryption, scoped ingest keys, tenant isolation, privacy-first telemetry, and the providers we build on.',
+        'How Nijam protects your test data — encryption, scoped ingest keys, tenant isolation, privacy-first telemetry, and the providers we build on.',
       path: '/security',
     }),
   component: SecurityPage,
@@ -89,9 +89,9 @@ function SecurityPage() {
             How we protect your test data
           </Text>
           <Text className="mx-auto mt-4 max-w-2xl text-lg text-pretty text-muted-foreground">
-            Nijam is a read-only reporting layer for Playwright — it ingests the results your CI
-            already produces and never executes or re-runs your tests. Here's how we keep that data
-            safe, end to end.
+            Nijam is a read-only reporting layer for Playwright, pytest, and Vitest — it ingests the
+            results your CI already produces and never executes or re-runs your tests. Here's how we
+            keep that data safe, end to end.
           </Text>
           <Text className="mt-4 text-sm text-muted-foreground">Last updated {UPDATED}</Text>
         </section>
