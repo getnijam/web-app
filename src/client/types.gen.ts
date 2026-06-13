@@ -213,6 +213,7 @@ export type ProjectStats = {
     testsCount: number;
     avgDurationSec: number | null;
     lastRunAt: string;
+    branch: string | null;
     ciProvider: string | null;
 } | null;
 
