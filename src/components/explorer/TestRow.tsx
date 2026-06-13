@@ -28,6 +28,7 @@ export function TestRow({
   projectId,
   flakeCount,
   failCount,
+  isGroupEnabled = false,
   from = 'explorer',
 }: {
   test: TestCaseSummary;
@@ -35,6 +36,7 @@ export function TestRow({
   projectId: string;
   flakeCount?: number;
   failCount?: number;
+  isGroupEnabled?: boolean;
   from?: TestDetailOrigin;
 }) {
   const meta = testStatusMeta(test.status);
@@ -71,16 +73,22 @@ export function TestRow({
       search={{ from } as never}
       align="center"
       gap={3}
-      className="border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
+      className={cn(
+        "border-b border-border px-4 py-3",
+        "transition-colors last:border-b-0 hover:bg-accent",
+        { "pl-12": isGroupEnabled }
+      )}
     >
       <HugeiconsIcon icon={meta.icon} size={18} className={cn('shrink-0', meta.color)} />
       <Flex direction="col" gap={0.5} className="min-w-0 flex-1 leading-tight">
         <Text as="span" truncate className="text-sm font-medium">
           {test.title}
         </Text>
-        <Text as="span" truncate className="font-mono text-xs text-muted-foreground">
-          {displayFile(test.file)}
-        </Text>
+        {!isGroupEnabled && (
+          <Text as="span" truncate className="font-mono text-xs text-muted-foreground">
+            {displayFile(test.file)}
+          </Text>
+        )}
       </Flex>
       {renderPill()}
       <Text as="span" className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
