@@ -45,7 +45,7 @@ const FEATURES: Feature[] = [
         Know <em>why</em> it failed
       </>
     ),
-    body: 'The error, stack trace, screenshots, video and the full Playwright trace — captured and attached to every failing attempt.',
+    body: 'The error, stack trace and the exact failing line — captured for every failing attempt, plus screenshots, video and the full trace on Playwright.',
   },
   {
     icon: Clock01Icon,
@@ -96,9 +96,9 @@ export function Features() {
           What you've been missing
         </Text>
         <Text as="h2" className="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-          Everything{' '}
+          Everything a single{' '}
           <code className="rounded-md bg-muted px-2 py-0.5 align-middle font-mono text-xl sm:text-2xl">
-            npx playwright test
+            test run
           </code>{' '}
           doesn't tell you
         </Text>

@@ -33,10 +33,10 @@ function TermsPage() {
     >
       <Section title="1. The Service">
         <P>
-          Nijam is a read-only reporting layer for Playwright. It ingests the test results your CI
-          already produces — runs, test outcomes, timings, and optional artifacts — and turns them
-          into history, flakiness detection, and failure analytics. Nijam never executes or re-runs
-          your tests.
+          Nijam is a read-only reporting layer for Playwright, pytest, and Vitest. It ingests the
+          test results your CI already produces — runs, test outcomes, timings, and optional
+          artifacts — and turns them into history, flakiness detection, and failure analytics. Nijam
+          never executes or re-runs your tests.
         </P>
       </Section>
 
@@ -75,10 +75,10 @@ function TermsPage() {
       <Section title="5. Your content, integrations & API access">
         <P>
           You retain all rights to the data you send to Nijam — test results, run metadata, and,
-          unless you disable source uploads, your test source files and the Playwright artifacts
-          your configuration produces (traces, screenshots, and videos). You grant Nijam a limited
-          license to host, process, and display that data solely to operate and provide the Service
-          to you.
+          unless you disable source uploads, your test source files and any artifacts your
+          configuration produces (on Playwright, traces, screenshots, and videos). You grant Nijam a
+          limited license to host, process, and display that data solely to operate and provide the
+          Service to you.
         </P>
         <P>
           You access the API with two kinds of{' '}

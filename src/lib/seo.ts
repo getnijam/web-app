@@ -9,9 +9,9 @@ const SITE_URL = 'https://www.nijam.dev';
 const SITE_NAME = 'Nijam';
 const OG_IMAGE = `${SITE_URL}/og.png`;
 
-export const DEFAULT_TITLE = 'Nijam — Playwright test analytics & flakiness dashboard';
+export const DEFAULT_TITLE = 'Nijam — test analytics & flakiness dashboard for Playwright, pytest & Vitest';
 export const DEFAULT_DESCRIPTION =
-  'The missing dashboard for your Playwright suite — run history, flakiness scoring, and failure traces from every CI run. Think Sentry, for Playwright.';
+  'The missing dashboard for your test suite — run history, flakiness scoring, and failure analysis from every CI run. Works with Playwright, pytest, and Vitest. Think Sentry, for your tests.';
 
 interface SeoInput {
   /** Page-specific title; rendered as "<title> · Nijam". Omit for the site default. */

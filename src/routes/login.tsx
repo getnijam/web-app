@@ -23,7 +23,8 @@ export const Route = createFileRoute('/login')({
   head: () =>
     seo({
       title: 'Log in',
-      description: 'Sign in to Nijam to view your Playwright run history, flakiness, and traces.',
+      description:
+        'Sign in to Nijam to view your Playwright, pytest, and Vitest run history, flakiness, and failures.',
       path: '/login',
     }),
   beforeLoad: ({ context, search }) =>

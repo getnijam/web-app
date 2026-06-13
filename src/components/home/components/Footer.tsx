@@ -39,8 +39,8 @@ export function Footer() {
               <Logo />
             </Flex>
             <Text className="mt-3.5 max-w-70 text-sm text-background/60">
-              The reporting layer for Playwright. Reads the results your CI already produces — never
-              runs your tests.
+              The reporting layer for Playwright, pytest &amp; Vitest. Reads the results your CI
+              already produces — never runs your tests.
             </Text>
           </div>
 
@@ -116,7 +116,7 @@ export function Footer() {
           className="mt-11 border-t border-background/10 pt-6 text-xs text-background/60"
         >
           <span>© 2026 Nijam.dev — a read-only test reporting dashboard.</span>
-          <span className="font-mono">Built for Playwright</span>
+          <span className="font-mono">Playwright · pytest · Vitest</span>
         </Flex>
       </div>
     </footer>

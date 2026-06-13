@@ -46,11 +46,11 @@ function PrivacyPage() {
         </P>
         <P>
           <strong className="font-semibold text-foreground">Source &amp; artifacts.</strong> By
-          default, the reporter also uploads your test source files and any Playwright artifacts
-          your test configuration produces — traces, screenshots, and videos — so they can be shown
-          in the dashboard. You can turn off source uploads by setting{' '}
-          <code className="font-mono">uploadSource: false</code> in the reporter, and you control
-          which artifacts exist through your Playwright configuration.
+          default, the reporter also uploads your test source files and any artifacts your test
+          configuration produces — on Playwright, traces, screenshots, and videos (pytest and Vitest
+          have no traces) — so they can be shown in the dashboard. You can turn off source uploads by
+          setting <code className="font-mono">uploadSource: false</code> in the reporter, and you
+          control which artifacts exist through your test configuration.
         </P>
         <P>
           <strong className="font-semibold text-foreground">Usage &amp; billing data.</strong>{' '}
