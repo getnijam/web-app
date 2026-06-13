@@ -217,8 +217,9 @@ function Header({
   const parts = [
     repo,
     proj.stats ? `last run ${timeAgo(proj.stats.lastRunAt)}` : null,
-    // Only as a qualifier for the last run — a lone "on main" (no runs yet) reads oddly.
-    proj.stats && proj.defaultBranch ? `on ${proj.defaultBranch}` : null,
+    // The last run's actual branch (not the project's default) — this whole line
+    // describes the last run, so a feature-branch run shows its branch, not "main".
+    proj.stats?.branch ? `on ${proj.stats.branch}` : null,
     proj.stats?.ciProvider ? `via ${proj.stats.ciProvider}` : null,
   ].filter(Boolean);
 
