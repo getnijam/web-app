@@ -15,6 +15,13 @@ const COL_EXT =
   'flex w-fit items-center gap-1 py-1 text-sm text-background/80 transition-colors hover:text-background';
 const H5 = 'mb-3.5 text-xs font-bold tracking-wide text-background/60 uppercase';
 
+// The published reporter packages, linked to their registry pages.
+const REPORTERS = [
+  { label: 'Playwright (npm)', href: 'https://www.npmjs.com/package/@nijam/pw-reporter' },
+  { label: 'pytest (PyPI)', href: 'https://pypi.org/project/pytest-nijam/' },
+  { label: 'Vitest (npm)', href: 'https://www.npmjs.com/package/@nijam/vitest-reporter' },
+] as const;
+
 /** New-tab indicator for the footer's external links. */
 function ExtIcon() {
   return (
@@ -26,7 +33,7 @@ export function Footer() {
   return (
     <footer className="bg-foreground text-background/80">
       <div className="mx-auto max-w-6xl px-6 py-14">
-        <Grid cols={[1, 2, 4]} gap={8}>
+        <Grid cols={[1, 2, 5]} gap={8}>
           <div className="sm:col-span-2 md:col-span-1">
             <Flex
               as={Link}
@@ -77,6 +84,18 @@ export function Footer() {
                 className={COL_EXT}
               >
                 {p}
+                <ExtIcon />
+              </a>
+            ))}
+          </div>
+
+          <div>
+            <Text as="p" className={H5}>
+              Reporters
+            </Text>
+            {REPORTERS.map((r) => (
+              <a key={r.label} href={r.href} {...ext} className={COL_EXT}>
+                {r.label}
                 <ExtIcon />
               </a>
             ))}
