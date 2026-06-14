@@ -141,8 +141,8 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   let seatHint = 'Unlimited members on Pro.';
   if (!(pro || limits.seats === null))
     seatHint = isAdmin
-      ? 'Free includes up to 2 members. Upgrade to Pro for unlimited.'
-      : 'Free includes up to 2 members.';
+      ? 'Free includes up to 3 members. Upgrade to Pro for unlimited.'
+      : 'Free includes up to 3 members.';
 
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
@@ -170,7 +170,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
             <Text as="span" className="text-sm text-muted-foreground">
               {pro
                 ? `Unlimited members · ${billing.retentionDays}-day history retention`
-                : `Up to ${formatCount(limits.seats ?? 2)} members · ${billing.retentionDays}-day history retention`}
+                : `Up to ${formatCount(limits.seats ?? 3)} members · ${billing.retentionDays}-day history retention`}
             </Text>
           </Flex>
           {isAdmin && (

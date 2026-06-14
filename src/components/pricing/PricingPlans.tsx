@@ -31,7 +31,7 @@ const PLANS: Plan[] = [
       <>
         <strong className="font-semibold text-foreground">1,000</strong> credits / month
       </>,
-      'Up to 2 members',
+      'Up to 3 members',
       '7-day history retention',
       'Flakiness detection & analytics',
       'Traces, screenshots & video',

@@ -61,7 +61,7 @@ function PricingPage() {
               Estimate your monthly bill
             </Text>
             <Text className="mt-3 text-base text-pretty text-muted-foreground">
-              Drag the slider to set your monthly credit usage and enter your team size. Up to 2
+              Drag the slider to set your monthly credit usage and enter your team size. Up to 3
               members and 1,000 credits stays free; beyond that, Pro is $20/mo plus an early-bird
               $0.001 per extra credit (half the standard $0.002).
             </Text>

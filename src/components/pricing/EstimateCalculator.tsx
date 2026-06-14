@@ -11,7 +11,7 @@ import { Slider } from '@/components/ui/slider';
 // Pro plan, which bills an early-bird $0.001 per credit over the 10k included (half the
 // standard $0.002). Base ($20) is unchanged. 1 credit = 1 Playwright test = 100
 // pytest/Vitest tests.
-const FREE_MEMBER_LIMIT = 2;
+const FREE_MEMBER_LIMIT = 3;
 const FREE_CREDIT_LIMIT = 1_000;
 const PRO_BASE = 20;
 const PRO_INCLUDED_CREDITS = 10_000;
@@ -48,7 +48,7 @@ export function EstimateCalculator() {
 
   let planNote: string;
   if (isFree) {
-    planNote = 'Up to 2 members and 1,000 credits each month.';
+    planNote = 'Up to 3 members and 1,000 credits each month.';
   } else if (overageCredits > 0) {
     planNote = `$${PRO_BASE} base + $${money(overageCredits * OVERAGE_RATE)} for ${compact(overageCredits)} credits over the included 10,000.`;
   } else {
