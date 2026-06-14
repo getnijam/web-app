@@ -32,7 +32,7 @@ import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/billing')({
-  head: () => privateSeo('Billing'),
+  head: () => privateSeo('Billing & usage'),
   // `?upgraded=1` is set by the Polar checkout success redirect.
   validateSearch: (search: Record<string, unknown>): { upgraded?: boolean } =>
     search.upgraded === '1' || search.upgraded === true ? { upgraded: true } : {},
@@ -116,27 +116,38 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
     !pro && limits.seats !== null && usage.seats >= limits.seats ? 'danger' : 'default';
   const resets = formatResetDate(billing.resetsAt);
 
-  // Members never see amounts. When metered/over they get a "contact an admin" note.
-  // `${formatCount(usage.tests)} tests` is the raw reported count behind the credits.
-  const reported = `${formatCount(usage.tests)} tests reported`;
+  // The dynamic status line for the Credits meter; the per-framework breakdown below
+  // is appended in the JSX. Members never see amounts — metered/over → "contact an admin".
+  const used = `${formatCount(usage.credits)} credits used`;
   let creditHint: string;
   if (isAdmin) {
     if (pro)
       creditHint = overActive
         ? `Included ${formatCount(included)} credits used up — overage now $0.001/credit (${formatCount(overCredits)} over this cycle), added to your next invoice. Resets ${resets}.`
-        : `${formatCount(usage.credits)} of ${formatCount(included)} credits used (${reported}). Beyond that, $0.001 per credit, billed at cycle end. Resets ${resets}.`;
+        : `${formatCount(usage.credits)} of ${formatCount(included)} credits used. Beyond that, $0.001 per credit, billed at cycle end. Resets ${resets}.`;
     else if (billing.over)
       creditHint = billing.enforced
         ? `Monthly credit limit reached — new reports are paused until ${resets}. Upgrade to keep reporting.`
         : 'Monthly credit limit reached — upgrade to Pro to report beyond the Free tier.';
-    else creditHint = `${CREDIT_NOTE} ${reported} this cycle. Resets ${resets}.`;
+    else creditHint = `${used} this cycle. Resets ${resets}.`;
   } else if (pro)
     creditHint = overActive
       ? `Metered usage is in effect — credits beyond the included amount are now billed. Contact an admin for details. Resets ${resets}.`
-      : `${formatCount(usage.credits)} of ${formatCount(included)} credits used (${reported}). Resets ${resets}.`;
+      : `${formatCount(usage.credits)} of ${formatCount(included)} credits used. Resets ${resets}.`;
   else if (billing.over)
     creditHint = `Monthly credit limit reached — contact an admin to upgrade. Resets ${resets}.`;
-  else creditHint = `${CREDIT_NOTE} ${reported} this cycle. Resets ${resets}.`;
+  else creditHint = `${used} this cycle. Resets ${resets}.`;
+
+  // Per-framework credit breakdown, shown under the Credits meter on its own lines
+  // (block spans so they stack inside the hint's inline <Text as="span">).
+  const creditMeterHint = (
+    <>
+      <span className="block">{creditHint}</span>
+      <span className="mt-1.5 block">1 credit = 1 Playwright test report</span>
+      <span className="block">1 credit = 100 pytest test reports</span>
+      <span className="block">1 credit = 100 Vitest test reports</span>
+    </>
+  );
 
   let seatHint = 'Unlimited members on Pro.';
   if (!(pro || limits.seats === null))
@@ -147,7 +158,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
-        <Text variant="h1">Billing</Text>
+        <Text variant="h1">Billing &amp; usage</Text>
         <Text color="muted">Your plan, usage, and limits for this organization.</Text>
       </Flex>
 
@@ -193,7 +204,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
           value={`${formatCount(usage.credits)} / ${formatCount(included)}${pro ? ' included' : ''}`}
           percent={creditPercent}
           tone={creditTone}
-          hint={creditHint}
+          hint={creditMeterHint}
         />
         <UsageMeter
           icon={UserMultiple02Icon}

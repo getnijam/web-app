@@ -20,7 +20,7 @@ export const ROUTE_TITLES: Record<SubRoute, string> = {
   org: 'Organization settings',
   users: 'Users',
   keys: 'Secret keys',
-  billing: 'Billing',
+  billing: 'Billing & usage',
   integrations: 'Integrations',
   runs: 'Runs',
   explorer: 'Test explorer',

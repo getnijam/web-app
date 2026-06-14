@@ -311,7 +311,7 @@ export function AppSidebar() {
               <SidebarMenuButton asChild isActive={active === 'billing'} className={NAV_ACTIVE}>
                 <Link to="/orgs/$orgId/billing" params={{ orgId }} onClick={closeMobile}>
                   <NavGlyph icon={CreditCardIcon} active={active === 'billing'} />
-                  <span>Billing</span>
+                  <span>Billing &amp; usage</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

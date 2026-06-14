@@ -40,13 +40,22 @@ function PricingPage() {
 
         <PricingPlans />
 
+        <Flex direction="col" align="center" gap={1} className="mt-8 text-sm text-muted-foreground">
+          <Text as="span" className="font-medium text-foreground">
+            How credits work
+          </Text>
+          <Text as="span">1 credit = 1 Playwright test report</Text>
+          <Text as="span">1 credit = 100 pytest test reports</Text>
+          <Text as="span">1 credit = 100 Vitest test reports</Text>
+        </Flex>
+
         <Text
           align="center"
-          className="mx-auto mt-8 max-w-xl text-xs text-pretty text-muted-foreground"
+          className="mx-auto mt-6 max-w-xl text-xs text-pretty text-muted-foreground"
         >
           Prices shown in USD and billed monthly. At checkout you&rsquo;re charged in your local
-          currency with taxes handled for you. 1 credit = 1 Playwright test = 100 pytest/Vitest
-          tests (every reported attempt counts; retries and shards included).
+          currency with taxes handled for you. Every reported attempt counts (retries and shards
+          included).
         </Text>
 
         <Flex direction="col" className="mt-16 md:mt-20">
