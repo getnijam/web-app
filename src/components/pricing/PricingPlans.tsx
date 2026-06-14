@@ -29,7 +29,7 @@ const PLANS: Plan[] = [
     blurb: 'Everything you need to connect your first project and see it working.',
     features: [
       <>
-        <strong className="font-semibold text-foreground">1,000</strong> test results / month
+        <strong className="font-semibold text-foreground">1,000</strong> credits / month
       </>,
       'Up to 2 members',
       '7-day history retention',
@@ -48,16 +48,15 @@ const PLANS: Plan[] = [
     earlyBird: (
       <>
         <strong className="font-semibold">Early bird — 50% off usage.</strong> Register now as a Pro
-        org and lock the half-price <strong className="font-semibold">$0.001</strong>/test metered
+        org and lock the half-price <strong className="font-semibold">$0.001</strong>/credit metered
         rate for at least 2 years.
       </>
     ),
     features: [
       <>
-        <strong className="font-semibold text-foreground">10,000</strong> test results included,
-        then{' '}
+        <strong className="font-semibold text-foreground">10,000</strong> credits included, then{' '}
         <span className="text-muted-foreground line-through">$0.002</span>{' '}
-        <strong className="font-semibold text-foreground">$0.001</strong> per additional test
+        <strong className="font-semibold text-foreground">$0.001</strong> per additional credit
       </>,
       'Unlimited members',
       '90-day history retention',

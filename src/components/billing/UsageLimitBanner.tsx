@@ -11,7 +11,7 @@ import { formatResetDate } from '@/lib/billing';
 
 /**
  * A permanent bar pinned to the bottom of the dashboard whenever the current org
- * has hit its Free monthly test limit (`billing.over`). Wording hardens once
+ * has hit its Free monthly credit limit (`billing.over`). Wording hardens once
  * ingestion is actually paused (`billing.enforced`). Renders nothing outside an
  * org context or when the org is within its limit.
  */
@@ -42,8 +42,8 @@ export function UsageLimitBanner() {
         />
         <Text as="span" className="text-sm font-medium text-foreground text-pretty">
           {data.enforced
-            ? `You've hit your Free plan's monthly test limit — new reports are paused until ${formatResetDate(data.resetsAt)}.`
-            : "You've reached your Free plan's monthly test limit."}{' '}
+            ? `You've hit your Free plan's monthly credit limit — new reports are paused until ${formatResetDate(data.resetsAt)}.`
+            : "You've reached your Free plan's monthly credit limit."}{' '}
           <Text as="span" className="font-normal text-muted-foreground">
             Upgrade to Pro to keep reporting.
           </Text>

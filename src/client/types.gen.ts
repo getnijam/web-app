@@ -189,11 +189,12 @@ export type BillingResponse = {
     status: string | null;
     retentionDays: number;
     usage: {
+        credits: number;
         tests: number;
         seats: number;
     };
     limits: {
-        tests: number;
+        credits: number;
         seats: number | null;
     };
     estimateCents: number | null;

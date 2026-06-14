@@ -63,10 +63,13 @@ function BillingPage() {
 }
 
 const PRO_PERKS: { icon: IconSvgElement; label: string }[] = [
-  { icon: Database02Icon, label: '10,000 tests / mo included' },
+  { icon: Database02Icon, label: '10,000 credits / mo included' },
   { icon: UserMultiple02Icon, label: 'Unlimited members' },
   { icon: Calendar03Icon, label: '90-day history retention' },
 ];
+
+/** 1 credit = 1 Playwright test = 100 pytest/Vitest tests (framework-weighted). */
+const CREDIT_NOTE = '1 credit = 1 Playwright test = 100 pytest/Vitest tests.';
 
 function BillingView({ orgId, billing }: { orgId: string; billing: BillingResponse }) {
   const isAdmin = useIsOrgAdmin(orgId);
@@ -100,39 +103,40 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   });
 
   // Pro is uncapped — once usage passes the included allotment, overage billing
-  // ($0.001/test early-bird rate) kicks in. Surface that instead of a silent full bar.
-  const included = limits.tests;
-  const overTests = pro ? Math.max(0, usage.tests - included) : 0;
-  const overActive = overTests > 0;
-  const testPercent = usagePercent(usage.tests, included);
-  let testTone: MeterTone = 'default';
-  if (pro) testTone = overActive ? 'warning' : 'default';
-  else if (billing.over) testTone = 'danger';
-  else if (testPercent >= 80) testTone = 'warning';
+  // ($0.001/credit early-bird rate) kicks in. Surface that instead of a silent full bar.
+  const included = limits.credits;
+  const overCredits = pro ? Math.max(0, usage.credits - included) : 0;
+  const overActive = overCredits > 0;
+  const creditPercent = usagePercent(usage.credits, included);
+  let creditTone: MeterTone = 'default';
+  if (pro) creditTone = overActive ? 'warning' : 'default';
+  else if (billing.over) creditTone = 'danger';
+  else if (creditPercent >= 80) creditTone = 'warning';
   const seatTone: MeterTone =
     !pro && limits.seats !== null && usage.seats >= limits.seats ? 'danger' : 'default';
   const resets = formatResetDate(billing.resetsAt);
 
   // Members never see amounts. When metered/over they get a "contact an admin" note.
-  let testHint: string;
+  // `${formatCount(usage.tests)} tests` is the raw reported count behind the credits.
+  const reported = `${formatCount(usage.tests)} tests reported`;
+  let creditHint: string;
   if (isAdmin) {
     if (pro)
-      testHint = overActive
-        ? `Included ${formatCount(included)} used up — extra tests now cost $0.001 each (${formatCount(overTests)} over this cycle), added to your next invoice. Resets ${resets}.`
-        : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Beyond that, $0.001 per test, billed at cycle end. Resets ${resets}.`;
+      creditHint = overActive
+        ? `Included ${formatCount(included)} credits used up — overage now $0.001/credit (${formatCount(overCredits)} over this cycle), added to your next invoice. Resets ${resets}.`
+        : `${formatCount(usage.credits)} of ${formatCount(included)} credits used (${reported}). Beyond that, $0.001 per credit, billed at cycle end. Resets ${resets}.`;
     else if (billing.over)
-      testHint = billing.enforced
-        ? `Monthly limit reached — new reports are paused until ${resets}. Upgrade to keep reporting.`
-        : 'Monthly limit reached — upgrade to Pro to report beyond the Free tier.';
-    else
-      testHint = `Counts every reported attempt (retries and shards included). Resets ${resets}.`;
+      creditHint = billing.enforced
+        ? `Monthly credit limit reached — new reports are paused until ${resets}. Upgrade to keep reporting.`
+        : 'Monthly credit limit reached — upgrade to Pro to report beyond the Free tier.';
+    else creditHint = `${CREDIT_NOTE} ${reported} this cycle. Resets ${resets}.`;
   } else if (pro)
-    testHint = overActive
-      ? `Metered usage is in effect — extra test runs are now billed. Contact an admin for billing details. Resets ${resets}.`
-      : `${formatCount(usage.tests)} of ${formatCount(included)} included used. Resets ${resets}.`;
+    creditHint = overActive
+      ? `Metered usage is in effect — credits beyond the included amount are now billed. Contact an admin for details. Resets ${resets}.`
+      : `${formatCount(usage.credits)} of ${formatCount(included)} credits used (${reported}). Resets ${resets}.`;
   else if (billing.over)
-    testHint = `Monthly limit reached — contact an admin to upgrade. Resets ${resets}.`;
-  else testHint = `Counts every reported attempt (retries and shards included). Resets ${resets}.`;
+    creditHint = `Monthly credit limit reached — contact an admin to upgrade. Resets ${resets}.`;
+  else creditHint = `${CREDIT_NOTE} ${reported} this cycle. Resets ${resets}.`;
 
   let seatHint = 'Unlimited members on Pro.';
   if (!(pro || limits.seats === null))
@@ -185,11 +189,11 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
       <SettingsPanel title="Usage this month">
         <UsageMeter
           icon={TestTube01Icon}
-          label="Test results"
-          value={`${formatCount(usage.tests)} / ${formatCount(included)}${pro ? ' included' : ''}`}
-          percent={testPercent}
-          tone={testTone}
-          hint={testHint}
+          label="Credits"
+          value={`${formatCount(usage.credits)} / ${formatCount(included)}${pro ? ' included' : ''}`}
+          percent={creditPercent}
+          tone={creditTone}
+          hint={creditHint}
         />
         <UsageMeter
           icon={UserMultiple02Icon}
@@ -225,7 +229,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
               </Text>
               <Text as="span" className="text-xs text-muted-foreground">
                 {overActive
-                  ? `$20 base + ${formatCount(overTests)} over × $0.001. Final amount billed at period end.`
+                  ? `$20 base + ${formatCount(overCredits)} credits over × $0.001. Final amount billed at period end.`
                   : '$20 base. Final amount is calculated at the end of your billing period.'}
               </Text>
             </Flex>
@@ -280,8 +284,8 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
             <Text as="span" className="text-sm text-muted-foreground">
               <strong className="font-semibold text-foreground">$20</strong>/mo, then{' '}
               <span className="line-through">$0.002</span>{' '}
-              <strong className="font-semibold text-foreground">$0.001</strong> per test over
-              10,000.
+              <strong className="font-semibold text-foreground">$0.001</strong> per credit over
+              10,000. {CREDIT_NOTE}
             </Text>
             <Button
               loading={checkout.isPending}
@@ -299,8 +303,8 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
               className="mt-0.5 shrink-0"
             />
             <Text as="span" className="text-pretty">
-              Early bird: upgrade now to lock the half-price $0.001/test metered rate for at least 2
-              years.
+              Early bird: upgrade now to lock the half-price $0.001/credit metered rate for at least
+              2 years.
             </Text>
           </Flex>
         </Flex>

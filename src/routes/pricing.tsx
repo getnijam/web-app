@@ -34,7 +34,7 @@ function PricingPage() {
           </Text>
           <Text className="mt-3.5 text-lg text-pretty text-muted-foreground">
             One simple plan when you outgrow the free tier — no per-seat pricing, no surprises.
-            You&rsquo;re only charged for the test volume you actually report.
+            You&rsquo;re only charged for the credits you actually use.
           </Text>
         </Reveal>
 
@@ -45,8 +45,8 @@ function PricingPage() {
           className="mx-auto mt-8 max-w-xl text-xs text-pretty text-muted-foreground"
         >
           Prices shown in USD and billed monthly. At checkout you&rsquo;re charged in your local
-          currency with taxes handled for you. One test result = one reported test attempt (retries
-          and shards count).
+          currency with taxes handled for you. 1 credit = 1 Playwright test = 100 pytest/Vitest
+          tests (every reported attempt counts; retries and shards included).
         </Text>
 
         <Flex direction="col" className="mt-16 md:mt-20">
@@ -61,9 +61,9 @@ function PricingPage() {
               Estimate your monthly bill
             </Text>
             <Text className="mt-3 text-base text-pretty text-muted-foreground">
-              Drag the slider to set your monthly test volume and enter your team size. Up to 2
-              members and 1,000 test results stays free; beyond that, Pro is $20/mo plus an
-              early-bird $0.001 per extra test result (half the standard $0.002).
+              Drag the slider to set your monthly credit usage and enter your team size. Up to 2
+              members and 1,000 credits stays free; beyond that, Pro is $20/mo plus an early-bird
+              $0.001 per extra credit (half the standard $0.002).
             </Text>
           </Reveal>
 
