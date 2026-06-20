@@ -519,6 +519,7 @@ function SlackDetailInner({
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              loading={disconnect.isPending}
               onClick={(e) => {
                 e.preventDefault();
                 disconnect.mutate({ path: { orgId } });

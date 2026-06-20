@@ -36,12 +36,20 @@ export type UserPublic = {
     hasAvatar: boolean;
     avatarUpdatedAt: string | null;
     hasPassword: boolean;
+    twoFactorEnabled: boolean;
     createdAt: string;
 };
 
 export type UserResponse = {
     user: UserPublic;
 };
+
+export type TwoFactorChallengeResponse = {
+    twoFactorRequired: true;
+    challengeToken: string;
+};
+
+export type LoginResult = UserResponse | TwoFactorChallengeResponse;
 
 export type LoginBody = {
     email: string;
@@ -94,6 +102,74 @@ export type UpdatePasswordBody = {
 
 export type UpdateMeBody = {
     name?: string | null;
+};
+
+export type TotpSetupResponse = {
+    otpauthUri: string;
+    secret: string;
+};
+
+export type BackupCodesResponse = {
+    backupCodes: Array<string>;
+};
+
+export type TotpCodeBody = {
+    code: string;
+};
+
+export type TotpReauthBody = {
+    password?: string;
+    code?: string;
+};
+
+export type Login2FaBody = {
+    challengeToken: string;
+    code: string;
+};
+
+export type DeletabilityResponse = {
+    canDelete: boolean;
+    blockingOrgs: Array<{
+        id: string;
+        name: string;
+        memberCount: number;
+        projectCount: number;
+    }>;
+    orgsToDelete: Array<{
+        id: string;
+        name: string;
+        projectCount: number;
+    }>;
+};
+
+export type DeleteMeBody = {
+    password?: string;
+};
+
+export type MyOrganizationsResponse = {
+    organizations: Array<{
+        id: string;
+        name: string;
+        role: 'admin' | 'member';
+        memberCount: number;
+        isSoleAdmin: boolean;
+    }>;
+};
+
+export type MyInvitationsResponse = {
+    invitations: Array<{
+        id: string;
+        orgId: string;
+        orgName: string;
+        role: 'admin' | 'member';
+        invitedByName: string | null;
+        expiresAt: string;
+    }>;
+};
+
+export type AcceptMyInvitationResponse = {
+    orgId: string;
+    orgName: string;
 };
 
 export type OrgSummary = {
@@ -755,9 +831,9 @@ export type LoginError = LoginErrors[keyof LoginErrors];
 
 export type LoginResponses = {
     /**
-     * OK
+     * Signed in, or a 2FA challenge to complete
      */
-    200: UserResponse;
+    200: LoginResult;
 };
 
 export type LoginResponse = LoginResponses[keyof LoginResponses];
@@ -954,6 +1030,39 @@ export type UpdateMyPasswordResponses = {
 
 export type UpdateMyPasswordResponse = UpdateMyPasswordResponses[keyof UpdateMyPasswordResponses];
 
+export type DeleteMeData = {
+    body?: DeleteMeBody;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me';
+};
+
+export type DeleteMeErrors = {
+    /**
+     * Wrong password
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Sole admin of a shared org
+     */
+    409: ApiError;
+};
+
+export type DeleteMeError = DeleteMeErrors[keyof DeleteMeErrors];
+
+export type DeleteMeResponses = {
+    /**
+     * Deleted
+     */
+    200: AuthOkResponse;
+};
+
+export type DeleteMeResponse = DeleteMeResponses[keyof DeleteMeResponses];
+
 export type GetMeData = {
     body?: never;
     path?: never;
@@ -1071,6 +1180,281 @@ export type UploadMyAvatarResponses = {
 };
 
 export type UploadMyAvatarResponse = UploadMyAvatarResponses[keyof UploadMyAvatarResponses];
+
+export type SetupMyTotpData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/totp/setup';
+};
+
+export type SetupMyTotpErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Already enabled
+     */
+    409: ApiError;
+};
+
+export type SetupMyTotpError = SetupMyTotpErrors[keyof SetupMyTotpErrors];
+
+export type SetupMyTotpResponses = {
+    /**
+     * OK
+     */
+    200: TotpSetupResponse;
+};
+
+export type SetupMyTotpResponse = SetupMyTotpResponses[keyof SetupMyTotpResponses];
+
+export type EnableMyTotpData = {
+    body?: TotpCodeBody;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/totp/enable';
+};
+
+export type EnableMyTotpErrors = {
+    /**
+     * Invalid code
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Already enabled
+     */
+    409: ApiError;
+};
+
+export type EnableMyTotpError = EnableMyTotpErrors[keyof EnableMyTotpErrors];
+
+export type EnableMyTotpResponses = {
+    /**
+     * Enabled
+     */
+    200: BackupCodesResponse;
+};
+
+export type EnableMyTotpResponse = EnableMyTotpResponses[keyof EnableMyTotpResponses];
+
+export type DisableMyTotpData = {
+    body?: TotpReauthBody;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/totp/disable';
+};
+
+export type DisableMyTotpErrors = {
+    /**
+     * Failed re-auth
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not enabled
+     */
+    409: ApiError;
+};
+
+export type DisableMyTotpError = DisableMyTotpErrors[keyof DisableMyTotpErrors];
+
+export type DisableMyTotpResponses = {
+    /**
+     * Disabled
+     */
+    200: AuthOkResponse;
+};
+
+export type DisableMyTotpResponse = DisableMyTotpResponses[keyof DisableMyTotpResponses];
+
+export type RegenerateMyBackupCodesData = {
+    body?: TotpReauthBody;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/totp/backup-codes';
+};
+
+export type RegenerateMyBackupCodesErrors = {
+    /**
+     * Failed re-auth
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not enabled
+     */
+    409: ApiError;
+};
+
+export type RegenerateMyBackupCodesError = RegenerateMyBackupCodesErrors[keyof RegenerateMyBackupCodesErrors];
+
+export type RegenerateMyBackupCodesResponses = {
+    /**
+     * OK
+     */
+    200: BackupCodesResponse;
+};
+
+export type RegenerateMyBackupCodesResponse = RegenerateMyBackupCodesResponses[keyof RegenerateMyBackupCodesResponses];
+
+export type VerifyLogin2FaData = {
+    body?: Login2FaBody;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/login/2fa';
+};
+
+export type VerifyLogin2FaErrors = {
+    /**
+     * Invalid code
+     */
+    400: ApiError;
+    /**
+     * Invalid or expired challenge
+     */
+    401: ApiError;
+};
+
+export type VerifyLogin2FaError = VerifyLogin2FaErrors[keyof VerifyLogin2FaErrors];
+
+export type VerifyLogin2FaResponses = {
+    /**
+     * Signed in
+     */
+    200: UserResponse;
+};
+
+export type VerifyLogin2FaResponse = VerifyLogin2FaResponses[keyof VerifyLogin2FaResponses];
+
+export type GetMyDeletabilityData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/deletability';
+};
+
+export type GetMyDeletabilityErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+};
+
+export type GetMyDeletabilityError = GetMyDeletabilityErrors[keyof GetMyDeletabilityErrors];
+
+export type GetMyDeletabilityResponses = {
+    /**
+     * OK
+     */
+    200: DeletabilityResponse;
+};
+
+export type GetMyDeletabilityResponse = GetMyDeletabilityResponses[keyof GetMyDeletabilityResponses];
+
+export type ListMyOrganizationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/organizations';
+};
+
+export type ListMyOrganizationsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+};
+
+export type ListMyOrganizationsError = ListMyOrganizationsErrors[keyof ListMyOrganizationsErrors];
+
+export type ListMyOrganizationsResponses = {
+    /**
+     * OK
+     */
+    200: MyOrganizationsResponse;
+};
+
+export type ListMyOrganizationsResponse = ListMyOrganizationsResponses[keyof ListMyOrganizationsResponses];
+
+export type ListMyInvitationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/invitations';
+};
+
+export type ListMyInvitationsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+};
+
+export type ListMyInvitationsError = ListMyInvitationsErrors[keyof ListMyInvitationsErrors];
+
+export type ListMyInvitationsResponses = {
+    /**
+     * OK
+     */
+    200: MyInvitationsResponse;
+};
+
+export type ListMyInvitationsResponse = ListMyInvitationsResponses[keyof ListMyInvitationsResponses];
+
+export type AcceptMyInvitationData = {
+    body?: never;
+    path: {
+        invitationId: string;
+    };
+    query?: never;
+    url: '/v1/auth/me/invitations/{invitationId}/accept';
+};
+
+export type AcceptMyInvitationErrors = {
+    /**
+     * Expired
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Free plan seat limit reached
+     */
+    402: ApiError;
+    /**
+     * Email mismatch
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type AcceptMyInvitationError = AcceptMyInvitationErrors[keyof AcceptMyInvitationErrors];
+
+export type AcceptMyInvitationResponses = {
+    /**
+     * Joined
+     */
+    200: AcceptMyInvitationResponse;
+};
+
+export type AcceptMyInvitationResponse2 = AcceptMyInvitationResponses[keyof AcceptMyInvitationResponses];
 
 export type ListOrgsData = {
     body?: never;
@@ -1433,6 +1817,41 @@ export type UpdateOrgMemberRoleResponses = {
 };
 
 export type UpdateOrgMemberRoleResponse = UpdateOrgMemberRoleResponses[keyof UpdateOrgMemberRoleResponses];
+
+export type LeaveOrgData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/leave';
+};
+
+export type LeaveOrgErrors = {
+    /**
+     * Sole admin cannot leave
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not a member
+     */
+    404: ApiError;
+};
+
+export type LeaveOrgError = LeaveOrgErrors[keyof LeaveOrgErrors];
+
+export type LeaveOrgResponses = {
+    /**
+     * Left
+     */
+    200: OkResponse;
+};
+
+export type LeaveOrgResponse = LeaveOrgResponses[keyof LeaveOrgResponses];
 
 export type ListOrgInvitationsData = {
     body?: never;

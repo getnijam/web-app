@@ -124,7 +124,7 @@ export function KeyRow({ orgId, secretKey }: { orgId: string; secretKey: SecretK
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
-              disabled={revoke.isPending}
+              loading={revoke.isPending}
               data-testid="revoke-key-confirm"
               onClick={(e) => {
                 e.preventDefault();

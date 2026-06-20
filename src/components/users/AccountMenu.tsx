@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Logout01Icon, Settings01Icon, ArrowDown01Icon } from '@hugeicons/core-free-icons';
@@ -7,11 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { UserAvatar } from '@/components/users/UserAvatar';
-import { AccountDialog } from '@/components/account/AccountDialog';
 import { useClickAway } from '@/hooks/use-click-away';
 import { useLogout } from '@/hooks/use-logout';
-import { oauthErrorMessage } from '@/lib/oauth-error';
-import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 
 export type AccountMenuVariant = 'sidebar' | 'topnav';
@@ -19,8 +17,8 @@ export type AccountMenuVariant = 'sidebar' | 'topnav';
 /**
  * One avatar + account dropdown for **both** nav contexts, switched by `variant`:
  * `sidebar` (dashboard — full-width trigger, opens upward) and `topnav` (outside the
- * dashboard — compact avatar, opens downward). Owns the shared account-settings
- * dialog and re-opens it (with a toast) after an OAuth "connect" round-trip.
+ * dashboard — compact avatar, opens downward). "Account settings" links to the
+ * full-page `/profile` settings area.
  *
  * `onSignedOut` runs after sign-out (e.g. route to /login); omit it to stay put as a
  * guest (the public nav re-renders itself).
@@ -38,12 +36,6 @@ export function AccountMenu({
   const name = user?.name ?? (email ? email.split('@')[0] : 'Account');
 
   const [open, setOpen] = useState(false);
-  // A "connect" click leaves the SPA and returns here with ?connected / ?connectError.
-  // Derive the dialog's initial open-state from that at mount (no setState-in-effect).
-  const [dialogOpen, setDialogOpen] = useState(() => {
-    const p = new URLSearchParams(window.location.search);
-    return p.has('connected') || p.has('connectError');
-  });
   const ref = useClickAway<HTMLDivElement>(() => setOpen(false));
   const logout = useLogout({
     onSuccess: () => {
@@ -51,26 +43,6 @@ export function AccountMenu({
       onSignedOut?.();
     },
   });
-
-  // Side effects for that round-trip: toast the result and strip the params so a
-  // refresh doesn't repeat it. (Re-opening is handled by the initial state above.)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const connected = params.get('connected');
-    const connectError = params.get('connectError');
-    if (!connected && !connectError) return;
-    if (connected) {
-      notify.success('Connected', { description: `Your ${connected} account is now linked.` });
-    } else {
-      const msg = oauthErrorMessage(connectError ?? undefined);
-      if (msg) notify.error("Couldn't connect", { description: msg });
-    }
-    params.delete('connected');
-    params.delete('connectError');
-    const qs = params.toString();
-    const url = window.location.pathname + (qs ? `?${qs}` : '') + window.location.hash;
-    window.history.replaceState(null, '', url);
-  }, []);
 
   const menu = (
     <>
@@ -94,16 +66,14 @@ export function AccountMenu({
         </Flex>
       </Flex>
       <Button
+        asChild
         variant="ghost"
-        type="button"
-        onClick={() => {
-          setOpen(false);
-          setDialogOpen(true);
-        }}
         className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-accent"
       >
-        <HugeiconsIcon icon={Settings01Icon} size={16} strokeWidth={1.8} />
-        Account settings
+        <Link to="/profile" onClick={() => setOpen(false)}>
+          <HugeiconsIcon icon={Settings01Icon} size={16} strokeWidth={1.8} />
+          Account settings
+        </Link>
       </Button>
       <Button
         variant="ghost"
@@ -188,8 +158,6 @@ export function AccountMenu({
           />
         </Button>
       )}
-
-      <AccountDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }

@@ -336,7 +336,7 @@ function MemberRow({
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
-                disabled={remove.isPending}
+                loading={remove.isPending}
                 onClick={(e) => {
                   e.preventDefault();
                   remove.mutate({ path: { orgId, userId: member.userId } });
@@ -354,6 +354,7 @@ function MemberRow({
 
 function InviteRow({ orgId, invite }: { orgId: string; invite: InvitationSummary }) {
   const queryClient = useQueryClient();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const revoke = useMutation({
     ...revokeOrgInvitationMutation(),
@@ -393,16 +394,39 @@ function InviteRow({ orgId, invite }: { orgId: string; invite: InvitationSummary
       <Badge variant={expired ? 'destructive' : 'outline'} className="shrink-0">
         {expired ? 'Expired' : 'Pending'}
       </Badge>
-      <Button
-        variant="ghost"
-        size="icon"
-        aria-label={`Revoke invitation for ${invite.email}`}
-        className="text-muted-foreground hover:text-destructive"
-        loading={revoke.isPending}
-        onClick={() => revoke.mutate({ path: { orgId, invitationId: invite.id } })}
-      >
-        <HugeiconsIcon icon={Delete02Icon} size={18} />
-      </Button>
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={`Revoke invitation for ${invite.email}`}
+          className="text-muted-foreground hover:text-destructive"
+          onClick={() => setConfirmOpen(true)}
+        >
+          <HugeiconsIcon icon={Delete02Icon} size={18} />
+        </Button>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revoke invitation?</AlertDialogTitle>
+            <AlertDialogDescription>
+              The invitation to {invite.email} will be removed and the link can no longer be used to
+              join. You can invite them again later.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              loading={revoke.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                revoke.mutate({ path: { orgId, invitationId: invite.id } });
+              }}
+            >
+              Revoke invitation
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Flex>
   );
 }

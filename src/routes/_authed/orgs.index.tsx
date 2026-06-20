@@ -14,6 +14,7 @@ import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl'
 import { AccountMenu } from '@/components/users/AccountMenu';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { CreateOrgDialog } from '@/components/orgs/CreateOrgDialog';
+import { PendingInvitations } from '@/components/orgs/PendingInvitations';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/')({
@@ -109,6 +110,10 @@ function OrgsPicker() {
             <Text variant="h1">Your organizations</Text>
             <Text color="muted">Select an organization to continue, or create a new one.</Text>
           </Flex>
+
+          <PendingInvitations
+            onAccepted={(orgId) => navigate({ to: '/orgs/$orgId/projects', params: { orgId } })}
+          />
 
           {renderOrgs()}
         </Flex>
