@@ -10,6 +10,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
 import { LoadingState } from '@/components/states/LoadingState';
 import { FullPageError } from '@/components/states/FullPageError';
+import { NotFound } from '@/components/states/NotFound';
 import { initSentry } from '@/lib/sentry';
 import * as Sentry from '@sentry/react';
 import { routeTree } from './routeTree.gen';
@@ -54,6 +55,8 @@ const router = createRouter({
   defaultErrorComponent: ({ error, reset }) => (
     <FullPageError error={error} onReset={reset} capture />
   ),
+  // Unmatched URLs (and any thrown notFound()) render the 404 page.
+  defaultNotFoundComponent: () => <NotFound />,
 });
 
 declare module '@tanstack/react-router' {
