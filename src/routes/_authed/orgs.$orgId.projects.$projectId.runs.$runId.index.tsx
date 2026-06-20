@@ -16,9 +16,9 @@ import { EmptyState } from '@/components/states/EmptyState';
 import { UserAvatar } from '@/components/users/UserAvatar';
 import { RunDetailSkeleton } from '@/components/runs/RunSkeletons';
 import { RunSummaryBar } from '@/components/runs/RunSummaryBar';
+import { RunStatusBadge } from '@/components/runs/RunStatusBadge';
 import { SpecFileRow } from '@/components/runs/SpecFileRow';
-import { runDisplayStatus, RUN_PILL } from '@/components/runs/run-status';
-import { cn } from '@/lib/utils';
+import { runDisplayStatus } from '@/components/runs/run-status';
 import { timeAgo, displayAuthor } from '@/lib/format';
 import { gitBranchUrl, gitProviderIcon } from '@/lib/git';
 import { privateSeo } from '@/lib/seo';
@@ -42,7 +42,7 @@ function RunDetailPage() {
   if (q.error || !q.data) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
 
   const { run, summary, files } = q.data;
-  const pill = RUN_PILL[runDisplayStatus(run)];
+  const ds = runDisplayStatus(run);
   const author = displayAuthor(run.authorEmail, run.authorName);
   const branchHref = gitBranchUrl(run);
 
@@ -70,16 +70,7 @@ function RunDetailPage() {
       <Flex align="start" justify="between" gap={4} className="flex-wrap">
         <Flex direction="col" gap={2}>
           <Flex align="center" gap={2.5} wrap>
-            <Flex
-              as="span"
-              inline
-              align="center"
-              gap={1.5}
-              className={cn('rounded-full px-2.5 py-1 text-xs font-semibold', pill.cls)}
-            >
-              <span className={cn('size-1.75 rounded-full', pill.dot)} />
-              {pill.label}
-            </Flex>
+            <RunStatusBadge status={ds} />
             <Text variant="code" className="text-lg font-semibold">
               #{run.commitSha ? run.commitSha.slice(0, 7) : '———'}
             </Text>

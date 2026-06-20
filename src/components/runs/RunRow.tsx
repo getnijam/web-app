@@ -28,7 +28,8 @@ import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { timeAgo, formatDuration, displayAuthor } from '@/lib/format';
 import { CountDots } from './CountDots';
-import { runDisplayStatus, runDurationSec, RUN_BAR_CLASS, RUN_PILL } from './run-status';
+import { RunStatusBadge } from './RunStatusBadge';
+import { runDisplayStatus, runDurationSec, RUN_BAR_CLASS } from './run-status';
 
 /** One run in the history list. The whole row links to the run detail; the
  *  actions menu (Open run / Delete run) sits above the overlay so it stays
@@ -43,7 +44,6 @@ export function RunRow({
   projectId: string;
 }) {
   const ds = runDisplayStatus(run);
-  const pill = RUN_PILL[ds];
   const dur = runDurationSec(run);
   const author = displayAuthor(run.authorEmail, run.authorName);
 
@@ -97,16 +97,7 @@ export function RunRow({
               <Text as="span" variant="code" className="font-medium">
                 #{run.commitSha ? run.commitSha.slice(0, 7) : '———'}
               </Text>
-              <Flex
-                as="span"
-                inline
-                align="center"
-                gap={1.5}
-                className={cn('shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold', pill.cls)}
-              >
-                <span className={cn('size-1.75 rounded-full', pill.dot)} />
-                {pill.label}
-              </Flex>
+              <RunStatusBadge status={ds} className="shrink-0" />
               {run.shardTotal != null && run.shardTotal > 1 && (
                 <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
                   {run.shardTotal} shards
