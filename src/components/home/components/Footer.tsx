@@ -109,6 +109,9 @@ export function Footer() {
               Docs
               <ExtIcon />
             </a>
+            <Link to="/support" className={COL}>
+              Support
+            </Link>
             <Link to="/terms" className={COL}>
               Terms of Service
             </Link>

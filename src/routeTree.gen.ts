@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -58,6 +59,11 @@ const VerifyRoute = VerifyRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -276,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
+  '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
   '/profile': typeof AuthedProfileRouteWithChildren
@@ -317,6 +324,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
+  '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
   '/profile/danger': typeof AuthedProfileDangerRoute
@@ -356,6 +364,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
+  '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
   '/_authed/profile': typeof AuthedProfileRouteWithChildren
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/security'
     | '/signup'
+    | '/support'
     | '/terms'
     | '/verify'
     | '/profile'
@@ -440,6 +450,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/security'
     | '/signup'
+    | '/support'
     | '/terms'
     | '/verify'
     | '/profile/danger'
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/security'
     | '/signup'
+    | '/support'
     | '/terms'
     | '/verify'
     | '/_authed/profile'
@@ -521,6 +533,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SecurityRoute: typeof SecurityRoute
   SignupRoute: typeof SignupRoute
+  SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   VerifyRoute: typeof VerifyRoute
 }
@@ -539,6 +552,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -939,6 +959,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SecurityRoute: SecurityRoute,
   SignupRoute: SignupRoute,
+  SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   VerifyRoute: VerifyRoute,
 }
