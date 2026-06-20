@@ -1,8 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { client } from '@/client/client.gen';
+import { logNetworkError } from '@/lib/network-logging';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Flex } from '@/components/ui/flex';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -27,6 +28,15 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: false, refetchOnWindowFocus: false },
   },
+  // Log every non-2xx network call (and network failures) in one place — the generated
+  // client uses throwOnError, so these caches' onError fires for exactly the non-2xx outcomes.
+  queryCache: new QueryCache({
+    onError: (error, query) => logNetworkError('query', error, query.queryKey),
+  }),
+  mutationCache: new MutationCache({
+    onError: (error, _variables, _context, mutation) =>
+      logNetworkError('mutation', error, mutation.options.mutationKey),
+  }),
 });
 
 const router = createRouter({

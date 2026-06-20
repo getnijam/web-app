@@ -18,7 +18,7 @@ function PrivacyPage() {
   return (
     <LegalLayout
       title="Privacy Policy"
-      updated="June 11, 2026"
+      updated="June 20, 2026"
       intro={
         <>
           This Privacy Policy explains what information Nijam collects when you use the dashboard at
@@ -48,8 +48,8 @@ function PrivacyPage() {
           <strong className="font-semibold text-foreground">Source &amp; artifacts.</strong> By
           default, the reporter also uploads your test source files and any artifacts your test
           configuration produces — on Playwright, traces, screenshots, and videos (pytest and Vitest
-          have no traces) — so they can be shown in the dashboard. You can turn off source uploads by
-          setting <code className="font-mono">uploadSource: false</code> in the reporter, and you
+          have no traces) — so they can be shown in the dashboard. You can turn off source uploads
+          by setting <code className="font-mono">uploadSource: false</code> in the reporter, and you
           control which artifacts exist through your test configuration.
         </P>
         <P>
@@ -104,7 +104,7 @@ function PrivacyPage() {
             'Vercel and Railway — hosting for the web app and API;',
             'Slack — delivering run notifications to your workspace, if you connect it;',
             'GitHub — posting checks and pull-request comments via the Nijam GitHub App, if you connect it;',
-            'Sentry — error monitoring and diagnostics, with personal data scrubbed before it is sent.',
+            'Better Stack — error monitoring and diagnostics, with personal data scrubbed before it is sent.',
           ]}
         />
         <P>

@@ -1,15 +1,19 @@
 import * as Sentry from '@sentry/react';
 
 /**
- * Initialize Sentry error monitoring for the SPA. Enabled only for **production**
- * builds that actually carry a DSN — so dev and any DSN-less build are a true
- * no-op (no network, no SDK overhead). Captures errors + performance traces, and
- * records a **session replay only when an error occurs**, with all text/inputs
- * masked and media blocked so no PII is recorded.
+ * Initialize Better Stack error monitoring for the SPA (via the Sentry SDK). The DSN comes
+ * from `VITE_SENTRY_DSN` (set it on Vercel for prod; in `.env` for local). Enabled for
+ * **production** builds (so normal `npm run dev` is a true no-op — no network, no SDK
+ * overhead); to test locally, set `VITE_MONITORING_DEV=true` (+ the DSN) and restart the
+ * dev server. No DSN → no init. Captures errors + performance traces, and records a
+ * **session replay only when an error occurs**, with all text/inputs masked and media
+ * blocked (no PII).
  */
 export function initSentry(): void {
+  const enabledInDev = import.meta.env.VITE_MONITORING_DEV === 'true';
+  if (!import.meta.env.PROD && !enabledInDev) return;
   const dsn = import.meta.env.VITE_SENTRY_DSN;
-  if (!dsn || !import.meta.env.PROD) return;
+  if (!dsn) return;
 
   Sentry.init({
     dsn,
