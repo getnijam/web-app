@@ -268,8 +268,8 @@ function SecurityPage() {
                     <b>Resend</b> — transactional email (verification and password-reset messages).
                   </>,
                   <>
-                    <b>Sentry</b> — error monitoring (PII disabled); <b>Polar</b> — billing and
-                    payments.
+                    <b>Better Stack</b> — error monitoring (PII disabled); <b>Polar</b> — billing
+                    and payments.
                   </>,
                   <>
                     <b>Slack</b> and the <b>Nijam GitHub App</b> — only for the integrations you
