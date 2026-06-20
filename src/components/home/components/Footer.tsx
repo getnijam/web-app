@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { SquareArrowUpRightIcon } from '@hugeicons/core-free-icons';
 import { Logo } from '@/components/auth/Logo';
+import { FooterStatus } from './FooterStatus';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -45,6 +46,8 @@ export function Footer() {
             >
               <Logo />
             </Flex>
+            {/* Live system status — sourced from the Better Stack status page JSON API. */}
+            <FooterStatus />
             <Text className="mt-3.5 max-w-70 text-sm text-background/60">
               The reporting layer for Playwright, pytest &amp; Vitest. Reads the results your CI
               already produces — never runs your tests.
