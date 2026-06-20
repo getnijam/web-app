@@ -31,7 +31,7 @@ export const Route = createFileRoute('/security')({
 });
 
 const CONTACT = 'support@nijam.dev';
-const UPDATED = 'June 11, 2026';
+const UPDATED = 'June 20, 2026';
 
 type Pillar = { icon: ReactNode; tint: string; title: string; body: string };
 
@@ -40,13 +40,13 @@ const PILLARS: Pillar[] = [
     icon: <HugeiconsIcon icon={SquareLock02Icon} size={22} />,
     tint: 'bg-primary/15 text-primary',
     title: 'Encryption everywhere',
-    body: 'All traffic runs over HTTPS/TLS. Passwords are hashed with argon2id, session and ingest tokens are stored only as SHA-256 hashes, and Slack tokens are encrypted with AES-256-GCM — never in plaintext.',
+    body: 'All traffic runs over HTTPS/TLS. Passwords are hashed with argon2id, session and ingest tokens are stored only as SHA-256 hashes, and Slack tokens and two-factor secrets are encrypted with AES-256-GCM — never in plaintext.',
   },
   {
     icon: <HugeiconsIcon icon={FingerPrintIcon} size={22} />,
     tint: 'bg-info/15 text-info',
     title: 'Authentication & sessions',
-    body: 'Email + password (argon2id) plus optional Google and GitHub sign-in. Sessions live in HttpOnly, Secure, SameSite cookies and are revoked on logout, password change, and reset.',
+    body: 'Email + password (argon2id) plus optional Google and GitHub sign-in and optional two-factor authentication (TOTP). Sessions live in HttpOnly, Secure, SameSite cookies and are revoked on logout, password change, and reset.',
   },
   {
     icon: <HugeiconsIcon icon={Key01Icon} size={22} />,
@@ -165,6 +165,7 @@ function SecurityPage() {
                   'Login returns the same error for an unknown email and a wrong password, and equalizes timing so it can’t be used to discover which emails have accounts.',
                   'Email verification and password-reset links are single-use and time-limited (24 hours and 1 hour respectively); a password reset signs you out of every session.',
                   'Google and GitHub sign-in use an HMAC-signed, short-lived state parameter to prevent CSRF, and only match accounts on a verified email address.',
+                  'Optional two-factor authentication (TOTP) adds an authenticator-app code to sign-in; the shared secret is encrypted at rest (AES-256-GCM) and one-time backup codes are stored only as SHA-256 hashes.',
                   'Sessions are stored server-side, expire after 30 days, and are revoked on logout and on any password change.',
                 ]}
               />
