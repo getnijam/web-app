@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import * as Sentry from '@sentry/react';
 import { logout } from '@/client';
 import { getMeQueryKey } from '@/client/@tanstack/react-query.gen';
+import { track, resetAnalyticsUser } from '@/lib/betterstack';
 
 /**
  * Sign the user out. **Resets** the `/me` query (not `invalidate` — an errored 401
@@ -17,8 +18,10 @@ export function useLogout({ onSuccess }: { onSuccess?: () => void } = {}) {
   return useMutation({
     mutationFn: () => logout({ throwOnError: true }),
     onSuccess: () => {
+      track('logged_out');
       void queryClient.resetQueries({ queryKey: getMeQueryKey() });
       Sentry.setUser(null);
+      resetAnalyticsUser();
       onSuccess?.();
     },
   });

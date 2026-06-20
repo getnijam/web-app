@@ -24,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { AccountSection } from '@/components/account/AccountSection';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { ErrorBanner } from '@/components/states/ErrorState';
+import { track } from '@/lib/betterstack';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 
@@ -112,6 +113,7 @@ function PasswordDialog({
   const save = useMutation({
     ...updateMyPasswordMutation(),
     onSuccess: async () => {
+      track('password_changed', { was_set: user.hasPassword });
       await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
       close(false);
       notify.success(user.hasPassword ? 'Password changed' : 'Password set', {

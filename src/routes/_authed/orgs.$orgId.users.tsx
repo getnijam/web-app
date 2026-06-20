@@ -186,7 +186,7 @@ function InviteBar({ orgId }: { orgId: string }) {
           />
         </Flex>
         <Select value={role} onValueChange={(v) => setRole(v as 'admin' | 'member')}>
-          <SelectTrigger aria-label="Role" className="w-32 shrink-0">
+          <SelectTrigger size="field" aria-label="Role" className="w-32 shrink-0">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

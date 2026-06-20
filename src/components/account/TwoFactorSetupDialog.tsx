@@ -25,6 +25,7 @@ import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { BackupCodesPanel } from '@/components/account/BackupCodes';
+import { track } from '@/lib/betterstack';
 import { isApiError } from '@/lib/api-error';
 
 /**
@@ -65,6 +66,7 @@ export function TwoFactorSetupDialog({
   const enable = useMutation({
     ...enableMyTotpMutation(),
     onSuccess: async (data) => {
+      track('two_factor_enabled');
       await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
       setBackupCodes(data.backupCodes);
     },

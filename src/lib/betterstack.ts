@@ -46,3 +46,54 @@ export function initBetterStackAnalytics(): void {
 
   queue('init', { environment: import.meta.env.MODE });
 }
+
+/**
+ * The catalog of product-analytics events. **This is the source of truth** — to track a new
+ * user action, add one entry here (a `snake_case` name → its property shape), then call
+ * `track('your_event', { … })` from the click/mutation handler. The value type is the event's
+ * properties; use {@link NoProps} for events that carry no properties.
+ *
+ * Keep names verb-led and past-tense (the action already happened), and keep properties to
+ * low-cardinality, non-PII facts (booleans, enums, counts) — never raw emails, tokens, or names.
+ */
+export type AnalyticsEvents = {
+  signed_up: { method: 'password' | 'google' | 'github' };
+  logged_in: { method: 'password' | 'google' | 'github' };
+  logged_out: NoProps;
+  password_changed: { was_set: boolean };
+  two_factor_enabled: NoProps;
+  two_factor_disabled: NoProps;
+  backup_codes_regenerated: NoProps;
+  project_created: { has_repository_url: boolean };
+};
+
+// An event with no properties. `keyof` is `never` (unlike `Record<string, never>`, whose
+// `keyof` is `string`), which is what lets `track('evt')` typecheck with no second argument.
+type NoProps = Record<never, never>;
+
+type EventName = keyof AnalyticsEvents;
+// Events whose props type has no keys (e.g. `Record<string, never>`) take no second arg.
+type TrackArgs<K extends EventName> = keyof AnalyticsEvents[K] extends never
+  ? [event: K]
+  : [event: K, props: AnalyticsEvents[K]];
+
+/**
+ * Record a user action. No-op until `initBetterStackAnalytics()` has run (so it's silent in
+ * dev and SSR-free prerender), and typed against {@link AnalyticsEvents} so the event name and
+ * its properties always match. Fire-and-forget — never awaited, never throws.
+ */
+export function track<K extends EventName>(...args: TrackArgs<K>): void {
+  if (!window.betterstack) return;
+  const [event, props] = args;
+  window.betterstack('track', event, props ?? {});
+}
+
+/** Associate the current session with the signed-in user (pairs with `Sentry.setUser`). */
+export function identify(user: { id: string; email: string }): void {
+  window.betterstack?.('user', { id: user.id, email: user.email });
+}
+
+/** Clear the identified user on sign-out (pairs with `Sentry.setUser(null)`). */
+export function resetAnalyticsUser(): void {
+  window.betterstack?.('user', null);
+}

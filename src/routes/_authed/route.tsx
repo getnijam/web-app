@@ -3,6 +3,7 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import * as Sentry from '@sentry/react';
 import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { identify } from '@/lib/betterstack';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed')({
@@ -29,6 +30,7 @@ function AuthedLayout() {
   const user = useQuery({ ...getMeOptions(), retry: false }).data?.user;
   useEffect(() => {
     Sentry.setUser(user ? { id: user.id, email: user.email } : null);
+    if (user) identify({ id: user.id, email: user.email });
   }, [user]);
   return <Outlet />;
 }

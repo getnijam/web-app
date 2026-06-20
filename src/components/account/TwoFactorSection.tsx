@@ -26,6 +26,7 @@ import { AccountSection } from '@/components/account/AccountSection';
 import { TwoFactorSetupDialog } from '@/components/account/TwoFactorSetupDialog';
 import { BackupCodesPanel } from '@/components/account/BackupCodes';
 import { FieldError } from '@/components/auth/AuthLayout';
+import { track } from '@/lib/betterstack';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 
@@ -105,6 +106,7 @@ function DisableDialog({
   const disable = useMutation({
     ...disableMyTotpMutation(),
     onSuccess: async () => {
+      track('two_factor_disabled');
       await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
       onOpenChange(false);
       notify.success('Two-factor disabled', {
@@ -142,7 +144,10 @@ function RegenerateDialog({
   const [codes, setCodes] = useState<string[] | null>(null);
   const regen = useMutation({
     ...regenerateMyBackupCodesMutation(),
-    onSuccess: (data) => setCodes(data.backupCodes),
+    onSuccess: (data) => {
+      track('backup_codes_regenerated');
+      setCodes(data.backupCodes);
+    },
   });
 
   const close = (next: boolean) => {

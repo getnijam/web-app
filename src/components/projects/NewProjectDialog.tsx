@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { FieldError } from '@/components/auth/AuthLayout';
+import { track } from '@/lib/betterstack';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { GlyphPicker } from '@/components/projects/GlyphPicker';
@@ -79,6 +80,7 @@ export function NewProjectDialog({
   const mutation = useMutation({
     ...createProjectMutation(),
     onSuccess: async (project) => {
+      track('project_created', { has_repository_url: Boolean(project.repositoryUrl) });
       await queryClient.invalidateQueries({
         queryKey: listOrgProjectsQueryKey({ path: { orgId } }),
       });
