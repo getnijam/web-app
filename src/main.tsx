@@ -12,12 +12,15 @@ import { LoadingState } from '@/components/states/LoadingState';
 import { FullPageError } from '@/components/states/FullPageError';
 import { NotFound } from '@/components/states/NotFound';
 import { initSentry } from '@/lib/sentry';
+import { initBetterStackAnalytics } from '@/lib/betterstack';
 import * as Sentry from '@sentry/react';
 import { routeTree } from './routeTree.gen';
 import './styles/globals.css';
 
-// Wire up error monitoring before anything renders (no-op in dev / without a DSN).
+// Wire up error monitoring + product analytics before anything renders
+// (both no-op in dev / without their tokens).
 initSentry();
+initBetterStackAnalytics();
 
 // Point the generated client at the API and send the session cookie.
 client.setConfig({
