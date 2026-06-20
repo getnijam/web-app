@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
-import { login } from '@/client';
+import { login, verifyLogin2Fa } from '@/client';
 import { getMeQueryKey } from '@/client/@tanstack/react-query.gen';
 import { AuthLayout, AuthHeading, FieldError } from '@/components/auth/AuthLayout';
 import { OAuthButtons } from '@/components/auth/OAuthButtons';
@@ -56,15 +56,26 @@ function LoginPage() {
   // target is carried through OAuth via the start route's `next`.
   const postLogin = invite ? `/invite?token=${invite}` : (nextUrl ?? '/orgs');
   const [formError, setFormError] = useState<string | null>(() => oauthErrorMessage(oauthError));
+  // Set once the password step succeeds for a 2FA-enabled account; switches the page to
+  // the code-entry step. Held only in memory (never persisted).
+  const [challengeToken, setChallengeToken] = useState<string | null>(null);
 
   const form = useForm<LoginForm>({ resolver: zodResolver(LoginSchema) });
 
+  const finishLogin = async () => {
+    await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
+    if (invite) navigate({ to: '/invite', search: { token: invite } });
+    else navigate({ to: nextUrl ?? '/orgs' });
+  };
+
   const mutation = useMutation({
-    mutationFn: (body: LoginForm) => login({ body, throwOnError: true }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
-      if (invite) navigate({ to: '/invite', search: { token: invite } });
-      else navigate({ to: nextUrl ?? '/orgs' });
+    mutationFn: async (body: LoginForm) => (await login({ body, throwOnError: true })).data,
+    onSuccess: async (result) => {
+      if (result && 'twoFactorRequired' in result) {
+        setChallengeToken(result.challengeToken);
+        return;
+      }
+      await finishLogin();
     },
     onError: (err: unknown) => {
       if (isApiError(err) && err.error.field) {
@@ -76,6 +87,18 @@ function LoginPage() {
       }
     },
   });
+
+  if (challengeToken) {
+    return (
+      <AuthLayout>
+        <TwoFactorStep
+          challengeToken={challengeToken}
+          onAuthenticated={finishLogin}
+          onCancel={() => setChallengeToken(null)}
+        />
+      </AuthLayout>
+    );
+  }
 
   return (
     <AuthLayout>
@@ -149,5 +172,96 @@ function LoginPage() {
         </Text>
       </Flex>
     </AuthLayout>
+  );
+}
+
+/** Second sign-in step for 2FA accounts: enter an authenticator or backup code. */
+function TwoFactorStep({
+  challengeToken,
+  onAuthenticated,
+  onCancel,
+}: {
+  challengeToken: string;
+  onAuthenticated: () => Promise<void> | void;
+  onCancel: () => void;
+}) {
+  const [code, setCode] = useState('');
+  const [useBackup, setUseBackup] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const verify = useMutation({
+    mutationFn: (body: { challengeToken: string; code: string }) =>
+      verifyLogin2Fa({ body, throwOnError: true }),
+    onSuccess: () => {
+      void onAuthenticated();
+    },
+    onError: (err: unknown) => {
+      setError(isApiError(err) ? err.error.message : 'Something went wrong. Please try again.');
+    },
+  });
+
+  const description = useBackup
+    ? 'Enter one of your saved backup codes.'
+    : 'Enter the 6-digit code from your authenticator app.';
+
+  return (
+    <Flex direction="col" gap={6}>
+      <AuthHeading title="Two-factor authentication" description={description} />
+
+      <Flex
+        as="form"
+        direction="col"
+        gap={4}
+        onSubmit={(e) => {
+          e.preventDefault();
+          setError(null);
+          verify.mutate({ challengeToken, code: code.trim() });
+        }}
+      >
+        {error && <ErrorBanner>{error}</ErrorBanner>}
+
+        <Flex direction="col" gap={1.5}>
+          <Label htmlFor="totp-code">{useBackup ? 'Backup code' : 'Verification code'}</Label>
+          <Input
+            id="totp-code"
+            inputMode={useBackup ? 'text' : 'numeric'}
+            autoComplete="one-time-code"
+            autoFocus
+            placeholder={useBackup ? 'XXXX-XXXX' : '123456'}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            data-testid="login-2fa-code"
+          />
+        </Flex>
+
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full"
+          loading={verify.isPending}
+          disabled={code.trim().length === 0}
+          data-testid="login-2fa-submit"
+        >
+          {verify.isPending ? 'Verifying…' : 'Verify'}
+        </Button>
+      </Flex>
+
+      <Flex direction="col" align="center" gap={2}>
+        <Button
+          variant="link"
+          size="sm"
+          onClick={() => {
+            setUseBackup((b) => !b);
+            setCode('');
+            setError(null);
+          }}
+        >
+          {useBackup ? 'Use your authenticator app instead' : 'Use a backup code instead'}
+        </Button>
+        <Button variant="ghost" size="sm" onClick={onCancel}>
+          Back to sign in
+        </Button>
+      </Flex>
+    </Flex>
   );
 }

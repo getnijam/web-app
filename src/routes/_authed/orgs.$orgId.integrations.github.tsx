@@ -5,6 +5,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { getOrgGithubIntegrationQueryKey } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
+import { Button } from '@/components/ui/button';
 import { GitHubDetail } from '@/components/integrations/GitHubDetail';
 import { notify } from '@/lib/notify';
 import { privateSeo } from '@/lib/seo';
@@ -58,17 +59,12 @@ function GitHubPage() {
 
   return (
     <Flex direction="col" gap={5} className="mx-auto w-full max-w-5xl">
-      <Flex
-        as={Link}
-        to="/orgs/$orgId/integrations"
-        params={{ orgId } as never}
-        align="center"
-        gap={1.5}
-        className="w-fit text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
-        Integrations
-      </Flex>
+      <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
+        <Link to="/orgs/$orgId/integrations" params={{ orgId }}>
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+          Integrations
+        </Link>
+      </Button>
 
       <GitHubDetail orgId={orgId} />
     </Flex>

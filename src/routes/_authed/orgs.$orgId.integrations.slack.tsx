@@ -5,6 +5,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { getOrgSlackIntegrationQueryKey } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
+import { Button } from '@/components/ui/button';
 import { SlackDetail } from '@/components/integrations/SlackDetail';
 import { notify } from '@/lib/notify';
 import { privateSeo } from '@/lib/seo';
@@ -57,17 +58,12 @@ function SlackPage() {
 
   return (
     <Flex direction="col" gap={5} className="mx-auto w-full max-w-5xl">
-      <Flex
-        as={Link}
-        to="/orgs/$orgId/integrations"
-        params={{ orgId } as never}
-        align="center"
-        gap={1.5}
-        className="w-fit text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
-        Integrations
-      </Flex>
+      <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
+        <Link to="/orgs/$orgId/integrations" params={{ orgId }}>
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+          Integrations
+        </Link>
+      </Button>
 
       <SlackDetail orgId={orgId} />
     </Flex>

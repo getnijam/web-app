@@ -293,6 +293,7 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              loading={disconnect.isPending}
               onClick={(e) => {
                 e.preventDefault();
                 disconnect.mutate({ path: { orgId } });

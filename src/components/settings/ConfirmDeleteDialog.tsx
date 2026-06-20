@@ -83,7 +83,8 @@ export function ConfirmDeleteDialog({
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            disabled={!matches || loading}
+            disabled={!matches}
+            loading={loading}
             onClick={(e) => {
               e.preventDefault();
               onConfirm();

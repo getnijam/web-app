@@ -21,7 +21,11 @@ import { Route as InviteRouteImport } from './routes/invite'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
+import { Route as AuthedProfileIndexRouteImport } from './routes/_authed/profile.index'
 import { Route as AuthedOrgsIndexRouteImport } from './routes/_authed/orgs.index'
+import { Route as AuthedProfileSecurityRouteImport } from './routes/_authed/profile.security'
+import { Route as AuthedProfileDangerRouteImport } from './routes/_authed/profile.danger'
 import { Route as AuthedOrgsOrgIdRouteImport } from './routes/_authed/orgs.$orgId'
 import { Route as AuthedOrgsOrgIdIndexRouteImport } from './routes/_authed/orgs.$orgId.index'
 import { Route as AuthedOrgsOrgIdUsersRouteImport } from './routes/_authed/orgs.$orgId.users'
@@ -105,10 +109,30 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedProfileRoute = AuthedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedProfileIndexRoute = AuthedProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthedProfileRoute,
+} as any)
 const AuthedOrgsIndexRoute = AuthedOrgsIndexRouteImport.update({
   id: '/orgs/',
   path: '/orgs/',
   getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedProfileSecurityRoute = AuthedProfileSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AuthedProfileRoute,
+} as any)
+const AuthedProfileDangerRoute = AuthedProfileDangerRouteImport.update({
+  id: '/danger',
+  path: '/danger',
+  getParentRoute: () => AuthedProfileRoute,
 } as any)
 const AuthedOrgsOrgIdRoute = AuthedOrgsOrgIdRouteImport.update({
   id: '/orgs/$orgId',
@@ -254,8 +278,12 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
+  '/profile': typeof AuthedProfileRouteWithChildren
   '/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
+  '/profile/danger': typeof AuthedProfileDangerRoute
+  '/profile/security': typeof AuthedProfileSecurityRoute
   '/orgs/': typeof AuthedOrgsIndexRoute
+  '/profile/': typeof AuthedProfileIndexRoute
   '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
   '/orgs/$orgId/keys': typeof AuthedOrgsOrgIdKeysRouteWithChildren
   '/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
@@ -291,7 +319,10 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
+  '/profile/danger': typeof AuthedProfileDangerRoute
+  '/profile/security': typeof AuthedProfileSecurityRoute
   '/orgs': typeof AuthedOrgsIndexRoute
+  '/profile': typeof AuthedProfileIndexRoute
   '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
   '/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
   '/orgs/$orgId/users': typeof AuthedOrgsOrgIdUsersRoute
@@ -327,8 +358,12 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
+  '/_authed/profile': typeof AuthedProfileRouteWithChildren
   '/_authed/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
+  '/_authed/profile/danger': typeof AuthedProfileDangerRoute
+  '/_authed/profile/security': typeof AuthedProfileSecurityRoute
   '/_authed/orgs/': typeof AuthedOrgsIndexRoute
+  '/_authed/profile/': typeof AuthedProfileIndexRoute
   '/_authed/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
   '/_authed/orgs/$orgId/keys': typeof AuthedOrgsOrgIdKeysRouteWithChildren
   '/_authed/orgs/$orgId/settings': typeof AuthedOrgsOrgIdSettingsRoute
@@ -366,8 +401,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/verify'
+    | '/profile'
     | '/orgs/$orgId'
+    | '/profile/danger'
+    | '/profile/security'
     | '/orgs/'
+    | '/profile/'
     | '/orgs/$orgId/billing'
     | '/orgs/$orgId/keys'
     | '/orgs/$orgId/settings'
@@ -403,7 +442,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/verify'
+    | '/profile/danger'
+    | '/profile/security'
     | '/orgs'
+    | '/profile'
     | '/orgs/$orgId/billing'
     | '/orgs/$orgId/settings'
     | '/orgs/$orgId/users'
@@ -438,8 +480,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/verify'
+    | '/_authed/profile'
     | '/_authed/orgs/$orgId'
+    | '/_authed/profile/danger'
+    | '/_authed/profile/security'
     | '/_authed/orgs/'
+    | '/_authed/profile/'
     | '/_authed/orgs/$orgId/billing'
     | '/_authed/orgs/$orgId/keys'
     | '/_authed/orgs/$orgId/settings'
@@ -565,12 +611,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed/profile': {
+      id: '/_authed/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthedProfileRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/profile/': {
+      id: '/_authed/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof AuthedProfileIndexRouteImport
+      parentRoute: typeof AuthedProfileRoute
+    }
     '/_authed/orgs/': {
       id: '/_authed/orgs/'
       path: '/orgs'
       fullPath: '/orgs/'
       preLoaderRoute: typeof AuthedOrgsIndexRouteImport
       parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/profile/security': {
+      id: '/_authed/profile/security'
+      path: '/security'
+      fullPath: '/profile/security'
+      preLoaderRoute: typeof AuthedProfileSecurityRouteImport
+      parentRoute: typeof AuthedProfileRoute
+    }
+    '/_authed/profile/danger': {
+      id: '/_authed/profile/danger'
+      path: '/danger'
+      fullPath: '/profile/danger'
+      preLoaderRoute: typeof AuthedProfileDangerRouteImport
+      parentRoute: typeof AuthedProfileRoute
     }
     '/_authed/orgs/$orgId': {
       id: '/_authed/orgs/$orgId'
@@ -736,6 +810,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthedProfileRouteChildren {
+  AuthedProfileDangerRoute: typeof AuthedProfileDangerRoute
+  AuthedProfileSecurityRoute: typeof AuthedProfileSecurityRoute
+  AuthedProfileIndexRoute: typeof AuthedProfileIndexRoute
+}
+
+const AuthedProfileRouteChildren: AuthedProfileRouteChildren = {
+  AuthedProfileDangerRoute: AuthedProfileDangerRoute,
+  AuthedProfileSecurityRoute: AuthedProfileSecurityRoute,
+  AuthedProfileIndexRoute: AuthedProfileIndexRoute,
+}
+
+const AuthedProfileRouteWithChildren = AuthedProfileRoute._addFileChildren(
+  AuthedProfileRouteChildren,
+)
+
 interface AuthedOrgsOrgIdKeysRouteChildren {
   AuthedOrgsOrgIdKeysIngestionRoute: typeof AuthedOrgsOrgIdKeysIngestionRoute
   AuthedOrgsOrgIdKeysMcpRoute: typeof AuthedOrgsOrgIdKeysMcpRoute
@@ -823,11 +913,13 @@ const AuthedOrgsOrgIdRouteWithChildren = AuthedOrgsOrgIdRoute._addFileChildren(
 )
 
 interface AuthedRouteRouteChildren {
+  AuthedProfileRoute: typeof AuthedProfileRouteWithChildren
   AuthedOrgsOrgIdRoute: typeof AuthedOrgsOrgIdRouteWithChildren
   AuthedOrgsIndexRoute: typeof AuthedOrgsIndexRoute
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
+  AuthedProfileRoute: AuthedProfileRouteWithChildren,
   AuthedOrgsOrgIdRoute: AuthedOrgsOrgIdRouteWithChildren,
   AuthedOrgsIndexRoute: AuthedOrgsIndexRoute,
 }

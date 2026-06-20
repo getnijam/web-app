@@ -25,6 +25,7 @@ import { FieldError } from '@/components/auth/AuthLayout';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
+import { TransferAdminControl } from '@/components/orgs/TransferAdminControl';
 import { ConfirmDeleteDialog } from '@/components/settings/ConfirmDeleteDialog';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
@@ -253,6 +254,12 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
 
       {isAdmin && (
         <SettingsPanel title="Danger zone" danger>
+          <SettingsRow
+            label="Transfer admin"
+            hint="Make another member an admin so you can hand off or leave this organization."
+          >
+            <TransferAdminControl orgId={orgId} />
+          </SettingsRow>
           <SettingsRow
             label="Delete organization"
             hint="Permanently deletes this organization, its members, invitations, and logo. Delete all of its projects first."
