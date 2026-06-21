@@ -116,7 +116,7 @@ function OrgRow({ org }: { org: Membership }) {
             </span>
           </TooltipTrigger>
           <TooltipContent>
-            Transfer this org to another member, as you're the only admin.
+            You can't leave because you're the only admin. Promote another member to admin first.
           </TooltipContent>
         </Tooltip>
       ) : (

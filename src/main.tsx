@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@ta
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { client } from '@/client/client.gen';
 import { logNetworkError } from '@/lib/network-logging';
+import { registerAuthInterceptor } from '@/lib/auth-interceptor';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Flex } from '@/components/ui/flex';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -67,6 +68,9 @@ declare module '@tanstack/react-router' {
     router: typeof router;
   }
 }
+
+// Bounce to /login (preserving where they were) on any runtime 401 inside the dashboard.
+registerAuthInterceptor(router);
 
 const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('Root element #root not found');

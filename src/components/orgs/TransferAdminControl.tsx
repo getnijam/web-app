@@ -57,7 +57,7 @@ export function TransferAdminControl({ orgId }: { orgId: string }) {
   if (!membersQuery.isLoading && candidates.length === 0) {
     return (
       <Text className="text-sm text-muted-foreground">
-        No other members to promote. Invite someone first, or delete the organization.
+        No other members to promote to admin. Invite someone first.
       </Text>
     );
   }
