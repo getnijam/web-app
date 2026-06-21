@@ -64,7 +64,7 @@ export type AnalyticsEvents = {
   two_factor_enabled: NoProps;
   two_factor_disabled: NoProps;
   backup_codes_regenerated: NoProps;
-  project_created: { has_repository_url: boolean };
+  project_created: NoProps;
 };
 
 // An event with no properties. `keyof` is `never` (unlike `Record<string, never>`, whose

@@ -292,6 +292,8 @@ export type ProjectStats = {
     lastRunAt: string;
     branch: string | null;
     ciProvider: string | null;
+    repository: string | null;
+    ciRunUrl: string | null;
 } | null;
 
 export type RunBar = {
@@ -310,8 +312,6 @@ export type ProjectSummary = {
     id: string;
     name: string;
     description: string | null;
-    repositoryUrl: string | null;
-    defaultBranch: string | null;
     icon: string | null;
     color: string | null;
     testFramework: 'playwright' | 'pytest' | 'vitest';
@@ -323,8 +323,6 @@ export type ProjectSummary = {
 export type CreateProjectBody = {
     name: string;
     description?: string;
-    repositoryUrl?: string;
-    defaultBranch?: string;
     icon?: 'dashboard' | 'browser' | 'support' | 'finance' | 'testing' | 'education' | 'travel' | 'mobile' | 'gaming' | 'blockchain' | 'design' | 'database' | 'playwright' | 'pytest' | 'vitest';
     color?: 'emerald' | 'indigo' | 'amber' | 'sky' | 'pink' | 'teal' | 'rose' | 'violet' | 'orange';
     testFramework?: 'playwright' | 'pytest' | 'vitest';
@@ -338,8 +336,6 @@ export type AccessibleProject = {
     id: string;
     name: string;
     description: string | null;
-    repositoryUrl: string | null;
-    defaultBranch: string | null;
     createdAt: string;
 };
 
@@ -350,8 +346,6 @@ export type AccessibleProjectsResponse = {
 export type UpdateProjectBody = {
     name: string;
     description?: string;
-    repositoryUrl?: string;
-    defaultBranch?: string;
     icon?: 'dashboard' | 'browser' | 'support' | 'finance' | 'testing' | 'education' | 'travel' | 'mobile' | 'gaming' | 'blockchain' | 'design' | 'database' | 'playwright' | 'pytest' | 'vitest';
     color?: 'emerald' | 'indigo' | 'amber' | 'sky' | 'pink' | 'teal' | 'rose' | 'violet' | 'orange';
 };

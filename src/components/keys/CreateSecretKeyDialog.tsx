@@ -42,7 +42,6 @@ import { Label } from '@/components/ui/label';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { isApiError } from '@/lib/api-error';
-import { repoFromUrl } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { ScopeTag, ProjectGlyphMini } from './ScopeTag';
 
@@ -277,7 +276,8 @@ export function CreateSecretKeyDialog({
                     </SelectTrigger>
                     <SelectContent>
                       {projects.map((p) => {
-                        const repo = repoFromUrl(p.repositoryUrl);
+                        // Repo slug from the project's latest run (reporter-sent), not config.
+                        const repo = p.stats?.repository ?? null;
                         return (
                           <SelectItem key={p.id} value={p.id} textValue={p.name}>
                             <Flex align="center" gap={2}>

@@ -31,8 +31,6 @@ import { type IconKey, type ColorKey } from '@/lib/project-glyph';
 const CreateSchema = z.object({
   name: z.string().min(1, 'Enter a project name.').max(80),
   description: z.string().max(500).optional(),
-  repositoryUrl: z.string().max(500).optional(),
-  defaultBranch: z.string().max(200).optional(),
 });
 type CreateForm = z.infer<typeof CreateSchema>;
 
@@ -57,7 +55,6 @@ export function NewProjectDialog({
   const [testFramework, setTestFramework] = useState<TestFramework>('playwright');
   const form = useForm<CreateForm>({
     resolver: zodResolver(CreateSchema),
-    defaultValues: { defaultBranch: 'main' },
   });
   const name = form.watch('name');
 
@@ -69,7 +66,7 @@ export function NewProjectDialog({
   }
 
   function close() {
-    form.reset({ defaultBranch: 'main' });
+    form.reset();
     setIcon('playwright');
     setColor('emerald');
     setTestFramework('playwright');
@@ -80,7 +77,7 @@ export function NewProjectDialog({
   const mutation = useMutation({
     ...createProjectMutation(),
     onSuccess: async (project) => {
-      track('project_created', { has_repository_url: Boolean(project.repositoryUrl) });
+      track('project_created');
       await queryClient.invalidateQueries({
         queryKey: listOrgProjectsQueryKey({ path: { orgId } }),
       });
@@ -120,8 +117,6 @@ export function NewProjectDialog({
               body: {
                 name: data.name,
                 description: blankToUndefined(data.description),
-                repositoryUrl: blankToUndefined(data.repositoryUrl),
-                defaultBranch: blankToUndefined(data.defaultBranch),
                 icon,
                 color,
                 testFramework,
@@ -171,26 +166,6 @@ export function NewProjectDialog({
               placeholder="What does this suite cover?"
               {...form.register('description')}
             />
-          </Flex>
-
-          <Flex gap={4}>
-            <Flex direction="col" gap={1.5} className="flex-1">
-              <Label htmlFor="np-repo">Git repository URL</Label>
-              <Input
-                id="np-repo"
-                placeholder="https://github.com/org/repo"
-                {...form.register('repositoryUrl')}
-              />
-            </Flex>
-            <Flex direction="col" gap={1.5} className="flex-1">
-              <Label htmlFor="np-branch">Main branch</Label>
-              <Input
-                id="np-branch"
-                className="font-mono"
-                placeholder="main"
-                {...form.register('defaultBranch')}
-              />
-            </Flex>
           </Flex>
         </Flex>
 

@@ -1,3 +1,4 @@
+import { Fragment, type ReactNode } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -27,7 +28,8 @@ import {
   RunsListSkeleton,
   RunFiltersSkeleton,
 } from '@/components/runs/RunSkeletons';
-import { timeAgo, repoFromUrl } from '@/lib/format';
+import { timeAgo } from '@/lib/format';
+import { gitBranchUrl } from '@/lib/git';
 import {
   validateDateRangeSearch,
   searchToRange,
@@ -213,21 +215,54 @@ function Header({
   onRefresh: () => void;
   refreshing: boolean;
 }) {
-  const repo = repoFromUrl(proj.repositoryUrl);
-  const parts = [
-    repo,
-    proj.stats ? `last run ${timeAgo(proj.stats.lastRunAt)}` : null,
-    // The last run's actual branch (not the project's default) — this whole line
-    // describes the last run, so a feature-branch run shows its branch, not "main".
-    proj.stats?.branch ? `on ${proj.stats.branch}` : null,
-    proj.stats?.ciProvider ? `via ${proj.stats.ciProvider}` : null,
-  ].filter(Boolean);
+  const stats = proj.stats;
+  // The last run's actual branch (not the project's default) — this line describes
+  // the last run, so a feature-branch run shows its branch. Linked out to the
+  // provider (github/gitlab) when we have enough git context to build the URL.
+  const branchHref = stats
+    ? gitBranchUrl({
+        repository: stats.repository,
+        branch: stats.branch,
+        ciProvider: stats.ciProvider,
+        ciRunUrl: stats.ciRunUrl,
+      })
+    : null;
+
+  const segments: ReactNode[] = [];
+  if (stats) segments.push(`last run ${timeAgo(stats.lastRunAt)}`);
+  if (stats?.branch) {
+    segments.push(
+      branchHref ? (
+        <a
+          key="branch"
+          href={branchHref}
+          target="_blank"
+          rel="noreferrer"
+          className="transition-colors hover:text-foreground hover:underline"
+        >
+          on {stats.branch}
+        </a>
+      ) : (
+        `on ${stats.branch}`
+      ),
+    );
+  }
+  if (stats?.ciProvider) segments.push(`via ${stats.ciProvider}`);
 
   return (
     <Flex align="start" justify="between" gap={4} className="flex-wrap">
       <Flex direction="col" gap={1}>
         <Text variant="h1">Runs</Text>
-        {parts.length > 0 && <Text color="muted">{parts.join(' · ')}</Text>}
+        {segments.length > 0 && (
+          <Text color="muted">
+            {segments.map((seg, i) => (
+              <Fragment key={i}>
+                {i > 0 && ' · '}
+                {seg}
+              </Fragment>
+            ))}
+          </Text>
+        )}
       </Flex>
       <Button variant="outline" size="sm" loading={refreshing} onClick={onRefresh}>
         {!refreshing && <HugeiconsIcon icon={RefreshIcon} size={15} />}

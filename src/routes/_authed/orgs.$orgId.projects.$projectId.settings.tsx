@@ -42,8 +42,6 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/s
 const Schema = z.object({
   name: z.string().min(1, 'Enter a project name.').max(80),
   description: z.string().max(500).optional(),
-  repositoryUrl: z.string().max(500).optional(),
-  defaultBranch: z.string().max(200).optional(),
 });
 type FormValues = z.infer<typeof Schema>;
 
@@ -84,8 +82,6 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
     defaultValues: {
       name: project.name,
       description: project.description ?? '',
-      repositoryUrl: project.repositoryUrl ?? '',
-      defaultBranch: project.defaultBranch ?? '',
     },
   });
 
@@ -155,8 +151,6 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
             body: {
               name: data.name,
               description: data.description,
-              repositoryUrl: data.repositoryUrl,
-              defaultBranch: data.defaultBranch,
               icon,
               color,
             },
@@ -197,12 +191,6 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
               placeholder="What does this suite cover?"
               {...form.register('description')}
             />
-          </SettingsRow>
-          <SettingsRow label="Repository URL">
-            <Input placeholder="https://github.com/org/repo" {...form.register('repositoryUrl')} />
-          </SettingsRow>
-          <SettingsRow label="Main branch">
-            <Input className="font-mono" placeholder="main" {...form.register('defaultBranch')} />
           </SettingsRow>
           <SettingsRow
             label="Test framework"

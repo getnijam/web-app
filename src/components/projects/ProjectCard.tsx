@@ -6,15 +6,17 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { glyphFor } from '@/lib/project-glyph';
 import { ProjectGlyphIcon } from '@/components/projects/ProjectGlyphIcon';
-import { timeAgo, formatDate, repoFromUrl } from '@/lib/format';
+import { timeAgo, formatDate } from '@/lib/format';
 import { RunChart } from './RunChart';
 import { StatusPill } from './StatusPill';
 
 export function ProjectCard({ project, orgId }: { project: ProjectSummary; orgId: string }) {
   const glyph = glyphFor(project);
-  const repo = repoFromUrl(project.repositoryUrl);
   const stats = project.stats;
   const hasRuns = stats !== null && project.chartRuns.length > 0;
+  // Repo comes from the latest run (the reporter sends it), not project config.
+  const repo = stats?.repository ?? null;
+  const fallbackLabel = hasRuns ? 'no repository info' : 'no runs yet';
 
   return (
     <Flex
@@ -50,7 +52,7 @@ export function ProjectCard({ project, orgId }: { project: ProjectSummary; orgId
             </Flex>
           ) : (
             <Text as="span" className="mt-0.5 font-mono text-xs text-muted-foreground italic">
-              no repository linked
+              {fallbackLabel}
             </Text>
           )}
         </Flex>
@@ -109,8 +111,8 @@ export function ProjectCard({ project, orgId }: { project: ProjectSummary; orgId
               <b className="font-semibold text-foreground">—</b> tests
             </Flex>
             <Flex align="center" gap={1.5}>
-              <HugeiconsIcon icon={GitBranchIcon} size={14} className="shrink-0" />
-              {project.defaultBranch || 'main'}
+              <HugeiconsIcon icon={Clock01Icon} size={14} className="shrink-0" />
+              never run
             </Flex>
           </>
         )}
