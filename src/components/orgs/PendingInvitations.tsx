@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { useLocation } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { MyInvitationsResponse } from '@/client';
 import {
@@ -7,6 +9,7 @@ import {
   listMyOrganizationsQueryKey,
   getMyDeletabilityQueryKey,
   acceptMyInvitationMutation,
+  rejectMyInvitationMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -15,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
+import { cn } from '@/lib/utils';
 
 type Invitation = MyInvitationsResponse['invitations'][number];
 
@@ -26,10 +30,34 @@ type Invitation = MyInvitationsResponse['invitations'][number];
 export function PendingInvitations({ onAccepted }: { onAccepted?: (orgId: string) => void }) {
   const { data } = useQuery(listMyInvitationsOptions());
   const invitations = data?.invitations ?? [];
+
+  // When linked here from the account menu (`/profile#invitations`), scroll the card
+  // into view and flash a highlight so it's easy to spot among the profile sections.
+  const hash = useLocation({ select: (l) => l.hash });
+  const [highlight, setHighlight] = useState(false);
+  useEffect(() => {
+    if (hash !== 'invitations' || invitations.length === 0) return;
+    document.getElementById('invitations')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const on = setTimeout(() => setHighlight(true), 0);
+    const off = setTimeout(() => setHighlight(false), 2200);
+    return () => {
+      clearTimeout(on);
+      clearTimeout(off);
+    };
+  }, [hash, invitations.length]);
+
   if (invitations.length === 0) return null;
 
   return (
-    <Flex direction="col" gap={4} className="rounded-2xl border border-border bg-card p-5">
+    <Flex
+      id="invitations"
+      direction="col"
+      gap={4}
+      className={cn(
+        'scroll-mt-6 rounded-2xl border bg-card p-5 transition-shadow duration-500',
+        highlight ? 'border-primary ring-2 ring-primary/40' : 'border-border',
+      )}
+    >
       <Flex direction="col" gap={0.5}>
         <Text variant="h4">Invitations</Text>
         <Text as="span" className="text-sm text-muted-foreground">
@@ -72,6 +100,24 @@ function InvitationRow({
       }),
   });
 
+  const reject = useMutation({
+    ...rejectMyInvitationMutation(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: listMyInvitationsQueryKey() });
+      notify.success('Invitation declined', {
+        description: `You declined the invitation to ${invitation.orgName}.`,
+      });
+    },
+    onError: (err) =>
+      notify.error("Couldn't decline invitation", {
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
+      }),
+  });
+
+  const busy = accept.isPending || reject.isPending;
+
   return (
     <Flex align="center" justify="between" gap={3}>
       <Flex align="center" gap={3} className="min-w-0">
@@ -100,14 +146,25 @@ function InvitationRow({
           </Text>
         </Flex>
       </Flex>
-      <Button
-        size="sm"
-        className="shrink-0"
-        loading={accept.isPending}
-        onClick={() => accept.mutate({ path: { invitationId: invitation.id } })}
-      >
-        Accept
-      </Button>
+      <Flex gap={2} className="shrink-0">
+        <Button
+          variant="outline"
+          size="sm"
+          loading={reject.isPending}
+          disabled={busy}
+          onClick={() => reject.mutate({ path: { invitationId: invitation.id } })}
+        >
+          Decline
+        </Button>
+        <Button
+          size="sm"
+          loading={accept.isPending}
+          disabled={busy}
+          onClick={() => accept.mutate({ path: { invitationId: invitation.id } })}
+        >
+          Accept
+        </Button>
+      </Flex>
     </Flex>
   );
 }

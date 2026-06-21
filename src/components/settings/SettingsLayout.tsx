@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft01Icon, UserIcon, SecurityIcon, Delete02Icon } from '@hugeicons/core-free-icons';
+import { getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
@@ -22,6 +24,15 @@ const SECTIONS = [
  */
 export function SettingsLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  // Return to the org the user last opened (same as the post-login landing); fall
+  // back to the picker when there isn't one.
+  const lastOrgId = useQuery({ ...getMeOptions(), retry: false }).data?.user.lastOrgId ?? null;
+  const backLabel = (
+    <>
+      <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+      Back to dashboard
+    </>
+  );
 
   return (
     <Flex direction="col" className="min-h-svh">
@@ -46,10 +57,13 @@ export function SettingsLayout({ children }: { children: ReactNode }) {
           size="sm"
           className="mb-4 -ml-2 w-fit text-muted-foreground"
         >
-          <Link to="/orgs">
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
-            Back to dashboard
-          </Link>
+          {lastOrgId ? (
+            <Link to="/orgs/$orgId/projects" params={{ orgId: lastOrgId }}>
+              {backLabel}
+            </Link>
+          ) : (
+            <Link to="/orgs">{backLabel}</Link>
+          )}
         </Button>
 
         <Flex direction="col" gap={1} className="mb-8">

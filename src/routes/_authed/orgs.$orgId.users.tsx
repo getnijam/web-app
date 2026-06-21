@@ -372,7 +372,31 @@ function InviteRow({ orgId, invite }: { orgId: string; invite: InvitationSummary
       }),
   });
 
-  const expired = invite.status === 'expired';
+  // Re-invite reissues the invitation (new token + expiry, email re-sent); for a
+  // declined invite the backend also clears the rejection so it goes active again.
+  const reinvite = useMutation({
+    ...createOrgInvitationMutation(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: listOrgInvitationsQueryKey({ path: { orgId } }),
+      });
+      notify.success('Invitation re-sent', {
+        description: `A fresh invitation was sent to ${invite.email}.`,
+      });
+    },
+    onError: () =>
+      notify.error("Couldn't re-invite", {
+        description: 'Something went wrong. Please try again.',
+      }),
+  });
+
+  const STATUS_META = {
+    pending: { label: 'Pending', badge: 'outline' as const, note: 'awaiting acceptance' },
+    expired: { label: 'Expired', badge: 'destructive' as const, note: 'expired' },
+    rejected: { label: 'Declined', badge: 'secondary' as const, note: 'declined the invitation' },
+  };
+  const meta = STATUS_META[invite.status];
+  const canReinvite = invite.status !== 'pending';
 
   return (
     <Flex align="center" gap={3} className="border-b border-border px-5 py-4 last:border-b-0">
@@ -388,12 +412,25 @@ function InviteRow({ orgId, invite }: { orgId: string; invite: InvitationSummary
           {invite.email}
         </Text>
         <Text as="span" truncate className="text-sm text-muted-foreground">
-          Invited {timeAgo(invite.invitedAt)} · {expired ? 'expired' : 'awaiting acceptance'}
+          Invited {timeAgo(invite.invitedAt)} · {meta.note}
         </Text>
       </Flex>
-      <Badge variant={expired ? 'destructive' : 'outline'} className="shrink-0">
-        {expired ? 'Expired' : 'Pending'}
+      <Badge variant={meta.badge} className="shrink-0">
+        {meta.label}
       </Badge>
+      {canReinvite && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="shrink-0"
+          loading={reinvite.isPending}
+          onClick={() =>
+            reinvite.mutate({ path: { orgId }, body: { email: invite.email, role: invite.role } })
+          }
+        >
+          Re-invite
+        </Button>
+      )}
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <Button
           variant="ghost"

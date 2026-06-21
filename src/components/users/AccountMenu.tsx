@@ -2,8 +2,13 @@ import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Logout01Icon, Settings01Icon, ArrowDown01Icon } from '@hugeicons/core-free-icons';
-import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import {
+  Logout01Icon,
+  Settings01Icon,
+  ArrowDown01Icon,
+  Mail01Icon,
+} from '@hugeicons/core-free-icons';
+import { getMeOptions, listMyInvitationsOptions } from '@/client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -35,6 +40,11 @@ export function AccountMenu({
   const email = user?.email ?? '';
   const name = user?.name ?? (email ? email.split('@')[0] : 'Account');
 
+  // Pending org invitations — surfaced here because login now lands returning users
+  // straight in their org (skipping the /orgs picker where invites used to show).
+  const invites = useQuery({ ...listMyInvitationsOptions(), retry: false, staleTime: 60 * 1000 });
+  const inviteCount = invites.data?.invitations.length ?? 0;
+
   const [open, setOpen] = useState(false);
   const ref = useClickAway<HTMLDivElement>(() => setOpen(false));
   const logout = useLogout({
@@ -65,6 +75,21 @@ export function AccountMenu({
           </Text>
         </Flex>
       </Flex>
+      {inviteCount > 0 && (
+        <Button
+          asChild
+          variant="ghost"
+          className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-accent"
+        >
+          <Link to="/profile" hash="invitations" onClick={() => setOpen(false)}>
+            <HugeiconsIcon icon={Mail01Icon} size={16} strokeWidth={1.8} className="text-primary" />
+            <span className="flex-1">Pending invitations</span>
+            <span className="rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground tabular-nums">
+              {inviteCount}
+            </span>
+          </Link>
+        </Button>
+      )}
       <Button
         asChild
         variant="ghost"
@@ -87,6 +112,16 @@ export function AccountMenu({
       </Button>
     </>
   );
+
+  // Notification dot on the (closed) trigger avatar so pending invitations are visible
+  // without opening the menu. Hidden while open (the menu item shows the count then).
+  const notifDot =
+    inviteCount > 0 && !open ? (
+      <span className="absolute -top-0.5 -right-0.5 flex size-2.5">
+        <span className="size-2.5 rounded-full bg-primary ring-2 ring-background" />
+        <span className="sr-only">{inviteCount} pending invitations</span>
+      </span>
+    ) : null;
 
   return (
     <div ref={ref} className="relative">
@@ -111,15 +146,18 @@ export function AccountMenu({
             open && 'bg-accent',
           )}
         >
-          <UserAvatar
-            size="sm"
-            className="size-8 rounded-full text-sm"
-            userId={user?.id}
-            email={email}
-            name={name}
-            hasAvatar={user?.hasAvatar}
-            avatarUpdatedAt={user?.avatarUpdatedAt}
-          />
+          <span className="relative shrink-0">
+            <UserAvatar
+              size="sm"
+              className="size-8 rounded-full text-sm"
+              userId={user?.id}
+              email={email}
+              name={name}
+              hasAvatar={user?.hasAvatar}
+              avatarUpdatedAt={user?.avatarUpdatedAt}
+            />
+            {notifDot}
+          </span>
           <Flex direction="col" className="min-w-0 leading-tight">
             <Text as="span" truncate className="text-sm font-semibold">
               {name}
@@ -143,9 +181,11 @@ export function AccountMenu({
           variant="ghost"
           size="icon"
           type="button"
-          aria-label="Account menu"
+          aria-label={
+            inviteCount > 0 ? `Account menu, ${inviteCount} pending invitations` : 'Account menu'
+          }
           onClick={() => setOpen((o) => !o)}
-          className="size-8 rounded-full p-0 hover:bg-transparent hover:opacity-80"
+          className="relative size-8 rounded-full p-0 hover:bg-transparent hover:opacity-80"
         >
           <UserAvatar
             size="sm"
@@ -156,6 +196,7 @@ export function AccountMenu({
             hasAvatar={user?.hasAvatar}
             avatarUpdatedAt={user?.avatarUpdatedAt}
           />
+          {notifDot}
         </Button>
       )}
     </div>

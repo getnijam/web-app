@@ -37,6 +37,7 @@ export type UserPublic = {
     avatarUpdatedAt: string | null;
     hasPassword: boolean;
     twoFactorEnabled: boolean;
+    lastOrgId: string | null;
     createdAt: string;
 };
 
@@ -102,6 +103,10 @@ export type UpdatePasswordBody = {
 
 export type UpdateMeBody = {
     name?: string | null;
+};
+
+export type SetLastOrgBody = {
+    orgId: string;
 };
 
 export type TotpSetupResponse = {
@@ -234,9 +239,10 @@ export type UpdateMemberRoleBody = {
 export type InvitationSummary = {
     id: string;
     email: string;
+    role: 'admin' | 'member';
     invitedAt: string;
     expiresAt: string;
-    status: 'pending' | 'expired';
+    status: 'pending' | 'expired' | 'rejected';
 };
 
 export type InvitationListResponse = {
@@ -252,7 +258,7 @@ export type InvitePreviewResponse = {
     orgId: string;
     orgName: string;
     email: string;
-    status: 'pending' | 'expired' | 'accepted';
+    status: 'pending' | 'expired' | 'accepted' | 'rejected';
 };
 
 export type AcceptInviteResponse = {
@@ -1107,6 +1113,35 @@ export type UpdateMeResponses = {
 
 export type UpdateMeResponse = UpdateMeResponses[keyof UpdateMeResponses];
 
+export type SetMyLastOrgData = {
+    body?: SetLastOrgBody;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/last-org';
+};
+
+export type SetMyLastOrgErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Org not found
+     */
+    404: ApiError;
+};
+
+export type SetMyLastOrgError = SetMyLastOrgErrors[keyof SetMyLastOrgErrors];
+
+export type SetMyLastOrgResponses = {
+    /**
+     * OK
+     */
+    200: UserResponse;
+};
+
+export type SetMyLastOrgResponse = SetMyLastOrgResponses[keyof SetMyLastOrgResponses];
+
 export type DeleteMyAvatarData = {
     body?: never;
     path?: never;
@@ -1449,6 +1484,41 @@ export type AcceptMyInvitationResponses = {
 };
 
 export type AcceptMyInvitationResponse2 = AcceptMyInvitationResponses[keyof AcceptMyInvitationResponses];
+
+export type RejectMyInvitationData = {
+    body?: never;
+    path: {
+        invitationId: string;
+    };
+    query?: never;
+    url: '/v1/auth/me/invitations/{invitationId}/reject';
+};
+
+export type RejectMyInvitationErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Email mismatch
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type RejectMyInvitationError = RejectMyInvitationErrors[keyof RejectMyInvitationErrors];
+
+export type RejectMyInvitationResponses = {
+    /**
+     * Declined
+     */
+    200: AuthOkResponse;
+};
+
+export type RejectMyInvitationResponse = RejectMyInvitationResponses[keyof RejectMyInvitationResponses];
 
 export type ListOrgsData = {
     body?: never;

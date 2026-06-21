@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { login, verifyLogin2Fa } from '@/client';
-import { getMeQueryKey } from '@/client/@tanstack/react-query.gen';
+import { getMeQueryKey, getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { AuthLayout, AuthHeading, FieldError } from '@/components/auth/AuthLayout';
 import { OAuthButtons } from '@/components/auth/OAuthButtons';
 import { oauthErrorMessage } from '@/lib/oauth-error';
@@ -64,8 +64,21 @@ function LoginPage() {
 
   const finishLogin = async () => {
     await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
-    if (invite) navigate({ to: '/invite', search: { token: invite } });
-    else navigate({ to: nextUrl ?? '/orgs' });
+    if (invite) {
+      navigate({ to: '/invite', search: { token: invite } });
+      return;
+    }
+    if (nextUrl) {
+      navigate({ to: nextUrl });
+      return;
+    }
+    // Land returning users on the org they last opened; first-timers get the picker.
+    const me = await queryClient.ensureQueryData(getMeOptions());
+    if (me.user.lastOrgId) {
+      navigate({ to: '/orgs/$orgId/projects', params: { orgId: me.user.lastOrgId } });
+    } else {
+      navigate({ to: '/orgs' });
+    }
   };
 
   const mutation = useMutation({

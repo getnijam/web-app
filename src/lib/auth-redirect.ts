@@ -24,10 +24,18 @@ export async function redirectAuthedToDashboard(
   queryClient: QueryClient,
   nextUrl?: string,
 ): Promise<void> {
+  let me;
   try {
-    await queryClient.ensureQueryData(getMeOptions());
+    me = await queryClient.ensureQueryData(getMeOptions());
   } catch {
     return; // a 401 means guest — let the auth page render
   }
-  throw redirect({ to: safeNextPath(nextUrl) ?? '/orgs' });
+  const next = safeNextPath(nextUrl);
+  if (next) throw redirect({ to: next });
+  // Land returning users straight on the org they last opened; first-timers (or anyone
+  // whose last org is gone) get the picker — the org layout also bounces back to it.
+  if (me.user.lastOrgId) {
+    throw redirect({ to: '/orgs/$orgId/projects', params: { orgId: me.user.lastOrgId } });
+  }
+  throw redirect({ to: '/orgs' });
 }
