@@ -2,7 +2,15 @@ import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CheckmarkCircle02Icon, AlertCircleIcon } from '@hugeicons/core-free-icons';
+import {
+  CheckmarkCircle02Icon,
+  AlertCircleIcon,
+  CancelCircleIcon,
+  ToggleOnIcon,
+  ToggleOffIcon,
+  SquareLock02Icon,
+  SquareUnlock02Icon,
+} from '@hugeicons/core-free-icons';
 import type { SsoConnection, SsoDomainItem } from '@/client';
 
 // The generated `SsoConnection` includes `| null` (the response field is nullable);
@@ -45,6 +53,7 @@ import {
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { CopyField } from '@/components/ui/copy-field';
+import { StatusBadge } from '@/components/ui/status-badge';
 import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
@@ -337,14 +346,18 @@ function ConnectionView({ connection }: { connection: Conn }) {
         </Text>
       </SettingsRow>
       <SettingsRow label="Just-in-time provisioning">
-        <Badge variant={connection.jitProvisioning ? 'secondary' : 'outline'}>
-          {connection.jitProvisioning ? 'On' : 'Off'}
-        </Badge>
+        {connection.jitProvisioning ? (
+          <StatusBadge icon={ToggleOnIcon} label="On" tone="success" />
+        ) : (
+          <StatusBadge icon={ToggleOffIcon} label="Off" variant="outline" />
+        )}
       </SettingsRow>
       <SettingsRow label="Require SSO">
-        <Badge variant={connection.enforced ? 'secondary' : 'outline'}>
-          {connection.enforced ? 'Required' : 'Optional'}
-        </Badge>
+        {connection.enforced ? (
+          <StatusBadge icon={SquareLock02Icon} label="Required" tone="warning" />
+        ) : (
+          <StatusBadge icon={SquareUnlock02Icon} label="Optional" variant="outline" />
+        )}
       </SettingsRow>
       <SettingsRow label="Default role">
         <Text as="span" className="text-sm capitalize">
@@ -352,9 +365,11 @@ function ConnectionView({ connection }: { connection: Conn }) {
         </Text>
       </SettingsRow>
       <SettingsRow label="Enabled">
-        <Badge variant={connection.status === 'active' ? 'secondary' : 'outline'}>
-          {connection.status === 'active' ? 'Active' : 'Disabled'}
-        </Badge>
+        {connection.status === 'active' ? (
+          <StatusBadge icon={CheckmarkCircle02Icon} label="Active" tone="success" />
+        ) : (
+          <StatusBadge icon={CancelCircleIcon} label="Disabled" tone="danger" variant="outline" />
+        )}
       </SettingsRow>
     </>
   );
@@ -561,15 +576,9 @@ function DomainRow({
             {domain.domain}
           </Text>
           {domain.verified ? (
-            <Badge variant="secondary" className="gap-1">
-              <HugeiconsIcon icon={CheckmarkCircle02Icon} size={13} className="text-success" />
-              Verified
-            </Badge>
+            <StatusBadge icon={CheckmarkCircle02Icon} label="Verified" tone="success" />
           ) : (
-            <Badge variant="outline" className="gap-1">
-              <HugeiconsIcon icon={AlertCircleIcon} size={13} className="text-warning" />
-              Pending
-            </Badge>
+            <StatusBadge icon={AlertCircleIcon} label="Pending" tone="warning" variant="outline" />
           )}
         </Flex>
         <Flex align="center" gap={2}>

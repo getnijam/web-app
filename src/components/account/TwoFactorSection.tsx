@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { SecurityPasswordIcon } from '@hugeicons/core-free-icons';
+import { SecurityPasswordIcon, CheckmarkCircle02Icon, CircleIcon } from '@hugeicons/core-free-icons';
 import type { UserPublic } from '@/client';
 import {
   getMeQueryKey,
@@ -21,7 +21,7 @@ import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import { StatusBadge } from '@/components/ui/status-badge';
 import { AccountSection } from '@/components/account/AccountSection';
 import { TwoFactorSetupDialog } from '@/components/account/TwoFactorSetupDialog';
 import { BackupCodesPanel } from '@/components/account/BackupCodes';
@@ -54,11 +54,9 @@ export function TwoFactorSection({ user }: { user: UserPublic }) {
                 Authenticator app
               </Text>
               {user.twoFactorEnabled ? (
-                <Badge variant="outline" className="border-success/30 bg-success/10 text-success">
-                  On
-                </Badge>
+                <StatusBadge icon={CheckmarkCircle02Icon} label="On" tone="success" />
               ) : (
-                <Badge variant="secondary">Off</Badge>
+                <StatusBadge icon={CircleIcon} label="Off" variant="outline" />
               )}
             </Flex>
             <Text as="span" className="text-xs text-muted-foreground">

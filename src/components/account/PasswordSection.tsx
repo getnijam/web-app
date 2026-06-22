@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { LockPasswordIcon } from '@hugeicons/core-free-icons';
+import { LockPasswordIcon, CheckmarkCircle02Icon, CircleIcon } from '@hugeicons/core-free-icons';
 import type { UserPublic } from '@/client';
 import { getMeQueryKey, updateMyPasswordMutation } from '@/client/@tanstack/react-query.gen';
 import {
@@ -20,7 +20,7 @@ import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import { StatusBadge } from '@/components/ui/status-badge';
 import { AccountSection } from '@/components/account/AccountSection';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { ErrorBanner } from '@/components/states/ErrorState';
@@ -47,11 +47,9 @@ export function PasswordSection({ user }: { user: UserPublic }) {
                 Password
               </Text>
               {user.hasPassword ? (
-                <Badge variant="outline" className="border-success/30 bg-success/10 text-success">
-                  Set
-                </Badge>
+                <StatusBadge icon={CheckmarkCircle02Icon} label="Set" tone="success" />
               ) : (
-                <Badge variant="secondary">Not set</Badge>
+                <StatusBadge icon={CircleIcon} label="Not set" variant="outline" />
               )}
             </Flex>
             <Text as="span" className="text-xs text-muted-foreground">
