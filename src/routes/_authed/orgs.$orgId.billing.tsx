@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import {
-  RocketIcon,
+  CrownIcon,
   Database02Icon,
   UserMultiple02Icon,
   Calendar03Icon,
@@ -263,7 +263,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
               justify="center"
               className="size-10 shrink-0 rounded-xl bg-primary/15 text-primary"
             >
-              <HugeiconsIcon icon={RocketIcon} size={20} strokeWidth={1.9} />
+              <HugeiconsIcon icon={CrownIcon} size={20} strokeWidth={1.9} />
             </Flex>
             <Flex direction="col" gap={0.5}>
               <Text as="h3" className="text-base font-semibold tracking-tight">

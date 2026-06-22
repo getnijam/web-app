@@ -10,6 +10,7 @@ import {
   ToggleOffIcon,
   SquareLock02Icon,
   SquareUnlock02Icon,
+  ZapIcon,
 } from '@hugeicons/core-free-icons';
 import type { SsoConnection, SsoDomainItem } from '@/client';
 
@@ -104,13 +105,53 @@ export function SsoSettings({ orgId }: { orgId: string }) {
     return <Page header={header}><ErrorState error={sso.error} onRetry={() => sso.refetch()} /></Page>;
   }
 
+  const connection = sso.data.connection;
+  // The launch link only works once SSO is actually live (active + a verified domain),
+  // so only surface it then — sitting right under the "active" banner.
+  const live =
+    !!connection && connection.status === 'active' && connection.domains.some((d) => d.verified);
+
   return (
     <Page header={header}>
-      {sso.data.connection && <ConnectionStatus connection={sso.data.connection} />}
-      <ConnectionPanel orgId={orgId} connection={sso.data.connection} />
-      {sso.data.connection && <DomainsPanel orgId={orgId} connection={sso.data.connection} />}
-      {sso.data.connection && <DangerPanel orgId={orgId} />}
+      {connection && <ConnectionStatus connection={connection} />}
+      {connection && live && <LaunchLinkCard connection={connection} />}
+      <ConnectionPanel orgId={orgId} connection={connection} />
+      {connection && <DomainsPanel orgId={orgId} connection={connection} />}
+      {connection && <DangerPanel orgId={orgId} />}
     </Page>
+  );
+}
+
+/**
+ * Launch link — an IdP app-tile / dashboard target, not a form field. Rendered as its
+ * own card under the status banner (only when SSO is live) so it reads as "here's the URL
+ * to hand to your IdP", distinct from the editable connection settings.
+ */
+function LaunchLinkCard({ connection }: { connection: Conn }) {
+  return (
+    <Flex direction="col" gap={3} className="rounded-2xl border border-border bg-card p-5">
+      <Flex align="start" gap={3}>
+        <Flex
+          inline
+          align="center"
+          justify="center"
+          className="size-9 shrink-0 rounded-xl bg-primary/15 text-primary"
+        >
+          <HugeiconsIcon icon={ZapIcon} size={18} />
+        </Flex>
+        <Flex direction="col" gap={0.5}>
+          <Text as="span" className="text-sm font-semibold">
+            Launch link
+          </Text>
+          <Text as="span" className="text-xs text-muted-foreground">
+            Add this to your identity provider&rsquo;s app tile or dashboard — Okta initiate-login URI,
+            Entra home-page URL, a Google launcher link, or a bookmark — so people can launch Nijam
+            straight from there.
+          </Text>
+        </Flex>
+      </Flex>
+      <CopyField value={`${API_BASE}/v1/auth/sso/launch/${connection.id}`} />
+    </Flex>
   );
 }
 
@@ -330,41 +371,47 @@ function ConnectionPanel({
 function ConnectionView({ connection }: { connection: Conn }) {
   return (
     <>
-      <SettingsRow label="Issuer URL">
+      <SettingsRow label="Issuer URL" hint="Your provider's OIDC issuer URL.">
         <Text as="span" className="break-all font-mono text-sm text-muted-foreground">
           {connection.issuerUrl}
         </Text>
       </SettingsRow>
-      <SettingsRow label="Client ID">
+      <SettingsRow label="Client ID" hint="From your provider's OIDC application.">
         <Text as="span" className="break-all font-mono text-sm text-muted-foreground">
           {connection.clientId}
         </Text>
       </SettingsRow>
-      <SettingsRow label="Client secret">
+      <SettingsRow label="Client secret" hint="Stored encrypted at rest; never shown.">
         <Text as="span" className="font-mono text-sm text-muted-foreground">
           •••••••• {connection.secretSet ? 'hidden' : 'not set'}
         </Text>
       </SettingsRow>
-      <SettingsRow label="Just-in-time provisioning">
+      <SettingsRow
+        label="Just-in-time provisioning"
+        hint="Auto-creates accounts and adds them to this org on first SSO sign-in."
+      >
         {connection.jitProvisioning ? (
           <StatusBadge icon={ToggleOnIcon} label="On" tone="success" />
         ) : (
           <StatusBadge icon={ToggleOffIcon} label="Off" variant="outline" />
         )}
       </SettingsRow>
-      <SettingsRow label="Require SSO">
+      <SettingsRow
+        label="Require SSO"
+        hint="When on, members on your verified domains must sign in via SSO."
+      >
         {connection.enforced ? (
           <StatusBadge icon={SquareLock02Icon} label="Required" tone="warning" />
         ) : (
           <StatusBadge icon={SquareUnlock02Icon} label="Optional" variant="outline" />
         )}
       </SettingsRow>
-      <SettingsRow label="Default role">
+      <SettingsRow label="Default role" hint="The role new members get when provisioned.">
         <Text as="span" className="text-sm capitalize">
           {connection.defaultRole}
         </Text>
       </SettingsRow>
-      <SettingsRow label="Enabled">
+      <SettingsRow label="Enabled" hint="When off, the config is kept but SSO logins are blocked.">
         {connection.status === 'active' ? (
           <StatusBadge icon={CheckmarkCircle02Icon} label="Active" tone="success" />
         ) : (
