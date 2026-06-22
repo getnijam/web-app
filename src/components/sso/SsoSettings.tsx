@@ -50,6 +50,7 @@ import { ErrorState } from '@/components/states/ErrorState';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
+import { cn } from '@/lib/utils';
 
 const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
 const REDIRECT_URI = `${API_BASE}/v1/auth/sso/callback`;
@@ -96,10 +97,67 @@ export function SsoSettings({ orgId }: { orgId: string }) {
 
   return (
     <Page header={header}>
+      {sso.data.connection && <ConnectionStatus connection={sso.data.connection} />}
       <ConnectionPanel orgId={orgId} connection={sso.data.connection} />
       {sso.data.connection && <DomainsPanel orgId={orgId} connection={sso.data.connection} />}
       {sso.data.connection && <DangerPanel orgId={orgId} />}
     </Page>
+  );
+}
+
+const NOTICE_TONE = {
+  warning: { box: 'border-warning/40 bg-warning/5', icon: 'text-warning' },
+  success: { box: 'border-success/40 bg-success/5', icon: 'text-success' },
+};
+
+function Notice({
+  tone,
+  icon,
+  children,
+}: {
+  tone: keyof typeof NOTICE_TONE;
+  icon: typeof AlertCircleIcon;
+  children: React.ReactNode;
+}) {
+  const t = NOTICE_TONE[tone];
+  return (
+    <Flex align="start" gap={2.5} className={cn('rounded-xl border px-4 py-3', t.box)}>
+      <HugeiconsIcon icon={icon} size={17} className={cn('mt-0.5 shrink-0', t.icon)} />
+      <Text as="span" className="text-sm text-pretty">
+        {children}
+      </Text>
+    </Flex>
+  );
+}
+
+/**
+ * Readiness banner — makes it obvious that a fully-filled-in connection still does
+ * nothing until a domain is verified (and the connection is enabled).
+ */
+function ConnectionStatus({ connection }: { connection: Conn }) {
+  const hasVerifiedDomain = connection.domains.some((d) => d.verified);
+
+  if (connection.status !== 'active') {
+    return (
+      <Notice tone="warning" icon={AlertCircleIcon}>
+        Single sign-on is turned off. Click <b>Edit</b> and turn <b>Enabled</b> on to start using it.
+      </Notice>
+    );
+  }
+  if (!hasVerifiedDomain) {
+    return (
+      <Notice tone="warning" icon={AlertCircleIcon}>
+        Single sign-on isn&rsquo;t live yet — add and <b>verify an email domain</b> below. Until a
+        domain is verified, no one can sign in with SSO.
+      </Notice>
+    );
+  }
+  return (
+    <Notice tone="success" icon={CheckmarkCircle02Icon}>
+      Single sign-on is active. People with a verified-domain email are sent to your identity provider
+      to sign in
+      {connection.enforced && <> — and it&rsquo;s required for those domains</>}.
+    </Notice>
   );
 }
 
