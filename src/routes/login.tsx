@@ -46,6 +46,13 @@ function isEmailish(v: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
+function ssoStartUrl(email: string, next: string): string {
+  return (
+    `${API_BASE}/v1/auth/sso/start?email=${encodeURIComponent(email)}` +
+    `&next=${encodeURIComponent(next)}`
+  );
+}
+
 function LoginPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -68,6 +75,9 @@ function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [checkingSso, setCheckingSso] = useState(false);
+  // SSO is available for this domain but NOT enforced → offer it alongside the password
+  // field instead of force-redirecting, so users with a password keep that choice.
+  const [ssoOptional, setSsoOptional] = useState(false);
 
   const finishLogin = async () => {
     await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
@@ -100,17 +110,24 @@ function LoginPage() {
     setCheckingSso(true);
     try {
       const res = await ssoDiscovery({ query: { email: e } });
-      if (res.data?.available) {
-        window.location.href =
-          `${API_BASE}/v1/auth/sso/start?email=${encodeURIComponent(e)}` +
-          `&next=${encodeURIComponent(postLogin)}`;
+      const data = res.data;
+      // Enforced → SSO is the only way in for this domain; go straight to the IdP.
+      if (data?.available && data.enforced) {
+        window.location.href = ssoStartUrl(e, postLogin);
         return;
       }
+      // Available but optional → continue to the password step, but also offer SSO there.
+      setSsoOptional(Boolean(data?.available));
     } catch {
       // Discovery failed → fall back to password login rather than blocking sign-in.
+      setSsoOptional(false);
     }
     setCheckingSso(false);
     setStep('password');
+  };
+
+  const goToSso = () => {
+    window.location.href = ssoStartUrl(email.trim(), postLogin);
   };
 
   const passwordLogin = useMutation({
@@ -133,6 +150,7 @@ function LoginPage() {
   const backToEmail = () => {
     setStep('email');
     setPassword('');
+    setSsoOptional(false);
     setFormError(null);
   };
 
@@ -175,6 +193,8 @@ function LoginPage() {
               passwordLogin.mutate();
             }}
             loading={passwordLogin.isPending}
+            ssoAvailable={ssoOptional}
+            onSso={goToSso}
           />
         )}
 
@@ -240,7 +260,11 @@ function EmailStep({
   );
 }
 
-/** Step 2 (no SSO for this domain): show the password field for the chosen email. */
+/**
+ * Step 2: the password field for the chosen email. When the domain has **optional**
+ * SSO, a "Continue with SSO" button is shown above it so users keep both options (an
+ * enforced domain never reaches this step — it's redirected straight to the IdP).
+ */
 function PasswordStep({
   email,
   password,
@@ -248,6 +272,8 @@ function PasswordStep({
   onBack,
   onSubmit,
   loading,
+  ssoAvailable,
+  onSso,
 }: {
   email: string;
   password: string;
@@ -255,6 +281,8 @@ function PasswordStep({
   onBack: () => void;
   onSubmit: () => void;
   loading: boolean;
+  ssoAvailable: boolean;
+  onSso: () => void;
 }) {
   return (
     <Flex
@@ -281,6 +309,28 @@ function PasswordStep({
         </Flex>
         <Input id="email-display" type="email" value={email} readOnly disabled />
       </Flex>
+
+      {ssoAvailable && (
+        <Flex direction="col" gap={4}>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="w-full"
+            onClick={onSso}
+            data-testid="login-sso"
+          >
+            Continue with SSO
+          </Button>
+          <Flex align="center" gap={3}>
+            <div className="h-px flex-1 bg-border" />
+            <Text as="span" className="text-xs text-muted-foreground">
+              or use your password
+            </Text>
+            <div className="h-px flex-1 bg-border" />
+          </Flex>
+        </Flex>
+      )}
 
       <Flex direction="col" gap={1.5}>
         <Flex align="center" justify="between">
