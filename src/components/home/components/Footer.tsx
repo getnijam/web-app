@@ -3,6 +3,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { SquareArrowUpRightIcon } from '@hugeicons/core-free-icons';
 import { Logo } from '@/components/auth/Logo';
 import { FooterStatus } from './FooterStatus';
+import { DashboardLink } from './DashboardLink';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -70,9 +71,7 @@ export function Footer() {
             <Link to="/pricing" className={COL}>
               Pricing
             </Link>
-            <Link to="/login" className={COL}>
-              Dashboard
-            </Link>
+            <DashboardLink className={COL}>Dashboard</DashboardLink>
           </div>
 
           <div>

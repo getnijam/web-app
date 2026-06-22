@@ -18,7 +18,7 @@ function PrivacyPage() {
   return (
     <LegalLayout
       title="Privacy Policy"
-      updated="June 20, 2026"
+      updated="June 22, 2026"
       intro={
         <>
           This Privacy Policy explains what information Nijam collects when you use the dashboard at
@@ -74,6 +74,13 @@ function PrivacyPage() {
           If you point an AI agent at Nijam over MCP, the test data it requests is returned to that
           agent and its model provider.
         </P>
+        <P>
+          <strong className="font-semibold text-foreground">Single sign-on (SSO).</strong> If your
+          organization enables SSO, we store the connection settings — your provider’s issuer URL,
+          client ID, an encrypted client secret, and the email domains you verify. When a member signs
+          in through SSO, your identity provider sends us a subject identifier, email address, and
+          name, which we use to sign them in and link the login to their Nijam account.
+        </P>
       </Section>
 
       <Section title="2. How we use your information">
@@ -108,10 +115,10 @@ function PrivacyPage() {
           ]}
         />
         <P>
-          When you sign in with Google or GitHub, or connect Slack or the GitHub App, you also share
-          data with those providers under their own terms. And if you connect an AI agent over MCP,
-          the test data it queries is sent to that agent and its model provider — both chosen and
-          controlled by you, not by Nijam.
+          When you sign in with Google or GitHub, connect Slack or the GitHub App, or sign in through
+          your organization’s SSO identity provider, you also share data with those providers under
+          their own terms. And if you connect an AI agent over MCP, the test data it queries is sent
+          to that agent and its model provider — both chosen and controlled by you, not by Nijam.
         </P>
         <P>
           We may also disclose information if required by law or to protect the rights, safety, and

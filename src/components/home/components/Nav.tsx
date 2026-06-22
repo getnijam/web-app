@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Cancel01Icon, Menu01Icon } from '@hugeicons/core-free-icons';
 import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { DashboardLink } from './DashboardLink';
 import { Logo } from '@/components/auth/Logo';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
@@ -84,15 +85,15 @@ export function Nav() {
     actions = (
       <>
         <Button asChild size="sm" className="hidden rounded-full px-4 sm:inline-flex">
-          <Link to="/orgs">Go to dashboard</Link>
+          <DashboardLink>Go to dashboard</DashboardLink>
         </Button>
         <AccountMenu variant="topnav" />
       </>
     );
     menuExtras = (
-      <Link to="/orgs" className={cn(LINK, 'sm:hidden')} onClick={closeMenu}>
+      <DashboardLink className={cn(LINK, 'sm:hidden')} onClick={closeMenu}>
         Go to dashboard
-      </Link>
+      </DashboardLink>
     );
   } else {
     actions = (

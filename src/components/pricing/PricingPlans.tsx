@@ -60,6 +60,7 @@ const PLANS: Plan[] = [
       </>,
       'Unlimited members',
       '90-day history retention',
+      'Single sign-on (SSO/OIDC)',
       'Everything in Free',
       'Priority email support',
     ],

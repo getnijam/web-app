@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
-import { login, verifyLogin2Fa } from '@/client';
+import { login, verifyLogin2Fa, ssoDiscovery } from '@/client';
 import { getMeQueryKey, getMeOptions } from '@/client/@tanstack/react-query.gen';
-import { AuthLayout, AuthHeading, FieldError } from '@/components/auth/AuthLayout';
+import { AuthLayout, AuthHeading } from '@/components/auth/AuthLayout';
 import { OAuthButtons } from '@/components/auth/OAuthButtons';
 import { oauthErrorMessage } from '@/lib/oauth-error';
+import { ssoErrorMessage } from '@/lib/sso-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,6 +16,8 @@ import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
 import { redirectAuthedToDashboard, safeNextPath } from '@/lib/auth-redirect';
 import { seo } from '@/lib/seo';
+
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
 
 export const Route = createFileRoute('/login')({
   head: () =>
@@ -32,35 +32,42 @@ export const Route = createFileRoute('/login')({
   component: LoginPage,
   validateSearch: (
     search: Record<string, unknown>,
-  ): { invite?: string; oauthError?: string; nextUrl?: string } => ({
+  ): { invite?: string; oauthError?: string; ssoError?: string; nextUrl?: string } => ({
     invite: typeof search.invite === 'string' ? search.invite : undefined,
     oauthError: typeof search.oauthError === 'string' ? search.oauthError : undefined,
+    ssoError: typeof search.ssoError === 'string' ? search.ssoError : undefined,
     // The page to return to after sign-in (set by the _authed gate). Validated to a
     // same-origin relative path so it can't be used as an open redirect.
     nextUrl: safeNextPath(search.nextUrl),
   }),
 });
 
-const LoginSchema = z.object({
-  email: z.string().email('Enter a valid email address.'),
-  password: z.string().min(1, 'Enter your password.'),
-});
-type LoginForm = z.infer<typeof LoginSchema>;
+function isEmailish(v: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
 
 function LoginPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { invite, oauthError, nextUrl } = Route.useSearch();
+  const { invite, oauthError, ssoError, nextUrl } = Route.useSearch();
   // Where to land after sign-in: the invite flow wins (resumes acceptance), else the
   // page they were headed to (?nextUrl from the gate), else the org picker. The same
-  // target is carried through OAuth via the start route's `next`.
+  // target is carried through OAuth/SSO via the start route's `next`.
   const postLogin = invite ? `/invite?token=${invite}` : (nextUrl ?? '/orgs');
-  const [formError, setFormError] = useState<string | null>(() => oauthErrorMessage(oauthError));
+
+  const [formError, setFormError] = useState<string | null>(
+    () => oauthErrorMessage(oauthError) ?? ssoErrorMessage(ssoError),
+  );
   // Set once the password step succeeds for a 2FA-enabled account; switches the page to
   // the code-entry step. Held only in memory (never persisted).
   const [challengeToken, setChallengeToken] = useState<string | null>(null);
 
-  const form = useForm<LoginForm>({ resolver: zodResolver(LoginSchema) });
+  // Identity-first: collect the email, check if its domain has SSO, and only reveal the
+  // password field when it doesn't (SSO domains never see a password prompt).
+  const [step, setStep] = useState<'email' | 'password'>('email');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [checkingSso, setCheckingSso] = useState(false);
 
   const finishLogin = async () => {
     await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
@@ -81,8 +88,34 @@ function LoginPage() {
     }
   };
 
-  const mutation = useMutation({
-    mutationFn: async (body: LoginForm) => (await login({ body, throwOnError: true })).data,
+  // Step 1 → decide SSO vs password for this email. On an SSO domain we leave the page
+  // for the IdP (keep the spinner); otherwise we reveal the password field.
+  const continueWithEmail = async () => {
+    const e = email.trim();
+    if (!isEmailish(e)) {
+      setFormError('Enter a valid email address.');
+      return;
+    }
+    setFormError(null);
+    setCheckingSso(true);
+    try {
+      const res = await ssoDiscovery({ query: { email: e } });
+      if (res.data?.available) {
+        window.location.href =
+          `${API_BASE}/v1/auth/sso/start?email=${encodeURIComponent(e)}` +
+          `&next=${encodeURIComponent(postLogin)}`;
+        return;
+      }
+    } catch {
+      // Discovery failed → fall back to password login rather than blocking sign-in.
+    }
+    setCheckingSso(false);
+    setStep('password');
+  };
+
+  const passwordLogin = useMutation({
+    mutationFn: async () =>
+      (await login({ body: { email: email.trim(), password }, throwOnError: true })).data,
     onSuccess: async (result) => {
       if (result && 'twoFactorRequired' in result) {
         setChallengeToken(result.challengeToken);
@@ -91,15 +124,17 @@ function LoginPage() {
       await finishLogin();
     },
     onError: (err: unknown) => {
-      if (isApiError(err) && err.error.field) {
-        form.setError(err.error.field as keyof LoginForm, { message: err.error.message });
-      } else if (isApiError(err)) {
-        setFormError(err.error.message);
-      } else {
-        setFormError('Something went wrong. Please try again.');
-      }
+      setFormError(
+        isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+      );
     },
   });
+
+  const backToEmail = () => {
+    setStep('email');
+    setPassword('');
+    setFormError(null);
+  };
 
   if (challengeToken) {
     return (
@@ -120,59 +155,28 @@ function LoginPage() {
 
         <OAuthButtons next={postLogin} />
 
-        <Flex
-          as="form"
-          direction="col"
-          gap={4}
-          onSubmit={form.handleSubmit((data) => {
-            setFormError(null);
-            mutation.mutate(data);
-          })}
-        >
-          {formError && <ErrorBanner>{formError}</ErrorBanner>}
+        {formError && <ErrorBanner>{formError}</ErrorBanner>}
 
-          <Flex direction="col" gap={1.5}>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              data-testid="login-email"
-              {...form.register('email')}
-            />
-            <FieldError message={form.formState.errors.email?.message} />
-          </Flex>
-
-          <Flex direction="col" gap={1.5}>
-            <Flex align="center" justify="between">
-              <Label htmlFor="password">Password</Label>
-              <Link
-                to="/forgot-password"
-                className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </Flex>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              data-testid="login-password"
-              {...form.register('password')}
-            />
-            <FieldError message={form.formState.errors.password?.message} />
-          </Flex>
-
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full"
-            loading={mutation.isPending}
-            data-testid="login-submit"
-          >
-            {mutation.isPending ? 'Signing in…' : 'Sign in'}
-          </Button>
-        </Flex>
+        {step === 'email' ? (
+          <EmailStep
+            email={email}
+            onEmailChange={setEmail}
+            onContinue={continueWithEmail}
+            loading={checkingSso}
+          />
+        ) : (
+          <PasswordStep
+            email={email}
+            password={password}
+            onPasswordChange={setPassword}
+            onBack={backToEmail}
+            onSubmit={() => {
+              setFormError(null);
+              passwordLogin.mutate();
+            }}
+            loading={passwordLogin.isPending}
+          />
+        )}
 
         <Text color="muted" align="center">
           New to Nijam?{' '}
@@ -185,6 +189,131 @@ function LoginPage() {
         </Text>
       </Flex>
     </AuthLayout>
+  );
+}
+
+/** Step 1: just the email. Continue checks for SSO before asking for a password. */
+function EmailStep({
+  email,
+  onEmailChange,
+  onContinue,
+  loading,
+}: {
+  email: string;
+  onEmailChange: (v: string) => void;
+  onContinue: () => void;
+  loading: boolean;
+}) {
+  return (
+    <Flex
+      as="form"
+      direction="col"
+      gap={4}
+      onSubmit={(e) => {
+        e.preventDefault();
+        onContinue();
+      }}
+    >
+      <Flex direction="col" gap={1.5}>
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          autoComplete="email"
+          autoFocus
+          placeholder="you@company.com"
+          value={email}
+          onChange={(e) => onEmailChange(e.target.value)}
+          data-testid="login-email"
+        />
+      </Flex>
+      <Button
+        type="submit"
+        size="lg"
+        className="w-full"
+        loading={loading}
+        data-testid="login-continue"
+      >
+        {loading ? 'Checking…' : 'Continue'}
+      </Button>
+    </Flex>
+  );
+}
+
+/** Step 2 (no SSO for this domain): show the password field for the chosen email. */
+function PasswordStep({
+  email,
+  password,
+  onPasswordChange,
+  onBack,
+  onSubmit,
+  loading,
+}: {
+  email: string;
+  password: string;
+  onPasswordChange: (v: string) => void;
+  onBack: () => void;
+  onSubmit: () => void;
+  loading: boolean;
+}) {
+  return (
+    <Flex
+      as="form"
+      direction="col"
+      gap={4}
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit();
+      }}
+    >
+      <Flex direction="col" gap={1.5}>
+        <Flex align="center" justify="between">
+          <Label htmlFor="email-display">Email</Label>
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="h-auto p-0 text-xs"
+            onClick={onBack}
+          >
+            Use a different email
+          </Button>
+        </Flex>
+        <Input id="email-display" type="email" value={email} readOnly disabled />
+      </Flex>
+
+      <Flex direction="col" gap={1.5}>
+        <Flex align="center" justify="between">
+          <Label htmlFor="password">Password</Label>
+          <Link
+            to="/forgot-password"
+            className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </Flex>
+        <Input
+          id="password"
+          type="password"
+          autoComplete="current-password"
+          autoFocus
+          value={password}
+          onChange={(e) => onPasswordChange(e.target.value)}
+          data-testid="login-password"
+        />
+      </Flex>
+
+      <Button
+        type="submit"
+        size="lg"
+        className="w-full"
+        loading={loading}
+        disabled={password.length === 0}
+        data-testid="login-submit"
+      >
+        {loading ? 'Signing in…' : 'Sign in'}
+      </Button>
+    </Flex>
   );
 }
 

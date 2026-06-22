@@ -18,7 +18,7 @@ function TermsPage() {
   return (
     <LegalLayout
       title="Terms of Service"
-      updated="June 11, 2026"
+      updated="June 22, 2026"
       intro={
         <>
           These Terms of Service (“Terms”) govern your access to and use of Nijam — the
@@ -101,6 +101,15 @@ function TermsPage() {
           revoke a key at any time.
         </P>
         <P>
+          If your organization configures{' '}
+          <strong className="font-semibold text-foreground">single sign-on (SSO)</strong>, an admin
+          authorizes Nijam to authenticate members through your chosen identity provider over OIDC.
+          You’re responsible for your provider configuration and the email domains you verify, and —
+          if you turn on enforcement, which blocks password and social sign-in for your domains — for
+          confirming SSO works before relying on it, since enforced users can’t fall back to a
+          password.
+        </P>
+        <P>
           The reporter, <code className="font-mono">@nijam/pw-reporter</code>, is open source under
           the MIT license; your use of it is governed by that license.
         </P>
@@ -110,7 +119,7 @@ function TermsPage() {
         <Bullets
           items={[
             'Free includes up to 1,000 credits per month, 3 members, and 7-day history retention. 1 credit = 1 Playwright test = 100 pytest/Vitest tests.',
-            'Pro is $20/month and includes 10,000 credits per month and unlimited members, with 90-day retention. Usage beyond the included amount is billed at $0.001 per additional credit (an early-bird rate, half the standard $0.002), calculated and invoiced in arrears at the end of each billing period.',
+            'Pro is $20/month and includes 10,000 credits per month, unlimited members, single sign-on (OIDC), and 90-day retention. Usage beyond the included amount is billed at $0.001 per additional credit (an early-bird rate, half the standard $0.002), calculated and invoiced in arrears at the end of each billing period.',
             'Payments are processed by Polar, our Merchant of Record. Polar handles checkout, billing, applicable taxes, and invoices; your card details are handled by Polar, not stored by Nijam.',
             'Paid subscriptions renew automatically each period until cancelled. You can cancel anytime from the billing portal; cancellation takes effect at the end of the current period and your plan reverts to Free.',
             'Except where required by law or stated otherwise, payments are non-refundable. We may change prices or plan limits with reasonable notice; changes apply to the following billing period.',

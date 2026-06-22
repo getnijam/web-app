@@ -14,11 +14,8 @@ export function SettingsRow({
   children: ReactNode;
 }) {
   return (
-    <Grid
-      cols={[1, 1, 2]}
-      gap={4}
-      className="items-start border-b border-border px-5 py-5 last:border-b-0"
-    >
+    <Grid cols={[1, 1, 2]} gap={4} className="items-start px-5 py-4">
+
       <Flex direction="col" gap={1}>
         <Text as="span" className="text-sm font-semibold">
           {label}

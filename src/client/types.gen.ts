@@ -82,6 +82,11 @@ export type ResetPasswordBody = {
     password: string;
 };
 
+export type SsoDiscoveryResponse = {
+    available: boolean;
+    enforced: boolean;
+};
+
 export type OAuthAccountInfo = {
     provider: 'google' | 'github';
     email: string;
@@ -287,6 +292,46 @@ export type BillingResponse = {
 
 export type BillingRedirectResponse = {
     url: string;
+};
+
+export type SsoDomainItem = {
+    id: string;
+    domain: string;
+    verified: boolean;
+    txtName: string;
+    txtValue: string;
+};
+
+export type SsoConnection = {
+    id: string;
+    provider: string;
+    issuerUrl: string;
+    clientId: string;
+    secretSet: boolean;
+    jitProvisioning: boolean;
+    enforced: boolean;
+    defaultRole: 'admin' | 'member';
+    status: 'active' | 'disabled';
+    domains: Array<SsoDomainItem>;
+} | null;
+
+export type SsoSettingsResponse = {
+    connection: SsoConnection;
+};
+
+export type UpsertSsoConnectionBody = {
+    provider?: string;
+    issuerUrl: string;
+    clientId: string;
+    clientSecret?: string;
+    jitProvisioning?: boolean;
+    enforced?: boolean;
+    defaultRole?: 'admin' | 'member';
+    status?: 'active' | 'disabled';
+};
+
+export type AddSsoDomainBody = {
+    domain: string;
 };
 
 export type ProjectStats = {
@@ -797,6 +842,10 @@ export type SignupErrors = {
      */
     400: ApiError;
     /**
+     * Organization requires SSO
+     */
+    403: ApiError;
+    /**
      * Email exists
      */
     409: ApiError;
@@ -825,6 +874,10 @@ export type LoginErrors = {
      * Invalid credentials or unverified email
      */
     401: ApiError;
+    /**
+     * Organization requires SSO
+     */
+    403: ApiError;
 };
 
 export type LoginError = LoginErrors[keyof LoginErrors];
@@ -944,6 +997,24 @@ export type ResetPasswordResponses = {
 };
 
 export type ResetPasswordResponse = ResetPasswordResponses[keyof ResetPasswordResponses];
+
+export type SsoDiscoveryData = {
+    body?: never;
+    path?: never;
+    query: {
+        email: string;
+    };
+    url: '/v1/auth/sso/discovery';
+};
+
+export type SsoDiscoveryResponses = {
+    /**
+     * OK
+     */
+    200: SsoDiscoveryResponse;
+};
+
+export type SsoDiscoveryResponse2 = SsoDiscoveryResponses[keyof SsoDiscoveryResponses];
 
 export type ListMyOAuthAccountsData = {
     body?: never;
@@ -2205,6 +2276,246 @@ export type CreateBillingPortalResponses = {
 };
 
 export type CreateBillingPortalResponse = CreateBillingPortalResponses[keyof CreateBillingPortalResponses];
+
+export type DeleteOrgSsoData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/sso';
+};
+
+export type DeleteOrgSsoErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type DeleteOrgSsoError = DeleteOrgSsoErrors[keyof DeleteOrgSsoErrors];
+
+export type DeleteOrgSsoResponses = {
+    /**
+     * OK
+     */
+    200: SsoSettingsResponse;
+    /**
+     * Deleted
+     */
+    204: void;
+};
+
+export type DeleteOrgSsoResponse = DeleteOrgSsoResponses[keyof DeleteOrgSsoResponses];
+
+export type GetOrgSsoData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/sso';
+};
+
+export type GetOrgSsoErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type GetOrgSsoError = GetOrgSsoErrors[keyof GetOrgSsoErrors];
+
+export type GetOrgSsoResponses = {
+    /**
+     * OK
+     */
+    200: SsoSettingsResponse;
+};
+
+export type GetOrgSsoResponse = GetOrgSsoResponses[keyof GetOrgSsoResponses];
+
+export type UpsertOrgSsoData = {
+    body?: UpsertSsoConnectionBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/sso';
+};
+
+export type UpsertOrgSsoErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type UpsertOrgSsoError = UpsertOrgSsoErrors[keyof UpsertOrgSsoErrors];
+
+export type UpsertOrgSsoResponses = {
+    /**
+     * OK
+     */
+    200: SsoSettingsResponse;
+};
+
+export type UpsertOrgSsoResponse = UpsertOrgSsoResponses[keyof UpsertOrgSsoResponses];
+
+export type AddOrgSsoDomainData = {
+    body?: AddSsoDomainBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/sso/domains';
+};
+
+export type AddOrgSsoDomainErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type AddOrgSsoDomainError = AddOrgSsoDomainErrors[keyof AddOrgSsoDomainErrors];
+
+export type AddOrgSsoDomainResponses = {
+    /**
+     * OK
+     */
+    200: SsoSettingsResponse;
+};
+
+export type AddOrgSsoDomainResponse = AddOrgSsoDomainResponses[keyof AddOrgSsoDomainResponses];
+
+export type VerifyOrgSsoDomainData = {
+    body?: never;
+    path: {
+        orgId: string;
+        domainId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/sso/domains/{domainId}/verify';
+};
+
+export type VerifyOrgSsoDomainErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type VerifyOrgSsoDomainError = VerifyOrgSsoDomainErrors[keyof VerifyOrgSsoDomainErrors];
+
+export type VerifyOrgSsoDomainResponses = {
+    /**
+     * OK
+     */
+    200: SsoSettingsResponse;
+};
+
+export type VerifyOrgSsoDomainResponse = VerifyOrgSsoDomainResponses[keyof VerifyOrgSsoDomainResponses];
+
+export type RemoveOrgSsoDomainData = {
+    body?: never;
+    path: {
+        orgId: string;
+        domainId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/sso/domains/{domainId}';
+};
+
+export type RemoveOrgSsoDomainErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type RemoveOrgSsoDomainError = RemoveOrgSsoDomainErrors[keyof RemoveOrgSsoDomainErrors];
+
+export type RemoveOrgSsoDomainResponses = {
+    /**
+     * OK
+     */
+    200: SsoSettingsResponse;
+};
+
+export type RemoveOrgSsoDomainResponse = RemoveOrgSsoDomainResponses[keyof RemoveOrgSsoDomainResponses];
 
 export type ListOrgProjectsData = {
     body?: never;

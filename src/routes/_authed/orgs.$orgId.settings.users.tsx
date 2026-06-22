@@ -52,7 +52,7 @@ import { notify } from '@/lib/notify';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { privateSeo } from '@/lib/seo';
 
-export const Route = createFileRoute('/_authed/orgs/$orgId/users')({
+export const Route = createFileRoute('/_authed/orgs/$orgId/settings/users')({
   head: () => privateSeo('Members'),
   component: UsersPage,
 });
@@ -107,16 +107,13 @@ function UsersPage() {
   };
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
-      <Flex direction="col" gap={1}>
-        <Text variant="h1">Users</Text>
-        <Text color="muted">
-          {memberCount} {memberCount === 1 ? 'member' : 'members'}
-          {isAdmin &&
-            pendingCount > 0 &&
-            ` · ${pendingCount} pending ${pendingCount === 1 ? 'invitation' : 'invitations'}`}
-        </Text>
-      </Flex>
+    <Flex direction="col" gap={6}>
+      <Text color="muted" className="text-sm">
+        {memberCount} {memberCount === 1 ? 'member' : 'members'}
+        {isAdmin &&
+          pendingCount > 0 &&
+          ` · ${pendingCount} pending ${pendingCount === 1 ? 'invitation' : 'invitations'}`}
+      </Text>
 
       {isAdmin ? (
         <InviteBar orgId={orgId} />

@@ -31,7 +31,7 @@ export const Route = createFileRoute('/security')({
 });
 
 const CONTACT = 'support@nijam.dev';
-const UPDATED = 'June 20, 2026';
+const UPDATED = 'June 22, 2026';
 
 type Pillar = { icon: ReactNode; tint: string; title: string; body: string };
 
@@ -46,7 +46,7 @@ const PILLARS: Pillar[] = [
     icon: <HugeiconsIcon icon={FingerPrintIcon} size={22} />,
     tint: 'bg-info/15 text-info',
     title: 'Authentication & sessions',
-    body: 'Email + password (argon2id) plus optional Google and GitHub sign-in and optional two-factor authentication (TOTP). Sessions live in HttpOnly, Secure, SameSite cookies and are revoked on logout, password change, and reset.',
+    body: 'Email + password (argon2id), optional Google and GitHub sign-in, optional two-factor authentication (TOTP), and enterprise single sign-on (OIDC) for Pro organizations. Sessions live in HttpOnly, Secure, SameSite cookies and are revoked on logout, password change, and reset.',
   },
   {
     icon: <HugeiconsIcon icon={Key01Icon} size={22} />,
@@ -144,8 +144,8 @@ function SecurityPage() {
                     or the one-time key you copy.
                   </>,
                   <>
-                    <b>Slack bot tokens</b> are encrypted at rest with <b>AES-256-GCM</b> and are
-                    never returned to clients or written to logs.
+                    <b>Slack bot tokens</b> and <b>SSO client secrets</b> are encrypted at rest with{' '}
+                    <b>AES-256-GCM</b> and are never returned to clients or written to logs.
                   </>,
                   <>
                     Our managed database (Neon Postgres) and object storage (Cloudflare R2) encrypt
@@ -166,6 +166,15 @@ function SecurityPage() {
                   'Email verification and password-reset links are single-use and time-limited (24 hours and 1 hour respectively); a password reset signs you out of every session.',
                   'Google and GitHub sign-in use an HMAC-signed, short-lived state parameter to prevent CSRF, and only match accounts on a verified email address.',
                   'Optional two-factor authentication (TOTP) adds an authenticator-app code to sign-in; the shared secret is encrypted at rest (AES-256-GCM) and one-time backup codes are stored only as SHA-256 hashes.',
+                  <>
+                    Pro organizations can require <b>enterprise single sign-on (OIDC)</b> through their
+                    own identity provider (Okta, Entra ID, Auth0, and others). Each connection is
+                    per-organization and uses the Authorization Code flow with <b>PKCE</b>; the client
+                    secret is encrypted at rest (AES-256-GCM); and SSO only routes a login once the
+                    organization has proven ownership of the email domain with a <b>DNS TXT record</b>.
+                    Admins can <b>enforce</b> SSO so password and social sign-in are blocked for their
+                    domains.
+                  </>,
                   'Sessions are stored server-side, expire after 30 days, and are revoked on logout and on any password change.',
                 ]}
               />
@@ -273,7 +282,8 @@ function SecurityPage() {
                   </>,
                   <>
                     <b>Slack</b> and the <b>Nijam GitHub App</b> — only for the integrations you
-                    connect; and <b>Google</b>/<b>GitHub</b> for the sign-in methods you use.
+                    connect; <b>Google</b>/<b>GitHub</b> for the sign-in methods you use; and your own{' '}
+                    <b>identity provider</b> (e.g. Okta) for SSO, if you configure it.
                   </>,
                 ]}
               />

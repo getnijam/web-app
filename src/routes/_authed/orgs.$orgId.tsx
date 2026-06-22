@@ -3,6 +3,7 @@ import { setMyLastOrg } from '@/client';
 import type { UserPublic } from '@/client';
 import { getOrgOptions, getMeQueryKey } from '@/client/@tanstack/react-query.gen';
 import { AppShell } from '@/components/shell/AppShell';
+import { DashboardNotFound } from '@/components/states/DashboardNotFound';
 
 /**
  * Org workspace layout. Loads the org (membership-checked server-side) and
@@ -30,5 +31,8 @@ export const Route = createFileRoute('/_authed/orgs/$orgId')({
         .catch(() => {});
     }
   },
+  // Unmatched routes under an org render the dashboard 404 inside the shell (the 404
+  // replaces AppShell's <Outlet/>, so the sidebar/topbar stay).
+  notFoundComponent: DashboardNotFound,
   component: AppShell,
 });

@@ -4,7 +4,6 @@ import { useParams, useRouterState } from '@tanstack/react-router';
 export type SubRoute =
   | 'home'
   | 'org'
-  | 'users'
   | 'keys'
   | 'billing'
   | 'integrations'
@@ -18,7 +17,6 @@ export type SubRoute =
 export const ROUTE_TITLES: Record<SubRoute, string> = {
   home: 'Projects',
   org: 'Organization settings',
-  users: 'Users',
   keys: 'Secret keys',
   billing: 'Billing & usage',
   integrations: 'Integrations',
@@ -38,8 +36,7 @@ const PROJECT_SUB: Record<string, SubRoute> = {
 };
 
 const ORG_SUB: Record<string, SubRoute> = {
-  settings: 'org',
-  users: 'users',
+  settings: 'org', // also covers /settings/users and /settings/sso (Org settings tabs)
   keys: 'keys',
   billing: 'billing',
   integrations: 'integrations',

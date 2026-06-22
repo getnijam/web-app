@@ -4,10 +4,12 @@ import { CloudUploadIcon, AiChat02Icon } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DashboardNotFound } from '@/components/states/DashboardNotFound';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/keys')({
   head: () => privateSeo('Secret keys'),
+  notFoundComponent: DashboardNotFound,
   component: SecretKeysLayout,
 });
 

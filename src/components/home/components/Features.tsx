@@ -9,6 +9,7 @@ import {
   BellIcon,
   GitPullRequestIcon,
   AiChat02Icon,
+  ShieldKeyIcon,
 } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
@@ -85,6 +86,12 @@ const FEATURES: Feature[] = [
     tint: 'bg-info/15 text-info',
     title: 'MCP for AI agents',
     body: 'Point any MCP-capable agent — Claude Code, Cursor, Codex — at your runs and ask why a suite is red, whether a test is flaky, or when it broke, answered from your real history.',
+  },
+  {
+    icon: ShieldKeyIcon,
+    tint: 'bg-primary/15 text-primary',
+    title: 'Single sign-on',
+    body: 'Let your team sign in with your own identity provider — Okta, Entra ID, Auth0, any OIDC — with just-in-time provisioning and optional enforcement. A Pro feature.',
   },
 ];
 

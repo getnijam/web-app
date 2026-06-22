@@ -5,6 +5,8 @@ const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   denied: 'Sign-in was cancelled.',
   unverified_email:
     "Your email isn't verified with that provider. Verify it there, then try again.",
+  sso_enforced:
+    'Your organization requires single sign-on. Enter your work email above to continue with SSO.',
   in_use: 'That account is already linked to a different Nijam user.',
   email_mismatch:
     'That account uses a different email than your Nijam account. Connect one that uses the same email.',

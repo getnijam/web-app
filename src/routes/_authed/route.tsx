@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import * as Sentry from '@sentry/react';
 import { getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { identify } from '@/lib/betterstack';
+import { DashboardNotFound } from '@/components/states/DashboardNotFound';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed')({
@@ -21,6 +22,10 @@ export const Route = createFileRoute('/_authed')({
       throw redirect({ to: '/login', search: { nextUrl: location.href } });
     }
   },
+  // Dashboard-scoped 404: unmatched authed routes render the in-app 404 instead of
+  // bubbling to the public marketing 404 (Nav + Footer). Org-scoped 404s use the org
+  // layout's own notFoundComponent so the shell (sidebar/topbar) stays.
+  notFoundComponent: DashboardNotFound,
   component: AuthedLayout,
 });
 

@@ -5,7 +5,6 @@ import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import {
   Home01Icon,
   Building03Icon,
-  UserMultiple02Icon,
   SquareLock02Icon,
   CreditCardIcon,
   PlugSocketIcon,
@@ -75,14 +74,6 @@ function HomeNav({ orgId, active }: { orgId: string; active: SubRoute }) {
           <Link to="/orgs/$orgId/projects" params={{ orgId }}>
             <NavGlyph icon={Home01Icon} active={active === 'home'} />
             <span>Projects</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild isActive={active === 'users'} className={NAV_ACTIVE}>
-          <Link to="/orgs/$orgId/users" params={{ orgId }}>
-            <NavGlyph icon={UserMultiple02Icon} active={active === 'users'} />
-            <span>Users</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>

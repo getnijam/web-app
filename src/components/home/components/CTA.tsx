@@ -5,6 +5,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { useQuery } from '@tanstack/react-query';
 import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { DashboardLink } from './DashboardLink';
 import { Reveal } from '../Reveal';
 
 /**
@@ -30,7 +31,7 @@ export function CTA({
         <Flex justify="center" gap={3} wrap className="mt-7">
           <Button asChild size="lg">
             {user ? (
-              <Link to="/orgs">Go to dashboard</Link>
+              <DashboardLink>Go to dashboard</DashboardLink>
             ) : (
               <Link to="/login">Log in to your dashboard</Link>
             )}
