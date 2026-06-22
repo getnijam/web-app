@@ -5,7 +5,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { SentIcon, Delete02Icon, Mail01Icon } from '@hugeicons/core-free-icons';
+import {
+  SentIcon,
+  Delete02Icon,
+  Mail01Icon,
+  Search01Icon,
+  UserAdd01Icon,
+} from '@hugeicons/core-free-icons';
 import type { MemberSummary, InvitationSummary } from '@/client';
 import {
   getMeOptions,
@@ -22,6 +28,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import {
   Select,
@@ -40,6 +47,15 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
 import { RowsSkeleton } from '@/components/states/RowsSkeleton';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
@@ -64,8 +80,19 @@ function UsersPage() {
   const members = useQuery(listOrgMembersOptions({ path: { orgId } }));
   const invites = useQuery(listOrgInvitationsOptions({ path: { orgId } }));
 
+  const [query, setQuery] = useState('');
+  const [inviteOpen, setInviteOpen] = useState(false);
+
   const memberCount = members.data?.members.length ?? 0;
   const pendingCount = invites.data?.invitations.length ?? 0;
+
+  const q = query.trim().toLowerCase();
+  const matches = (name: string | null | undefined, email: string) =>
+    !q || (name?.toLowerCase().includes(q) ?? false) || email.toLowerCase().includes(q);
+  const filteredMembers = (members.data?.members ?? []).filter((m) => matches(m.name, m.email));
+  const filteredInvites = (invites.data?.invitations ?? []).filter((inv) =>
+    matches(null, inv.email),
+  );
 
   const renderMembers = () => {
     if (members.isLoading) return <RowsSkeleton rows={3} round />;
@@ -75,7 +102,9 @@ function UsersPage() {
           <ErrorState error={members.error} onRetry={() => members.refetch()} />
         </div>
       );
-    return members.data.members.map((m) => (
+    if (filteredMembers.length === 0)
+      return <EmptyState title="No matches" description="No members match your search." />;
+    return filteredMembers.map((m) => (
       <MemberRow
         key={m.userId}
         orgId={orgId}
@@ -101,9 +130,9 @@ function UsersPage() {
           description="Invite a teammate by email and they'll show up here until they accept."
         />
       );
-    return invites.data.invitations.map((inv) => (
-      <InviteRow key={inv.id} orgId={orgId} invite={inv} />
-    ));
+    if (filteredInvites.length === 0)
+      return <EmptyState title="No matches" description="No invitations match your search." />;
+    return filteredInvites.map((inv) => <InviteRow key={inv.id} orgId={orgId} invite={inv} />);
   };
 
   return (
@@ -115,9 +144,32 @@ function UsersPage() {
           ` · ${pendingCount} pending ${pendingCount === 1 ? 'invitation' : 'invitations'}`}
       </Text>
 
-      {isAdmin ? (
-        <InviteBar orgId={orgId} />
-      ) : (
+      <Flex align="center" gap={3} className="flex-wrap">
+        <div className="relative min-w-0 flex-1">
+          <HugeiconsIcon
+            icon={Search01Icon}
+            size={16}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            type="search"
+            placeholder="Search members…"
+            aria-label="Search members"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="pl-9"
+            data-testid="members-search"
+          />
+        </div>
+        {isAdmin && (
+          <Button className="shrink-0" onClick={() => setInviteOpen(true)} data-testid="invite-open">
+            <HugeiconsIcon icon={UserAdd01Icon} size={16} />
+            Invite user
+          </Button>
+        )}
+      </Flex>
+
+      {!isAdmin && (
         <Text color="muted" className="text-sm">
           Only admins can invite or manage members.
         </Text>
@@ -126,6 +178,8 @@ function UsersPage() {
       <SettingsPanel title="Members">{renderMembers()}</SettingsPanel>
 
       {isAdmin && <SettingsPanel title="Pending invitations">{renderInvites()}</SettingsPanel>}
+
+      {isAdmin && <InviteDialog orgId={orgId} open={inviteOpen} onOpenChange={setInviteOpen} />}
     </Flex>
   );
 }
@@ -135,7 +189,15 @@ const InviteSchema = z.object({
 });
 type InviteForm = z.infer<typeof InviteSchema>;
 
-function InviteBar({ orgId }: { orgId: string }) {
+function InviteDialog({
+  orgId,
+  open,
+  onOpenChange,
+}: {
+  orgId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const queryClient = useQueryClient();
   const form = useForm<InviteForm>({
     resolver: zodResolver(InviteSchema),
@@ -151,10 +213,11 @@ function InviteBar({ orgId }: { orgId: string }) {
         queryKey: listOrgInvitationsQueryKey({ path: { orgId } }),
       });
       form.reset();
+      setRole('member');
+      onOpenChange(false);
       notify.success('Invitation sent', {
         description: `${created.email} was invited as ${role === 'admin' ? 'an admin' : 'a member'}. The invite expires in 7 days.`,
       });
-      setRole('member');
     },
     onError: (err) => {
       const msg = isApiError(err) ? err.error.message : 'Could not send the invitation.';
@@ -163,41 +226,62 @@ function InviteBar({ orgId }: { orgId: string }) {
   });
 
   return (
-    <Flex
-      as="form"
-      direction="col"
-      gap={1.5}
-      className="rounded-2xl border border-border bg-card p-4"
-      onSubmit={form.handleSubmit((data) =>
-        invite.mutate({ path: { orgId }, body: { email: data.email, role } }),
-      )}
-    >
-      <Flex gap={2} align="start" className="w-full">
-        <Flex direction="col" gap={1.5} className="min-w-0 flex-1">
-          <Input
-            type="email"
-            autoComplete="off"
-            placeholder="teammate@company.com"
-            aria-label="Invite by email"
-            {...form.register('email')}
-          />
-        </Flex>
-        <Select value={role} onValueChange={(v) => setRole(v as 'admin' | 'member')}>
-          <SelectTrigger size="field" aria-label="Role" className="w-32 shrink-0">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="member">Member</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button type="submit" loading={invite.isPending} disabled={!email.trim()}>
-          <HugeiconsIcon icon={SentIcon} size={16} />
-          Send invite
-        </Button>
-      </Flex>
-      <FieldError message={form.formState.errors.email?.message} />
-    </Flex>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Invite a member</DialogTitle>
+          <DialogDescription>
+            They&rsquo;ll get an email invitation to join this organization. It expires in 7 days.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form
+          onSubmit={form.handleSubmit((data) =>
+            invite.mutate({ path: { orgId }, body: { email: data.email, role } }),
+          )}
+        >
+          <Flex direction="col" gap={4}>
+            <Flex direction="col" gap={1.5}>
+              <Label htmlFor="invite-email">Email</Label>
+              <Input
+                id="invite-email"
+                type="email"
+                autoComplete="off"
+                autoFocus
+                placeholder="teammate@company.com"
+                {...form.register('email')}
+              />
+              <FieldError message={form.formState.errors.email?.message} />
+            </Flex>
+
+            <Flex direction="col" gap={1.5}>
+              <Label htmlFor="invite-role">Role</Label>
+              <Select value={role} onValueChange={(v) => setRole(v as 'admin' | 'member')}>
+                <SelectTrigger id="invite-role" aria-label="Role" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="member">Member</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </Flex>
+          </Flex>
+
+          <DialogFooter className="mt-6">
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit" loading={invite.isPending} disabled={!email.trim()}>
+              {!invite.isPending && <HugeiconsIcon icon={SentIcon} size={16} />}
+              Send invite
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
