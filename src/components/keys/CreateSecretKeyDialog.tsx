@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -133,7 +133,7 @@ export function CreateSecretKeyDialog({
     resolver: zodResolver(CreateSchema),
     defaultValues: { name: '' },
   });
-  const name = form.watch('name');
+  const name = useWatch({ control: form.control, name: 'name' });
 
   function reset() {
     form.reset({ name: '' });

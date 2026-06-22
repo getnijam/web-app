@@ -434,10 +434,19 @@ function ConnectionEdit({
 
       <SettingsRow
         label="Require SSO"
-        hint="Force members on verified domains to sign in via SSO — blocks password and social login for them. Test SSO before enabling: enforced users can't fall back, and a broken IdP can lock them out."
+        hint="Force everyone on your verified domains to sign in via SSO — this blocks password and social login for those emails across all of Nijam. Test SSO before enabling: enforced users can't fall back, and a broken IdP can lock them out."
       >
         <Switch checked={draft.enforced} onCheckedChange={(v) => set({ enforced: v })} />
       </SettingsRow>
+      {draft.enforced && (
+        <div className="px-5 pb-4">
+          <Notice tone="warning" icon={AlertCircleIcon}>
+            Enforcing SSO <b>claims your verified domains</b>: everyone with one of those emails must sign
+            in through your identity provider across all of Nijam — including any other organizations they
+            belong to. Deprovisioning a user in your IdP then removes their Nijam access entirely.
+          </Notice>
+        </div>
+      )}
 
       <SettingsRow label="Default role" hint="The role new members get when provisioned.">
         <Select

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -39,7 +39,7 @@ export function CreateOrgDialog({
   const queryClient = useQueryClient();
   const [formError, setFormError] = useState<string | null>(null);
   const form = useForm<CreateForm>({ resolver: zodResolver(CreateSchema) });
-  const name = form.watch('name');
+  const name = useWatch({ control: form.control, name: 'name' });
 
   function close() {
     form.reset();
