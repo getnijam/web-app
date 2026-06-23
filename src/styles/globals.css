@@ -248,32 +248,14 @@
   background-color: var(--overlay);
 }
 
-/* Cursor-following glow "orb" for the hero (positioned + faded in Hero.tsx via a
-   ref). A soft, brand-tinted radial ball; size/blur/color live here so the call
-   site avoids one-off values. Decorative — paired with pointer-events-none. */
-@utility hero-orb {
-  width: 40rem;
-  height: 40rem;
-  background: radial-gradient(
-    circle at center,
-    color-mix(in oklab, var(--primary) 40%, transparent),
-    color-mix(in oklab, var(--info) 22%, transparent) 45%,
-    transparent 70%
-  );
-  filter: blur(64px);
-  /* Gentle breathing shimmer so the glow feels alive even when the cursor is
-     still (its position is driven separately via a JS transform). */
-  animation: hero-shimmer 6s ease-in-out infinite;
-}
-
-@keyframes hero-shimmer {
-  0%,
-  100% {
-    opacity: 0.7;
-  }
-  50% {
-    opacity: 1;
-  }
+/* Interactive grid overlay for the hero. A full-bleed CSS grid whose cells are
+   aligned to the same 3.5rem rhythm as hero-grid; each cell tints toward the
+   brand color on hover and fades back out (the fade lives on the cell in
+   Hero.tsx), so the cursor leaves a soft trail of lit squares. Decorative. */
+@utility grid-cells {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 3.5rem);
+  grid-auto-rows: 3.5rem;
 }
 
 /* Faint full-bleed grid behind the hero, softly fading in from the top of the
@@ -297,8 +279,23 @@
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
 }
 
+/* Connector "data flow" in the hero product mock: dashes that stream along the
+   stroke from the top cards down into the dashboard card. Paired with a faint
+   static track path; decorative + aria-hidden. The dash period (3+9=12) divides
+   the offset travel (24) so the loop is seamless. */
+@utility flow-line {
+  stroke-dasharray: 3 9;
+  animation: nijam-flow 1.1s linear infinite;
+}
+
+@keyframes nijam-flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .hero-orb {
+  .flow-line {
     animation: none;
   }
 }

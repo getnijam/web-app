@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type PointerEvent } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Tick02Icon } from '@hugeicons/core-free-icons';
@@ -12,58 +12,56 @@ import { DashboardLink } from './DashboardLink';
 import { ProductMock } from './ProductMock';
 import { CIStrip } from './CIStrip';
 
+// px width of one grid cell — matches the 3.5rem rhythm of hero-grid / grid-cells.
+const CELL = 56;
+
 export function Hero() {
   const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
 
-  // Cursor-following glow orb. Its transform is written straight to the DOM
-  // through a ref so pointer moves never re-render the hero subtree.
-  const sectionRef = useRef<HTMLElement>(null);
-  const orbRef = useRef<HTMLDivElement>(null);
-  // Until the pointer first drives the orb we keep it centered (and re-center
-  // on resize); once the cursor takes over it stays wherever it was left.
-  const trackedRef = useRef(false);
+  // Interactive grid backdrop: we fill it with exactly enough cells to cover the
+  // hero, recomputed on resize. Hover lighting/fading is pure CSS on each cell —
+  // no pointer tracking, no re-renders as the cursor moves.
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [cells, setCells] = useState(0);
 
   useLayoutEffect(() => {
-    const center = () => {
-      const el = orbRef.current;
-      const section = sectionRef.current;
-      if (!el || !section) return;
-      el.style.transform = `translate(${section.clientWidth / 2}px, ${section.clientHeight / 2}px) translate(-50%, -50%)`;
+    const el = gridRef.current;
+    if (!el) return;
+    const compute = () => {
+      const next = Math.ceil(el.clientWidth / CELL) * Math.ceil(el.clientHeight / CELL);
+      setCells((prev) => (prev === next ? prev : next));
     };
-    center(); // before paint → starts centered, no flash, no animate-in
-    const onResize = () => {
-      if (!trackedRef.current) center();
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
-  const moveOrb = (e: PointerEvent<HTMLElement>) => {
-    const el = orbRef.current;
-    if (!el) return;
-    trackedRef.current = true;
-    const rect = e.currentTarget.getBoundingClientRect();
-    el.style.transform = `translate(${e.clientX - rect.left}px, ${e.clientY - rect.top}px) translate(-50%, -50%)`;
-  };
-
   return (
-    <section ref={sectionRef} onPointerMove={moveOrb} className="relative -mt-18 overflow-hidden">
-      {/* Full-bleed background: a faint grid + a cursor-following glow that
-          shimmers over it. The section is pulled up behind the (transparent)
-          floating nav by -mt-18 — slightly more than the nav's height — so the
-          grid and glow start at the very top of the viewport; the inner
-          container's pt compensates, keeping the content where it was. The
-          section's overflow-hidden still clips the backdrop from the section
-          below. The orb is moved by moveOrb(). */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute inset-0 hero-grid" />
-        <div
-          ref={orbRef}
-          className="absolute top-0 left-0 hero-orb transition-transform duration-300 ease-out motion-reduce:transition-none"
-        />
+    <section className="relative -mt-18 overflow-hidden">
+      {/* Full-bleed background: a faint grid plus an interactive layer of cells on
+          the same rhythm that light up toward the brand color under the cursor and
+          fade back out. The section is pulled up behind the (transparent) floating
+          nav by -mt-18 — slightly more than the nav's height — so the grid starts
+          at the very top of the viewport; the inner container's pt compensates,
+          keeping the content where it was. overflow-hidden clips the backdrop from
+          the section below. */}
+      <div aria-hidden="true" className="absolute inset-0 z-0">
+        <div className="pointer-events-none absolute inset-0 hero-grid" />
+        <div ref={gridRef} className="grid-cells absolute inset-0">
+          {Array.from({ length: cells }, (_, i) => (
+            <span
+              key={i}
+              className="transition-colors duration-2000 ease-out hover:bg-primary/45 hover:duration-0 motion-reduce:transition-none"
+            />
+          ))}
+        </div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6 pt-34 pb-16 md:pt-38">
+      {/* Content sits above the grid, but is pointer-events-none so the cursor
+          falls through the empty space (and behind the text) to light the cells;
+          only genuinely interactive bits re-enable events. */}
+      <div className="pointer-events-none relative z-10 mx-auto max-w-6xl px-6 pt-34 pb-16 md:pt-38">
         <Grid cols={[1, 1, 2]} className="items-center gap-12">
           <div>
             <Flex
@@ -89,7 +87,7 @@ export function Hero() {
               to <em>why</em> — and <em>since when</em> — your tests started failing.
             </Text>
 
-            <Flex gap={3} wrap className="mt-7">
+            <Flex gap={3} wrap className="pointer-events-auto mt-7">
               <Button asChild size="lg">
                 {user ? (
                   <DashboardLink>Go to dashboard</DashboardLink>
