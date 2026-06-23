@@ -7,14 +7,7 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { displayFile } from '@/lib/format';
 import { CountDots } from './CountDots';
-
-type FileStatus = 'passed' | 'failed' | 'flaky';
-
-function fileStatus(f: RunFileSummary): FileStatus {
-  if (f.failed > 0) return 'failed';
-  if (f.flaky > 0) return 'flaky';
-  return 'passed';
-}
+import { fileStatus, type FileStatus } from './file-status';
 
 const ICON_TINT: Record<FileStatus, string> = {
   passed: 'bg-success/10 text-success',

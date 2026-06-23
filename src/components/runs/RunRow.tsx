@@ -134,6 +134,7 @@ export function RunRow({
                 failed={run.stats.failed}
                 flaky={run.stats.flaky}
                 skipped={run.stats.skipped}
+                link={{ orgId, projectId, runId: run.id }}
               />
             )}
             {showMenu && (

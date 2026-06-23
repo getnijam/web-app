@@ -5,15 +5,9 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { DateRangeFilter } from '@/components/explorer/DateRangeFilter';
 import type { RunFiltersResponse } from '@/client';
+import { STATUS_OPTIONS, type RunStatusFilter } from './status-filter';
 
-export type RunStatusFilter = 'all' | 'passed' | 'failed' | 'flaky';
-
-const STATUS_OPTIONS: { value: RunStatusFilter; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'passed', label: 'Passed' },
-  { value: 'failed', label: 'Failed' },
-  { value: 'flaky', label: 'Flaky' },
-];
+export type { RunStatusFilter } from './status-filter';
 
 /** Mirrors the API's `UNSET_ENV` sentinel — selects runs with no environment. */
 const UNSET_ENV = '(unset)';

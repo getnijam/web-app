@@ -11,6 +11,7 @@ import { getRunOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { UserAvatar } from '@/components/users/UserAvatar';
@@ -18,18 +19,35 @@ import { RunDetailSkeleton } from '@/components/runs/RunSkeletons';
 import { RunSummaryBar } from '@/components/runs/RunSummaryBar';
 import { RunStatusBadge } from '@/components/runs/RunStatusBadge';
 import { SpecFileRow } from '@/components/runs/SpecFileRow';
+import { fileStatus } from '@/components/runs/file-status';
+import { STATUS_OPTIONS, type RunStatusFilter } from '@/components/runs/status-filter';
 import { runDisplayStatus } from '@/components/runs/run-status';
 import { timeAgo, displayAuthor } from '@/lib/format';
 import { gitBranchUrl, gitProviderIcon } from '@/lib/git';
 import { privateSeo } from '@/lib/seo';
 
+const STATUSES: RunStatusFilter[] = ['all', 'passed', 'failed', 'flaky'];
+
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/runs/$runId/')({
   head: () => privateSeo('Run'),
+  // The spec-file status filter lives in the URL so it survives refresh and is
+  // shareable; 'all' is the default and stays out of the URL.
+  validateSearch: (search: Record<string, unknown>): { status?: RunStatusFilter } => {
+    const s = search.status as RunStatusFilter;
+    return { status: STATUSES.includes(s) && s !== 'all' ? s : undefined };
+  },
   component: RunDetailPage,
 });
 
 function RunDetailPage() {
   const { orgId, projectId, runId } = Route.useParams();
+  const { status = 'all' } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const setStatus = (next: string) =>
+    navigate({
+      search: (prev) => ({ ...prev, status: next === 'all' ? undefined : (next as RunStatusFilter) }),
+      replace: true,
+    });
   // While the run is in-progress, poll every 30s so Running→Failing→terminal updates
   // live (sharded runs stay open until their post-matrix /complete step). Stops once
   // finalized/canceled.
@@ -45,6 +63,31 @@ function RunDetailPage() {
   const ds = runDisplayStatus(run);
   const author = displayAuthor(run.authorEmail, run.authorName);
   const branchHref = gitBranchUrl(run);
+
+  // FE-only filter: the run response already carries every spec file, so we just
+  // narrow what's shown by the file's rolled-up status.
+  const visibleFiles = status === 'all' ? files : files.filter((f) => fileStatus(f) === status);
+  const activeLabel = STATUS_OPTIONS.find((o) => o.value === status)?.label.toLowerCase() ?? status;
+
+  function renderFiles() {
+    if (files.length === 0)
+      return (
+        <EmptyState
+          title="No test results"
+          description="This run has no recorded test executions yet."
+        />
+      );
+    if (visibleFiles.length === 0)
+      return (
+        <EmptyState
+          title={`No ${activeLabel} spec files`}
+          description="No spec files match this filter — clear it to see the rest."
+        />
+      );
+    return visibleFiles.map((f) => (
+      <SpecFileRow key={f.file} file={f} orgId={orgId} projectId={projectId} runId={runId} />
+    ));
+  }
 
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
@@ -126,22 +169,54 @@ function RunDetailPage() {
 
       {/* spec files */}
       <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-        <Flex align="center" justify="between" className="border-b border-border px-5 py-4">
-          <Text variant="h4">Spec files</Text>
-          <Text as="span" className="text-sm text-muted-foreground tabular-nums">
-            {files.length}
-          </Text>
+        <Flex
+          align="center"
+          justify="between"
+          gap={3}
+          wrap
+          className="border-b border-border px-5 py-4"
+        >
+          <Flex align="center" gap={3}>
+            <Text variant="h4">Spec files</Text>
+            <Text as="span" className="text-sm text-muted-foreground tabular-nums">
+              {status === 'all' ? files.length : `${visibleFiles.length} of ${files.length}`}
+            </Text>
+          </Flex>
+          <Tabs value={status} onValueChange={setStatus}>
+            <TabsList>
+              {STATUS_OPTIONS.map((o) => (
+                <TabsTrigger key={o.value} value={o.value}>
+                  {o.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </Flex>
-        {files.length === 0 ? (
-          <EmptyState
-            title="No test results"
-            description="This run has no recorded test executions yet."
-          />
-        ) : (
-          files.map((f) => (
-            <SpecFileRow key={f.file} file={f} orgId={orgId} projectId={projectId} runId={runId} />
-          ))
+
+        {/* Make it obvious the list is filtered, with a one-click way out. */}
+        {status !== 'all' && (
+          <Flex
+            align="center"
+            justify="between"
+            gap={2}
+            className="border-b border-border bg-muted/40 px-5 py-2.5"
+          >
+            <Text as="span" className="text-sm text-muted-foreground">
+              Showing only <span className="font-medium text-foreground">{activeLabel}</span> spec
+              files
+            </Text>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="-mr-2 text-muted-foreground"
+              onClick={() => setStatus('all')}
+            >
+              Show all
+            </Button>
+          </Flex>
         )}
+
+        {renderFiles()}
       </Flex>
     </Flex>
   );
