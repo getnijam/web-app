@@ -148,7 +148,7 @@ export function TagInput({
         <Popover.Content
           align="start"
           sideOffset={4}
-          // Keep the caret in the input — the list is navigated with the keyboard,
+          // Keep the caret in the input, the list is navigated with the keyboard,
           // and closing is driven by the input's blur/Escape (not radix dismissal),
           // so clicking back into the field doesn't flicker the list shut.
           onOpenAutoFocus={(e) => e.preventDefault()}

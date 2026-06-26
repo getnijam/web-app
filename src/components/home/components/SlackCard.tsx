@@ -1,7 +1,7 @@
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 
-// Preview of the (upcoming) Slack message — 10/2/1 example shared with the dashboard.
+// Preview of the (upcoming) Slack message, 10/2/1 example shared with the dashboard.
 const TESTS = [
   '🔴 checkout.spec.ts › completes guest checkout',
   '🟡 cart.spec.ts › persists cart across sessions',
@@ -44,7 +44,8 @@ export function SlackCard() {
 
           <div className="mt-2 border-l-2 border-destructive pl-3">
             <Text as="p" className="text-sm font-bold">
-              🔴 Tests failed — <span className="font-medium text-info">web-checkout · #4a91c2e</span>
+              🔴 Tests failed,{' '}
+              <span className="font-medium text-info">web-checkout · #4a91c2e</span>
             </Text>
             <Flex className="mt-1.5 gap-3.5 text-xs text-muted-foreground">
               <span>

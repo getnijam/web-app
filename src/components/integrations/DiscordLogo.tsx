@@ -1,4 +1,4 @@
-/** The Discord mark (official "Clyde" glyph in brand blurple). Decorative — sized via the `size` prop. */
+/** The Discord mark (official "Clyde" glyph in brand blurple). Decorative, sized via the `size` prop. */
 export function DiscordLogo({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="#5865F2" aria-hidden="true">

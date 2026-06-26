@@ -145,24 +145,23 @@ function UsersPage() {
       </Text>
 
       <Flex align="center" gap={3} className="flex-wrap">
-        <div className="relative min-w-0 flex-1">
-          <HugeiconsIcon
-            icon={Search01Icon}
-            size={16}
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-          />
-          <Input
-            type="search"
-            placeholder="Search members…"
-            aria-label="Search members"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="pl-9"
-            data-testid="members-search"
-          />
-        </div>
+        <Input
+          className="min-w-0 flex-1"
+          placeholder="Search members…"
+          aria-label="Search members"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          data-testid="members-search"
+          startIcon={<HugeiconsIcon icon={Search01Icon} size={16} />}
+          clearable
+          onClear={() => setQuery('')}
+        />
         {isAdmin && (
-          <Button className="shrink-0" onClick={() => setInviteOpen(true)} data-testid="invite-open">
+          <Button
+            className="shrink-0"
+            onClick={() => setInviteOpen(true)}
+            data-testid="invite-open"
+          >
             <HugeiconsIcon icon={UserAdd01Icon} size={16} />
             Invite user
           </Button>

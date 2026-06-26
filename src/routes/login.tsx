@@ -141,9 +141,7 @@ function LoginPage() {
       await finishLogin();
     },
     onError: (err: unknown) => {
-      setFormError(
-        isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
-      );
+      setFormError(isApiError(err) ? err.error.message : 'Something went wrong. Please try again.');
     },
   });
 
@@ -263,7 +261,7 @@ function EmailStep({
 /**
  * Step 2: the password field for the chosen email. When the domain has **optional**
  * SSO, a "Continue with SSO" button is shown above it so users keep both options (an
- * enforced domain never reaches this step — it's redirected straight to the IdP).
+ * enforced domain never reaches this step, it's redirected straight to the IdP).
  */
 function PasswordStep({
   email,

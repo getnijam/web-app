@@ -43,11 +43,11 @@ const PLANS: Plan[] = [
     name: 'Pro',
     price: '$20',
     cadence: 'per month',
-    blurb: 'For teams shipping every day — more volume, longer history, no seat limits.',
+    blurb: 'For teams shipping every day, more volume, longer history, no seat limits.',
     featured: true,
     earlyBird: (
       <>
-        <strong className="font-semibold">Early bird — 50% off usage.</strong> Register now as a Pro
+        <strong className="font-semibold">Early bird, 50% off usage.</strong> Register now as a Pro
         org and lock the half-price <strong className="font-semibold">$0.001</strong>/credit metered
         rate for at least 2 years.
       </>

@@ -113,7 +113,7 @@ export function KeyRow({ orgId, secretKey }: { orgId: string; secretKey: SecretK
               <Text as="span" className="font-mono">
                 {secretKey.prefix}••••{secretKey.last4}
               </Text>
-              ) will stop working immediately —{' '}
+              ) will stop working immediately -{' '}
               {isIngest
                 ? 'any CI pipeline using it will fail to upload results and traces.'
                 : 'any MCP agent or integration using it will lose read access.'}{' '}

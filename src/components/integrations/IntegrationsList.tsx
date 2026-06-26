@@ -183,7 +183,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
       <Flex direction="col" gap={1}>
         <Text variant="h1">Integrations</Text>
         <Text color="muted">
-          Connect Nijam to the tools your team already lives in — Slack notifications, GitHub PR
+          Connect Nijam to the tools your team already lives in, Slack notifications, GitHub PR
           checks &amp; comments, and AI agents via MCP.
         </Text>
       </Flex>
@@ -280,7 +280,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
               {connectButton(e)}
             </CardRow>
           ))}
-          {/* The MCP server has no server-side connection state — the setup
+          {/* The MCP server has no server-side connection state, the setup
               (a read key + a copy-paste command) lives on the keys page. */}
           <CardRow>
             <Flex
@@ -296,7 +296,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
                 MCP server
               </Text>
               <Text as="span" className="text-xs text-muted-foreground">
-                Let AI agents query your runs — failures, history, flakiness — from any MCP-capable
+                Let AI agents query your runs, failures, history, flakiness, from any MCP-capable
                 client.
               </Text>
             </Flex>

@@ -265,7 +265,7 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
             )}
             {repos.data && repos.data.repositories.length === 0 && (
               <Text className="text-sm text-muted-foreground">
-                No repositories yet — grant the app access to repos in your GitHub settings.
+                No repositories yet, grant the app access to repos in your GitHub settings.
               </Text>
             )}
             {repos.data && repos.data.repositories.length > 0 && (

@@ -7,7 +7,7 @@ import { SettingsPanel } from '@/components/settings/SettingsPanel';
 const PKG = '@nijam/pw-reporter';
 const KEY_PLACEHOLDER = 'nij_sk_...';
 
-// Install command per package manager — the reporter is a dev dependency.
+// Install command per package manager, the reporter is a dev dependency.
 const MANAGERS = [
   { id: 'npm', command: `npm install -D ${PKG}` },
   { id: 'pnpm', command: `pnpm add -D ${PKG}` },
@@ -25,7 +25,7 @@ const CONFIG = `reporter: [
 const RUN = `NIJAM_API_KEY=${KEY_PLACEHOLDER} npx playwright test`;
 
 /**
- * Copy-paste setup for uploading runs from CI, shown on the secret-keys page —
+ * Copy-paste setup for uploading runs from CI, shown on the secret-keys page -
  * the ingestion key created above is the credential the reporter needs. Mirrors
  * the MCP card on the read-keys tab: install the reporter, wire it into the
  * Playwright config, run with the key.
@@ -36,10 +36,10 @@ export function ReporterSetupCard() {
       <Flex direction="col" gap={4} className="px-5 py-4">
         <Text color="muted" className="text-sm">
           Add the Nijam reporter to your Playwright config and pass an ingestion key (nij_sk_…) as
-          NIJAM_API_KEY. Every test run then uploads automatically — results, traces, and history.
+          NIJAM_API_KEY. Every test run then uploads automatically, results, traces, and history.
         </Text>
 
-        {/* Step 1 — install the reporter */}
+        {/* Step 1, install the reporter */}
         <Flex direction="col" gap={2}>
           <Text as="span" className="text-xs font-medium text-muted-foreground">
             Install the reporter
@@ -75,7 +75,7 @@ export function ReporterSetupCard() {
           </Tabs>
         </Flex>
 
-        {/* Step 2 — add it to the Playwright config */}
+        {/* Step 2, add it to the Playwright config */}
         <Flex direction="col" gap={2}>
           <Flex align="center" justify="between" gap={2}>
             <Text as="span" className="text-xs font-medium text-muted-foreground">
@@ -92,7 +92,7 @@ export function ReporterSetupCard() {
           </Text>
         </Flex>
 
-        {/* Step 3 — run with the key */}
+        {/* Step 3, run with the key */}
         <Flex direction="col" gap={2}>
           <Text as="span" className="text-xs font-medium text-muted-foreground">
             Run your tests with the key
@@ -117,7 +117,7 @@ export function ReporterSetupCard() {
 
         <Text as="span" className="text-xs text-muted-foreground">
           Find your project&rsquo;s ID in its settings. Store the key as a CI secret (NIJAM_API_KEY)
-          — never commit it.
+          , never commit it.
         </Text>
       </Flex>
     </SettingsPanel>

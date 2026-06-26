@@ -1,5 +1,5 @@
 # Allow crawling of all pages. Auth/dashboard pages carry their own
-# `noindex` meta, so they're intentionally left crawlable — that lets
+# `noindex` meta, so they're intentionally left crawlable, that lets
 # Google read the noindex tag and keep them out of the index.
 User-agent: *
 Allow: /

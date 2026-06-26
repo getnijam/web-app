@@ -45,7 +45,10 @@ function RunDetailPage() {
   const navigate = Route.useNavigate();
   const setStatus = (next: string) =>
     navigate({
-      search: (prev) => ({ ...prev, status: next === 'all' ? undefined : (next as RunStatusFilter) }),
+      search: (prev) => ({
+        ...prev,
+        status: next === 'all' ? undefined : (next as RunStatusFilter),
+      }),
       replace: true,
     });
   // While the run is in-progress, poll every 30s so Running→Failing→terminal updates
@@ -81,7 +84,7 @@ function RunDetailPage() {
       return (
         <EmptyState
           title={`No ${activeLabel} spec files`}
-          description="No spec files match this filter — clear it to see the rest."
+          description="No spec files match this filter, clear it to see the rest."
         />
       );
     return visibleFiles.map((f) => (
@@ -115,7 +118,7 @@ function RunDetailPage() {
           <Flex align="center" gap={2.5} wrap>
             <RunStatusBadge status={ds} />
             <Text variant="code" className="text-lg font-semibold">
-              #{run.commitSha ? run.commitSha.slice(0, 7) : '———'}
+              #{run.commitSha ? run.commitSha.slice(0, 7) : '---'}
             </Text>
             {run.shardTotal != null && run.shardTotal > 1 && (
               <Text

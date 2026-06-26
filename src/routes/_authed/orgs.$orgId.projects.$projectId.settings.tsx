@@ -17,6 +17,7 @@ import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { CopyField } from '@/components/ui/copy-field';
 import { ConfirmDeleteDialog } from '@/components/settings/ConfirmDeleteDialog';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { LoadingState } from '@/components/states/LoadingState';
@@ -73,7 +74,6 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
   const [icon, setIcon] = useState<IconKey>(toIconKey(project.icon));
   const [color, setColor] = useState<ColorKey>(toColorKey(project.color));
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
   // null = legacy project → treat as Playwright. Immutable, so derived not stateful.
   const framework = (project.testFramework ?? 'playwright') as TestFramework;
 
@@ -128,13 +128,6 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
       });
     },
   });
-
-  function copyId() {
-    navigator.clipboard.writeText(project.id).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    });
-  }
 
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
@@ -211,12 +204,7 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
             label="Project ID"
             hint="Use this value as projectId in your reporter config."
           >
-            <Flex gap={2} className="w-full">
-              <Input readOnly value={project.id} className="font-mono" />
-              <Button type="button" variant="outline" onClick={copyId} className="shrink-0">
-                {copied ? 'Copied' : 'Copy'}
-              </Button>
-            </Flex>
+            <CopyField value={project.id} />
           </SettingsRow>
         </SettingsPanel>
       </form>
@@ -250,8 +238,8 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
             title="Remove this project?"
             description={
               <>
-                {project.name} and all of its runs, executions, and artifacts — including files in
-                storage — will be permanently deleted. This can&rsquo;t be undone.
+                {project.name} and all of its runs, executions, and artifacts, including files in
+                storage, will be permanently deleted. This can&rsquo;t be undone.
               </>
             }
             confirmText={project.name}

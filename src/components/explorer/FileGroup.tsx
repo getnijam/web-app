@@ -38,7 +38,7 @@ function fileStatus(c: Counts): FileStatus {
 
 /**
  * One collapsible file group in the test explorer: a header row (filename + test
- * count + status pills) that expands — via the right-chevron — into the file's test
+ * count + status pills) that expands, via the right-chevron, into the file's test
  * rows. Collapsed by default; pass `defaultOpen` to start expanded (e.g. while a
  * search is active so matches are visible).
  */

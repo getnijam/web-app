@@ -3,7 +3,7 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { SlackLogo } from './SlackLogo';
 
-// A faithful, static preview of the Slack message Nijam posts — mirrors the API's
+// A faithful, static preview of the Slack message Nijam posts, mirrors the API's
 // builder in api/src/services/slack-message.ts. Purely presentational (sample
 // data), so users see what `Compact`/`Full` + `Classic`/`Block Kit` look like
 // before saving. Theme tokens / Tailwind scale only (no arbitrary values).
@@ -41,7 +41,7 @@ const SAMPLES: Record<PreviewState, Sample & { commit: string }> = {
         file: 'checkout.spec.ts',
         title: 'completes guest checkout with saved card',
         status: 'fail',
-        error: 'expect(order-total).toHaveText("$63.20") — received "$79.00"',
+        error: 'expect(order-total).toHaveText("$63.20"), received "$79.00"',
       },
       { file: 'cart.spec.ts', title: 'persists cart across sessions', status: 'flaky' },
       { file: 'coupon.spec.ts', title: 'rejects expired coupon code', status: 'flaky' },

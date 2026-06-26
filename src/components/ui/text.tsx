@@ -5,12 +5,12 @@ import { cn } from '@/lib/utils';
 
 /**
  * Typographic + color styles for the {@link Text} primitive. Centralizing them
- * here keeps call sites free of one-off `text-*`/`font-*` classes — pick a
+ * here keeps call sites free of one-off `text-*`/`font-*` classes, pick a
  * `variant` for the scale and a `color` for the tone instead.
  */
 const textVariants = cva('', {
   variants: {
-    // Typographic scale only (size / weight / leading / font-family) — color is
+    // Typographic scale only (size / weight / leading / font-family), color is
     // a separate axis so any variant can take any color.
     variant: {
       display: 'font-heading text-3xl leading-tight font-semibold tracking-tight text-balance',
@@ -24,7 +24,7 @@ const textVariants = cva('', {
       body: 'text-sm leading-normal',
       caption: 'text-xs leading-normal',
       code: 'font-mono text-xs',
-      /** No typographic styles — inherits size/weight from the surrounding text. */
+      /** No typographic styles, inherits size/weight from the surrounding text. */
       inherit: '',
     },
     color: {

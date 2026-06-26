@@ -20,6 +20,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { CopyField } from '@/components/ui/copy-field';
 import { Label } from '@/components/ui/label';
 import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorBanner } from '@/components/states/ErrorState';
@@ -53,7 +54,7 @@ export function TwoFactorSetupDialog({
     if (open) runSetup({});
   }, [open, runSetup]);
 
-  // Single close path so every dismissal (X, escape, Cancel, Done) clears state — so a
+  // Single close path so every dismissal (X, escape, Cancel, Done) clears state, so a
   // reopen mints a fresh secret instead of reusing stale data.
   const close = useCallback(() => {
     setCode('');
@@ -120,12 +121,7 @@ export function TwoFactorSetupDialog({
                   <Text variant="caption" color="muted">
                     Or enter this key manually:
                   </Text>
-                  <Text
-                    as="span"
-                    className="rounded-md bg-muted px-3 py-2 font-mono text-sm break-all"
-                  >
-                    {setup.data.secret}
-                  </Text>
+                  <CopyField value={setup.data.secret} />
                 </Flex>
 
                 <Flex
@@ -181,8 +177,8 @@ function BackupCodesStep({ codes, onDone }: { codes: string[]; onDone: () => voi
           <DialogTitle>Two-factor authentication enabled</DialogTitle>
         </Flex>
         <DialogDescription>
-          Save these recovery codes somewhere safe. Each works once if you lose your authenticator —
-          they won't be shown again.
+          Save these recovery codes somewhere safe. Each works once if you lose your authenticator.
+          They won't be shown again.
         </DialogDescription>
       </DialogHeader>
 

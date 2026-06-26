@@ -71,7 +71,7 @@ function Breadcrumbs() {
     if (isFile) {
       return (
         <>
-          {/* No "Runs" crumb — the project link above already points to the runs list. */}
+          {/* No "Runs" crumb, the project link above already points to the runs list. */}
           <Sep />
           <Link
             to="/orgs/$orgId/projects/$projectId/runs/$runId"
@@ -89,7 +89,7 @@ function Breadcrumbs() {
     }
     return (
       <>
-        {/* No "Runs" crumb — the project link above already points to the runs list. */}
+        {/* No "Runs" crumb, the project link above already points to the runs list. */}
         <Sep />
         <Text as="span" className="shrink-0 font-mono font-semibold">
           {commit}

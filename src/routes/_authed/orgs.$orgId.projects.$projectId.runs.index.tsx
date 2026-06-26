@@ -182,7 +182,7 @@ function RunsPage() {
       {stats && <RunStats stats={stats} />}
 
       <Flex direction="col" gap={3}>
-        {/* Filter options come from the backend — skeleton the bar until they load,
+        {/* Filter options come from the backend, skeleton the bar until they load,
             then keep it available regardless of the run list (re)fetching. */}
         {filters.isLoading ? (
           <RunFiltersSkeleton />
@@ -216,7 +216,7 @@ function Header({
   refreshing: boolean;
 }) {
   const stats = proj.stats;
-  // The last run's actual branch (not the project's default) — this line describes
+  // The last run's actual branch (not the project's default), this line describes
   // the last run, so a feature-branch run shows its branch. Linked out to the
   // provider (github/gitlab) when we have enough git context to build the URL.
   const branchHref = stats

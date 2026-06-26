@@ -12,13 +12,13 @@ function formatMs(ms: number): string {
   return ms < 1000 ? `${ms}ms` : formatDuration(Math.round(ms / 1000));
 }
 
-/** Which list the test detail was opened from — drives its "back" link. */
+/** Which list the test detail was opened from, drives its "back" link. */
 export type TestDetailOrigin = 'explorer' | 'flaky' | 'failing';
 
 /**
  * One test case in the explorer; links to the test detail. When `flakeCount`
  * (flaky-tests page) or `failCount` (failing-tests page) is given it shows that
- * count pill instead of the retry pill — otherwise the row is identical to the
+ * count pill instead of the retry pill, otherwise the row is identical to the
  * explorer's. `from` records the originating list so the detail page's back
  * button points there (defaults to the explorer).
  */
@@ -42,7 +42,7 @@ export function TestRow({
   const meta = testStatusMeta(test.status);
 
   // The trailing pill: flake count (flaky page), fail count (failing page), or
-  // the retry count (explorer) — at most one applies, so pick it before render.
+  // the retry count (explorer), at most one applies, so pick it before render.
   const renderPill = () => {
     if (flakeCount != null)
       return (
@@ -74,9 +74,9 @@ export function TestRow({
       align="center"
       gap={3}
       className={cn(
-        "border-b border-border px-4 py-3",
-        "transition-colors last:border-b-0 hover:bg-accent",
-        { "pl-12": isGroupEnabled }
+        'border-b border-border px-4 py-3',
+        'transition-colors last:border-b-0 hover:bg-accent',
+        { 'pl-12': isGroupEnabled },
       )}
     >
       <HugeiconsIcon icon={meta.icon} size={18} className={cn('shrink-0', meta.color)} />

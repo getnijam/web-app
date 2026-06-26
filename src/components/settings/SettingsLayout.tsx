@@ -18,7 +18,7 @@ const SECTIONS = [
 ] as const;
 
 /**
- * Full-page chrome for the user account settings area — deliberately separate from the
+ * Full-page chrome for the user account settings area, deliberately separate from the
  * org dashboard shell. A top bar (logo + theme + account menu), a "back to dashboard"
  * link, and a left section rail (Profile / Security / Danger) beside the routed content.
  */

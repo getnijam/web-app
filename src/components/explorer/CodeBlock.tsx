@@ -6,7 +6,7 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 
 // Lightweight, zero-dep TS/JS highlighter: comments, strings, keywords, numbers.
-// Per-line (no cross-line block comments) — good enough for a source preview.
+// Per-line (no cross-line block comments), good enough for a source preview.
 const KEYWORDS = new Set([
   'const',
   'let',

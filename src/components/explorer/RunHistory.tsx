@@ -21,7 +21,7 @@ function formatMs(ms: number): string {
 
 /**
  * A test's run history card: a header with the pass tally, a chronological
- * pass/fail/flaky strip, and a newest-first list — each row linking to that
+ * pass/fail/flaky strip, and a newest-first list, each row linking to that
  * run's file detail (this test's spec file).
  */
 export function RunHistory({
@@ -79,7 +79,7 @@ export function RunHistory({
             <Flex direction="col" gap={1} className="min-w-0 flex-1">
               <Flex align="center" justify="between" gap={2}>
                 <Text as="span" variant="code" truncate className="text-sm font-semibold">
-                  #{h.commitSha ? h.commitSha.slice(0, 7) : '———'}
+                  #{h.commitSha ? h.commitSha.slice(0, 7) : '---'}
                 </Text>
                 <Flex align="center" gap={2.5} className="shrink-0">
                   <span className="font-mono text-xs text-muted-foreground tabular-nums">

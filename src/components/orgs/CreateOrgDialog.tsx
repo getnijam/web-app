@@ -53,7 +53,7 @@ export function CreateOrgDialog({
       await queryClient.invalidateQueries({ queryKey: listOrgsQueryKey() });
       close();
       notify.success('Organization created', {
-        description: `${org.name} is ready — create a project to start tracking runs.`,
+        description: `${org.name} is ready, create a project to start tracking runs.`,
       });
       navigate({ to: '/orgs/$orgId/projects', params: { orgId: org.id } });
     },

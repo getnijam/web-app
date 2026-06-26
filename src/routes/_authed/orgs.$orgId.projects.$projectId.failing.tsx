@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Search01Icon } from '@hugeicons/core-free-icons';
 import { listProjectFailingTestsOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -33,7 +35,7 @@ function FailingPage() {
     ...listProjectFailingTestsOptions({ path: { projectId }, query: rangeToQuery(search) }),
     // Retain the prior data across a filter change so the filter row stays mounted
     // (it keys off `tests.length`); the list itself still shows a skeleton while the
-    // new data loads — see `isPlaceholderData` in renderList.
+    // new data loads, see `isPlaceholderData` in renderList.
     placeholderData: keepPreviousData,
   });
 
@@ -63,7 +65,7 @@ function FailingPage() {
     if (q.isLoading || q.isPlaceholderData) return <FailingSkeleton />;
     if (tests.length === 0)
       return (
-        <EmptyState title="No failing tests" description="Nothing failed — your suite is green." />
+        <EmptyState title="No failing tests" description="Nothing failed, your suite is green." />
       );
     if (filtered.length === 0)
       return <EmptyState title="No matches" description="No failing test matches your search." />;
@@ -95,11 +97,13 @@ function FailingPage() {
           // Search + date side by side on web, stacked on mobile.
           <Flex direction="col" gap={2} className="sm:flex-row sm:items-center">
             <Input
-              type="search"
               placeholder="Search by test or suite name…"
               className="flex-1"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              startIcon={<HugeiconsIcon icon={Search01Icon} size={16} />}
+              clearable
+              onClear={() => setQuery('')}
             />
             <DateRangeFilter
               value={searchToRange(search)}

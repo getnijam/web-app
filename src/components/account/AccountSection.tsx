@@ -3,7 +3,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 
 /**
- * A flat settings section for the account dialog — just a heading, stacked fields,
+ * A flat settings section for the account dialog, just a heading, stacked fields,
  * and an optional right-aligned action. No card or row borders (sections are
  * separated by the dialog's dividers), so it reads compact in a modal.
  */

@@ -153,7 +153,7 @@ function show(variant: Variant, title: React.ReactNode, opts: NotifyOptions = {}
 }
 
 /**
- * App toast API — a progress-bar toast that auto-closes, pauses on hover/focus,
+ * App toast API, a progress-bar toast that auto-closes, pauses on hover/focus,
  * and has a close button. Prefer this over importing sonner's `toast` directly.
  */
 export const notify = {

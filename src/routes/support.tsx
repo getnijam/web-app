@@ -18,7 +18,7 @@ export const Route = createFileRoute('/support')({
     seo({
       title: 'Support',
       description:
-        'Get help with Nijam — reach the team by email, browse the docs, troubleshoot reporter and CI setup, or report a security issue. We answer every message.',
+        'Get help with Nijam, reach the team by email, browse the docs, troubleshoot reporter and CI setup, or report a security issue. We answer every message.',
       path: '/support',
     }),
   component: SupportPage,
@@ -40,7 +40,7 @@ const CHANNELS: Channel[] = [
     icon: <HugeiconsIcon icon={Mail01Icon} size={22} />,
     tint: 'bg-primary/15 text-primary',
     title: 'Email us',
-    body: 'The fastest way to reach a human. Account, billing, bugs, feature requests — anything. We usually reply within one business day.',
+    body: 'The fastest way to reach a human. Account, billing, bugs, feature requests, anything. We usually reply within one business day.',
     action: (
       <a href={`mailto:${CONTACT}`} className="text-primary underline-offset-4 hover:underline">
         {CONTACT}
@@ -51,7 +51,7 @@ const CHANNELS: Channel[] = [
     icon: <HugeiconsIcon icon={BookOpen01Icon} size={22} />,
     tint: 'bg-info/15 text-info',
     title: 'Read the docs',
-    body: 'Setup guides for the Playwright, pytest, and Vitest reporters, CI integration, secret keys, and the MCP server — most answers live here.',
+    body: 'Setup guides for the Playwright, pytest, and Vitest reporters, CI integration, secret keys, and the MCP server, most answers live here.',
     action: (
       <a
         href={DOCS_URL}
@@ -149,7 +149,7 @@ function SupportPage() {
                 >
                   {CONTACT}
                 </a>{' '}
-                from the address on your account and include as much as you can — the more context,
+                from the address on your account and include as much as you can, the more context,
                 the faster we can help:
               </P>
               <Bullets
@@ -183,7 +183,7 @@ function SupportPage() {
                     that the reporter step ran after your tests.
                   </>,
                   <>
-                    <b>“No Branch Info” on a run.</b> Your CI didn’t pass a branch — set it in the
+                    <b>“No Branch Info” on a run.</b> Your CI didn’t pass a branch, set it in the
                     reporter config or CI environment as shown in the docs.
                   </>,
                   <>
@@ -205,7 +205,7 @@ function SupportPage() {
                 >
                   {CONTACT}
                 </a>{' '}
-                and we’ll sort it out. Billing is handled by Polar — see the{' '}
+                and we’ll sort it out. Billing is handled by Polar, see the{' '}
                 <Link to="/pricing" className="text-primary underline-offset-4 hover:underline">
                   pricing page
                 </Link>{' '}
@@ -237,7 +237,7 @@ function SupportPage() {
 
             <Section title="Response times">
               <P>
-                We’re an early-stage team, so we don’t offer a formal SLA yet — but we read every
+                We’re an early-stage team, so we don’t offer a formal SLA yet, but we read every
                 message and aim to reply within one business day. Urgent, account-blocking issues
                 get priority; please say so in the subject line.
               </P>

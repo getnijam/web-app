@@ -29,7 +29,7 @@ export function RunStats({ stats }: { stats: NonNullable<ProjectStats> }) {
         icon={Clock01Icon}
         tint="bg-info/10 text-info"
         label="Avg time"
-        value={stats.avgDurationSec === null ? '—' : formatDuration(stats.avgDurationSec)}
+        value={stats.avgDurationSec === null ? '-' : formatDuration(stats.avgDurationSec)}
         caption={window}
       />
     </Grid>

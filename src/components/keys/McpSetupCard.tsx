@@ -6,7 +6,7 @@ import { SettingsPanel } from '@/components/settings/SettingsPanel';
 
 const KEY_PLACEHOLDER = 'nij_rk_...';
 
-// The standard `mcpServers` JSON block — Cursor and Claude Desktop both use it.
+// The standard `mcpServers` JSON block, Cursor and Claude Desktop both use it.
 const MCP_SERVERS_JSON = `{
   "mcpServers": {
     "nijam": {
@@ -54,7 +54,7 @@ env = { NIJAM_API_KEY = "${KEY_PLACEHOLDER}" }`,
 ];
 
 /**
- * Copy-paste setup for the Nijam MCP server, shown on the secret-keys page —
+ * Copy-paste setup for the Nijam MCP server, shown on the secret-keys page -
  * a read key created above is the credential the snippets need.
  */
 export function McpSetupCard() {
@@ -62,10 +62,9 @@ export function McpSetupCard() {
     <SettingsPanel title="Use with AI agents (MCP)">
       <Flex direction="col" gap={4} className="px-5 py-4">
         <Text color="muted" className="text-sm">
-          The Nijam MCP server lets any MCP-capable agent — Claude Code, Cursor, Codex, Claude
-          Desktop, and friends — answer questions about your test runs: what failed, why, since
-          when, and what&rsquo;s flaky. It needs a read key (nij_rk_…) and can never change
-          anything.
+          The Nijam MCP server lets any MCP-capable agent, Claude Code, Cursor, Codex, Claude
+          Desktop, and friends, answer questions about your test runs: what failed, why, since when,
+          and what&rsquo;s flaky. It needs a read key (nij_rk_…) and can never change anything.
         </Text>
 
         <Tabs defaultValue={CLIENTS[0]!.id}>
@@ -124,7 +123,7 @@ export function McpSetupCard() {
         </Tabs>
 
         <Text as="span" className="text-xs text-muted-foreground">
-          Replace {KEY_PLACEHOLDER} with a read key from above — read keys cover the whole org, so
+          Replace {KEY_PLACEHOLDER} with a read key from above, read keys cover the whole org, so
           agents can resolve any project by name.
         </Text>
       </Flex>

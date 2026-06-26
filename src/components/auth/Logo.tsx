@@ -4,7 +4,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 
 /**
- * The Nijam brand mark — a single self-contained SVG (rounded-square gradient +
+ * The Nijam brand mark, a single self-contained SVG (rounded-square gradient +
  * check), so it renders identically everywhere regardless of CSS context. (The
  * old approach wrapped the check in a `bg-brand`/`rounded` div, whose corner
  * radius drifted under containers that override `--radius`, e.g. the sidebar.)

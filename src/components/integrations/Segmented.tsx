@@ -8,7 +8,7 @@ interface SegmentedOption<T extends string> {
 
 /**
  * A segmented control matching the Runs page status filter (see
- * components/runs/RunFilters.tsx) — shadcn `Tabs` used purely as a selector, with
+ * components/runs/RunFilters.tsx), shadcn `Tabs` used purely as a selector, with
  * the same `TabsList`/`TabsTrigger` classes so the styling stays consistent.
  */
 export function Segmented<T extends string>({

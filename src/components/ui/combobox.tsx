@@ -73,7 +73,7 @@ export function FilterCombobox({
             )}
           </Button>
         </PopoverTrigger>
-        {/* Overlay — free to be wider than the trigger so options/search fit. */}
+        {/* Overlay, free to be wider than the trigger so options/search fit. */}
         <PopoverContent align="start" className="w-64 p-0">
           <Command>
             <CommandInput placeholder={searchPlaceholder} />

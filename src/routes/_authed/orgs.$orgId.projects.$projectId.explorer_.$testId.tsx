@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
 import { privateSeo } from '@/lib/seo';
 
 interface TestDetailSearch {
-  /** The list this detail was opened from — drives the back link. */
+  /** The list this detail was opened from, drives the back link. */
   from: TestDetailOrigin;
 }
 
@@ -193,7 +193,7 @@ function SourcePanel({ source, test }: { source: TestSourceRef | null; test: Tes
   });
 
   if (!source) {
-    return <EmptyPanel>Source not uploaded — enable uploadSource in the reporter.</EmptyPanel>;
+    return <EmptyPanel>Source not uploaded, enable uploadSource in the reporter.</EmptyPanel>;
   }
   if (src.isLoading) return <Skeleton className="h-96 w-full rounded-2xl" />;
   if (src.error || !src.data)

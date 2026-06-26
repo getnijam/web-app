@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { SecurityPasswordIcon, CheckmarkCircle02Icon, CircleIcon } from '@hugeicons/core-free-icons';
+import {
+  SecurityPasswordIcon,
+  CheckmarkCircle02Icon,
+  CircleIcon,
+} from '@hugeicons/core-free-icons';
 import type { UserPublic } from '@/client';
 import {
   getMeQueryKey,
@@ -90,7 +94,7 @@ export function TwoFactorSection({ user }: { user: UserPublic }) {
   );
 }
 
-/** Disable 2FA — re-auth with password (or a live code for OAuth-only accounts). */
+/** Disable 2FA, re-auth with password (or a live code for OAuth-only accounts). */
 function DisableDialog({
   user,
   open,
@@ -129,7 +133,7 @@ function DisableDialog({
   );
 }
 
-/** Regenerate backup codes — re-auth, then show the fresh codes (old ones stop working). */
+/** Regenerate backup codes, re-auth, then show the fresh codes (old ones stop working). */
 function RegenerateDialog({
   user,
   open,
@@ -163,7 +167,7 @@ function RegenerateDialog({
           <DialogHeader>
             <DialogTitle>New backup codes</DialogTitle>
             <DialogDescription>
-              Your previous codes no longer work. Save these somewhere safe — each works once.
+              Your previous codes no longer work. Save these somewhere safe, each works once.
             </DialogDescription>
           </DialogHeader>
           <BackupCodesPanel codes={codes} />

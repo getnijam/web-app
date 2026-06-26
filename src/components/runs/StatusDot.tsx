@@ -5,7 +5,7 @@ import { RUN_PILL, type RunDisplayStatus } from './run-status';
 /** Live, in-progress statuses whose dot animates with a radar ping. */
 const PULSING: ReadonlySet<RunDisplayStatus> = new Set(['running', 'failing']);
 
-/** The colored status dot used inside run pills — pulses while a run is live. */
+/** The colored status dot used inside run pills, pulses while a run is live. */
 export function StatusDot({ status }: { status: RunDisplayStatus }) {
   const { dot } = RUN_PILL[status];
   if (!PULSING.has(status)) {

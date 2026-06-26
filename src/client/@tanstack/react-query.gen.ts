@@ -1417,7 +1417,7 @@ export const getRunSourceOptions = (options: Options<GetRunSourceData>) => query
 export const listSecretKeysQueryKey = (options: Options<ListSecretKeysData>) => createQueryKey('listSecretKeys', options);
 
 /**
- * List an organization's secret keys (masked) — ingest keys are org-wide, read keys are per-user
+ * List an organization's secret keys (masked), ingest keys are org-wide, read keys are per-user
  */
 export const listSecretKeysOptions = (options: Options<ListSecretKeysData>) => queryOptions<ListSecretKeysResponse, ListSecretKeysError, ListSecretKeysResponse, ReturnType<typeof listSecretKeysQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -1433,7 +1433,7 @@ export const listSecretKeysOptions = (options: Options<ListSecretKeysData>) => q
 });
 
 /**
- * Mint a secret key — ingest or read kind (returns the cleartext token once)
+ * Mint a secret key, ingest or read kind (returns the cleartext token once)
  */
 export const createSecretKeyMutation = (options?: Partial<Options<CreateSecretKeyData>>): UseMutationOptions<CreateSecretKeyResponse, CreateSecretKeyError, Options<CreateSecretKeyData>> => {
     const mutationOptions: UseMutationOptions<CreateSecretKeyResponse, CreateSecretKeyError, Options<CreateSecretKeyData>> = {
@@ -1450,7 +1450,7 @@ export const createSecretKeyMutation = (options?: Partial<Options<CreateSecretKe
 };
 
 /**
- * Revoke (delete) a secret key — read (MCP) keys can be revoked only by their creator
+ * Revoke (delete) a secret key, read (MCP) keys can be revoked only by their creator
  */
 export const deleteSecretKeyMutation = (options?: Partial<Options<DeleteSecretKeyData>>): UseMutationOptions<DeleteSecretKeyResponse, DeleteSecretKeyError, Options<DeleteSecretKeyData>> => {
     const mutationOptions: UseMutationOptions<DeleteSecretKeyResponse, DeleteSecretKeyError, Options<DeleteSecretKeyData>> = {
@@ -1519,7 +1519,7 @@ export const updateOrgSlackIntegrationMutation = (options?: Partial<Options<Upda
 };
 
 /**
- * Begin Slack OAuth — returns the consent URL to redirect the admin to
+ * Begin Slack OAuth, returns the consent URL to redirect the admin to
  */
 export const installOrgSlackMutation = (options?: Partial<Options<InstallOrgSlackData>>): UseMutationOptions<InstallOrgSlackResponse, InstallOrgSlackError, Options<InstallOrgSlackData>> => {
     const mutationOptions: UseMutationOptions<InstallOrgSlackResponse, InstallOrgSlackError, Options<InstallOrgSlackData>> = {
@@ -1658,7 +1658,7 @@ export const updateOrgGithubIntegrationMutation = (options?: Partial<Options<Upd
 };
 
 /**
- * Begin GitHub App install — returns the URL to redirect the admin to
+ * Begin GitHub App install, returns the URL to redirect the admin to
  */
 export const installOrgGithubMutation = (options?: Partial<Options<InstallOrgGithubData>>): UseMutationOptions<InstallOrgGithubResponse, InstallOrgGithubError, Options<InstallOrgGithubData>> => {
     const mutationOptions: UseMutationOptions<InstallOrgGithubResponse, InstallOrgGithubError, Options<InstallOrgGithubData>> = {

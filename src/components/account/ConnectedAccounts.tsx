@@ -44,7 +44,9 @@ export function ConnectedAccounts({ user }: { user: UserPublic }) {
     },
     onError: (err) =>
       notify.error("Couldn't disconnect", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       }),
   });
 
@@ -86,7 +88,9 @@ export function ConnectedAccounts({ user }: { user: UserPublic }) {
                 </Button>
               ) : (
                 <Button asChild variant="outline" size="sm">
-                  <a href={`${API_BASE}/v1/auth/oauth/${p.id}/link?next=${encodeURIComponent(next)}`}>
+                  <a
+                    href={`${API_BASE}/v1/auth/oauth/${p.id}/link?next=${encodeURIComponent(next)}`}
+                  >
                     Connect
                   </a>
                 </Button>
@@ -98,7 +102,7 @@ export function ConnectedAccounts({ user }: { user: UserPublic }) {
 
       {onlyMethod && accounts.length > 0 && (
         <Text className="text-xs text-muted-foreground">
-          This is your only way to sign in — set a password above before disconnecting it.
+          This is your only way to sign in, set a password above before disconnecting it.
         </Text>
       )}
     </AccountSection>

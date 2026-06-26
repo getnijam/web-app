@@ -24,7 +24,7 @@ export const Route = createFileRoute('/security')({
     seo({
       title: 'Security',
       description:
-        'How Nijam protects your test data — encryption, scoped ingest keys, tenant isolation, privacy-first telemetry, and the providers we build on.',
+        'How Nijam protects your test data, encryption, scoped ingest keys, tenant isolation, privacy-first telemetry, and the providers we build on.',
       path: '/security',
     }),
   component: SecurityPage,
@@ -40,7 +40,7 @@ const PILLARS: Pillar[] = [
     icon: <HugeiconsIcon icon={SquareLock02Icon} size={22} />,
     tint: 'bg-primary/15 text-primary',
     title: 'Encryption everywhere',
-    body: 'All traffic runs over HTTPS/TLS. Passwords are hashed with argon2id, session and ingest tokens are stored only as SHA-256 hashes, and Slack tokens and two-factor secrets are encrypted with AES-256-GCM — never in plaintext.',
+    body: 'All traffic runs over HTTPS/TLS. Passwords are hashed with argon2id, session and ingest tokens are stored only as SHA-256 hashes, and Slack tokens and two-factor secrets are encrypted with AES-256-GCM, never in plaintext.',
   },
   {
     icon: <HugeiconsIcon icon={FingerPrintIcon} size={22} />,
@@ -52,13 +52,13 @@ const PILLARS: Pillar[] = [
     icon: <HugeiconsIcon icon={Key01Icon} size={22} />,
     tint: 'bg-warning/15 text-warning',
     title: 'Split secret keys',
-    body: 'CI uploads use write-only ingestion keys that can never read data — a leaked CI key exposes nothing. MCP/agent reads use separate read-only keys that can never write. Each key is shown once, stored as a SHA-256 hash, and revocable at any time.',
+    body: 'CI uploads use write-only ingestion keys that can never read data, a leaked CI key exposes nothing. MCP/agent reads use separate read-only keys that can never write. Each key is shown once, stored as a SHA-256 hash, and revocable at any time.',
   },
   {
     icon: <HugeiconsIcon icon={Shield01Icon} size={22} />,
     tint: 'bg-success/15 text-success',
     title: 'Tenant isolation',
-    body: "Every project belongs to an organization. Requests are checked against your membership, and anything you can't access returns a plain 404 — no resource enumeration.",
+    body: "Every project belongs to an organization. Requests are checked against your membership, and anything you can't access returns a plain 404, no resource enumeration.",
   },
   {
     icon: <HugeiconsIcon icon={EyeOffIcon} size={22} />,
@@ -89,7 +89,7 @@ function SecurityPage() {
             How we protect your test data
           </Text>
           <Text className="mx-auto mt-4 max-w-2xl text-lg text-pretty text-muted-foreground">
-            Nijam is a read-only reporting layer for Playwright, pytest, and Vitest — it ingests the
+            Nijam is a read-only reporting layer for Playwright, pytest, and Vitest. It ingests the
             results your CI already produces and never executes or re-runs your tests. Here's how we
             keep that data safe, end to end.
           </Text>
@@ -127,10 +127,9 @@ function SecurityPage() {
           <Flex direction="col" gap={8}>
             <Section title="Data encryption">
               <P>
-                Every connection to Nijam — the dashboard, the API, and the reporter — is served
-                over HTTPS/TLS, and session cookies are marked{' '}
-                <code className="font-mono">Secure</code> in production. Sensitive values are never
-                stored in the clear:
+                Every connection to Nijam, the dashboard, the API, and the reporter, is served over
+                HTTPS/TLS, and session cookies are marked <code className="font-mono">Secure</code>{' '}
+                in production. Sensitive values are never stored in the clear:
               </P>
               <Bullets
                 items={[
@@ -140,7 +139,7 @@ function SecurityPage() {
                   </>,
                   <>
                     <b>Session, ingest, email-verification, and password-reset tokens</b> are stored
-                    only as <b>SHA-256 hashes</b> — the raw token exists only in your browser cookie
+                    only as <b>SHA-256 hashes</b>, the raw token exists only in your browser cookie
                     or the one-time key you copy.
                   </>,
                   <>
@@ -167,13 +166,13 @@ function SecurityPage() {
                   'Google and GitHub sign-in use an HMAC-signed, short-lived state parameter to prevent CSRF, and only match accounts on a verified email address.',
                   'Optional two-factor authentication (TOTP) adds an authenticator-app code to sign-in; the shared secret is encrypted at rest (AES-256-GCM) and one-time backup codes are stored only as SHA-256 hashes.',
                   <>
-                    Pro organizations can require <b>enterprise single sign-on (OIDC)</b> through their
-                    own identity provider (Okta, Entra ID, Auth0, and others). Each connection is
-                    per-organization and uses the Authorization Code flow with <b>PKCE</b>; the client
-                    secret is encrypted at rest (AES-256-GCM); and SSO only routes a login once the
-                    organization has proven ownership of the email domain with a <b>DNS TXT record</b>.
-                    Admins can <b>enforce</b> SSO so password and social sign-in are blocked for their
-                    domains.
+                    Pro organizations can require <b>enterprise single sign-on (OIDC)</b> through
+                    their own identity provider (Okta, Entra ID, Auth0, and others). Each connection
+                    is per-organization and uses the Authorization Code flow with <b>PKCE</b>; the
+                    client secret is encrypted at rest (AES-256-GCM); and SSO only routes a login
+                    once the organization has proven ownership of the email domain with a{' '}
+                    <b>DNS TXT record</b>. Admins can <b>enforce</b> SSO so password and social
+                    sign-in are blocked for their domains.
                   </>,
                   'Sessions are stored server-side, expire after 30 days, and are revoked on logout and on any password change.',
                 ]}
@@ -184,10 +183,10 @@ function SecurityPage() {
               <P>
                 Secret keys come in two strictly separated kinds. <b>Ingestion keys</b> (
                 <code className="font-mono">nij_sk_…</code>) are what your CI uses as a bearer token
-                — they can submit runs, results, and artifacts but <b>can never read your data</b>,
+                , they can submit runs, results, and artifacts but <b>can never read your data</b>,
                 so the key most exposed to leaks (the one in CI config) unlocks nothing.{' '}
                 <b>Read keys</b> (<code className="font-mono">nij_rk_…</code>) power the Nijam MCP
-                server and other read integrations — they can read test data within their scope but
+                server and other read integrations, they can read test data within their scope but
                 can never write. Neither kind can change settings, manage members, or touch billing.
                 Each key is scoped to a single organization or project, shown in full exactly once
                 at creation, stored only as a SHA-256 hash, and can be revoked at any time.
@@ -203,23 +202,23 @@ function SecurityPage() {
               <Bullets
                 items={[
                   <>
-                    <b>GitHub</b> — the Nijam GitHub App posts a status check and a single sticky
+                    <b>GitHub</b>, the Nijam GitHub App posts a status check and a single sticky
                     comment on the pull request for a run. We store <b>no GitHub token</b>: access
                     uses short-lived installation tokens minted on demand and signed by the App’s
-                    private key, and the App holds only the permissions it needs — writing commit
+                    private key, and the App holds only the permissions it needs, writing commit
                     checks and pull-request comments. It never reads your source code.
                   </>,
                   <>
-                    <b>Slack</b> — posts run notifications to the channel you choose. The bot token
+                    <b>Slack</b>, posts run notifications to the channel you choose. The bot token
                     is encrypted at rest with <b>AES-256-GCM</b> and is never returned to clients or
                     written to logs.
                   </>,
                   <>
-                    <b>MCP / AI agents</b> — a read-only <code className="font-mono">nij_rk_…</code>{' '}
+                    <b>MCP / AI agents</b>, a read-only <code className="font-mono">nij_rk_…</code>{' '}
                     key lets an MCP client query your runs. The server runs locally as a subprocess
                     of your client, so the key stays on your machine and we only ever see the read
                     requests it makes. What an agent then does with the data it retrieves is
-                    governed by that agent and its model provider — both of which you choose.
+                    governed by that agent and its model provider, both of which you choose.
                   </>,
                 ]}
               />
@@ -229,7 +228,7 @@ function SecurityPage() {
               <P>
                 Projects belong to organizations, and every read is scoped to your membership in
                 that organization. If you request something you’re not a member of, you get a plain{' '}
-                <code className="font-mono">404</code> rather than a “forbidden” — so the API never
+                <code className="font-mono">404</code> rather than a “forbidden”, so the API never
                 reveals whether a resource exists. Sensitive organization actions (members, billing,
                 settings) are additionally gated to organization admins.
               </P>
@@ -252,7 +251,7 @@ function SecurityPage() {
                 ever sees. Telemetry is disabled unless explicitly configured; when it runs,
                 personal data collection is off, and cookies, authorization headers, and request
                 bodies are stripped before anything is sent. On the web, error session replays mask{' '}
-                <b>all</b> text and inputs. The browser never stores your test data — only a session
+                <b>all</b> text and inputs. The browser never stores your test data, only a session
                 cookie (set by the API) and your theme preference.
               </P>
             </Section>
@@ -265,25 +264,25 @@ function SecurityPage() {
               <Bullets
                 items={[
                   <>
-                    <b>Neon</b> — managed Postgres database.
+                    <b>Neon</b>, managed Postgres database.
                   </>,
                   <>
-                    <b>Cloudflare R2</b> — object storage for traces, screenshots, and videos.
+                    <b>Cloudflare R2</b>, object storage for traces, screenshots, and videos.
                   </>,
                   <>
-                    <b>Vercel</b> — hosting for the web app; <b>Railway</b> — hosting for the API.
+                    <b>Vercel</b>, hosting for the web app; <b>Railway</b>, hosting for the API.
                   </>,
                   <>
-                    <b>Resend</b> — transactional email (verification and password-reset messages).
+                    <b>Resend</b>, transactional email (verification and password-reset messages).
                   </>,
                   <>
-                    <b>Better Stack</b> — error monitoring (PII disabled); <b>Polar</b> — billing
-                    and payments.
+                    <b>Better Stack</b>, error monitoring (PII disabled); <b>Polar</b>, billing and
+                    payments.
                   </>,
                   <>
-                    <b>Slack</b> and the <b>Nijam GitHub App</b> — only for the integrations you
-                    connect; <b>Google</b>/<b>GitHub</b> for the sign-in methods you use; and your own{' '}
-                    <b>identity provider</b> (e.g. Okta) for SSO, if you configure it.
+                    <b>Slack</b> and the <b>Nijam GitHub App</b>, only for the integrations you
+                    connect; <b>Google</b>/<b>GitHub</b> for the sign-in methods you use; and your
+                    own <b>identity provider</b> (e.g. Okta) for SSO, if you configure it.
                   </>,
                 ]}
               />
@@ -292,9 +291,9 @@ function SecurityPage() {
             <Section title="Your data & ownership">
               <P>
                 Your test results are yours. Nijam is a read-only layer that stores the runs, test
-                outcomes, timings, and artifacts your CI sends us — it never executes or re-runs
-                your tests. Deleting a project removes its runs, results, and artifacts. For details
-                on what we collect and why, see our{' '}
+                outcomes, timings, and artifacts your CI sends us, it never executes or re-runs your
+                tests. Deleting a project removes its runs, results, and artifacts. For details on
+                what we collect and why, see our{' '}
                 <Link to="/privacy" className="text-primary underline-offset-4 hover:underline">
                   Privacy Policy
                 </Link>
@@ -333,7 +332,7 @@ function SecurityPage() {
 
       <CTA
         title="Bring your test results somewhere safe"
-        description="Point your CI at Nijam and turn the results you already produce into flakiness detection and failure analytics — no agents, no re-runs."
+        description="Point your CI at Nijam and turn the results you already produce into flakiness detection and failure analytics, no agents, no re-runs."
       />
       <Footer />
     </div>

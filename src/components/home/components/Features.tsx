@@ -36,7 +36,7 @@ const FEATURES: Feature[] = [
     icon: AnalyticsUpIcon,
     tint: 'bg-primary/15 text-primary',
     title: 'Test analytics',
-    body: 'Pass rates, durations and volume trends across every run, branch and spec file — so you can see the suite getting healthier or slower over time.',
+    body: 'Pass rates, durations and volume trends across every run, branch and spec file, so you can see the suite getting healthier or slower over time.',
   },
   {
     icon: Alert02Icon,
@@ -46,7 +46,7 @@ const FEATURES: Feature[] = [
         Know <em>why</em> it failed
       </>
     ),
-    body: 'The error, stack trace and the exact failing line — captured for every failing attempt, plus screenshots, video and the full trace on Playwright.',
+    body: 'The error, stack trace and the exact failing line, captured for every failing attempt, plus screenshots, video and the full trace on Playwright.',
   },
   {
     icon: Clock01Icon,
@@ -56,7 +56,7 @@ const FEATURES: Feature[] = [
         Know <em>since when</em>
       </>
     ),
-    body: 'Pinpoint the first run a test started failing and the commit that introduced it — no more bisecting through CI logs by hand.',
+    body: 'Pinpoint the first run a test started failing and the commit that introduced it. No more bisecting through CI logs by hand.',
   },
   {
     icon: WorkflowSquare01Icon,
@@ -73,25 +73,25 @@ const FEATURES: Feature[] = [
     icon: BellIcon,
     tint: 'bg-success/15 text-success',
     title: 'Slack notifications',
-    body: 'Auto-post passing, flaky and failing runs to Slack — with green / yellow / red status and every test linked back to its results on Nijam.',
+    body: 'Auto-post passing, flaky and failing runs to Slack, with green / yellow / red status and every test linked back to its results on Nijam.',
   },
   {
     icon: GitPullRequestIcon,
     tint: 'bg-foreground/10 text-foreground',
     title: 'GitHub checks & comments',
-    body: 'Install the GitHub App and every pull request gets a Nijam status check — green when it passes, red when it fails — plus a results comment that updates in place on each run.',
+    body: 'Install the GitHub App and every pull request gets a Nijam status check, green when it passes, red when it fails, plus a results comment that updates in place on each run.',
   },
   {
     icon: AiChat02Icon,
     tint: 'bg-info/15 text-info',
     title: 'MCP for AI agents',
-    body: 'Point any MCP-capable agent — Claude Code, Cursor, Codex — at your runs and ask why a suite is red, whether a test is flaky, or when it broke, answered from your real history.',
+    body: 'Point any MCP-capable agent, Claude Code, Cursor, Codex, at your runs and ask why a suite is red, whether a test is flaky, or when it broke, answered from your real history.',
   },
   {
     icon: ShieldKeyIcon,
     tint: 'bg-primary/15 text-primary',
     title: 'Single sign-on',
-    body: 'Let your team sign in with your own identity provider — Okta, Entra ID, Auth0, any OIDC — with just-in-time provisioning and optional enforcement. A Pro feature.',
+    body: 'Let your team sign in with your own identity provider, Okta, Entra ID, Auth0, any OIDC, with just-in-time provisioning and optional enforcement. A Pro feature.',
   },
 ];
 

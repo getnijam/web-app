@@ -10,7 +10,7 @@ import { privateSeo } from '@/lib/seo';
 export const Route = createFileRoute('/_authed/orgs/$orgId/settings')({
   head: () => privateSeo('Organization settings'),
   // A layout route catches its own unmatched children (e.g. /settings/garbage), so it
-  // needs its own dashboard 404 — otherwise it falls back to the public marketing 404.
+  // needs its own dashboard 404, otherwise it falls back to the public marketing 404.
   notFoundComponent: DashboardNotFound,
   component: OrgSettingsLayout,
 });

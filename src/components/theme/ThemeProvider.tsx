@@ -7,7 +7,7 @@ export type ResolvedTheme = 'light' | 'dark';
 
 /**
  * localStorage key for the theme preference. The same key is read by the
- * inline no-flash script in `index.html` — keep them in sync.
+ * inline no-flash script in `index.html`, keep them in sync.
  *
  * NOTE: localStorage is otherwise banned in this app (see web-app/CLAUDE.md);
  * it is permitted *only* for this preference, per explicit user approval.
@@ -25,7 +25,7 @@ function readStoredTheme(): Theme {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (isTheme(stored)) return stored;
   } catch {
-    // Storage unavailable (private mode, blocked) — fall back to system.
+    // Storage unavailable (private mode, blocked), fall back to system.
   }
   return 'system';
 }

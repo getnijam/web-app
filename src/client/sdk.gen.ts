@@ -604,12 +604,12 @@ export const getArtifactUrl = <ThrowOnError extends boolean = false>(options: Op
 export const getRunSource = <ThrowOnError extends boolean = false>(options: Options<GetRunSourceData, ThrowOnError>): RequestResult<GetRunSourceResponses, GetRunSourceErrors, ThrowOnError> => (options.client ?? client).get<GetRunSourceResponses, GetRunSourceErrors, ThrowOnError>({ url: '/v1/runs/{runId}/source', ...options });
 
 /**
- * List an organization's secret keys (masked) — ingest keys are org-wide, read keys are per-user
+ * List an organization's secret keys (masked), ingest keys are org-wide, read keys are per-user
  */
 export const listSecretKeys = <ThrowOnError extends boolean = false>(options: Options<ListSecretKeysData, ThrowOnError>): RequestResult<ListSecretKeysResponses, ListSecretKeysErrors, ThrowOnError> => (options.client ?? client).get<ListSecretKeysResponses, ListSecretKeysErrors, ThrowOnError>({ url: '/v1/orgs/{orgId}/secret-keys', ...options });
 
 /**
- * Mint a secret key — ingest or read kind (returns the cleartext token once)
+ * Mint a secret key, ingest or read kind (returns the cleartext token once)
  */
 export const createSecretKey = <ThrowOnError extends boolean = false>(options: Options<CreateSecretKeyData, ThrowOnError>): RequestResult<CreateSecretKeyResponses, CreateSecretKeyErrors, ThrowOnError> => (options.client ?? client).post<CreateSecretKeyResponses, CreateSecretKeyErrors, ThrowOnError>({
     url: '/v1/orgs/{orgId}/secret-keys',
@@ -621,7 +621,7 @@ export const createSecretKey = <ThrowOnError extends boolean = false>(options: O
 });
 
 /**
- * Revoke (delete) a secret key — read (MCP) keys can be revoked only by their creator
+ * Revoke (delete) a secret key, read (MCP) keys can be revoked only by their creator
  */
 export const deleteSecretKey = <ThrowOnError extends boolean = false>(options: Options<DeleteSecretKeyData, ThrowOnError>): RequestResult<DeleteSecretKeyResponses, DeleteSecretKeyErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSecretKeyResponses, DeleteSecretKeyErrors, ThrowOnError>({ url: '/v1/orgs/{orgId}/secret-keys/{keyId}', ...options });
 
@@ -648,7 +648,7 @@ export const updateOrgSlackIntegration = <ThrowOnError extends boolean = false>(
 });
 
 /**
- * Begin Slack OAuth — returns the consent URL to redirect the admin to
+ * Begin Slack OAuth, returns the consent URL to redirect the admin to
  */
 export const installOrgSlack = <ThrowOnError extends boolean = false>(options: Options<InstallOrgSlackData, ThrowOnError>): RequestResult<InstallOrgSlackResponses, InstallOrgSlackErrors, ThrowOnError> => (options.client ?? client).post<InstallOrgSlackResponses, InstallOrgSlackErrors, ThrowOnError>({ url: '/v1/orgs/{orgId}/integrations/slack/install', ...options });
 
@@ -709,7 +709,7 @@ export const updateOrgGithubIntegration = <ThrowOnError extends boolean = false>
 });
 
 /**
- * Begin GitHub App install — returns the URL to redirect the admin to
+ * Begin GitHub App install, returns the URL to redirect the admin to
  */
 export const installOrgGithub = <ThrowOnError extends boolean = false>(options: Options<InstallOrgGithubData, ThrowOnError>): RequestResult<InstallOrgGithubResponses, InstallOrgGithubErrors, ThrowOnError> => (options.client ?? client).post<InstallOrgGithubResponses, InstallOrgGithubErrors, ThrowOnError>({ url: '/v1/orgs/{orgId}/integrations/github/install', ...options });
 

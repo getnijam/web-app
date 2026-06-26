@@ -31,7 +31,7 @@ export function RunsListSkeleton({ rows = 6 }: { rows?: number }) {
 }
 
 /**
- * The filter bar's loading state — shown while the backend-sourced filter options
+ * The filter bar's loading state, shown while the backend-sourced filter options
  * (branches/users/environments) load, so the bar reads as "loading" rather than
  * briefly empty. Pills mirror the status tabs + selects + date pill.
  */

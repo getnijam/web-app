@@ -83,7 +83,7 @@ export function NewProjectDialog({
       });
       close();
       notify.success(`Project "${project.name}" created`, {
-        description: 'Point the reporter at it and run your tests — runs will show up here.',
+        description: 'Point the reporter at it and run your tests, runs will show up here.',
       });
     },
     onError: (err) => {
@@ -140,7 +140,7 @@ export function NewProjectDialog({
             <FieldError message={form.formState.errors.name?.message} />
           </Flex>
 
-          {/* Test framework — chosen once, locked after creation. */}
+          {/* Test framework, chosen once, locked after creation. */}
           <Flex direction="col" gap={2}>
             <Label>Test framework</Label>
             <FrameworkPicker value={testFramework} onChange={changeFramework} />

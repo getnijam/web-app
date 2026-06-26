@@ -14,7 +14,7 @@ import { AccountMenu } from '@/components/users/AccountMenu';
 import { cn } from '@/lib/utils';
 import { DOCS_URL } from '../config';
 
-// Quiet link that lights up in brand color on hover (no hover pill) — the
+// Quiet link that lights up in brand color on hover (no hover pill), the
 // reframe.shadcn.io treatment, shared by the desktop bar and the mobile menu.
 const LINK =
   'rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary';
@@ -49,7 +49,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 
 /**
  * Home/marketing nav: one floating bordered card under the top edge, modeled on
- * reframe.shadcn.io — the SAME shell for everyone. Only the right-side cluster
+ * reframe.shadcn.io, the SAME shell for everyone. Only the right-side cluster
  * changes with the session: a skeleton while /me loads, signed-in (dashboard +
  * account menu) or guest (log in + start free). On mobile the links collapse
  * into a hamburger menu that expands inside the card.
@@ -70,7 +70,7 @@ export function Nav() {
   const closeMenu = () => setMenuOpen(false);
 
   // Right-side cluster (after the theme toggle, before the hamburger) plus any
-  // overflow shown only inside the mobile menu — both vary with auth state.
+  // overflow shown only inside the mobile menu, both vary with auth state.
   // (Computed up-front to keep the JSX free of nested ternaries.)
   let actions: ReactNode;
   let menuExtras: ReactNode = null;

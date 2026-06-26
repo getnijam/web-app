@@ -13,7 +13,7 @@ const SHELL_STYLE = { '--sidebar-width': '16.5rem' } as CSSProperties;
 
 /**
  * Collapse/expand handle pinned to the sidebar's right edge. It lives at the
- * shell level — *outside* the sidebar's own transform — so it stays reachable
+ * shell level, *outside* the sidebar's own transform, so it stays reachable
  * even when the offcanvas sidebar slides fully off-screen: on the nav edge when
  * open (chevron points left → collapse) and at the screen's left edge when
  * collapsed (chevron points right → expand). Desktop only; mobile uses the top
@@ -33,13 +33,13 @@ function SidebarEdgeToggle() {
       style={{
         // Open: straddle the sidebar's right edge so the handle sits half inside the
         // nav. This reads correctly only because the fill + border are solid/opaque
-        // (see className) — they look identical over the sidebar and the content, so
+        // (see className), they look identical over the sidebar and the content, so
         // the two halves match. Collapsed: fully on the content at the left edge.
         // left: collapsed ? '0.5rem' : 'var(--sidebar-width)',
         left: collapsed ? '0.25rem' : 'var(--sidebar-width)',
         transform: collapsed ? 'translateY(-50%)' : 'translate(-50%, -50%)',
       }}
-      className="absolute top-1/2 z-30 duration-200 ease-linear bg-sidebar border-border hover:bg-sidebar-accent dark:border-[#222424]"
+      className="absolute top-1/2 z-30 border-border bg-sidebar duration-200 ease-linear hover:bg-sidebar-accent dark:border-[#222424]"
     >
       <HugeiconsIcon icon={collapsed ? ChevronRightIcon : ChevronLeftIcon} className="size-3.5" />
     </Button>

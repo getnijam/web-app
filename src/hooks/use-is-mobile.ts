@@ -1,6 +1,6 @@
 'use client';
 
-// Sourced from usehooks.io (`npx usehooks-cli@latest add use-is-mobile`) — vendored
+// Sourced from usehooks.io (`npx usehooks-cli@latest add use-is-mobile`), vendored
 // here rather than added as a runtime dep, matching the repo's copy-paste convention.
 // https://www.usehooks.io/docs/use-is-mobile
 import { useState, useEffect } from 'react';

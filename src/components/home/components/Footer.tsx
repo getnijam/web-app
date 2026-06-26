@@ -47,11 +47,11 @@ export function Footer() {
             >
               <Logo />
             </Flex>
-            {/* Live system status — sourced from the Better Stack status page JSON API. */}
+            {/* Live system status, sourced from the Better Stack status page JSON API. */}
             <FooterStatus />
             <Text className="mt-3.5 max-w-70 text-sm text-background/60">
               The reporting layer for Playwright, pytest &amp; Vitest. Reads the results your CI
-              already produces — never runs your tests.
+              already produces, never runs your tests.
             </Text>
           </div>
 
@@ -139,7 +139,7 @@ export function Footer() {
           gap={3}
           className="mt-11 border-t border-background/10 pt-6 text-xs text-background/60"
         >
-          <span>© 2026 Nijam.dev — a read-only test reporting dashboard.</span>
+          <span>© 2026 Nijam.dev, a read-only test reporting dashboard.</span>
           <span className="font-mono">Playwright · pytest · Vitest</span>
         </Flex>
       </div>

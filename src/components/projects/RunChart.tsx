@@ -20,7 +20,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 /**
- * Stacked passed/failed run chart — one bar per run (height ∝ total tests),
+ * Stacked passed/failed run chart, one bar per run (height ∝ total tests),
  * green passed on the bottom + red failed on top, with a hover tooltip. Built on
  * Recharts via the shadcn `chart` wrapper (per the preset); not hand-drawn SVG.
  */
@@ -35,7 +35,7 @@ export function RunChart({ runs, height = 78 }: { runs: RunBar[]; height?: numbe
         margin={{ top: 2, right: 0, bottom: 0, left: 0 }}
         barCategoryGap="26%"
       >
-        {/* One continuous bar per run — color is the only separation between
+        {/* One continuous bar per run, color is the only separation between
             segments (no per-segment radius). The segments are disjoint and sum
             to total. Bottom → top: passed, flaky, failed, skipped. */}
         <Bar dataKey="passed" stackId="run" fill="var(--color-passed)" isAnimationActive={false} />

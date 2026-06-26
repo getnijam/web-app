@@ -63,7 +63,7 @@ export function useShellNav(): ShellNav {
 
   if (params.projectId) {
     // The section is the segment right after the projectId (runs | explorer |
-    // flaky | settings) — not the last segment, so deep routes like
+    // flaky | settings), not the last segment, so deep routes like
     // `/explorer/<testId>` or `/runs/<runId>/file` keep the right nav active.
     const idx = segments.indexOf(params.projectId);
     const section = idx >= 0 ? segments[idx + 1] : undefined;

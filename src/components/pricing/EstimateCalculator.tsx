@@ -32,7 +32,7 @@ const tickLabel = (n: number) =>
   n.toLocaleString('en-US', { notation: 'compact', maximumFractionDigits: 1 });
 
 // Magnetic ticks: while dragging, a value within GRAVITY of a marker is pulled
-// onto it. Applied to the slider only — typing in the input stays exact.
+// onto it. Applied to the slider only, typing in the input stays exact.
 const GRAVITY = 2_000;
 const snapToTick = (n: number) => TICKS.find((t) => Math.abs(n - t) <= GRAVITY) ?? n;
 const money = (n: number) =>
@@ -60,7 +60,7 @@ export function EstimateCalculator() {
       <Grid cols={[1, 2]} gap={8} className="items-center">
         {/* Controls. */}
         <Flex direction="col" gap={6}>
-          {/* Credits — slider with a synced number readout. */}
+          {/* Credits, slider with a synced number readout. */}
           <Flex direction="col" gap={3}>
             <Flex align="center" justify="between" gap={3}>
               <Label htmlFor="estimate-credits" className="text-sm font-medium">
@@ -92,7 +92,7 @@ export function EstimateCalculator() {
               onValueChange={(v) => setCredits(snapToTick(v[0] ?? MIN_CREDITS))}
               aria-label="Credits per month"
             />
-            {/* Step markers along the track — notch + label at each reference value. */}
+            {/* Step markers along the track, notch + label at each reference value. */}
             <div className="relative h-6">
               {TICKS.map((t) => {
                 const pct = (t / MAX_CREDITS) * 100;
@@ -112,7 +112,7 @@ export function EstimateCalculator() {
             </div>
           </Flex>
 
-          {/* Team size — a plain number input. */}
+          {/* Team size, a plain number input. */}
           <Flex align="center" justify="between" gap={3}>
             <Label htmlFor="estimate-users" className="text-sm font-medium">
               Number of users
@@ -164,9 +164,9 @@ export function EstimateCalculator() {
       </Grid>
 
       <Text className="mt-6 text-xs text-pretty text-muted-foreground">
-        1 credit = 1 Playwright test = 100 pytest/Vitest tests. This is an estimate only — the
-        amount shown doesn&rsquo;t include any tax-related information. Final charges are calculated
-        at checkout by our payment provider.
+        1 credit = 1 Playwright test = 100 pytest/Vitest tests. This is an estimate only, the amount
+        shown doesn&rsquo;t include any tax-related information. Final charges are calculated at
+        checkout by our payment provider.
       </Text>
     </div>
   );

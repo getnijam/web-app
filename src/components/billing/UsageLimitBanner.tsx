@@ -40,9 +40,9 @@ export function UsageLimitBanner() {
           strokeWidth={1.9}
           className="shrink-0 text-destructive"
         />
-        <Text as="span" className="text-sm font-medium text-foreground text-pretty">
+        <Text as="span" className="text-sm font-medium text-pretty text-foreground">
           {data.enforced
-            ? `You've hit your Free plan's monthly credit limit — new reports are paused until ${formatResetDate(data.resetsAt)}.`
+            ? `You've hit your Free plan's monthly credit limit, new reports are paused until ${formatResetDate(data.resetsAt)}.`
             : "You've reached your Free plan's monthly credit limit."}{' '}
           <Text as="span" className="font-normal text-muted-foreground">
             Upgrade to Pro to keep reporting.

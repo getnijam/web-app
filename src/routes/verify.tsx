@@ -44,7 +44,7 @@ function VerifyPage() {
       .then(() => setStatus('success'))
       .catch((err: unknown) => {
         const code = isApiError(err) ? err.error.code : undefined;
-        // A used link almost always means the user clicked twice — treat as success.
+        // A used link almost always means the user clicked twice, treat as success.
         if (code === 'VERIFICATION_TOKEN_USED') setStatus('success');
         else if (code === 'VERIFICATION_TOKEN_EXPIRED') setStatus('expired');
         else setStatus('invalid');

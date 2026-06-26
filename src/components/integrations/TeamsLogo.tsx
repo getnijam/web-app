@@ -1,4 +1,4 @@
-/** The Microsoft Teams mark (official glyph in brand purple). Decorative — sized via the `size` prop. */
+/** The Microsoft Teams mark (official glyph in brand purple). Decorative, sized via the `size` prop. */
 export function TeamsLogo({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="#6264A7" aria-hidden="true">

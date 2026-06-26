@@ -9,7 +9,7 @@ import { FrameworkLogo } from '@/components/projects/framework-logos';
 /**
  * Framework chooser for the new-project form: a 2-up grid of cards, each just a 48px
  * brand logo + the framework name. The chosen framework is immutable after creation
- * (the API omits it from updates), so this only appears at creation time — the settings
+ * (the API omits it from updates), so this only appears at creation time, the settings
  * page shows it read-only.
  */
 export function FrameworkPicker({

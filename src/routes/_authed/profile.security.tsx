@@ -26,7 +26,7 @@ function SecurityPage() {
   const user = me.data?.user;
 
   // ConnectedAccounts' "Connect" leaves the SPA and returns here with ?connected /
-  // ?connectError — toast the result and strip the params (handled by AccountMenu when
+  // ?connectError, toast the result and strip the params (handled by AccountMenu when
   // settings was a modal; lives here now that it's a page).
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

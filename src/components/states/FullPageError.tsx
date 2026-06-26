@@ -6,7 +6,7 @@ import { ErrorState } from '@/components/states/ErrorState';
 /**
  * Full-page error fallback for the top-level / router error boundaries. Reuses
  * {@link ErrorState}. Set `capture` to report to Sentry from here (the router
- * error path) — leave it off when a `Sentry.ErrorBoundary` already captured the
+ * error path), leave it off when a `Sentry.ErrorBoundary` already captured the
  * error, to avoid double-reporting.
  */
 export function FullPageError({

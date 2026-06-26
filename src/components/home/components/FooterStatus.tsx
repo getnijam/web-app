@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 // Native replacement for Better Stack's badge <iframe>: polls the status page's
 // public JSON API and renders our own pill so it matches the footer's theme. This
 // fetches Better Stack (not the Nijam API), so the generated-client convention
-// doesn't apply — a direct fetch is the only option, and the endpoint sends
+// doesn't apply, a direct fetch is the only option, and the endpoint sends
 // `access-control-allow-origin: *`, so the cross-origin browser call is allowed.
 const STATUS_PAGE_URL = 'https://status.nijam.dev';
 

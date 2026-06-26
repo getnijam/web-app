@@ -2,7 +2,7 @@ import type { AnyRouter } from '@tanstack/react-router';
 import { client } from '@/client/client.gen';
 
 // The `_authed` route roots. A runtime 401 only bounces to login when the user is
-// actually inside the dashboard — so the guest `/me` probe on public pages and the
+// actually inside the dashboard, so the guest `/me` probe on public pages and the
 // login form's own 401 (wrong credentials) never trigger a redirect loop.
 const AUTHED_PREFIXES = ['/orgs', '/profile'];
 
@@ -10,7 +10,7 @@ let redirecting = false;
 
 /**
  * Send the user to `/login?nextUrl=<here>` whenever the API returns **401** while
- * they're inside the dashboard — e.g. their session expired mid-session. This is the
+ * they're inside the dashboard, e.g. their session expired mid-session. This is the
  * runtime counterpart to the `_authed` route gate (which only fires at navigation
  * time); together they cover both "load a page logged out" and "session dies while on
  * a page". Registered once, after the router exists, so it can navigate in-SPA.

@@ -33,7 +33,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: false, refetchOnWindowFocus: false },
   },
-  // Log every non-2xx network call (and network failures) in one place — the generated
+  // Log every non-2xx network call (and network failures) in one place, the generated
   // client uses throwOnError, so these caches' onError fires for exactly the non-2xx outcomes.
   queryCache: new QueryCache({
     onError: (error, query) => logNetworkError('query', error, query.queryKey),
@@ -48,7 +48,7 @@ const router = createRouter({
   routeTree,
   context: { queryClient },
   // Covers the window after React mounts while the auth gate (/v1/auth/me) and
-  // route loaders resolve — so a refresh shows a spinner, never a blank screen.
+  // route loaders resolve, so a refresh shows a spinner, never a blank screen.
   defaultPendingComponent: () => (
     <Flex align="center" justify="center" className="min-h-screen bg-background">
       <LoadingState message={null} />

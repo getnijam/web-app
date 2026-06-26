@@ -2,7 +2,7 @@ import type { SVGProps } from 'react';
 import type { TestFramework } from '@/lib/test-framework';
 
 /**
- * Brand logos for the supported test frameworks, vendored as inline SVGs — Hugeicons
+ * Brand logos for the supported test frameworks, vendored as inline SVGs, Hugeicons
  * carries no brand marks, so these are the same exception as the Nijam logo. Official
  * artwork (devicon); the brand fills are intentional and must stay as-is.
  */
@@ -104,7 +104,13 @@ export function VitestLogo({ size = 20, ...props }: LogoProps) {
 }
 
 /** Render the logo for a given framework value at a uniform size. */
-export function FrameworkLogo({ framework, size = 20 }: { framework: TestFramework; size?: number }) {
+export function FrameworkLogo({
+  framework,
+  size = 20,
+}: {
+  framework: TestFramework;
+  size?: number;
+}) {
   if (framework === 'pytest') return <PytestLogo size={size} />;
   if (framework === 'vitest') return <VitestLogo size={size} />;
   return <PlaywrightLogo size={size} />;

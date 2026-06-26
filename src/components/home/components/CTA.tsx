@@ -15,7 +15,7 @@ import { Reveal } from '../Reveal';
  */
 export function CTA({
   title = 'Stop guessing why your tests fail',
-  description = 'Point your CI at Nijam and get the dashboard your test suite has been missing — flakiness, analytics and root cause in one place, for Playwright, pytest and Vitest.',
+  description = 'Point your CI at Nijam and get the dashboard your test suite has been missing, flakiness, analytics and root cause in one place, for Playwright, pytest and Vitest.',
 }: {
   title?: string;
   description?: ReactNode;

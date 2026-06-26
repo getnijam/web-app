@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
 /**
- * Divider-row skeletons for list panels (members, secret keys, …) — a leading
+ * Divider-row skeletons for list panels (members, secret keys, …), a leading
  * glyph (round avatar or square icon), two text lines, and a trailing chip.
  */
 export function RowsSkeleton({ rows = 3, round = false }: { rows?: number; round?: boolean }) {

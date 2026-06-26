@@ -12,7 +12,7 @@ import type { TestFramework } from '@/lib/test-framework';
 type FrameworkSetup = {
   pkg: string;
   configFile: string;
-  /** Install command per package manager — the reporter is a dev dependency. */
+  /** Install command per package manager, the reporter is a dev dependency. */
   managers: { id: string; command: string }[];
   /** The config snippet a user pastes into `configFile`. */
   snippet: (projectId: string) => string;
@@ -107,11 +107,11 @@ export function ReporterSnippet({
           <Text as="span" variant="code">
             {setup.configFile}
           </Text>
-          , and run your tests — results will appear here.
+          , and run your tests, results will appear here.
         </Text>
       </Flex>
 
-      {/* Step 1 — install the reporter */}
+      {/* Step 1, install the reporter */}
       <Flex direction="col" gap={2}>
         <Text as="span" className="text-xs font-medium text-muted-foreground">
           Install the reporter
@@ -147,7 +147,7 @@ export function ReporterSnippet({
         </Tabs>
       </Flex>
 
-      {/* Step 2 — add it to the framework config */}
+      {/* Step 2, add it to the framework config */}
       <Flex direction="col" gap={2}>
         <Flex align="center" justify="between" gap={2}>
           <Text as="span" className="text-xs font-medium text-muted-foreground">

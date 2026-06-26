@@ -51,7 +51,7 @@ function FileDetailPage() {
   const fileSummary = run.data.files.find((f) => f.file === path);
   const tests = fileTests.data.tests;
   const firstNonPassing = tests.find((t) => t.status !== 'passed');
-  const commit = runData.commitSha ? runData.commitSha.slice(0, 7) : '———';
+  const commit = runData.commitSha ? runData.commitSha.slice(0, 7) : '---';
 
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
@@ -98,7 +98,7 @@ function FileDetailPage() {
           type="multiple"
           defaultValue={firstNonPassing ? [firstNonPassing.testId] : []}
           // Each test is its own bordered card (below), so drop the shadcn root's
-          // container border/rounding — otherwise it doubles up as an outer box.
+          // container border/rounding, otherwise it doubles up as an outer box.
           className="flex flex-col gap-2 overflow-visible rounded-none border-0"
         >
           {tests.map((t) => {
@@ -111,8 +111,16 @@ function FileDetailPage() {
               >
                 <AccordionTrigger className="px-4 py-3 hover:no-underline">
                   <Flex align="center" gap={3} className="min-w-0 flex-1">
-                    <HugeiconsIcon icon={meta.icon} size={18} className={cn('shrink-0', meta.color)} />
-                    <Text as="span" truncate className="min-w-0 flex-1 text-left text-sm font-medium">
+                    <HugeiconsIcon
+                      icon={meta.icon}
+                      size={18}
+                      className={cn('shrink-0', meta.color)}
+                    />
+                    <Text
+                      as="span"
+                      truncate
+                      className="min-w-0 flex-1 text-left text-sm font-medium"
+                    >
                       {t.title}
                     </Text>
                     {t.attempts.length > 1 && (

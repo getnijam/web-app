@@ -7,8 +7,8 @@ export const FRAMEWORK_OPTIONS: ReadonlyArray<{
   description: string;
 }> = [
   { value: 'playwright', label: 'Playwright', description: 'JS/TS end-to-end tests, with traces.' },
-  { value: 'pytest', label: 'pytest', description: 'Python tests — error logs, no traces.' },
-  { value: 'vitest', label: 'Vitest', description: 'JS/TS unit tests — error logs, no traces.' },
+  { value: 'pytest', label: 'pytest', description: 'Python tests, error logs, no traces.' },
+  { value: 'vitest', label: 'Vitest', description: 'JS/TS unit tests, error logs, no traces.' },
 ];
 
 /** Display name for a stored framework value (null = legacy project → Playwright). */

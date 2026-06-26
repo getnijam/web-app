@@ -143,7 +143,7 @@ function ProjectGitHubInner({
         hint={
           draft.enabled
             ? "This project's PR runs post a check and comment."
-            : 'Muted — this project never posts to GitHub.'
+            : 'Muted, this project never posts to GitHub.'
         }
       >
         <Flex align="center" gap={2}>
@@ -167,7 +167,7 @@ function ProjectGitHubInner({
             value={draft.branches}
             onChange={(branches) => setDraft((d) => ({ ...d, branches }))}
             suggestions={branchSuggestions}
-            placeholder="All branches — type to filter"
+            placeholder="All branches, type to filter"
             disabled={!draft.enabled}
             aria-label="Branch allow-list"
           />

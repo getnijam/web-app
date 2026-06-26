@@ -11,7 +11,7 @@ import type { TestFramework } from '@/lib/test-framework';
 import { ProjectGlyphIcon } from '@/components/projects/ProjectGlyphIcon';
 
 /** Project glyph picker: live preview tile + icon grid + color swatches. The grid
- *  leads with the matching framework's glyph (and only that one — never another
+ *  leads with the matching framework's glyph (and only that one, never another
  *  framework's), followed by the standard glyphs. */
 export function GlyphPicker({
   icon,
@@ -23,7 +23,7 @@ export function GlyphPicker({
 }: {
   icon: IconKey;
   color: ColorKey;
-  /** The project's framework — its glyph is offered first; other frameworks' aren't. */
+  /** The project's framework, its glyph is offered first; other frameworks' aren't. */
   framework: TestFramework;
   onIconChange: (icon: IconKey) => void;
   onColorChange: (color: ColorKey) => void;

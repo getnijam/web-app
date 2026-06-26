@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
  * Vendored from usehooks.io (`useClickAway`). We use a document listener rather
  * than a `fixed inset-0` overlay because the home nav has `backdrop-blur`, and a
  * `backdrop-filter` ancestor makes a child `position: fixed` resolve to that
- * ancestor (not the viewport) — so an overlay wouldn't cover the page.
+ * ancestor (not the viewport), so an overlay wouldn't cover the page.
  */
 export function useClickAway<T extends HTMLElement = HTMLElement>(onAway: (e: Event) => void) {
   const ref = useRef<T>(null);

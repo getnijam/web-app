@@ -19,7 +19,7 @@ function IngestionKeysPage() {
         kind="ingest"
         noteIcon={CloudUploadIcon}
         noteTitle="Ingestion only"
-        noteBody="Ingestion keys authenticate uploads from your CI provider. They grant write access to push runs, results and traces — they can't read data or change settings."
+        noteBody="Ingestion keys authenticate uploads from your CI provider. They grant write access to push runs, results and traces, they can't read data or change settings."
         docHref="https://docs.nijam.dev/reporter/ci-integration/"
         docLabel="Upload docs"
         emptyTitle="No ingestion keys yet"

@@ -21,7 +21,7 @@ function TermsPage() {
       updated="June 22, 2026"
       intro={
         <>
-          These Terms of Service (“Terms”) govern your access to and use of Nijam — the
+          These Terms of Service (“Terms”) govern your access to and use of Nijam, the
           test-analytics dashboard at nijam.dev, the Nijam API, and the{' '}
           <code className="font-mono">@nijam/pw-reporter</code> package (together, the “Service”).
           By creating an account or using the Service, you agree to these Terms. If you’re using
@@ -29,13 +29,13 @@ function TermsPage() {
         </>
       }
       ctaTitle="Ready to put your test results to work?"
-      ctaDescription="Point your CI at Nijam and turn the results you already produce into flakiness detection and failure analytics — no agents, no re-runs."
+      ctaDescription="Point your CI at Nijam and turn the results you already produce into flakiness detection and failure analytics, no agents, no re-runs."
     >
       <Section title="1. The Service">
         <P>
           Nijam is a read-only reporting layer for Playwright, pytest, and Vitest. It ingests the
-          test results your CI already produces — runs, test outcomes, timings, and optional
-          artifacts — and turns them into history, flakiness detection, and failure analytics. Nijam
+          test results your CI already produces (runs, test outcomes, timings, and optional
+          artifacts) and turns them into history, flakiness detection, and failure analytics. Nijam
           never executes or re-runs your tests.
         </P>
       </Section>
@@ -53,7 +53,7 @@ function TermsPage() {
       <Section title="3. Organizations & members">
         <P>
           Projects, runs, and data belong to an organization. Every member of an organization can
-          access and act on that organization’s data — there are no per-member roles. The person who
+          access and act on that organization’s data; there are no per-member roles. The person who
           creates an organization is responsible for who they invite. To limit abuse, an account may
           create a limited number of organizations.
         </P>
@@ -74,9 +74,9 @@ function TermsPage() {
 
       <Section title="5. Your content, integrations & API access">
         <P>
-          You retain all rights to the data you send to Nijam — test results, run metadata, and,
+          You retain all rights to the data you send to Nijam, test results, run metadata, and,
           unless you disable source uploads, your test source files and any artifacts your
-          configuration produces (on Playwright, traces, screenshots, and videos). You grant Nijam a
+          configuration produces (on Playwright: traces, screenshots, and videos). You grant Nijam a
           limited license to host, process, and display that data solely to operate and provide the
           Service to you.
         </P>
@@ -97,16 +97,16 @@ function TermsPage() {
           those platforms stays governed by their own terms. When you point an{' '}
           <strong className="font-semibold text-foreground">AI agent</strong> at Nijam over MCP, you
           control what you connect, and the data you expose to it is sent to that agent and its
-          model provider — you’re responsible for that choice. You can disconnect any integration or
+          model provider; you’re responsible for that choice. You can disconnect any integration or
           revoke a key at any time.
         </P>
         <P>
           If your organization configures{' '}
           <strong className="font-semibold text-foreground">single sign-on (SSO)</strong>, an admin
           authorizes Nijam to authenticate members through your chosen identity provider over OIDC.
-          You’re responsible for your provider configuration and the email domains you verify, and —
-          if you turn on enforcement, which blocks password and social sign-in for your domains — for
-          confirming SSO works before relying on it, since enforced users can’t fall back to a
+          You’re responsible for your provider configuration and the email domains you verify, and,
+          if you turn on enforcement (which blocks password and social sign-in for your domains),
+          for confirming SSO works before relying on it, since enforced users can’t fall back to a
           password.
         </P>
         <P>
@@ -132,7 +132,7 @@ function TermsPage() {
           We may enforce plan limits (test volume, members, and organizations per account) and apply
           reasonable rate limits to keep the Service stable. On the Free plan, ingestion pauses once
           a monthly limit is reached; reporting resumes when the period resets or you upgrade.
-          Hitting a limit never fails your CI — the reporter logs a warning and continues.
+          Hitting a limit never fails your CI, the reporter logs a warning and continues.
         </P>
       </Section>
 

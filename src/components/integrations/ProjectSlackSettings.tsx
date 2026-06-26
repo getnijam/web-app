@@ -63,12 +63,15 @@ interface Draft {
   branches: string[];
 }
 
-const sameSet = (a: string[], b: string[]) => a.length === b.length && a.every((x) => b.includes(x));
+const sameSet = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((x) => b.includes(x));
 
 /** One-line summary of the saved routing, covering channel + branch filter. */
 function describeSettings(projectName: string, s: ProjectSlackResponse): string {
   if (!s.enabled) return `${projectName} won't post to Slack.`;
-  const channel = s.channel ? `posts to #${s.channel.name}` : 'uses the organization default channel';
+  const channel = s.channel
+    ? `posts to #${s.channel.name}`
+    : 'uses the organization default channel';
   const branches = s.branches.length === 0 ? 'every branch' : s.branches.join(', ');
   return `${projectName} ${channel} for ${branches}.`;
 }
@@ -119,7 +122,9 @@ function ProjectSlackInner({
     ...updateProjectSlackSettingsMutation(),
     onSuccess: (updated) => {
       queryClient.setQueryData(queryKey, updated);
-      notify.success('Slack settings saved', { description: describeSettings(projectName, updated) });
+      notify.success('Slack settings saved', {
+        description: describeSettings(projectName, updated),
+      });
     },
     onError: (err) =>
       notify.error("Couldn't save Slack settings", {
@@ -188,7 +193,7 @@ function ProjectSlackInner({
         hint={
           draft.enabled
             ? `This project's runs post to ${effectiveLabel}.`
-            : 'Muted — this project never posts to Slack.'
+            : 'Muted, this project never posts to Slack.'
         }
       >
         <Flex align="center" gap={2}>
@@ -256,7 +261,7 @@ function ProjectSlackInner({
             value={draft.branches}
             onChange={(branches) => setDraft((d) => ({ ...d, branches }))}
             suggestions={branchSuggestions}
-            placeholder="All branches — type to filter"
+            placeholder="All branches, type to filter"
             disabled={!draft.enabled}
             aria-label="Branch allow-list"
           />

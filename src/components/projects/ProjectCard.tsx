@@ -108,7 +108,7 @@ export function ProjectCard({ project, orgId }: { project: ProjectSummary; orgId
           <>
             <Flex align="center" gap={1.5}>
               <HugeiconsIcon icon={Layers01Icon} size={14} className="shrink-0" />
-              <b className="font-semibold text-foreground">—</b> tests
+              <b className="font-semibold text-foreground">-</b> tests
             </Flex>
             <Flex align="center" gap={1.5}>
               <HugeiconsIcon icon={Clock01Icon} size={14} className="shrink-0" />

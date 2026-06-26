@@ -198,7 +198,7 @@ function BlockingOrgRow({
       </Flex>
       {candidates.length === 0 && !membersQuery.isLoading && (
         <Text variant="caption" color="muted">
-          No other members to promote — delete this organization instead.
+          No other members to promote, delete this organization instead.
         </Text>
       )}
     </Flex>

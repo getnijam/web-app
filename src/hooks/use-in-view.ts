@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 // usehooks.io has no IntersectionObserver / in-view hook (checked the full
 // catalog at https://www.usehooks.io), so this small one is hand-written.
 //
-// Returns a `ref` to attach to an element and `inView` — whether it has entered
+// Returns a `ref` to attach to an element and `inView`, whether it has entered
 // the viewport. `once` (default) stops observing after the first intersection.
 interface UseInViewOptions {
   threshold?: number;

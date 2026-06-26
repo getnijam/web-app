@@ -13,22 +13,21 @@ type Props = Pick<ComponentPropsWithoutRef<'a'>, 'className' | 'onClick'> & {
  * and `/login` for guests. forwardRef + prop spread so it drops into `<Button asChild>`
  * (Radix Slot passes className/ref through) or stands alone as a plain link.
  *
- * Reads `/me` from the shared, cached query the home sections already issue — no extra
+ * Reads `/me` from the shared, cached query the home sections already issue, no extra
  * request.
  */
-export const DashboardLink = forwardRef<HTMLAnchorElement, Props>(function DashboardLink(
-  props,
-  ref,
-) {
-  const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
+export const DashboardLink = forwardRef<HTMLAnchorElement, Props>(
+  function DashboardLink(props, ref) {
+    const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
 
-  if (user?.lastOrgId) {
-    return (
-      <Link ref={ref} to="/orgs/$orgId/projects" params={{ orgId: user.lastOrgId }} {...props} />
-    );
-  }
-  if (user) {
-    return <Link ref={ref} to="/orgs" {...props} />;
-  }
-  return <Link ref={ref} to="/login" {...props} />;
-});
+    if (user?.lastOrgId) {
+      return (
+        <Link ref={ref} to="/orgs/$orgId/projects" params={{ orgId: user.lastOrgId }} {...props} />
+      );
+    }
+    if (user) {
+      return <Link ref={ref} to="/orgs" {...props} />;
+    }
+    return <Link ref={ref} to="/login" {...props} />;
+  },
+);

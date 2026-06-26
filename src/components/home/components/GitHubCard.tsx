@@ -3,7 +3,7 @@ import { GitPullRequestIcon, CancelCircleIcon } from '@hugeicons/core-free-icons
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 
-// Preview of the GitHub PR surface Nijam posts to — the same 10/2/1 example as the
+// Preview of the GitHub PR surface Nijam posts to, the same 10/2/1 example as the
 // Slack card: a red status check plus a sticky results comment on the pull request.
 const TESTS = [
   '🔴 checkout.spec.ts › completes guest checkout',
@@ -40,7 +40,7 @@ export function GitHubCard() {
               Nijam · web-checkout
             </Text>
             <Text as="p" className="text-xs text-muted-foreground">
-              Failed — 10 passed · 2 flaky · 1 failed
+              Failed, 10 passed · 2 flaky · 1 failed
             </Text>
           </div>
           <Text as="span" className="ml-auto text-xs font-medium text-info">

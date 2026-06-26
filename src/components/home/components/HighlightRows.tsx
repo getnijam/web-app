@@ -83,7 +83,7 @@ export function HighlightRows() {
           id="flakiness"
           kicker="Flakiness detector"
           heading="Find the tests quietly wasting your team's time"
-          body="Nijam watches every retry across every run and scores each test for instability — so the worst offenders rise to the top instead of hiding in green builds."
+          body="Nijam watches every retry across every run and scores each test for instability, so the worst offenders rise to the top instead of hiding in green builds."
           items={[
             'Ranked by flake rate, not just pass/fail',
             'Per-test retry history across runs',
@@ -97,7 +97,7 @@ export function HighlightRows() {
           flip
           kicker="Root cause, fast"
           heading="Why it broke, and the commit that broke it"
-          body="Open any failure to get the assertion, the trace and the artifacts — then jump to the exact run and commit where the test first turned red."
+          body="Open any failure to get the assertion, the trace and the artifacts, then jump to the exact run and commit where the test first turned red."
           items={[
             'Full error, screenshots, video & trace',
             'First-failing run and commit, pinpointed',
@@ -111,7 +111,7 @@ export function HighlightRows() {
           id="integrations"
           kicker="Integrations"
           heading="Results land where your team already talks"
-          body="Connect a Slack channel and Nijam posts a summary of every run by your rules — passing, flaky or failing — with each suite and test linked back to its results."
+          body="Connect a Slack channel and Nijam posts a summary of every run by your rules, passing, flaky or failing, with each suite and test linked back to its results."
           items={[
             'Post on failures, flaky runs or regressions',
             'Route each project to its own channel, or mute it',
@@ -126,7 +126,7 @@ export function HighlightRows() {
           id="github"
           kicker="GitHub checks"
           heading="Every pull request gets a verdict"
-          body="Install the GitHub App and Nijam posts a status check on each PR — green when it passes, red when it fails — plus a results comment it keeps up to date as you push."
+          body="Install the GitHub App and Nijam posts a status check on each PR, green when it passes, red when it fails, plus a results comment it keeps up to date as you push."
           items={[
             'Pass / fail status check on the PR head commit',
             'A sticky results comment, updated in place each run',

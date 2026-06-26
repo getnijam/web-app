@@ -19,7 +19,7 @@ const dateTimeFmt = new Intl.DateTimeFormat(undefined, {
   minute: '2-digit',
 });
 
-/** "May 30, 9:48 PM" — date + time, for run-history rows. */
+/** "May 30, 9:48 PM", date + time, for run-history rows. */
 export function formatDateTime(input: string | Date): string {
   const d = typeof input === 'string' ? new Date(input) : input;
   return dateTimeFmt.format(d);
@@ -44,7 +44,7 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
- * Reduce a repository URL to "org/repo" — strips scheme/host (https or git@),
+ * Reduce a repository URL to "org/repo", strips scheme/host (https or git@),
  * a trailing `.git`, and trailing slashes. Empty string when not derivable.
  */
 export function repoFromUrl(url: string | null | undefined): string {
@@ -60,7 +60,7 @@ export function repoFromUrl(url: string | null | undefined): string {
 /**
  * Display form for a spec-file path. The reporter stores paths relative to the
  * Playwright rootDir, but older runs (and absolute-path setups) can hold a full
- * machine path like `/home/runner/_work/.../foo.spec.ts` — collapse those to the
+ * machine path like `/home/runner/_work/.../foo.spec.ts`, collapse those to the
  * basename. Relative paths are shown as-is (their directories are useful context).
  * Display-only: the stored `file` value is still what links/queries use.
  */
@@ -74,7 +74,7 @@ export function displayFile(file: string): string {
 
 /**
  * Whether an email is git's auto-generated placeholder (e.g.
- * `user@Akhils-MacBook-Pro-2.local`) rather than a real address — produced when
+ * `user@Akhils-MacBook-Pro-2.local`) rather than a real address, produced when
  * `git config user.email` isn't set to a real value at commit time.
  */
 export function isPlaceholderEmail(email: string): boolean {
@@ -87,7 +87,7 @@ export function isPlaceholderEmail(email: string): boolean {
 
 /**
  * Human label for a commit author: the email when it's real, otherwise the name,
- * otherwise the email's local-part — so we never surface git's
+ * otherwise the email's local-part, so we never surface git's
  * `user@hostname.local` placeholder verbatim.
  */
 export function displayAuthor(email: string | null, name: string | null): string {

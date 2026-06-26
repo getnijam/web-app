@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Search01Icon } from '@hugeicons/core-free-icons';
 import { listProjectFlakyTestsOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -33,7 +35,7 @@ function FlakyPage() {
     ...listProjectFlakyTestsOptions({ path: { projectId }, query: rangeToQuery(search) }),
     // Retain the prior data across a filter change so the filter row stays mounted
     // (it keys off `tests.length`); the list itself still shows a skeleton while the
-    // new data loads — see `isPlaceholderData` in renderList.
+    // new data loads, see `isPlaceholderData` in renderList.
     placeholderData: keepPreviousData,
   });
 
@@ -62,7 +64,7 @@ function FlakyPage() {
     if (q.error) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
     if (q.isLoading || q.isPlaceholderData) return <FlakySkeleton />;
     if (tests.length === 0)
-      return <EmptyState title="No flaky tests" description="Nothing flaked — nice and stable." />;
+      return <EmptyState title="No flaky tests" description="Nothing flaked, nice and stable." />;
     if (filtered.length === 0)
       return <EmptyState title="No matches" description="No flaky test matches your search." />;
     return (
@@ -93,11 +95,13 @@ function FlakyPage() {
           // Search + date side by side on web, stacked on mobile.
           <Flex direction="col" gap={2} className="sm:flex-row sm:items-center">
             <Input
-              type="search"
               placeholder="Search by test or suite name…"
               className="flex-1"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              startIcon={<HugeiconsIcon icon={Search01Icon} size={16} />}
+              clearable
+              onClear={() => setQuery('')}
             />
             <DateRangeFilter
               value={searchToRange(search)}

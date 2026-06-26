@@ -21,8 +21,8 @@ export type AccountMenuVariant = 'sidebar' | 'topnav';
 
 /**
  * One avatar + account dropdown for **both** nav contexts, switched by `variant`:
- * `sidebar` (dashboard — full-width trigger, opens upward) and `topnav` (outside the
- * dashboard — compact avatar, opens downward). "Account settings" links to the
+ * `sidebar` (dashboard, full-width trigger, opens upward) and `topnav` (outside the
+ * dashboard, compact avatar, opens downward). "Account settings" links to the
  * full-page `/profile` settings area.
  *
  * `onSignedOut` runs after sign-out (e.g. route to /login); omit it to stay put as a
@@ -40,7 +40,7 @@ export function AccountMenu({
   const email = user?.email ?? '';
   const name = user?.name ?? (email ? email.split('@')[0] : 'Account');
 
-  // Pending org invitations — surfaced here because login now lands returning users
+  // Pending org invitations, surfaced here because login now lands returning users
   // straight in their org (skipping the /orgs picker where invites used to show).
   const invites = useQuery({ ...listMyInvitationsOptions(), retry: false, staleTime: 60 * 1000 });
   const inviteCount = invites.data?.invitations.length ?? 0;

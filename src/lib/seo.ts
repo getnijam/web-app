@@ -2,16 +2,17 @@
 // tags are applied client-side via TanStack Router's route `head` option +
 // `<HeadContent />` (see __root.tsx). `index.html` carries static homepage
 // defaults for non-JS scrapers; `main.tsx` strips those on boot so the router is
-// the single source of truth in the browser (avoids duplicate tags — HeadContent
+// the single source of truth in the browser (avoids duplicate tags, HeadContent
 // only dedupes among route-provided meta, not against static index.html tags).
 
 const SITE_URL = 'https://www.nijam.dev';
 const SITE_NAME = 'Nijam';
 const OG_IMAGE = `${SITE_URL}/og.png`;
 
-export const DEFAULT_TITLE = 'Nijam — test analytics & flakiness dashboard for Playwright, pytest & Vitest';
+export const DEFAULT_TITLE =
+  'Nijam, test analytics & flakiness dashboard for Playwright, pytest & Vitest';
 export const DEFAULT_DESCRIPTION =
-  'The missing dashboard for your test suite — run history, flakiness scoring, and failure analysis from every CI run. Works with Playwright, pytest, and Vitest. Think Sentry, for your tests.';
+  'The missing dashboard for your test suite, run history, flakiness scoring, and failure analysis from every CI run. Works with Playwright, pytest, and Vitest. Think Sentry, for your tests.';
 
 interface SeoInput {
   /** Page-specific title; rendered as "<title> · Nijam". Omit for the site default. */
@@ -50,7 +51,7 @@ export function seo({ title, description, path = '', noindex = false }: SeoInput
 
 /**
  * Minimal head for private (dashboard) pages: a page title + `noindex`. No OG or
- * canonical — these pages are never indexed or shared, and a canonical on a
+ * canonical, these pages are never indexed or shared, and a canonical on a
  * noindexed page sends mixed signals to crawlers.
  */
 export function privateSeo(title: string) {

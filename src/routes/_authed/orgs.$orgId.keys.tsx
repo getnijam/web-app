@@ -18,7 +18,7 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/keys')({
  * two strictly-separated key kinds (`/keys/ingestion`, `/keys/mcp`). The tabs
  * are real router links (`TabsTrigger asChild` → `<Link>`); the active tab is
  * driven by the URL, not local state, so deep-linking and back/forward work.
- * Plain `variant="line"` — the component's own underline indicator, no overrides.
+ * Plain `variant="line"`, the component's own underline indicator, no overrides.
  */
 function SecretKeysLayout() {
   const { orgId } = Route.useParams();
@@ -32,7 +32,7 @@ function SecretKeysLayout() {
         <Text variant="h1">Secret keys</Text>
         <Text color="muted">
           Ingestion keys upload your runs from CI; read keys let AI agents query them over MCP. The
-          two are strictly separated — a leaked key of one kind can never do the other&rsquo;s job.
+          two are strictly separated, a leaked key of one kind can never do the other&rsquo;s job.
         </Text>
       </Flex>
 

@@ -8,7 +8,7 @@ import { Footer } from './components/Footer';
 
 /** Public marketing landing page, rendered at the dashboard root (`/`). */
 export function Home() {
-  // Smooth in-page anchor scrolling without bespoke CSS — toggle Tailwind's
+  // Smooth in-page anchor scrolling without bespoke CSS, toggle Tailwind's
   // `scroll-smooth` on <html> only while the landing is mounted + motion is allowed.
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;

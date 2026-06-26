@@ -24,32 +24,32 @@ function PrivacyPage() {
           This Privacy Policy explains what information Nijam collects when you use the dashboard at
           nijam.dev, the Nijam API, and the <code className="font-mono">@nijam/pw-reporter</code>{' '}
           package, how we use it, and the choices you have. We aim to collect only what we need to
-          run a test-analytics service — and nothing more.
+          run a test-analytics service, and nothing more.
         </>
       }
       ctaTitle="Your tests, your data, your dashboard"
-      ctaDescription="Nijam only reads the results your CI already uploads — connect a project and see it working in minutes."
+      ctaDescription="Nijam only reads the results your CI already uploads, connect a project and see it working in minutes."
     >
       <Section title="1. Information we collect">
         <P>
           <strong className="font-semibold text-foreground">
             Account &amp; organization data.
           </strong>{' '}
-          Your name, email address, password (stored only as a hash — see Security), and optional
+          Your name, email address, password (stored only as a hash, see Security), and optional
           profile picture; and your organization’s name, optional logo, members, and invitations.
         </P>
         <P>
           <strong className="font-semibold text-foreground">Test &amp; run data you send.</strong>{' '}
-          When your CI reports to Nijam we receive test results and run metadata — test names and
+          When your CI reports to Nijam we receive test results and run metadata, test names and
           file paths, pass/fail status, durations, retries, error messages, and CI context such as
           commit SHA, branch, run identifiers, and the commit author’s name and email.
         </P>
         <P>
           <strong className="font-semibold text-foreground">Source &amp; artifacts.</strong> By
           default, the reporter also uploads your test source files and any artifacts your test
-          configuration produces — on Playwright, traces, screenshots, and videos (pytest and Vitest
-          have no traces) — so they can be shown in the dashboard. You can turn off source uploads
-          by setting <code className="font-mono">uploadSource: false</code> in the reporter, and you
+          configuration produces, on Playwright, traces, screenshots, and videos (pytest and Vitest
+          have no traces), so they can be shown in the dashboard. You can turn off source uploads by
+          setting <code className="font-mono">uploadSource: false</code> in the reporter, and you
           control which artifacts exist through your test configuration.
         </P>
         <P>
@@ -76,21 +76,21 @@ function PrivacyPage() {
         </P>
         <P>
           <strong className="font-semibold text-foreground">Single sign-on (SSO).</strong> If your
-          organization enables SSO, we store the connection settings — your provider’s issuer URL,
-          client ID, an encrypted client secret, and the email domains you verify. When a member signs
-          in through SSO, your identity provider sends us a subject identifier, email address, and
-          name, which we use to sign them in and link the login to their Nijam account.
+          organization enables SSO, we store the connection settings, your provider’s issuer URL,
+          client ID, an encrypted client secret, and the email domains you verify. When a member
+          signs in through SSO, your identity provider sends us a subject identifier, email address,
+          and name, which we use to sign them in and link the login to their Nijam account.
         </P>
       </Section>
 
       <Section title="2. How we use your information">
         <Bullets
           items={[
-            'to provide the Service — store your runs and produce history, flakiness detection, and analytics;',
+            'to provide the Service, store your runs and produce history, flakiness detection, and analytics;',
             'to authenticate you, secure accounts, enforce plan limits, and prevent abuse;',
             'to process payments and manage subscriptions for paid plans;',
             'to send transactional email (verification, password reset, organization invitations);',
-            'to power the integrations you enable — posting run checks and comments to GitHub, notifications to Slack, and answering MCP queries made with read keys;',
+            'to power the integrations you enable, posting run checks and comments to GitHub, notifications to Slack, and answering MCP queries made with read keys;',
             'to operate, debug, and improve the Service and keep it reliable.',
           ]}
         />
@@ -104,21 +104,22 @@ function PrivacyPage() {
         </P>
         <Bullets
           items={[
-            'Polar — payment processing and billing, as our Merchant of Record;',
-            'Resend — sending transactional email;',
-            'Neon — managed PostgreSQL database hosting;',
-            'Cloudflare R2 — storage for artifacts (traces, screenshots, videos) and uploaded images;',
-            'Vercel and Railway — hosting for the web app and API;',
-            'Slack — delivering run notifications to your workspace, if you connect it;',
-            'GitHub — posting checks and pull-request comments via the Nijam GitHub App, if you connect it;',
-            'Better Stack — error monitoring and diagnostics, with personal data scrubbed before it is sent.',
+            'Polar, payment processing and billing, as our Merchant of Record;',
+            'Resend, sending transactional email;',
+            'Neon, managed PostgreSQL database hosting;',
+            'Cloudflare R2, storage for artifacts (traces, screenshots, videos) and uploaded images;',
+            'Vercel and Railway, hosting for the web app and API;',
+            'Slack, delivering run notifications to your workspace, if you connect it;',
+            'GitHub, posting checks and pull-request comments via the Nijam GitHub App, if you connect it;',
+            'Better Stack, error monitoring and diagnostics, with personal data scrubbed before it is sent.',
           ]}
         />
         <P>
-          When you sign in with Google or GitHub, connect Slack or the GitHub App, or sign in through
-          your organization’s SSO identity provider, you also share data with those providers under
-          their own terms. And if you connect an AI agent over MCP, the test data it queries is sent
-          to that agent and its model provider — both chosen and controlled by you, not by Nijam.
+          When you sign in with Google or GitHub, connect Slack or the GitHub App, or sign in
+          through your organization’s SSO identity provider, you also share data with those
+          providers under their own terms. And if you connect an AI agent over MCP, the test data it
+          queries is sent to that agent and its model provider, both chosen and controlled by you,
+          not by Nijam.
         </P>
         <P>
           We may also disclose information if required by law or to protect the rights, safety, and
@@ -128,8 +129,8 @@ function PrivacyPage() {
 
       <Section title="4. Data retention">
         <P>
-          Run history and artifacts are retained for the window included in your plan — 7 days on
-          Free and 90 days on Pro — and are then deleted automatically, including the underlying
+          Run history and artifacts are retained for the window included in your plan, 7 days on
+          Free and 90 days on Pro, and are then deleted automatically, including the underlying
           stored files. Account and organization data is kept while your account is active. If you
           delete your account, we delete or anonymize your data, except where we must retain limited
           records (for example, billing records) to meet legal obligations.
@@ -139,10 +140,10 @@ function PrivacyPage() {
       <Section title="5. Security">
         <Bullets
           items={[
-            'Passwords are hashed with argon2id; verification, reset, session, and ingest tokens are stored only as SHA-256 hashes — never in plaintext.',
+            'Passwords are hashed with argon2id; verification, reset, session, and ingest tokens are stored only as SHA-256 hashes, never in plaintext.',
             'Data is encrypted in transit over HTTPS.',
             'Artifact storage is private; files are served only through short-lived, signed URLs.',
-            'Secret keys come in two kinds — write-only ingestion keys and read-only read keys; each is shown once at creation and stored only as a SHA-256 hash.',
+            'Secret keys come in two kinds, write-only ingestion keys and read-only read keys; each is shown once at creation and stored only as a SHA-256 hash.',
           ]}
         />
         <P>

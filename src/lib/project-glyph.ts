@@ -31,7 +31,7 @@ export const ICON_KEYS = [
   'database',
 ] as const;
 
-/** Per-framework glyph keys — same string values as `TestFramework`. These render a
+/** Per-framework glyph keys, same string values as `TestFramework`. These render a
  *  monochrome brand mark (framework-glyphs.tsx) instead of a Hugeicon, and the picker
  *  only offers the one matching the selected framework. */
 export const FRAMEWORK_ICON_KEYS = ['playwright', 'pytest', 'vitest'] as const;
@@ -49,7 +49,7 @@ export const COLOR_KEYS = [
 ] as const;
 /** A standard Hugeicon glyph key. */
 export type StandardIconKey = (typeof ICON_KEYS)[number];
-/** Any stored icon — a standard glyph or a per-framework glyph. */
+/** Any stored icon, a standard glyph or a per-framework glyph. */
 export type IconKey = StandardIconKey | FrameworkIconKey;
 export type ColorKey = (typeof COLOR_KEYS)[number];
 
@@ -74,7 +74,7 @@ export const ICON_GLYPHS: Record<StandardIconKey, IconSvgElement> = {
 /** Key shown for projects with no icon set, or an icon key we no longer recognize. */
 const FALLBACK_ICON_KEY: StandardIconKey = 'design';
 
-/** The design's nine glyph fill colors — defined as theme tokens in globals.css. */
+/** The design's nine glyph fill colors, defined as theme tokens in globals.css. */
 export const COLOR_BACKGROUNDS: Record<ColorKey, string> = {
   emerald: 'var(--glyph-emerald)',
   indigo: 'var(--glyph-indigo)',
@@ -106,7 +106,7 @@ function hash(s: string): number {
 }
 
 export interface Glyph {
-  /** The project's icon key — its chosen glyph, or the fallback when none is set.
+  /** The project's icon key, its chosen glyph, or the fallback when none is set.
    *  Render with <ProjectGlyphIcon> (branches Hugeicon vs framework glyph). */
   iconKey: IconKey;
   /** A flat fill color for the glyph tile background. */

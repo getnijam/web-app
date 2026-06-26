@@ -1,4 +1,4 @@
-/** The Slack mark (official 4-color glyph). Decorative — sized via the `size` prop. */
+/** The Slack mark (official 4-color glyph). Decorative, sized via the `size` prop. */
 export function SlackLogo({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 122.8 122.8" aria-hidden="true">

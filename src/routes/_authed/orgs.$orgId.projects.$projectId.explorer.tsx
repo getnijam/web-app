@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Search01Icon } from '@hugeicons/core-free-icons';
 import type { TestCaseSummary } from '@/client';
 import { listProjectTestsOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
@@ -76,7 +78,7 @@ function ExplorerPage() {
     if (grouped) {
       // While a search is active, start groups expanded so matches are visible. The
       // `term ? 1 : 0` key remounts groups only when crossing the empty boundary, not
-      // on every keystroke — so user-toggled groups aren't reset mid-search.
+      // on every keystroke, so user-toggled groups aren't reset mid-search.
       return (
         <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
           {groupTestsByFile(filtered).map(([file, fileTests]) => (
@@ -115,11 +117,13 @@ function ExplorerPage() {
         {showSearch && (
           <Flex align="center" gap={3} wrap>
             <Input
-              type="search"
               placeholder="Find a test…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="min-w-0 flex-1"
+              startIcon={<HugeiconsIcon icon={Search01Icon} size={16} />}
+              clearable
+              onClear={() => setQuery('')}
             />
             <Flex align="center" gap={2} className="shrink-0">
               <Switch

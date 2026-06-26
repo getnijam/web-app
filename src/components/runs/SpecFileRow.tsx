@@ -15,7 +15,7 @@ const ICON_TINT: Record<FileStatus, string> = {
   flaky: 'bg-warning/10 text-warning',
 };
 
-/** One spec file in the run detail — links to the file detail (8b). */
+/** One spec file in the run detail, links to the file detail (8b). */
 export function SpecFileRow({
   file,
   orgId,

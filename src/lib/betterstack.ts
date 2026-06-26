@@ -1,10 +1,10 @@
 /**
- * Better Stack product analytics (user-action tracking) for the SPA — separate from the
+ * Better Stack product analytics (user-action tracking) for the SPA, separate from the
  * error monitoring in `sentry.ts`. Loads Better Stack's `b.js` and initializes the global
  * `betterstack` command queue.
  *
  * Config comes from env, not hardcoded: the source token is `VITE_BETTERSTACK_ANALYTICS_TOKEN`
- * (a public client key, inlined into the bundle at build — set it on Vercel for prod, in `.env`
+ * (a public client key, inlined into the bundle at build, set it on Vercel for prod, in `.env`
  * for local), and `environment` is derived from the build mode (`import.meta.env.MODE`). Enabled
  * for **production** builds only, so a normal `npm run dev` is a true no-op (no script load, no
  * tracking). To test locally, set `VITE_MONITORING_DEV=true` (+ the token) and restart the dev
@@ -48,13 +48,13 @@ export function initBetterStackAnalytics(): void {
 }
 
 /**
- * The catalog of product-analytics events. **This is the source of truth** — to track a new
+ * The catalog of product-analytics events. **This is the source of truth**, to track a new
  * user action, add one entry here (a `snake_case` name → its property shape), then call
  * `track('your_event', { … })` from the click/mutation handler. The value type is the event's
  * properties; use {@link NoProps} for events that carry no properties.
  *
  * Keep names verb-led and past-tense (the action already happened), and keep properties to
- * low-cardinality, non-PII facts (booleans, enums, counts) — never raw emails, tokens, or names.
+ * low-cardinality, non-PII facts (booleans, enums, counts), never raw emails, tokens, or names.
  */
 export type AnalyticsEvents = {
   signed_up: { method: 'password' | 'google' | 'github' };
@@ -80,7 +80,7 @@ type TrackArgs<K extends EventName> = keyof AnalyticsEvents[K] extends never
 /**
  * Record a user action. No-op until `initBetterStackAnalytics()` has run (so it's silent in
  * dev and SSR-free prerender), and typed against {@link AnalyticsEvents} so the event name and
- * its properties always match. Fire-and-forget — never awaited, never throws.
+ * its properties always match. Fire-and-forget, never awaited, never throws.
  */
 export function track<K extends EventName>(...args: TrackArgs<K>): void {
   if (!window.betterstack) return;

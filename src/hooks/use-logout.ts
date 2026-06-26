@@ -5,8 +5,8 @@ import { getMeQueryKey } from '@/client/@tanstack/react-query.gen';
 import { track, resetAnalyticsUser } from '@/lib/betterstack';
 
 /**
- * Sign the user out. **Resets** the `/me` query (not `invalidate` — an errored 401
- * refetch keeps the last successful user around; and not `remove` — that clears the
+ * Sign the user out. **Resets** the `/me` query (not `invalidate`, an errored 401
+ * refetch keeps the last successful user around; and not `remove`, that clears the
  * cache but doesn't notify *mounted* observers, so the public home nav would keep
  * showing the signed-in state). `reset` clears the cached user AND refetches any
  * active observer, so the home page (Nav/Hero/CTA) flips to its guest state in place,

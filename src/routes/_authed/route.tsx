@@ -30,7 +30,7 @@ export const Route = createFileRoute('/_authed')({
 });
 
 function AuthedLayout() {
-  // getMe is already in cache (beforeLoad ensured it) — tag Sentry events with the
+  // getMe is already in cache (beforeLoad ensured it), tag Sentry events with the
   // signed-in user so dashboard errors carry who hit them. Cleared on logout.
   const user = useQuery({ ...getMeOptions(), retry: false }).data?.user;
   useEffect(() => {

@@ -4,7 +4,7 @@ import { CopyButton } from '@/components/ui/copy-button';
 import { cn } from '@/lib/utils';
 
 /**
- * A read-only value beside a copy button — the reveal pattern from the Secret-keys
+ * A read-only value beside a copy button, the reveal pattern from the Secret-keys
  * dialog, extracted for reuse. Use anywhere we show a value the user needs to copy
  * (redirect URIs, DNS records, ids). Click selects the text; the button copies it.
  */

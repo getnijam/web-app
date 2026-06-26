@@ -6,7 +6,7 @@ import type { RunStatusFilter } from './status-filter';
 
 type CountKind = 'passed' | 'failed' | 'flaky' | 'skipped';
 
-/** Where a clickable pill should jump — the run, with its status filter applied. */
+/** Where a clickable pill should jump, the run, with its status filter applied. */
 type CountLink = { orgId: string; projectId: string; runId: string };
 
 const PILL: Record<CountKind, string> = {
@@ -33,7 +33,7 @@ const LABEL: Record<CountKind, (n: number) => string> = {
   skipped: (n) => `${n} ${n === 1 ? 'test' : 'tests'} skipped`,
 };
 
-/** A single count as an outlined, color-tinted badge — a link when `link` is set. */
+/** A single count as an outlined, color-tinted badge, a link when `link` is set. */
 function CountPill({ value, kind, link }: { value: number; kind: CountKind; link?: CountLink }) {
   const className = cn(
     'rounded-md border px-1.5 py-0.5 text-xs font-medium tabular-nums',
@@ -49,7 +49,10 @@ function CountPill({ value, kind, link }: { value: number; kind: CountKind; link
         aria-label={`Open run showing only ${status} tests`}
         // z-10 lifts the pill above the row's full-area overlay link so it's
         // independently clickable; the subtle scale signals it's interactive.
-        className={cn(className, 'relative z-10 cursor-pointer transition-transform hover:scale-110')}
+        className={cn(
+          className,
+          'relative z-10 cursor-pointer transition-transform hover:scale-110',
+        )}
       >
         {value}
       </Link>
@@ -68,7 +71,7 @@ function CountPill({ value, kind, link }: { value: number; kind: CountKind; link
 /**
  * passed/failed/flaky/skipped counts as small tinted pills; all but passed hidden
  * when zero. Pass `link` to make passed/failed/flaky deep-link into the run with
- * that status filter applied (skipped stays a plain badge — it has no filter).
+ * that status filter applied (skipped stays a plain badge, it has no filter).
  */
 export function CountDots({
   passed,

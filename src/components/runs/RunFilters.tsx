@@ -9,7 +9,7 @@ import { STATUS_OPTIONS, type RunStatusFilter } from './status-filter';
 
 export type { RunStatusFilter } from './status-filter';
 
-/** Mirrors the API's `UNSET_ENV` sentinel — selects runs with no environment. */
+/** Mirrors the API's `UNSET_ENV` sentinel, selects runs with no environment. */
 const UNSET_ENV = '(unset)';
 
 export interface RunFilterValues {

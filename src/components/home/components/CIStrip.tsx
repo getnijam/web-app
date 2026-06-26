@@ -5,7 +5,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { JenkinsLogo, CircleCiLogo, AzureLogo } from './ci-logos';
 
-// GitHub/GitLab from Hugeicons; the rest are inline brand SVGs (ci-logos) — all
+// GitHub/GitLab from Hugeicons; the rest are inline brand SVGs (ci-logos), all
 // tint to the surrounding `text-muted-foreground`, so the strip is one color.
 const PROVIDERS: { name: string; logo: ReactNode }[] = [
   { name: 'GitHub Actions', logo: <HugeiconsIcon icon={GithubIcon} size={18} /> },
@@ -18,7 +18,10 @@ const PROVIDERS: { name: string; logo: ReactNode }[] = [
 export function CIStrip() {
   return (
     <div className="pt-12">
-      <Text align="center" className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+      <Text
+        align="center"
+        className="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+      >
         Ingests results from your CI
       </Text>
       <Flex align="center" justify="center" wrap gap={8} className="mt-5">

@@ -22,7 +22,7 @@ import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 
 /**
- * Promote another member to admin — a "transfer" that lets the current admin hand off
+ * Promote another member to admin, a "transfer" that lets the current admin hand off
  * the org (and then leave, since they're no longer the sole admin). Reuses the existing
  * member-role endpoint. Only members (non-admins) are offered as candidates.
  */

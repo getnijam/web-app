@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Nav } from '@/components/home/components/Nav';
 import { Footer } from '@/components/home/components/Footer';
 
-/** Full-page 404 — shown by the router (`defaultNotFoundComponent`) when no route matches. */
+/** Full-page 404, shown by the router (`defaultNotFoundComponent`) when no route matches. */
 export function NotFound() {
   const router = useRouter();
 

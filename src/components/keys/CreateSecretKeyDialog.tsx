@@ -4,13 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { HugeiconsIcon } from '@hugeicons/react';
-import {
-  Building03Icon,
-  Layers01Icon,
-  Tick02Icon,
-  Copy01Icon,
-  Shield01Icon,
-} from '@hugeicons/core-free-icons';
+import { Building03Icon, Layers01Icon, Tick02Icon, Shield01Icon } from '@hugeicons/core-free-icons';
 import type { SecretKeyCreatedResponse } from '@/client';
 import {
   listOrgProjectsOptions,
@@ -38,6 +32,7 @@ import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { CopyField } from '@/components/ui/copy-field';
 import { Label } from '@/components/ui/label';
 import { ErrorBanner } from '@/components/states/ErrorState';
 import { FieldError } from '@/components/auth/AuthLayout';
@@ -126,7 +121,6 @@ export function CreateSecretKeyDialog({
   const [created, setCreated] = useState<SecretKeyCreatedResponse | null>(null);
   const [scope, setScope] = useState<Scope>('org');
   const [projectId, setProjectId] = useState<string>('');
-  const [copied, setCopied] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
   const form = useForm<CreateForm>({
@@ -141,7 +135,6 @@ export function CreateSecretKeyDialog({
     setCreated(null);
     setScope('org');
     setProjectId('');
-    setCopied(false);
     setFormError(null);
   }
   function close() {
@@ -174,14 +167,6 @@ export function CreateSecretKeyDialog({
   function selectProjectScope() {
     setScope('project');
     if (!projectId && projects[0]) setProjectId(projects[0].id);
-  }
-
-  function copyToken() {
-    if (!created) return;
-    navigator.clipboard.writeText(created.token).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    });
   }
 
   return (
@@ -323,25 +308,14 @@ export function CreateSecretKeyDialog({
               <DialogHeader>
                 <DialogTitle>Secret key created</DialogTitle>
                 <DialogDescription>
-                  Copy it now — for your security it won't be shown again.
+                  Copy it now, for your security it won't be shown again.
                 </DialogDescription>
               </DialogHeader>
 
               <Flex direction="col" gap={4}>
                 <Flex direction="col" gap={1.5}>
                   <Label>Your new secret key</Label>
-                  <Flex gap={2}>
-                    <Input readOnly value={created.token} className="font-mono" />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={copyToken}
-                      className="shrink-0"
-                    >
-                      <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} size={15} />
-                      {copied ? 'Copied' : 'Copy'}
-                    </Button>
-                  </Flex>
+                  <CopyField value={created.token} />
                 </Flex>
 
                 <Flex

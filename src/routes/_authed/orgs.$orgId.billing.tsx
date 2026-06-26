@@ -102,7 +102,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
       }),
   });
 
-  // Pro is uncapped — once usage passes the included allotment, overage billing
+  // Pro is uncapped, once usage passes the included allotment, overage billing
   // ($0.001/credit early-bird rate) kicks in. Surface that instead of a silent full bar.
   const included = limits.credits;
   const overCredits = pro ? Math.max(0, usage.credits - included) : 0;
@@ -117,25 +117,25 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   const resets = formatResetDate(billing.resetsAt);
 
   // The dynamic status line for the Credits meter; the per-framework breakdown below
-  // is appended in the JSX. Members never see amounts — metered/over → "contact an admin".
+  // is appended in the JSX. Members never see amounts, metered/over → "contact an admin".
   const used = `${formatCount(usage.credits)} credits used`;
   let creditHint: string;
   if (isAdmin) {
     if (pro)
       creditHint = overActive
-        ? `Included ${formatCount(included)} credits used up — overage now $0.001/credit (${formatCount(overCredits)} over this cycle), added to your next invoice. Resets ${resets}.`
+        ? `Included ${formatCount(included)} credits used up, overage now $0.001/credit (${formatCount(overCredits)} over this cycle), added to your next invoice. Resets ${resets}.`
         : `${formatCount(usage.credits)} of ${formatCount(included)} credits used. Beyond that, $0.001 per credit, billed at cycle end. Resets ${resets}.`;
     else if (billing.over)
       creditHint = billing.enforced
-        ? `Monthly credit limit reached — new reports are paused until ${resets}. Upgrade to keep reporting.`
-        : 'Monthly credit limit reached — upgrade to Pro to report beyond the Free tier.';
+        ? `Monthly credit limit reached, new reports are paused until ${resets}. Upgrade to keep reporting.`
+        : 'Monthly credit limit reached, upgrade to Pro to report beyond the Free tier.';
     else creditHint = `${used} this cycle. Resets ${resets}.`;
   } else if (pro)
     creditHint = overActive
-      ? `Metered usage is in effect — credits beyond the included amount are now billed. Contact an admin for details. Resets ${resets}.`
+      ? `Metered usage is in effect, credits beyond the included amount are now billed. Contact an admin for details. Resets ${resets}.`
       : `${formatCount(usage.credits)} of ${formatCount(included)} credits used. Resets ${resets}.`;
   else if (billing.over)
-    creditHint = `Monthly credit limit reached — contact an admin to upgrade. Resets ${resets}.`;
+    creditHint = `Monthly credit limit reached, contact an admin to upgrade. Resets ${resets}.`;
   else creditHint = `${used} this cycle. Resets ${resets}.`;
 
   // Per-framework credit breakdown, shown under the Credits meter on its own lines

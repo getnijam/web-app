@@ -95,19 +95,37 @@ export function SsoSettings({ orgId }: { orgId: string }) {
     );
   }
 
-  if (billing.isLoading) return <Page header={header}><LoadingState /></Page>;
+  if (billing.isLoading)
+    return (
+      <Page header={header}>
+        <LoadingState />
+      </Page>
+    );
   if (billing.data && billing.data.plan !== 'pro') {
-    return <Page header={header}><UpgradePanel orgId={orgId} /></Page>;
+    return (
+      <Page header={header}>
+        <UpgradePanel orgId={orgId} />
+      </Page>
+    );
   }
 
-  if (sso.isLoading) return <Page header={header}><LoadingState /></Page>;
+  if (sso.isLoading)
+    return (
+      <Page header={header}>
+        <LoadingState />
+      </Page>
+    );
   if (sso.error || !sso.data) {
-    return <Page header={header}><ErrorState error={sso.error} onRetry={() => sso.refetch()} /></Page>;
+    return (
+      <Page header={header}>
+        <ErrorState error={sso.error} onRetry={() => sso.refetch()} />
+      </Page>
+    );
   }
 
   const connection = sso.data.connection;
   // The launch link only works once SSO is actually live (active + a verified domain),
-  // so only surface it then — sitting right under the "active" banner.
+  // so only surface it then, sitting right under the "active" banner.
   const live =
     !!connection && connection.status === 'active' && connection.domains.some((d) => d.verified);
 
@@ -123,7 +141,7 @@ export function SsoSettings({ orgId }: { orgId: string }) {
 }
 
 /**
- * Launch link — an IdP app-tile / dashboard target, not a form field. Rendered as its
+ * Launch link, an IdP app-tile / dashboard target, not a form field. Rendered as its
  * own card under the status banner (only when SSO is live) so it reads as "here's the URL
  * to hand to your IdP", distinct from the editable connection settings.
  */
@@ -144,9 +162,9 @@ function LaunchLinkCard({ connection }: { connection: Conn }) {
             Launch link
           </Text>
           <Text as="span" className="text-xs text-muted-foreground">
-            Add this to your identity provider&rsquo;s app tile or dashboard — Okta initiate-login URI,
-            Entra home-page URL, a Google launcher link, or a bookmark — so people can launch Nijam
-            straight from there.
+            Add this to your identity provider&rsquo;s app tile or dashboard, Okta initiate-login
+            URI, Entra home-page URL, a Google launcher link, or a bookmark, so people can launch
+            Nijam straight from there.
           </Text>
         </Flex>
       </Flex>
@@ -181,7 +199,7 @@ function Notice({
 }
 
 /**
- * Readiness banner — makes it obvious that a fully-filled-in connection still does
+ * Readiness banner, makes it obvious that a fully-filled-in connection still does
  * nothing until a domain is verified (and the connection is enabled).
  */
 function ConnectionStatus({ connection }: { connection: Conn }) {
@@ -190,23 +208,24 @@ function ConnectionStatus({ connection }: { connection: Conn }) {
   if (connection.status !== 'active') {
     return (
       <Notice tone="warning" icon={AlertCircleIcon}>
-        Single sign-on is turned off. Click <b>Edit</b> and turn <b>Enabled</b> on to start using it.
+        Single sign-on is turned off. Click <b>Edit</b> and turn <b>Enabled</b> on to start using
+        it.
       </Notice>
     );
   }
   if (!hasVerifiedDomain) {
     return (
       <Notice tone="warning" icon={AlertCircleIcon}>
-        Single sign-on isn&rsquo;t live yet — add and <b>verify an email domain</b> below. Until a
+        Single sign-on isn&rsquo;t live yet, add and <b>verify an email domain</b> below. Until a
         domain is verified, no one can sign in with SSO.
       </Notice>
     );
   }
   return (
     <Notice tone="success" icon={CheckmarkCircle02Icon}>
-      Single sign-on is active. People with a verified-domain email are sent to your identity provider
-      to sign in
-      {connection.enforced && <> — and it&rsquo;s required for those domains</>}.
+      Single sign-on is active. People with a verified-domain email are sent to your identity
+      provider to sign in
+      {connection.enforced && <>, and it&rsquo;s required for those domains</>}.
     </Notice>
   );
 }
@@ -229,7 +248,7 @@ function UpgradePanel({ orgId }: { orgId: string }) {
         </Badge>
         <Text className="text-sm text-muted-foreground">
           Single sign-on lets your team log in through your own Okta, Entra ID, Auth0, or any OIDC
-          provider — with automatic provisioning. Upgrade to Pro to enable it.
+          provider, with automatic provisioning. Upgrade to Pro to enable it.
         </Text>
         <Flex>
           <Button asChild>
@@ -302,7 +321,9 @@ function ConnectionPanel({
     },
     onError: (err) =>
       notify.error("Couldn't save single sign-on", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       }),
   });
 
@@ -350,7 +371,7 @@ function ConnectionPanel({
 
   return (
     <SettingsPanel title="Identity provider" action={action}>
-      {/* Reference info — always shown, copyable, in both view and edit modes. */}
+      {/* Reference info, always shown, copyable, in both view and edit modes. */}
       <SettingsRow
         label="Redirect URI"
         hint="Add this as the sign-in redirect URI in your provider's OIDC app."
@@ -372,12 +393,12 @@ function ConnectionView({ connection }: { connection: Conn }) {
   return (
     <>
       <SettingsRow label="Issuer URL" hint="Your provider's OIDC issuer URL.">
-        <Text as="span" className="break-all font-mono text-sm text-muted-foreground">
+        <Text as="span" className="font-mono text-sm break-all text-muted-foreground">
           {connection.issuerUrl}
         </Text>
       </SettingsRow>
       <SettingsRow label="Client ID" hint="From your provider's OIDC application.">
-        <Text as="span" className="break-all font-mono text-sm text-muted-foreground">
+        <Text as="span" className="font-mono text-sm break-all text-muted-foreground">
           {connection.clientId}
         </Text>
       </SettingsRow>
@@ -456,7 +477,11 @@ function ConnectionEdit({
 
       <SettingsRow
         label="Client secret"
-        hint={connection ? 'Stored encrypted. Leave blank to keep the current secret.' : 'Stored encrypted at rest.'}
+        hint={
+          connection
+            ? 'Stored encrypted. Leave blank to keep the current secret.'
+            : 'Stored encrypted at rest.'
+        }
       >
         <Input
           type="password"
@@ -481,16 +506,17 @@ function ConnectionEdit({
 
       <SettingsRow
         label="Require SSO"
-        hint="Force everyone on your verified domains to sign in via SSO — this blocks password and social login for those emails across all of Nijam. Test SSO before enabling: enforced users can't fall back, and a broken IdP can lock them out."
+        hint="Force everyone on your verified domains to sign in via SSO, this blocks password and social login for those emails across all of Nijam. Test SSO before enabling: enforced users can't fall back, and a broken IdP can lock them out."
       >
         <Switch checked={draft.enforced} onCheckedChange={(v) => set({ enforced: v })} />
       </SettingsRow>
       {draft.enforced && (
         <div className="px-5 pb-4">
           <Notice tone="warning" icon={AlertCircleIcon}>
-            Enforcing SSO <b>claims your verified domains</b>: everyone with one of those emails must sign
-            in through your identity provider across all of Nijam — including any other organizations they
-            belong to. Deprovisioning a user in your IdP then removes their Nijam access entirely.
+            Enforcing SSO <b>claims your verified domains</b>: everyone with one of those emails
+            must sign in through your identity provider across all of Nijam, including any other
+            organizations they belong to. Deprovisioning a user in your IdP then removes their Nijam
+            access entirely.
           </Notice>
         </div>
       )}
@@ -547,7 +573,9 @@ function DomainsPanel({ orgId, connection }: { orgId: string; connection: Conn }
     ...verifyOrgSsoDomainMutation(),
     onSuccess: (data) => {
       writeCache(data);
-      notify.success('Domain verified', { description: 'Logins from this domain can now use SSO.' });
+      notify.success('Domain verified', {
+        description: 'Logins from this domain can now use SSO.',
+      });
     },
     onError: onErr("Couldn't verify domain"),
   });
@@ -600,7 +628,12 @@ function DomainsPanel({ orgId, connection }: { orgId: string; connection: Conn }
           className="max-w-xs"
           data-testid="sso-new-domain"
         />
-        <Button type="submit" variant="outline" loading={add.isPending} disabled={!newDomain.trim()}>
+        <Button
+          type="submit"
+          variant="outline"
+          loading={add.isPending}
+          disabled={!newDomain.trim()}
+        >
           Add domain
         </Button>
       </Flex>
@@ -657,8 +690,8 @@ function DomainRow({
                 <AlertDialogTitle>Remove {domain.domain}?</AlertDialogTitle>
                 <AlertDialogDescription>
                   Users with an{' '}
-                  <span className="font-medium text-foreground">@{domain.domain}</span> email will no
-                  longer be routed to single sign-on. You can add and re-verify it later.
+                  <span className="font-medium text-foreground">@{domain.domain}</span> email will
+                  no longer be routed to single sign-on. You can add and re-verify it later.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -718,7 +751,9 @@ function DangerPanel({ orgId }: { orgId: string }) {
     onError: (err) => {
       setOpen(false);
       notify.error("Couldn't remove single sign-on", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       });
     },
   });

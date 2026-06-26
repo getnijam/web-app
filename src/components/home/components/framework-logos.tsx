@@ -1,6 +1,6 @@
 // Inline brand SVGs for the test frameworks Nijam ingests (Playwright / pytest /
 // Vitest). Single-path marks rendered with fill=currentColor so they tint to the
-// surrounding text color — same approach as the CI provider logos (ci-logos).
+// surrounding text color, same approach as the CI provider logos (ci-logos).
 // Sources: simpleicons (Vitest, pytest), devicon (Playwright).
 
 export function PlaywrightLogo({ className }: { className?: string }) {

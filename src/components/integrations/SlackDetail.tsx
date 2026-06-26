@@ -123,7 +123,7 @@ function SlackDetailInner({
   const [previewState, setPreviewState] = useState<PreviewState>('fail');
 
   // Local draft of the editable config. Changes stay local until Save commits
-  // them in one PATCH — nothing is persisted per keystroke/click.
+  // them in one PATCH, nothing is persisted per keystroke/click.
   const [draft, setDraft] = useState<Draft>(() => ({
     triggerMode: data.triggerMode,
     detailLevel: data.detailLevel,
@@ -148,7 +148,7 @@ function SlackDetailInner({
   });
 
   // Single commit of the whole draft. The PATCH returns the fresh config, which we
-  // write straight to the cache so `data` matches the draft instantly — `dirty`
+  // write straight to the cache so `data` matches the draft instantly, `dirty`
   // resolves to false with no flicker and no extra refetch.
   const save = useMutation({
     ...updateOrgSlackIntegrationMutation(),
@@ -220,7 +220,7 @@ function SlackDetailInner({
     ...testOrgSlackMutation(),
     onSuccess: () =>
       notify.success('Test message sent', {
-        description: `Check ${draft.channelName ?? 'your channel'} in Slack — a sample message should be waiting.`,
+        description: `Check ${draft.channelName ?? 'your channel'} in Slack, a sample message should be waiting.`,
       }),
     onError: (err) =>
       notify.error("Couldn't send test message", {
@@ -232,7 +232,7 @@ function SlackDetailInner({
 
   return (
     <Flex direction="col" gap={6}>
-      {/* Header — title + Save */}
+      {/* Header, title + Save */}
       <Flex align="center" justify="between" gap={4} className="flex-wrap">
         <Flex direction="col" gap={1}>
           <Text variant="h1">Slack</Text>
@@ -296,7 +296,7 @@ function SlackDetailInner({
           )}
 
           <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">
-            {/* Configuration — left, 1/2 */}
+            {/* Configuration, left, 1/2 */}
             <Flex direction="col" gap={6}>
               {/* Workspace */}
               <SettingsPanel title="Slack workspace">
@@ -462,8 +462,8 @@ function SlackDetailInner({
                     className="mt-0.5 shrink-0 text-muted-foreground"
                   />
                   <Text as="span" className="text-xs text-muted-foreground">
-                    Want a project to report somewhere else? Set a per-project channel — or mute
-                    Slack — in that project&rsquo;s{' '}
+                    Want a project to report somewhere else? Set a per-project channel, or mute
+                    Slack, in that project&rsquo;s{' '}
                     <span className="font-medium text-foreground">
                       Settings &rarr; Slack notifications
                     </span>
@@ -473,7 +473,7 @@ function SlackDetailInner({
               </SettingsPanel>
             </Flex>
 
-            {/* Preview — right, 1/2, sticky on desktop */}
+            {/* Preview, right, 1/2, sticky on desktop */}
             <div>
               <div className="xl:sticky xl:top-6">
                 {/* Live preview reflects the unsaved draft */}

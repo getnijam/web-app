@@ -258,7 +258,7 @@ export function AppSidebar() {
   // On mobile the sidebar is an off-canvas sheet; tapping a nav link should
   // dismiss it. Delegate at the content/footer level so every link is covered,
   // but ignore non-link clicks (e.g. the project chip). The OrgSwitcher and
-  // AccountMenu live outside this and intentionally stay open — tapping them
+  // AccountMenu live outside this and intentionally stay open, tapping them
   // opens their own dropdowns, which would be unusable if the sheet closed.
   const closeMobile = () => {
     if (isMobile) setOpenMobile(false);
@@ -274,7 +274,7 @@ export function AppSidebar() {
           <Logo label="Nijam.dev" />
         </Flex>
         {/* Inside a project the project chip + "Back to projects" carry the context,
-            so the org switcher is redundant — hide it there. */}
+            so the org switcher is redundant, hide it there. */}
         {!inProject && <OrgSwitcher orgId={orgId} />}
       </SidebarHeader>
 

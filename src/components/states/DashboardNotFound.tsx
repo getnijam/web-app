@@ -6,7 +6,7 @@ import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 
 /**
- * 404 for the authed dashboard — wired as `notFoundComponent` on the `_authed` and
+ * 404 for the authed dashboard, wired as `notFoundComponent` on the `_authed` and
  * org layouts so unmatched dashboard routes render in-app (within the shell where one
  * is present) instead of falling through to the public marketing 404 (Nav + Footer).
  */

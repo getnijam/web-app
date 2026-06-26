@@ -34,7 +34,7 @@ export function RunSummaryBar({ summary }: { summary: RunAggregate }) {
       <Metric label="Skipped" value={summary.skipped} color="text-muted-foreground" />
       <Metric
         label="Duration"
-        value={summary.durationSec === null ? '—' : formatDuration(summary.durationSec)}
+        value={summary.durationSec === null ? '-' : formatDuration(summary.durationSec)}
       />
     </Flex>
   );

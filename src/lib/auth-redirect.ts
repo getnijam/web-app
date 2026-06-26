@@ -16,9 +16,9 @@ export function safeNextPath(value: unknown): string | undefined {
 
 /**
  * `beforeLoad` guard for the public auth pages (login / signup / verify / reset
- * etc.): send already-signed-in users straight to the dashboard — or to `nextUrl`
+ * etc.): send already-signed-in users straight to the dashboard, or to `nextUrl`
  * when they arrived with one. The inverse of the `_authed` guard. **Not** used on
- * `/invite` — signed-in users accept invites there.
+ * `/invite`, signed-in users accept invites there.
  */
 export async function redirectAuthedToDashboard(
   queryClient: QueryClient,
@@ -28,12 +28,12 @@ export async function redirectAuthedToDashboard(
   try {
     me = await queryClient.ensureQueryData(getMeOptions());
   } catch {
-    return; // a 401 means guest — let the auth page render
+    return; // a 401 means guest, let the auth page render
   }
   const next = safeNextPath(nextUrl);
   if (next) throw redirect({ to: next });
   // Land returning users straight on the org they last opened; first-timers (or anyone
-  // whose last org is gone) get the picker — the org layout also bounces back to it.
+  // whose last org is gone) get the picker, the org layout also bounces back to it.
   if (me.user.lastOrgId) {
     throw redirect({ to: '/orgs/$orgId/projects', params: { orgId: me.user.lastOrgId } });
   }

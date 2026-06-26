@@ -49,7 +49,12 @@ const LINE_ANCHOR: Record<string, (n: number) => string> = {
  * to a line. Needs a repository, commit, and provider; null otherwise.
  */
 export function gitFileUrl(
-  ref: { repository: string | null; commitSha: string | null; ciProvider: string | null; ciRunUrl: string | null },
+  ref: {
+    repository: string | null;
+    commitSha: string | null;
+    ciProvider: string | null;
+    ciRunUrl: string | null;
+  },
   file: string,
   line?: number | null,
 ): string | null {
@@ -57,7 +62,7 @@ export function gitFileUrl(
   if (!repository || !commitSha || !ciProvider || !file) return null;
   // Only a repo-relative path yields a valid blob URL. Older runs stored an
   // absolute machine path (e.g. /home/runner/work/…) when the reporter couldn't
-  // make it rootDir-relative — that produces …/blob/<sha>//home/… which 404s.
+  // make it rootDir-relative, that produces …/blob/<sha>//home/… which 404s.
   // Skip the link rather than send the user to a dead page.
   if (file.startsWith('/') || /^[a-zA-Z]:[\\/]/.test(file) || file.startsWith('..')) return null;
   const blob = BLOB_PATH[ciProvider];

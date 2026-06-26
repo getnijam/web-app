@@ -14,7 +14,7 @@ export const Route = createFileRoute('/pricing')({
     seo({
       title: 'Pricing',
       description:
-        'Simple, volume-based pricing for Nijam — start free, then $20/month on Pro with unlimited members and an early-bird half-price metered rate. Estimate your monthly bill by team size.',
+        'Simple, volume-based pricing for Nijam, start free, then $20/month on Pro with unlimited members and an early-bird half-price metered rate. Estimate your monthly bill by team size.',
       path: '/pricing',
     }),
   component: PricingPage,
@@ -33,7 +33,7 @@ function PricingPage() {
             Start free. Upgrade when your suite grows.
           </Text>
           <Text className="mt-3.5 text-lg text-pretty text-muted-foreground">
-            One simple plan when you outgrow the free tier — no per-seat pricing, no surprises.
+            One simple plan when you outgrow the free tier, no per-seat pricing, no surprises.
             You&rsquo;re only charged for the credits you actually use.
           </Text>
         </Reveal>
@@ -83,7 +83,7 @@ function PricingPage() {
       </main>
       <CTA
         title="Start free. Pay only when you grow."
-        description="Connect your CI in minutes and only pay for the test volume you actually report — no per-seat pricing, ever."
+        description="Connect your CI in minutes and only pay for the test volume you actually report, no per-seat pricing, ever."
       />
       <Footer />
     </div>

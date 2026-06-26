@@ -8,7 +8,7 @@
 /*
  * shadcn's sidebar sets `data-active={isActive}`, so inactive items render
  * `data-active="false"`. Tailwind's default `data-active:` variant is presence-
- * based (`&[data-active]`) and would match those too — styling every item active.
+ * based (`&[data-active]`) and would match those too - styling every item active.
  * Pin it to the truthy value so only the active item is highlighted.
  */
 @custom-variant data-active (&[data-active="true"]);
@@ -16,7 +16,7 @@
 /*
  * Radix exposes orientation as `data-orientation="horizontal|vertical"`, but the
  * shadcn preset's components (e.g. ui/tabs) ship `data-horizontal:`/`data-vertical:`
- * shorthands — presence-based by default in Tailwind, so they'd never match.
+ * shorthands - presence-based by default in Tailwind, so they'd never match.
  * Map them to the attribute value Radix actually sets.
  */
 @custom-variant data-horizontal (&[data-orientation="horizontal"]);
@@ -231,7 +231,7 @@
   background-clip: padding-box;
 }
 
-/* Token-driven brand gradients — used for the logo mark and avatar tiles.
+/* Token-driven brand gradients - used for the logo mark and avatar tiles.
    Defined as utilities so call sites avoid one-off `bg-[linear-gradient(...)]`. */
 @utility bg-brand {
   background-image: linear-gradient(

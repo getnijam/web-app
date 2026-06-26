@@ -95,7 +95,7 @@ export function RunRow({
           <Flex direction="col" gap={1} className="min-w-0 flex-1">
             <Flex align="center" gap={2} className="min-w-0">
               <Text as="span" variant="code" className="font-medium">
-                #{run.commitSha ? run.commitSha.slice(0, 7) : '———'}
+                #{run.commitSha ? run.commitSha.slice(0, 7) : '---'}
               </Text>
               <RunStatusBadge status={ds} className="shrink-0" />
               {run.shardTotal != null && run.shardTotal > 1 && (

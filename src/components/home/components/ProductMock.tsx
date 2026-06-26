@@ -23,7 +23,7 @@ const FRAMEWORKS: { name: string; logo: typeof PlaywrightLogo; n: number }[] = [
   { name: 'Vitest', logo: VitestLogo, n: 56 },
 ];
 
-// The analysis Nijam derives — success, flaky, and the rest.
+// The analysis Nijam derives, success, flaky, and the rest.
 const HEALTH: { label: string; n: number; dot: string; val: string }[] = [
   { label: 'Passed', n: 246, dot: 'bg-success', val: 'text-foreground' },
   { label: 'Flaky', n: 2, dot: 'bg-warning', val: 'text-warning' },
@@ -31,7 +31,7 @@ const HEALTH: { label: string; n: number; dot: string; val: string }[] = [
 ];
 
 // Per-run bars: `p` is the passed (green) portion, `f` the flaky (amber) cap.
-// Exactly two runs carry a flaky cap — matching the "Flaky 2" stat — and none
+// Exactly two runs carry a flaky cap, matching the "Flaky 2" stat, and none
 // are red, since Failed is 0. The two segments stack seamlessly into one bar.
 const CHART: { p: string; f?: string }[] = [
   { p: 'h-9' },
@@ -46,7 +46,7 @@ const CHART: { p: string; f?: string }[] = [
 
 const AXIS = ['09:00', '12:00', '15:00', '18:00'];
 
-// Decorative L-bracket placed just outside a corner — the blueprint frame.
+// Decorative L-bracket placed just outside a corner, the blueprint frame.
 const CORNERS = [
   'top-0 left-0 -translate-x-1.5 -translate-y-1.5 border-t-2 border-l-2 rounded-tl-sm',
   'top-0 right-0 translate-x-1.5 -translate-y-1.5 border-t-2 border-r-2 rounded-tr-sm',
@@ -63,7 +63,7 @@ export function ProductMock() {
 
       <Flex direction="col">
         <Grid cols={2} className="gap-3">
-          {/* Top-left — the headline metric Nijam reports back. */}
+          {/* Top-left, the headline metric Nijam reports back. */}
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
             <Flex align="center" justify="between">
               <Flex
@@ -102,7 +102,7 @@ export function ProductMock() {
             </Flex>
           </div>
 
-          {/* Top-right — the test results streaming in from CI. */}
+          {/* Top-right, the test results streaming in from CI. */}
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
             <Flex align="center" gap={1.5} className="text-xs font-semibold text-muted-foreground">
               <HugeiconsIcon icon={CloudUploadIcon} size={15} />
@@ -113,7 +113,7 @@ export function ProductMock() {
                 <Flex key={fw.name} align="center" gap={2} className="text-xs font-medium">
                   <fw.logo className="size-4 shrink-0 text-muted-foreground" />
                   {fw.name}
-                  <span className="ml-auto tabular-nums text-muted-foreground">{fw.n}</span>
+                  <span className="ml-auto text-muted-foreground tabular-nums">{fw.n}</span>
                 </Flex>
               ))}
             </Flex>
@@ -159,7 +159,7 @@ export function ProductMock() {
           </span>
         </div>
 
-        {/* Bottom — Nijam's analysis: success / flaky / failed + run history. */}
+        {/* Bottom, Nijam's analysis: success / flaky / failed + run history. */}
         <div className="rounded-2xl border border-border bg-card p-4 shadow-md">
           <Flex align="center" justify="between" className="mb-3">
             <Flex align="center" gap={2.5}>
@@ -208,11 +208,7 @@ export function ProductMock() {
 
           <Flex align="end" gap={1.5} className="mt-3.5 h-14 px-0.5">
             {CHART.map((c, i) => (
-              <Flex
-                key={i}
-                direction="col-reverse"
-                className="flex-1 overflow-hidden rounded-sm"
-              >
+              <Flex key={i} direction="col-reverse" className="flex-1 overflow-hidden rounded-sm">
                 <span className={cn('bg-success', c.p)} />
                 {c.f && <span className={cn('bg-warning', c.f)} />}
               </Flex>

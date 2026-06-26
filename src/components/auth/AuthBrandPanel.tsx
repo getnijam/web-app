@@ -34,7 +34,7 @@ const STATUS_TEXT: Record<RunRow['status'], string> = {
 };
 
 /**
- * Decorative right-hand panel for the auth screens — a faux Nijam test run that
+ * Decorative right-hand panel for the auth screens, a faux Nijam test run that
  * sells the product's niche (test run history + flakiness) at a glance.
  */
 export function AuthBrandPanel() {
@@ -64,7 +64,7 @@ export function AuthBrandPanel() {
           </Text>
           <Text className="max-w-sm text-background/60">
             Run history, failure analysis, and flakiness scoring for your Playwright, pytest &amp;
-            Vitest suites — without babysitting CI logs.
+            Vitest suites, without babysitting CI logs.
           </Text>
         </Flex>
 

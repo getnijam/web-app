@@ -12,14 +12,14 @@ import { DashboardLink } from './DashboardLink';
 import { ProductMock } from './ProductMock';
 import { CIStrip } from './CIStrip';
 
-// px width of one grid cell — matches the 3.5rem rhythm of hero-grid / grid-cells.
+// px width of one grid cell, matches the 3.5rem rhythm of hero-grid / grid-cells.
 const CELL = 56;
 
 export function Hero() {
   const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
 
   // Interactive grid backdrop: we fill it with exactly enough cells to cover the
-  // hero, recomputed on resize. Hover lighting/fading is pure CSS on each cell —
+  // hero, recomputed on resize. Hover lighting/fading is pure CSS on each cell -
   // no pointer tracking, no re-renders as the cursor moves.
   const gridRef = useRef<HTMLDivElement>(null);
   const [cells, setCells] = useState(0);
@@ -42,13 +42,13 @@ export function Hero() {
       {/* Full-bleed background: a faint grid plus an interactive layer of cells on
           the same rhythm that light up toward the brand color under the cursor and
           fade back out. The section is pulled up behind the (transparent) floating
-          nav by -mt-18 — slightly more than the nav's height — so the grid starts
+          nav by -mt-18, slightly more than the nav's height, so the grid starts
           at the very top of the viewport; the inner container's pt compensates,
           keeping the content where it was. overflow-hidden clips the backdrop from
           the section below. */}
       <div aria-hidden="true" className="absolute inset-0 z-0">
         <div className="pointer-events-none absolute inset-0 hero-grid" />
-        <div ref={gridRef} className="grid-cells absolute inset-0">
+        <div ref={gridRef} className="absolute inset-0 grid-cells">
           {Array.from({ length: cells }, (_, i) => (
             <span
               key={i}
@@ -82,9 +82,9 @@ export function Hero() {
             </Text>
 
             <Text className="mt-5 max-w-xl text-lg text-pretty text-muted-foreground">
-              Nijam reads the test results your CI already uploads — from Playwright, pytest, or
-              Vitest — and turns them into flakiness detection, failure analytics, and a clear answer
-              to <em>why</em> — and <em>since when</em> — your tests started failing.
+              Nijam reads the test results your CI already uploads, from Playwright, pytest, or
+              Vitest, and turns them into flakiness detection, failure analytics, and a clear answer
+              to <em>why</em> (and <em>since when</em>) your tests started failing.
             </Text>
 
             <Flex gap={3} wrap className="pointer-events-auto mt-7">
@@ -102,7 +102,7 @@ export function Hero() {
 
             <Flex align="center" gap={2} className="mt-5 text-sm text-muted-foreground">
               <HugeiconsIcon icon={Tick02Icon} size={17} className="text-success" />
-              No agents, no re-runs — just point your CI at Nijam.
+              No agents, no re-runs, just point your CI at Nijam.
             </Flex>
           </div>
 
