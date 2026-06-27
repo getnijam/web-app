@@ -31,7 +31,7 @@ export default defineConfig([
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
       ],
-      // No ternary hell: a single `cond ? a : b` only — never nest. Reach for a
+      // No ternary hell: a single `cond ? a : b` only, never nest. Reach for a
       // lookup object, an early-return helper, or `if`/`else` instead.
       'no-nested-ternary': 'error',
     },
@@ -44,9 +44,9 @@ export default defineConfig([
   },
 
   // `react-refresh/only-export-components` assumes plain component modules. These
-  // areas legitimately co-export non-components — shadcn primitives ship their
+  // areas legitimately co-export non-components, shadcn primitives ship their
   // `cva` variants, route files export `Route`, the theme provider exports its
-  // hook, and `lib` holds cross-cutting helpers — so the Fast Refresh check is
+  // hook, and `lib` holds cross-cutting helpers, so the Fast Refresh check is
   // turned off for them. It stays on for feature components, where a stray
   // non-component export usually is a mistake.
   {

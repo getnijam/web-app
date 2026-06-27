@@ -1,7 +1,7 @@
 import { type Page } from '@playwright/test';
 
 /**
- * Internal navigation helpers shared by the action utils — not actions themselves.
+ * Internal navigation helpers shared by the action utils, not actions themselves.
  */
 
 /** Pull the org id out of an `/orgs/<id>/…` URL. */

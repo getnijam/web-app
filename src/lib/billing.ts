@@ -11,7 +11,7 @@ export function formatCents(cents: number): string {
   return Number.isInteger(dollars) ? `$${dollars}` : `$${dollars.toFixed(2)}`;
 }
 
-/** Clamp a used/limit pair to a 0–100 percentage (limit 0 ⇒ 100%). */
+/** Clamp a used/limit pair to a 0-100 percentage (limit 0 ⇒ 100%). */
 export function usagePercent(used: number, limit: number): number {
   if (limit <= 0) return used > 0 ? 100 : 0;
   return Math.min(100, Math.round((used / limit) * 100));

@@ -32,7 +32,7 @@ export async function deleteProject(
   await openOrgProjects(page, org);
   await projectCard(page, project).click();
   await page.waitForURL(/\/orgs\/[^/]+\/projects\/[^/]+\/runs/);
-  // The project's settings share the project route — swap `/runs` for `/settings`.
+  // The project's settings share the project route, swap `/runs` for `/settings`.
   await page.goto(page.url().replace(/\/runs.*$/, '/settings'));
   await page.getByTestId('delete-project-trigger').click();
   await page.getByTestId('delete-project-input').fill(project);

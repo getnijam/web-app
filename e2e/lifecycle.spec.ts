@@ -20,7 +20,7 @@ test.describe('Org & project lifecycle', () => {
     await createOrg(page, { org });
     await createProject(page, { org, project });
     await deleteProject(page, { org, project });
-    // The org can only be deleted once it has no projects — hence after deleteProject.
+    // The org can only be deleted once it has no projects, hence after deleteProject.
     await deleteOrg(page, { org });
   });
 });

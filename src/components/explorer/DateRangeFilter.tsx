@@ -9,11 +9,11 @@ import { cn } from '@/lib/utils';
 
 const fmt = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
-/** The trigger label: placeholder, a single day, or the from–to span. */
+/** The trigger label: placeholder, a single day, or the from-to span. */
 function label(range: DateRange | undefined): string {
   if (!range?.from) return 'Filter by date';
   if (!range.to) return fmt.format(range.from);
-  return `${fmt.format(range.from)} – ${fmt.format(range.to)}`;
+  return `${fmt.format(range.from)} - ${fmt.format(range.to)}`;
 }
 
 /**

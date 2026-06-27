@@ -1,7 +1,8 @@
+import { AnimatePresence, motion } from 'motion/react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Sun03Icon, Moon02Icon, ComputerIcon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
-import { Flex } from '@/components/ui/flex';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { cn } from '@/lib/utils';
 import { useTheme, THEMES, type Theme } from '@/components/theme/ThemeProvider';
 
@@ -45,37 +46,41 @@ export function ThemeSegmentedControl({
   }
 
   return (
-    <Flex
-      inline
-      role="radiogroup"
+    <ToggleGroup
+      type="single"
+      value={theme}
+      onValueChange={(v) => {
+        if (v) setTheme(v as Theme);
+      }}
       aria-label="Theme"
-      gap={0.5}
-      className={cn('rounded-lg bg-muted p-0.75', className)}
+      spacing={0.5}
+      highlightClassName="bg-background shadow-sm dark:border dark:border-input dark:bg-input/30"
+      className={cn('rounded-4xl bg-muted p-0.75', className)}
     >
-      {OPTIONS.map(({ value, label, icon }) => {
-        const active = theme === value;
-        return (
-          <Button
-            variant="ghost"
-            size="sm"
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={active}
-            title={label}
-            onClick={() => setTheme(value)}
-            className={cn(
-              'h-auto gap-1.5 rounded-md px-2.5 py-1 text-sm font-medium',
-              active
-                ? 'bg-background font-semibold text-foreground shadow-sm hover:bg-background'
-                : 'text-muted-foreground hover:bg-transparent hover:text-foreground',
+      {OPTIONS.map(({ value, label, icon }) => (
+        <ToggleGroupItem
+          key={value}
+          value={value}
+          title={label}
+          className="h-8 rounded-xl px-2.5 text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-foreground data-[state=on]:text-foreground"
+        >
+          <HugeiconsIcon icon={icon} size={15} strokeWidth={1.8} />
+          <AnimatePresence initial={false}>
+            {theme === value && (
+              <motion.span
+                key="label"
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: 'auto', opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                className="overflow-hidden whitespace-nowrap"
+              >
+                {label}
+              </motion.span>
             )}
-          >
-            <HugeiconsIcon icon={icon} size={15} strokeWidth={1.8} />
-            {active && <span>{label}</span>}
-          </Button>
-        );
-      })}
-    </Flex>
+          </AnimatePresence>
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
   );
 }

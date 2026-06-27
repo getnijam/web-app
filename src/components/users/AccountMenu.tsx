@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -125,16 +126,24 @@ export function AccountMenu({
 
   return (
     <div ref={ref} className="relative">
-      {open &&
-        (variant === 'sidebar' ? (
-          <div className="absolute right-0 bottom-full left-0 z-50 mb-2 rounded-lg border border-border bg-popover p-1.5 shadow-xl">
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className={cn(
+              'absolute z-50 rounded-lg border border-border bg-popover p-1.5 shadow-xl',
+              variant === 'sidebar'
+                ? 'right-0 bottom-full left-0 mb-2 origin-bottom'
+                : 'top-full right-0 mt-2 w-56 origin-top-right',
+            )}
+          >
             {menu}
-          </div>
-        ) : (
-          <div className="absolute top-full right-0 z-50 mt-2 w-56 rounded-lg border border-border bg-popover p-1.5 shadow-xl">
-            {menu}
-          </div>
-        ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {variant === 'sidebar' ? (
         <Button

@@ -20,7 +20,7 @@ export async function createIngestKey(
   await page.goto(`/orgs/${orgId}/keys`); // redirects to /keys/ingestion
   await page.getByTestId('create-key-trigger').click();
   await page.getByTestId('create-key-name').fill(key);
-  // Scope defaults to "Organization" — no project needed.
+  // Scope defaults to "Organization", no project needed.
   await page.getByTestId('create-key-submit').click();
   // The reveal step shows the token once; dismiss it.
   await page.getByTestId('create-key-done').click();

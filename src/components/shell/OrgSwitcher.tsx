@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -25,13 +26,21 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
 
   return (
     <div className="relative mb-1.5">
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full right-0 left-0 z-50 mt-1.5 rounded-lg border border-border bg-popover p-1.5 shadow-xl">
-            <Text as="div" className="px-2 py-1 text-xs font-medium text-muted-foreground">
-              Organizations
-            </Text>
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+            <motion.div
+              key="org-menu"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+              className="absolute top-full right-0 left-0 z-50 mt-1.5 origin-top rounded-lg border border-border bg-popover p-1.5 shadow-xl"
+            >
+              <Text as="div" className="px-2 py-1 text-xs font-medium text-muted-foreground">
+                Organizations
+              </Text>
             <Flex direction="col" gap={0.5} className="max-h-64 overflow-y-auto">
               {(list.data?.orgs ?? []).map((o) => (
                 <Button
@@ -80,9 +89,10 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
               <HugeiconsIcon icon={Building03Icon} size={16} className="text-muted-foreground" />
               All organizations
             </Flex>
-          </div>
-        </>
-      )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <Button
         variant="ghost"

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Command as CommandPrimitive } from 'cmdk';
+import { AnimatePresence, motion } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 import {
@@ -78,16 +79,72 @@ function CommandInput({
   );
 }
 
-function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
+type CommandHighlight = { top: number; left: number; width: number; height: number };
+
+function CommandList({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof CommandPrimitive.List>) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [highlight, setHighlight] = React.useState<CommandHighlight | null>(null);
+
+  // Slide a single highlight to cmdk's active item (it toggles data-selected on
+  // keyboard + pointer), mirroring the dropdown/sidebar affordance.
+  React.useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    const measure = () => {
+      const item = root.querySelector<HTMLElement>('[data-slot="command-item"][data-selected="true"]');
+      if (!item) {
+        setHighlight(null);
+        return;
+      }
+      const rr = root.getBoundingClientRect();
+      const ir = item.getBoundingClientRect();
+      setHighlight({
+        top: ir.top - rr.top + root.scrollTop,
+        left: ir.left - rr.left + root.scrollLeft,
+        width: ir.width,
+        height: ir.height,
+      });
+    };
+    const observer = new MutationObserver(measure);
+    observer.observe(root, { subtree: true, attributes: true, attributeFilter: ['data-selected'] });
+    root.addEventListener('scroll', measure);
+    const raf = requestAnimationFrame(measure);
+    return () => {
+      observer.disconnect();
+      root.removeEventListener('scroll', measure);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <CommandPrimitive.List
+      ref={ref}
       data-slot="command-list"
       className={cn(
-        'no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none',
+        'no-scrollbar relative isolate max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none',
         className,
       )}
       {...props}
-    />
+    >
+      <AnimatePresence>
+        {highlight && (
+          <motion.div
+            aria-hidden
+            data-slot="command-highlight"
+            className="pointer-events-none absolute -z-10 rounded-lg bg-muted"
+            initial={{ opacity: 0, ...highlight }}
+            animate={{ opacity: 1, ...highlight }}
+            exit={{ opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 40, opacity: { duration: 0.12 } }}
+          />
+        )}
+      </AnimatePresence>
+      {children}
+    </CommandPrimitive.List>
   );
 }
 
@@ -140,7 +197,9 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
       className={cn(
         // data-[selected=true] (not data-selected), cmdk sets the attribute on
         // every item as true/false, so the bare variant would highlight them all.
-        "group/command-item relative flex cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-2xl data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-muted data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[selected=true]:*:[svg]:text-foreground",
+        // Selection background is drawn by the sliding highlight in CommandList,
+        // so only the text/icon color changes here on data-[selected=true].
+        "group/command-item relative z-10 flex cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-2xl data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[selected=true]:*:[svg]:text-foreground",
         className,
       )}
       {...props}
