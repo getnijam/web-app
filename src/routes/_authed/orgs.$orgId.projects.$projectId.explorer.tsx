@@ -15,6 +15,7 @@ import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { TestRow } from '@/components/explorer/TestRow';
 import { FileGroup } from '@/components/explorer/FileGroup';
+import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { privateSeo } from '@/lib/seo';
 
 interface ExplorerSearch {
@@ -81,24 +82,28 @@ function ExplorerPage() {
       // on every keystroke, so user-toggled groups aren't reset mid-search.
       return (
         <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-          {groupTestsByFile(filtered).map(([file, fileTests]) => (
-            <FileGroup
-              key={`${file}:${term ? 1 : 0}`}
-              file={file}
-              tests={fileTests}
-              orgId={orgId}
-              projectId={projectId}
-              defaultOpen={term.length > 0}
-            />
-          ))}
+          <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
+            {groupTestsByFile(filtered).map(([file, fileTests]) => (
+              <FileGroup
+                key={`${file}:${term ? 1 : 0}`}
+                file={file}
+                tests={fileTests}
+                orgId={orgId}
+                projectId={projectId}
+                defaultOpen={term.length > 0}
+              />
+            ))}
+          </HoverHighlight>
         </Flex>
       );
     }
     return (
       <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-        {filtered.map((t) => (
-          <TestRow key={t.testId} test={t} orgId={orgId} projectId={projectId} />
-        ))}
+        <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
+          {filtered.map((t) => (
+            <TestRow key={t.testId} test={t} orgId={orgId} projectId={projectId} />
+          ))}
+        </HoverHighlight>
       </Flex>
     );
   };

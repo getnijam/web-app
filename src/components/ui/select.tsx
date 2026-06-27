@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Select as SelectPrimitive } from "radix-ui";
+import { AnimatePresence, motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -58,6 +59,8 @@ function SelectTrigger({
   );
 }
 
+type SelectItemHighlight = { top: number; left: number; width: number; height: number };
+
 function SelectContent({
   className,
   children,
@@ -65,13 +68,47 @@ function SelectContent({
   align = "center",
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
+  const viewportRef = React.useRef<HTMLDivElement>(null);
+  const [highlight, setHighlight] = React.useState<SelectItemHighlight | null>(null);
+
+  // Slide a single highlight to Radix's currently-highlighted item (set on both
+  // keyboard and pointer navigation), mirroring the dropdown/sidebar affordance.
+  React.useEffect(() => {
+    const root = viewportRef.current;
+    if (!root) return;
+    const measure = () => {
+      const item = root.querySelector<HTMLElement>('[data-slot="select-item"][data-highlighted]');
+      if (!item) {
+        setHighlight(null);
+        return;
+      }
+      const rr = root.getBoundingClientRect();
+      const ir = item.getBoundingClientRect();
+      setHighlight({
+        top: ir.top - rr.top + root.scrollTop,
+        left: ir.left - rr.left + root.scrollLeft,
+        width: ir.width,
+        height: ir.height,
+      });
+    };
+    const observer = new MutationObserver(measure);
+    observer.observe(root, { subtree: true, attributes: true, attributeFilter: ["data-highlighted"] });
+    root.addEventListener("scroll", measure);
+    const raf = requestAnimationFrame(measure);
+    return () => {
+      observer.disconnect();
+      root.removeEventListener("scroll", measure);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         data-slot="select-content"
         data-align-trigger={position === "item-aligned"}
         className={cn(
-          "dark z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-2xl text-popover-foreground shadow-2xl ring-1 ring-foreground/5 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 animate-none! relative bg-popover/70 before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 **:data-[slot$=-item]:focus:bg-foreground/10 **:data-[slot$=-item]:data-highlighted:bg-foreground/10 **:data-[slot$=-separator]:bg-foreground/5 **:data-[slot$=-trigger]:focus:bg-foreground/10 **:data-[slot$=-trigger]:aria-expanded:bg-foreground/10! **:data-[variant=destructive]:focus:bg-foreground/10! **:data-[variant=destructive]:text-accent-foreground! **:data-[variant=destructive]:**:text-accent-foreground!",
+          "dark z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-2xl text-popover-foreground shadow-2xl ring-1 ring-foreground/5 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 animate-none! relative bg-popover/70 before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 **:data-[slot$=-item]:focus:bg-transparent! **:data-[slot$=-item]:data-highlighted:bg-transparent! **:data-[slot$=-separator]:bg-foreground/5 **:data-[slot$=-trigger]:focus:bg-foreground/10 **:data-[slot$=-trigger]:aria-expanded:bg-foreground/10! **:data-[variant=destructive]:focus:bg-foreground/10! **:data-[variant=destructive]:text-accent-foreground! **:data-[variant=destructive]:**:text-accent-foreground!",
           position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className
@@ -82,12 +119,26 @@ function SelectContent({
       >
         <SelectScrollUpButton />
         <SelectPrimitive.Viewport
+          ref={viewportRef}
           data-position={position}
           className={cn(
-            "data-[position=popper]:h-(--radix-select-trigger-height) data-[position=popper]:w-full data-[position=popper]:min-w-(--radix-select-trigger-width)",
+            "relative data-[position=popper]:h-(--radix-select-trigger-height) data-[position=popper]:w-full data-[position=popper]:min-w-(--radix-select-trigger-width)",
             position === "popper" && ""
           )}
         >
+          <AnimatePresence>
+            {highlight && (
+              <motion.div
+                aria-hidden
+                data-slot="select-highlight"
+                className="pointer-events-none absolute rounded-xl bg-foreground/10"
+                initial={{ opacity: 0, top: highlight.top, left: highlight.left, width: highlight.width, height: highlight.height }}
+                animate={{ opacity: 1, top: highlight.top, left: highlight.left, width: highlight.width, height: highlight.height }}
+                exit={{ opacity: 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 40, opacity: { duration: 0.12 } }}
+              />
+            )}
+          </AnimatePresence>
           {children}
         </SelectPrimitive.Viewport>
         <SelectScrollDownButton />

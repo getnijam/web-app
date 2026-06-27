@@ -27,6 +27,8 @@ import {
 import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
+import { useEditMode } from '@/hooks/use-edit-mode';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { isApiError } from '@/lib/api-error';
@@ -57,10 +59,13 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
   const isAdmin = useIsOrgAdmin(orgId);
   const queryClient = useQueryClient();
   const queryKey = getOrgGithubIntegrationQueryKey({ path: { orgId } });
+  const { editing, startEditing, stopEditing } = useEditMode();
   const [draft, setDraft] = useState({
     postChecks: data.postChecks,
     postComments: data.postComments,
   });
+  const resetDraft = () =>
+    setDraft({ postChecks: data.postChecks, postComments: data.postComments });
   const [disconnectOpen, setDisconnectOpen] = useState(false);
   const dirty = draft.postChecks !== data.postChecks || draft.postComments !== data.postComments;
 
@@ -74,6 +79,7 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
     onSuccess: (updated) => {
       queryClient.setQueryData(queryKey, updated);
       notify.success('GitHub settings saved');
+      stopEditing();
     },
     onError: (err) => notify.error("Couldn't save GitHub settings", { description: errMsg(err) }),
   });
@@ -106,15 +112,6 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
           Post a PR check and a results comment when tests run on a pull request.
         </Text>
       </Flex>
-      {data.connected && isAdmin && (
-        <Button
-          onClick={() => save.mutate({ path: { orgId }, body: draft })}
-          loading={save.isPending}
-          disabled={!dirty || save.isPending}
-        >
-          Save changes
-        </Button>
-      )}
     </Flex>
   );
 
@@ -224,37 +221,56 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
         </SettingsRow>
       </SettingsPanel>
 
-      <SettingsPanel title="What to post">
-        <SettingsRow
-          label="PR status check"
-          hint="Show an in-progress check while tests run, then green (pass/flaky) or red (fail)."
-        >
-          <Flex align="center" gap={2}>
-            <Switch
-              checked={draft.postChecks}
-              disabled={!isAdmin}
-              onCheckedChange={(postChecks) => setDraft((d) => ({ ...d, postChecks }))}
+      <SettingsPanel
+        title="What to post"
+        action={
+          isAdmin ? (
+            <EditActions
+              editing={editing}
+              dirty={dirty}
+              saving={save.isPending}
+              onEdit={startEditing}
+              onCancel={() => {
+                resetDraft();
+                stopEditing();
+              }}
+              onSave={() => save.mutate({ path: { orgId }, body: draft })}
             />
-            <Text as="span" className="text-sm text-muted-foreground">
-              {draft.postChecks ? 'On' : 'Off'}
-            </Text>
-          </Flex>
-        </SettingsRow>
-        <SettingsRow
-          label="PR comment"
-          hint="Post a results summary as a comment on the PR, updated in place each run."
-        >
-          <Flex align="center" gap={2}>
-            <Switch
-              checked={draft.postComments}
-              disabled={!isAdmin}
-              onCheckedChange={(postComments) => setDraft((d) => ({ ...d, postComments }))}
-            />
-            <Text as="span" className="text-sm text-muted-foreground">
-              {draft.postComments ? 'On' : 'Off'}
-            </Text>
-          </Flex>
-        </SettingsRow>
+          ) : undefined
+        }
+      >
+        <LockedFields locked={!editing}>
+          <SettingsRow
+            label="PR status check"
+            hint="Show an in-progress check while tests run, then green (pass/flaky) or red (fail)."
+          >
+            <Flex align="center" gap={2}>
+              <Switch
+                checked={draft.postChecks}
+                disabled={!isAdmin}
+                onCheckedChange={(postChecks) => setDraft((d) => ({ ...d, postChecks }))}
+              />
+              <Text as="span" className="text-sm text-muted-foreground">
+                {draft.postChecks ? 'On' : 'Off'}
+              </Text>
+            </Flex>
+          </SettingsRow>
+          <SettingsRow
+            label="PR comment"
+            hint="Post a results summary as a comment on the PR, updated in place each run."
+          >
+            <Flex align="center" gap={2}>
+              <Switch
+                checked={draft.postComments}
+                disabled={!isAdmin}
+                onCheckedChange={(postComments) => setDraft((d) => ({ ...d, postComments }))}
+              />
+              <Text as="span" className="text-sm text-muted-foreground">
+                {draft.postComments ? 'On' : 'Off'}
+              </Text>
+            </Flex>
+          </SettingsRow>
+        </LockedFields>
       </SettingsPanel>
 
       {isAdmin && (

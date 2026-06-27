@@ -155,7 +155,7 @@ function SidebarHoverLayer({ className, children, ...props }: React.ComponentPro
     const root = ref.current;
     if (!root) return;
     const button = (event.target as HTMLElement).closest<HTMLElement>(
-      '[data-slot="sidebar-menu-button"]',
+      '[data-slot="sidebar-menu-button"], [data-sidebar-hover]',
     );
     if (!button || !root.contains(button) || button === lastButton.current) return;
     lastButton.current = button;

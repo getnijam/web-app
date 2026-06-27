@@ -23,6 +23,8 @@ import {
 import { TagInput } from '@/components/ui/tag-input';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
+import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
+import { useEditMode } from '@/hooks/use-edit-mode';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
@@ -105,6 +107,8 @@ function ProjectSlackInner({
     ? historicBranches
     : [DEFAULT_BRANCH, ...historicBranches];
 
+  const { editing, startEditing, stopEditing } = useEditMode();
+
   // Edits stay local until Save commits them (matches the org Slack page).
   const [draft, setDraft] = useState<Draft>(() => ({
     enabled: data.enabled,
@@ -112,6 +116,14 @@ function ProjectSlackInner({
     channelName: data.channel?.name ?? null,
     branches: data.branches,
   }));
+
+  const resetDraft = () =>
+    setDraft({
+      enabled: data.enabled,
+      channelId: data.channel?.id ?? null,
+      channelName: data.channel?.name ?? null,
+      branches: data.branches,
+    });
 
   const dirty =
     draft.enabled !== data.enabled ||
@@ -125,6 +137,7 @@ function ProjectSlackInner({
       notify.success('Slack settings saved', {
         description: describeSettings(projectName, updated),
       });
+      stopEditing();
     },
     onError: (err) =>
       notify.error("Couldn't save Slack settings", {
@@ -180,97 +193,107 @@ function ProjectSlackInner({
   return (
     <SettingsPanel
       title="Slack notifications"
-      footer={
+      action={
         isAdmin ? (
-          <Button onClick={handleSave} loading={save.isPending} disabled={!dirty || save.isPending}>
-            Save changes
-          </Button>
+          <EditActions
+            editing={editing}
+            dirty={dirty}
+            saving={save.isPending}
+            onEdit={startEditing}
+            onCancel={() => {
+              resetDraft();
+              stopEditing();
+            }}
+            onSave={handleSave}
+          />
         ) : undefined
       }
     >
-      <SettingsRow
-        label="Post to Slack"
-        hint={
-          draft.enabled
-            ? `This project's runs post to ${effectiveLabel}.`
-            : 'Muted, this project never posts to Slack.'
-        }
-      >
-        <Flex align="center" gap={2}>
-          <Switch
-            checked={draft.enabled}
-            disabled={!isAdmin}
-            onCheckedChange={(enabled) => setDraft((d) => ({ ...d, enabled }))}
-          />
-          <Text as="span" className="text-sm text-muted-foreground">
-            {draft.enabled ? 'Enabled' : 'Muted'}
-          </Text>
-        </Flex>
-      </SettingsRow>
+      <LockedFields locked={!editing}>
+        <SettingsRow
+          label="Post to Slack"
+          hint={
+            draft.enabled
+              ? `This project's runs post to ${effectiveLabel}.`
+              : 'Muted, this project never posts to Slack.'
+          }
+        >
+          <Flex align="center" gap={2}>
+            <Switch
+              checked={draft.enabled}
+              disabled={!isAdmin}
+              onCheckedChange={(enabled) => setDraft((d) => ({ ...d, enabled }))}
+            />
+            <Text as="span" className="text-sm text-muted-foreground">
+              {draft.enabled ? 'Enabled' : 'Muted'}
+            </Text>
+          </Flex>
+        </SettingsRow>
 
-      <SettingsRow
-        label="Channel"
-        hint="Override the organization default channel for this project, or inherit it."
-      >
-        {isAdmin ? (
-          <Select
-            value={draft.channelId ?? INHERIT}
-            onValueChange={(value) => {
-              if (value === INHERIT) {
-                setDraft((d) => ({ ...d, channelId: null, channelName: null }));
-              } else {
-                const ch = channels.data?.channels.find((c) => c.id === value);
-                setDraft((d) => ({ ...d, channelId: value, channelName: ch?.name ?? value }));
-              }
-            }}
-            disabled={!draft.enabled}
-          >
-            <SelectTrigger className="w-full max-w-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={INHERIT}>
-                Default{data.orgDefaultChannel ? ` (#${data.orgDefaultChannel.name})` : ''}
-              </SelectItem>
-              {draft.channelId &&
-                !channels.data?.channels.some((c) => c.id === draft.channelId) && (
-                  <SelectItem value={draft.channelId}>
-                    #{draft.channelName ?? draft.channelId}
-                  </SelectItem>
-                )}
-              {channels.data?.channels.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  #{c.name}
+        <SettingsRow
+          label="Channel"
+          hint="Override the organization default channel for this project, or inherit it."
+        >
+          {isAdmin ? (
+            <Select
+              value={draft.channelId ?? INHERIT}
+              onValueChange={(value) => {
+                if (value === INHERIT) {
+                  setDraft((d) => ({ ...d, channelId: null, channelName: null }));
+                } else {
+                  const ch = channels.data?.channels.find((c) => c.id === value);
+                  setDraft((d) => ({ ...d, channelId: value, channelName: ch?.name ?? value }));
+                }
+              }}
+              disabled={!draft.enabled}
+            >
+              <SelectTrigger className="w-full max-w-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={INHERIT}>
+                  Default{data.orgDefaultChannel ? ` (#${data.orgDefaultChannel.name})` : ''}
                 </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : (
-          <Text className="text-sm">
-            {data.channel ? `#${data.channel.name}` : `Default (${orgDefaultLabel})`}
-          </Text>
-        )}
-      </SettingsRow>
+                {draft.channelId &&
+                  !channels.data?.channels.some((c) => c.id === draft.channelId) && (
+                    <SelectItem value={draft.channelId}>
+                      #{draft.channelName ?? draft.channelId}
+                    </SelectItem>
+                  )}
+                {channels.data?.channels.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    #{c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Text className="text-sm">
+              {data.channel ? `#${data.channel.name}` : `Default (${orgDefaultLabel})`}
+            </Text>
+          )}
+        </SettingsRow>
 
-      <SettingsRow
-        label="Branches"
-        hint="Only post runs from these branches. Leave empty to post on every branch."
-      >
-        {isAdmin ? (
-          <TagInput
-            value={draft.branches}
-            onChange={(branches) => setDraft((d) => ({ ...d, branches }))}
-            suggestions={branchSuggestions}
-            placeholder="All branches, type to filter"
-            disabled={!draft.enabled}
-            aria-label="Branch allow-list"
-          />
-        ) : (
-          <Text className="text-sm">
-            {data.branches.length ? data.branches.join(', ') : 'All branches'}
-          </Text>
-        )}
-      </SettingsRow>
+        <SettingsRow
+          label="Branches"
+          hint="Only post runs from these branches. Leave empty to post on every branch."
+        >
+          {isAdmin ? (
+            <TagInput
+              value={draft.branches}
+              onChange={(branches) => setDraft((d) => ({ ...d, branches }))}
+              suggestions={branchSuggestions}
+              placeholder="All branches, type to filter"
+              disabled={!draft.enabled}
+              aria-label="Branch allow-list"
+            />
+          ) : (
+            <Text className="text-sm">
+              {data.branches.length ? data.branches.join(', ') : 'All branches'}
+            </Text>
+          )}
+        </SettingsRow>
+      </LockedFields>
     </SettingsPanel>
   );
 }

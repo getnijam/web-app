@@ -23,6 +23,7 @@ import {
 } from '@/components/runs/RunFilters';
 import { RunsPager } from '@/components/runs/RunsPager';
 import { RunRow } from '@/components/runs/RunRow';
+import { HoverHighlight } from '@/components/ui/hover-highlight';
 import {
   RunsPageSkeleton,
   RunsListSkeleton,
@@ -160,9 +161,11 @@ function RunsPage() {
             direction="col"
             className="overflow-hidden rounded-2xl border border-border bg-card"
           >
-            {runs.data.runs.map((run) => (
-              <RunRow key={run.id} run={run} orgId={orgId} projectId={projectId} />
-            ))}
+            <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
+              {runs.data.runs.map((run) => (
+                <RunRow key={run.id} run={run} orgId={orgId} projectId={projectId} />
+              ))}
+            </HoverHighlight>
           </Flex>
           <RunsPager page={runs.data.page} totalPages={runs.data.totalPages} onPage={onPage} />
         </>

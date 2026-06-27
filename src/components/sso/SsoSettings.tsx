@@ -11,6 +11,10 @@ import {
   SquareLock02Icon,
   SquareUnlock02Icon,
   ZapIcon,
+  UserAdd01Icon,
+  ShieldKeyIcon,
+  LockKeyIcon,
+  CloudSavingDone02Icon,
 } from '@hugeicons/core-free-icons';
 import type { SsoConnection, SsoDomainItem } from '@/client';
 
@@ -28,6 +32,7 @@ import {
   removeOrgSsoDomainMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
+import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -72,6 +77,9 @@ export function SsoSettings({ orgId }: { orgId: string }) {
     ...getOrgSsoOptions({ path: { orgId } }),
     enabled: isAdmin && billing.data?.plan === 'pro',
   });
+  // When there's no connection yet, show the empty state first; the config form
+  // only appears once the admin opts in via "Configure SSO".
+  const [configuring, setConfiguring] = useState(false);
 
   // Rendered inside the Org-settings tab layout (which owns the page heading), so this
   // is just a one-line description rather than its own h1.
@@ -129,14 +137,106 @@ export function SsoSettings({ orgId }: { orgId: string }) {
   const live =
     !!connection && connection.status === 'active' && connection.domains.some((d) => d.verified);
 
+  // No connection and not yet configuring → an empty state that sells the feature
+  // and offers the CTA, instead of dropping the admin straight into a blank form.
+  if (!connection && !configuring) {
+    return (
+      <Page header={header}>
+        <SsoEmptyState onConfigure={() => setConfiguring(true)} />
+      </Page>
+    );
+  }
+
   return (
     <Page header={header}>
       {connection && <ConnectionStatus connection={connection} />}
       {connection && live && <LaunchLinkCard connection={connection} />}
-      <ConnectionPanel orgId={orgId} connection={connection} />
+      <ConnectionPanel
+        orgId={orgId}
+        connection={connection}
+        onClose={() => setConfiguring(false)}
+      />
       {connection && <DomainsPanel orgId={orgId} connection={connection} />}
       {connection && <DangerPanel orgId={orgId} />}
     </Page>
+  );
+}
+
+const SSO_FEATURES: { icon: typeof CloudSavingDone02Icon; title: string; body: string }[] = [
+  {
+    icon: CloudSavingDone02Icon,
+    title: 'Any OIDC provider',
+    body: 'Connect Okta, Entra ID, Auth0, or any standard OpenID Connect identity provider.',
+  },
+  {
+    icon: UserAdd01Icon,
+    title: 'Just-in-time provisioning',
+    body: 'Teammates get a Nijam account and join your org automatically on their first SSO sign-in.',
+  },
+  {
+    icon: LockKeyIcon,
+    title: 'Enforce it',
+    body: 'Optionally require everyone on your verified email domains to sign in through your IdP.',
+  },
+];
+
+/** Shown when SSO has never been configured: what it does, plus the CTA to start. */
+function SsoEmptyState({ onConfigure }: { onConfigure: () => void }) {
+  return (
+    <Flex
+      direction="col"
+      gap={6}
+      align="center"
+      className="rounded-2xl border border-border bg-card px-6 py-9"
+    >
+      <Flex direction="col" gap={2.5} align="center" className="max-w-md text-center">
+        <Flex
+          inline
+          align="center"
+          justify="center"
+          className="size-12 rounded-2xl bg-primary/15 text-primary"
+        >
+          <HugeiconsIcon icon={ShieldKeyIcon} size={26} />
+        </Flex>
+        <Text as="h3" className="text-lg font-semibold tracking-tight">
+          Single sign-on isn&rsquo;t set up yet
+        </Text>
+        <Text className="text-sm text-pretty text-muted-foreground">
+          Let your team sign in through your company identity provider over OIDC, with automatic
+          provisioning and optional enforcement.
+        </Text>
+      </Flex>
+
+      <Grid cols={[1, 1, 3]} gap={4} className="w-full">
+        {SSO_FEATURES.map((f) => (
+          <Flex
+            key={f.title}
+            direction="col"
+            gap={2.5}
+            className="rounded-xl border border-border p-4"
+          >
+            <Flex
+              inline
+              align="center"
+              justify="center"
+              className="size-9 rounded-lg bg-primary/10 text-primary"
+            >
+              <HugeiconsIcon icon={f.icon} size={18} />
+            </Flex>
+            <Text as="span" className="text-sm font-semibold">
+              {f.title}
+            </Text>
+            <Text as="span" className="text-xs leading-relaxed text-muted-foreground">
+              {f.body}
+            </Text>
+          </Flex>
+        ))}
+      </Grid>
+
+      <Button size="lg" onClick={onConfigure}>
+        Configure SSO
+      </Button>
+    </Flex>
   );
 }
 
@@ -275,9 +375,11 @@ interface ConnDraft {
 function ConnectionPanel({
   orgId,
   connection,
+  onClose,
 }: {
   orgId: string;
   connection: SsoConnection | null;
+  onClose: () => void;
 }) {
   const queryClient = useQueryClient();
   const queryKey = getOrgSsoQueryKey({ path: { orgId } });
@@ -352,13 +454,13 @@ function ConnectionPanel({
     setEditing(false);
   };
 
+  // Cancel reverts an existing connection's edits; on first setup it backs all the
+  // way out to the empty state.
   const action = editing ? (
     <Flex gap={2}>
-      {connection && (
-        <Button variant="ghost" onClick={cancelEdit} disabled={save.isPending}>
-          Cancel
-        </Button>
-      )}
+      <Button variant="ghost" onClick={connection ? cancelEdit : onClose} disabled={save.isPending}>
+        Cancel
+      </Button>
       <Button onClick={handleSave} loading={save.isPending} disabled={!canSave || save.isPending}>
         {connection ? 'Save changes' : 'Connect provider'}
       </Button>

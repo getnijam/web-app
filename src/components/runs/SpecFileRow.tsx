@@ -36,7 +36,8 @@ export function SpecFileRow({
       search={{ path: file.file } as never}
       align="center"
       gap={3}
-      className="border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
+      data-hover-item
+      className="border-b border-border px-4 py-3 transition-colors last:border-b-0"
     >
       <Flex
         align="center"

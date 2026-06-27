@@ -81,7 +81,8 @@ export function RunRow({
     <>
       <Flex
         align="center"
-        className="group relative border-b border-border transition-colors last:border-b-0 hover:bg-accent/40"
+        data-hover-item
+        className="group relative border-b border-border transition-colors last:border-b-0"
       >
         <Link
           to="/orgs/$orgId/projects/$projectId/runs/$runId"

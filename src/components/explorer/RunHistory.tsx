@@ -4,6 +4,7 @@ import { GitBranchIcon } from '@hugeicons/core-free-icons';
 import type { TestHistoryEntry } from '@/client';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
+import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { cn } from '@/lib/utils';
 import { timeAgo, formatDuration, formatDateTime } from '@/lib/format';
 import { testStatusMeta } from '@/components/runs/test-status';
@@ -62,48 +63,53 @@ export function RunHistory({
         </Flex>
       )}
 
-      {newest.map((h) => {
-        const meta = testStatusMeta(h.status);
-        return (
-          <Flex
-            as={Link}
-            key={h.runId}
-            to="/orgs/$orgId/projects/$projectId/runs/$runId/file"
-            params={{ orgId, projectId, runId: h.runId } as never}
-            search={{ path: file } as never}
-            align="stretch"
-            gap={3}
-            className="border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent"
-          >
-            <span className={cn('w-1 shrink-0 rounded-full', STATUS_BG[h.status] ?? 'bg-muted')} />
-            <Flex direction="col" gap={1} className="min-w-0 flex-1">
-              <Flex align="center" justify="between" gap={2}>
-                <Text as="span" variant="code" truncate className="text-sm font-semibold">
-                  #{h.commitSha ? h.commitSha.slice(0, 7) : '---'}
-                </Text>
-                <Flex align="center" gap={2.5} className="shrink-0">
-                  <span className="font-mono text-xs text-muted-foreground tabular-nums">
-                    {formatMs(h.durationMs)}
-                  </span>
-                  <Flex
-                    as="span"
-                    inline
-                    align="center"
-                    className={cn('rounded-full px-2 py-0.5 text-xs font-semibold', meta.pill)}
-                  >
-                    {meta.label}
+      <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
+        {newest.map((h) => {
+          const meta = testStatusMeta(h.status);
+          return (
+            <Flex
+              as={Link}
+              key={h.runId}
+              to="/orgs/$orgId/projects/$projectId/runs/$runId/file"
+              params={{ orgId, projectId, runId: h.runId } as never}
+              search={{ path: file } as never}
+              data-hover-item
+              align="stretch"
+              gap={3}
+              className="border-b border-border px-4 py-3 transition-colors last:border-b-0"
+            >
+              <span
+                className={cn('w-1 shrink-0 rounded-full', STATUS_BG[h.status] ?? 'bg-muted')}
+              />
+              <Flex direction="col" gap={1} className="min-w-0 flex-1">
+                <Flex align="center" justify="between" gap={2}>
+                  <Text as="span" variant="code" truncate className="text-sm font-semibold">
+                    #{h.commitSha ? h.commitSha.slice(0, 7) : '---'}
+                  </Text>
+                  <Flex align="center" gap={2.5} className="shrink-0">
+                    <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                      {formatMs(h.durationMs)}
+                    </span>
+                    <Flex
+                      as="span"
+                      inline
+                      align="center"
+                      className={cn('rounded-full px-2 py-0.5 text-xs font-semibold', meta.pill)}
+                    >
+                      {meta.label}
+                    </Flex>
                   </Flex>
                 </Flex>
-              </Flex>
-              <span className="text-xs text-muted-foreground">{formatDateTime(h.startedAt)}</span>
-              <Flex align="center" gap={1} className="min-w-0 text-xs text-muted-foreground">
-                <HugeiconsIcon icon={GitBranchIcon} size={12} className="shrink-0" />
-                <span className="truncate font-mono">{h.branch ?? 'no branch'}</span>
+                <span className="text-xs text-muted-foreground">{formatDateTime(h.startedAt)}</span>
+                <Flex align="center" gap={1} className="min-w-0 text-xs text-muted-foreground">
+                  <HugeiconsIcon icon={GitBranchIcon} size={12} className="shrink-0" />
+                  <span className="truncate font-mono">{h.branch ?? 'no branch'}</span>
+                </Flex>
               </Flex>
             </Flex>
-          </Flex>
-        );
-      })}
+          );
+        })}
+      </HoverHighlight>
     </Flex>
   );
 }

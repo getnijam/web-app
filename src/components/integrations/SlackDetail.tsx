@@ -36,6 +36,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
+import { useEditMode } from '@/hooks/use-edit-mode';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
@@ -124,6 +126,7 @@ function SlackDetailInner({
 
   // Local draft of the editable config. Changes stay local until Save commits
   // them in one PATCH, nothing is persisted per keystroke/click.
+  const { editing, startEditing, stopEditing } = useEditMode();
   const [draft, setDraft] = useState<Draft>(() => ({
     triggerMode: data.triggerMode,
     detailLevel: data.detailLevel,
@@ -131,6 +134,14 @@ function SlackDetailInner({
     channelId: data.defaultChannel?.id ?? null,
     channelName: data.defaultChannel?.name ?? null,
   }));
+  const resetDraft = () =>
+    setDraft({
+      triggerMode: data.triggerMode,
+      detailLevel: data.detailLevel,
+      layout: data.layout,
+      channelId: data.defaultChannel?.id ?? null,
+      channelName: data.defaultChannel?.name ?? null,
+    });
 
   const dirty =
     draft.triggerMode !== data.triggerMode ||
@@ -159,6 +170,7 @@ function SlackDetailInner({
           ? `Posting ${triggerSummary(draft.triggerMode)} to #${draft.channelName}.`
           : `Posting ${triggerSummary(draft.triggerMode)}.`,
       });
+      stopEditing();
     },
     onError: (err) =>
       notify.error("Couldn't save Slack settings", {
@@ -239,9 +251,17 @@ function SlackDetailInner({
           <Text color="muted">Auto-post run results to your Slack workspace.</Text>
         </Flex>
         {data.connected && isAdmin && (
-          <Button onClick={handleSave} loading={save.isPending} disabled={!dirty || save.isPending}>
-            Save changes
-          </Button>
+          <EditActions
+            editing={editing}
+            dirty={dirty}
+            saving={save.isPending}
+            onEdit={startEditing}
+            onCancel={() => {
+              resetDraft();
+              stopEditing();
+            }}
+            onSave={handleSave}
+          />
         )}
       </Flex>
 
@@ -332,71 +352,75 @@ function SlackDetailInner({
 
               {/* When to post */}
               <SettingsPanel title="When to post">
-                <div className="px-5 py-5">
-                  <RadioGroup
-                    value={draft.triggerMode}
-                    onValueChange={(v) =>
-                      setDraft((d) => ({ ...d, triggerMode: v as TriggerMode }))
-                    }
-                    disabled={!isAdmin}
-                    className="gap-2"
-                  >
-                    {TRIGGERS.map((t) => (
-                      <Flex
-                        as="label"
-                        key={t.key}
-                        align="start"
-                        gap={3}
-                        className={cn(
-                          'rounded-xl border border-border px-4 py-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5',
-                          isAdmin && 'cursor-pointer',
-                        )}
-                      >
-                        <RadioGroupItem value={t.key} className="mt-0.5" />
-                        <Flex direction="col" gap={0.5}>
-                          <Text as="span" className="text-sm font-semibold">
-                            {t.label}
-                          </Text>
-                          <Text as="span" className="text-xs text-muted-foreground">
-                            {t.desc}
-                          </Text>
+                <LockedFields locked={!editing}>
+                  <div className="px-5 py-5">
+                    <RadioGroup
+                      value={draft.triggerMode}
+                      onValueChange={(v) =>
+                        setDraft((d) => ({ ...d, triggerMode: v as TriggerMode }))
+                      }
+                      disabled={!isAdmin}
+                      className="gap-2"
+                    >
+                      {TRIGGERS.map((t) => (
+                        <Flex
+                          as="label"
+                          key={t.key}
+                          align="start"
+                          gap={3}
+                          className={cn(
+                            'rounded-xl border border-border px-4 py-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5',
+                            isAdmin && 'cursor-pointer',
+                          )}
+                        >
+                          <RadioGroupItem value={t.key} className="mt-0.5" />
+                          <Flex direction="col" gap={0.5}>
+                            <Text as="span" className="text-sm font-semibold">
+                              {t.label}
+                            </Text>
+                            <Text as="span" className="text-xs text-muted-foreground">
+                              {t.desc}
+                            </Text>
+                          </Flex>
                         </Flex>
-                      </Flex>
-                    ))}
-                  </RadioGroup>
-                </div>
+                      ))}
+                    </RadioGroup>
+                  </div>
+                </LockedFields>
               </SettingsPanel>
 
               {/* Styling */}
               <SettingsPanel title="Styling">
-                <SettingsRow
-                  label="Layout"
-                  hint="Block Kit is Slack's modern layout; Classic adds a colored status bar."
-                >
-                  <Segmented
-                    value={draft.layout}
-                    onChange={(v) => setDraft((d) => ({ ...d, layout: v }))}
-                    disabled={!isAdmin}
-                    options={[
-                      { value: 'blockkit', label: 'Block Kit' },
-                      { value: 'classic', label: 'Classic' },
-                    ]}
-                  />
-                </SettingsRow>
-                <SettingsRow
-                  label="Detail level"
-                  hint="Compact shows status and counts; full also lists each failed and flaky test."
-                >
-                  <Segmented
-                    value={draft.detailLevel}
-                    onChange={(v) => setDraft((d) => ({ ...d, detailLevel: v }))}
-                    disabled={!isAdmin}
-                    options={[
-                      { value: 'compact', label: 'Compact' },
-                      { value: 'full', label: 'Full' },
-                    ]}
-                  />
-                </SettingsRow>
+                <LockedFields locked={!editing}>
+                  <SettingsRow
+                    label="Layout"
+                    hint="Block Kit is Slack's modern layout; Classic adds a colored status bar."
+                  >
+                    <Segmented
+                      value={draft.layout}
+                      onChange={(v) => setDraft((d) => ({ ...d, layout: v }))}
+                      disabled={!isAdmin}
+                      options={[
+                        { value: 'blockkit', label: 'Block Kit' },
+                        { value: 'classic', label: 'Classic' },
+                      ]}
+                    />
+                  </SettingsRow>
+                  <SettingsRow
+                    label="Detail level"
+                    hint="Compact shows status and counts; full also lists each failed and flaky test."
+                  >
+                    <Segmented
+                      value={draft.detailLevel}
+                      onChange={(v) => setDraft((d) => ({ ...d, detailLevel: v }))}
+                      disabled={!isAdmin}
+                      options={[
+                        { value: 'compact', label: 'Compact' },
+                        { value: 'full', label: 'Full' },
+                      ]}
+                    />
+                  </SettingsRow>
+                </LockedFields>
               </SettingsPanel>
 
               {/* Channel */}
@@ -406,31 +430,33 @@ function SlackDetailInner({
                   hint="Where runs post unless a project overrides it in its own settings."
                 >
                   {isAdmin ? (
-                    <Select
-                      value={draft.channelId ?? undefined}
-                      onValueChange={(id) => {
-                        const ch = channels.data?.channels.find((c) => c.id === id);
-                        setDraft((d) => ({ ...d, channelId: id, channelName: ch?.name ?? id }));
-                      }}
-                    >
-                      <SelectTrigger className="w-full max-w-xs">
-                        <SelectValue placeholder="Select a channel" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {/* Show the current channel immediately, before the list loads. */}
-                        {draft.channelId &&
-                          !channels.data?.channels.some((c) => c.id === draft.channelId) && (
-                            <SelectItem value={draft.channelId}>
-                              #{draft.channelName ?? draft.channelId}
+                    <LockedFields locked={!editing}>
+                      <Select
+                        value={draft.channelId ?? undefined}
+                        onValueChange={(id) => {
+                          const ch = channels.data?.channels.find((c) => c.id === id);
+                          setDraft((d) => ({ ...d, channelId: id, channelName: ch?.name ?? id }));
+                        }}
+                      >
+                        <SelectTrigger className="w-full max-w-xs">
+                          <SelectValue placeholder="Select a channel" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {/* Show the current channel immediately, before the list loads. */}
+                          {draft.channelId &&
+                            !channels.data?.channels.some((c) => c.id === draft.channelId) && (
+                              <SelectItem value={draft.channelId}>
+                                #{draft.channelName ?? draft.channelId}
+                              </SelectItem>
+                            )}
+                          {channels.data?.channels.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              #{c.name}
                             </SelectItem>
-                          )}
-                        {channels.data?.channels.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>
-                            #{c.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </LockedFields>
                   ) : (
                     <Text className="text-sm">
                       {data.defaultChannel ? `#${data.defaultChannel.name}` : 'Not set'}

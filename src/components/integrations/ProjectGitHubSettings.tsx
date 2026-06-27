@@ -15,6 +15,8 @@ import { Switch } from '@/components/ui/switch';
 import { TagInput } from '@/components/ui/tag-input';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
+import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
+import { useEditMode } from '@/hooks/use-edit-mode';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
@@ -76,10 +78,12 @@ function ProjectGitHubInner({
     ? historicBranches
     : [DEFAULT_BRANCH, ...historicBranches];
 
+  const { editing, startEditing, stopEditing } = useEditMode();
   const [draft, setDraft] = useState<{ enabled: boolean; branches: string[] }>(() => ({
     enabled: data.enabled,
     branches: data.branches,
   }));
+  const resetDraft = () => setDraft({ enabled: data.enabled, branches: data.branches });
   const dirty = draft.enabled !== data.enabled || !sameSet(draft.branches, data.branches);
 
   const save = useMutation({
@@ -87,6 +91,7 @@ function ProjectGitHubInner({
     onSuccess: (updated) => {
       queryClient.setQueryData(queryKey, updated);
       notify.success('GitHub settings saved', { description: describe(projectName, updated) });
+      stopEditing();
     },
     onError: (err) =>
       notify.error("Couldn't save GitHub settings", {
@@ -130,53 +135,63 @@ function ProjectGitHubInner({
   return (
     <SettingsPanel
       title="GitHub checks & comments"
-      footer={
+      action={
         isAdmin ? (
-          <Button onClick={handleSave} loading={save.isPending} disabled={!dirty || save.isPending}>
-            Save changes
-          </Button>
+          <EditActions
+            editing={editing}
+            dirty={dirty}
+            saving={save.isPending}
+            onEdit={startEditing}
+            onCancel={() => {
+              resetDraft();
+              stopEditing();
+            }}
+            onSave={handleSave}
+          />
         ) : undefined
       }
     >
-      <SettingsRow
-        label="Post to GitHub"
-        hint={
-          draft.enabled
-            ? "This project's PR runs post a check and comment."
-            : 'Muted, this project never posts to GitHub.'
-        }
-      >
-        <Flex align="center" gap={2}>
-          <Switch
-            checked={draft.enabled}
-            disabled={!isAdmin}
-            onCheckedChange={(enabled) => setDraft((d) => ({ ...d, enabled }))}
-          />
-          <Text as="span" className="text-sm text-muted-foreground">
-            {draft.enabled ? 'Enabled' : 'Muted'}
-          </Text>
-        </Flex>
-      </SettingsRow>
+      <LockedFields locked={!editing}>
+        <SettingsRow
+          label="Post to GitHub"
+          hint={
+            draft.enabled
+              ? "This project's PR runs post a check and comment."
+              : 'Muted, this project never posts to GitHub.'
+          }
+        >
+          <Flex align="center" gap={2}>
+            <Switch
+              checked={draft.enabled}
+              disabled={!isAdmin}
+              onCheckedChange={(enabled) => setDraft((d) => ({ ...d, enabled }))}
+            />
+            <Text as="span" className="text-sm text-muted-foreground">
+              {draft.enabled ? 'Enabled' : 'Muted'}
+            </Text>
+          </Flex>
+        </SettingsRow>
 
-      <SettingsRow
-        label="Branches"
-        hint="Only post runs from these branches. Leave empty to post on every branch."
-      >
-        {isAdmin ? (
-          <TagInput
-            value={draft.branches}
-            onChange={(branches) => setDraft((d) => ({ ...d, branches }))}
-            suggestions={branchSuggestions}
-            placeholder="All branches, type to filter"
-            disabled={!draft.enabled}
-            aria-label="Branch allow-list"
-          />
-        ) : (
-          <Text className="text-sm">
-            {data.branches.length ? data.branches.join(', ') : 'All branches'}
-          </Text>
-        )}
-      </SettingsRow>
+        <SettingsRow
+          label="Branches"
+          hint="Only post runs from these branches. Leave empty to post on every branch."
+        >
+          {isAdmin ? (
+            <TagInput
+              value={draft.branches}
+              onChange={(branches) => setDraft((d) => ({ ...d, branches }))}
+              suggestions={branchSuggestions}
+              placeholder="All branches, type to filter"
+              disabled={!draft.enabled}
+              aria-label="Branch allow-list"
+            />
+          ) : (
+            <Text className="text-sm">
+              {data.branches.length ? data.branches.join(', ') : 'All branches'}
+            </Text>
+          )}
+        </SettingsRow>
+      </LockedFields>
     </SettingsPanel>
   );
 }

@@ -10,23 +10,28 @@ import { Text } from '@/components/ui/text';
 export function AccountSection({
   title,
   description,
+  action,
   footer,
   children,
 }: {
   title: string;
   description?: string;
+  action?: ReactNode;
   footer?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <Flex direction="col" gap={4}>
-      <Flex direction="col" gap={0.5}>
-        <Text variant="h4">{title}</Text>
-        {description && (
-          <Text as="span" className="text-sm text-muted-foreground">
-            {description}
-          </Text>
-        )}
+      <Flex align="start" justify="between" gap={3}>
+        <Flex direction="col" gap={0.5}>
+          <Text variant="h4">{title}</Text>
+          {description && (
+            <Text as="span" className="text-sm text-muted-foreground">
+              {description}
+            </Text>
+          )}
+        </Flex>
+        {action}
       </Flex>
       <Flex direction="col" gap={4}>
         {children}

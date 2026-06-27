@@ -24,6 +24,8 @@ import { ErrorState, ErrorBanner } from '@/components/states/ErrorState';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
+import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
+import { useEditMode } from '@/hooks/use-edit-mode';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { TransferAdminControl } from '@/components/orgs/TransferAdminControl';
 import { ConfirmDeleteDialog } from '@/components/settings/ConfirmDeleteDialog';
@@ -58,6 +60,7 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
+  const { editing, startEditing, stopEditing } = useEditMode();
   const [formError, setFormError] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const form = useForm<FormValues>({
@@ -82,6 +85,8 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
       notify.success('Organization settings saved', {
         description: `Your changes to ${org.name} have been saved.`,
       });
+      form.reset(form.getValues()); // saved values become the new clean baseline
+      stopEditing();
     },
     onError: (err) => {
       if (isApiError(err) && err.error.field) {
@@ -144,6 +149,17 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
     },
   });
 
+  const submit = form.handleSubmit((data) => {
+    setFormError(null);
+    save.mutate({ path: { orgId }, body: data });
+  });
+
+  const cancel = () => {
+    form.reset();
+    setFormError(null);
+    stopEditing();
+  };
+
   return (
     <Flex direction="col" gap={6}>
       {!isAdmin && (
@@ -152,19 +168,19 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
         </Text>
       )}
 
-      <form
-        onSubmit={form.handleSubmit((data) => {
-          setFormError(null);
-          save.mutate({ path: { orgId }, body: data });
-        })}
-      >
+      <form onSubmit={submit}>
         <SettingsPanel
           title="General"
-          footer={
+          action={
             isAdmin ? (
-              <Button type="submit" loading={save.isPending}>
-                Save changes
-              </Button>
+              <EditActions
+                editing={editing}
+                dirty={form.formState.isDirty}
+                saving={save.isPending}
+                onEdit={startEditing}
+                onCancel={cancel}
+                onSave={submit}
+              />
             ) : undefined
           }
         >
@@ -174,76 +190,73 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
             </div>
           )}
 
-          <SettingsRow label="Logo" hint="Shown on reports and shared links.">
-            <Flex align="center" gap={4} className="w-full">
-              <OrgAvatar org={org} size="lg" />
-              <Flex direction="col" gap={2} align="start">
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  hidden
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) uploadLogo.mutate({ path: { orgId }, body: { file } });
-                    e.target.value = '';
-                  }}
-                />
-                {isAdmin && (
-                  <Flex gap={2}>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      loading={uploadLogo.isPending}
-                      onClick={() => fileRef.current?.click()}
-                    >
-                      Upload logo
-                    </Button>
-                    {org.hasLogo && (
+          <LockedFields locked={!editing}>
+            <SettingsRow label="Logo" hint="Shown on reports and shared links.">
+              <Flex align="center" gap={4} className="w-full">
+                <OrgAvatar org={org} size="lg" />
+                <Flex direction="col" gap={2} align="start">
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    hidden
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) uploadLogo.mutate({ path: { orgId }, body: { file } });
+                      e.target.value = '';
+                    }}
+                  />
+                  {isAdmin && (
+                    <Flex gap={2}>
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        loading={removeLogo.isPending}
-                        onClick={() => removeLogo.mutate({ path: { orgId } })}
+                        loading={uploadLogo.isPending}
+                        onClick={() => fileRef.current?.click()}
                       >
-                        Remove
+                        Upload logo
                       </Button>
-                    )}
-                  </Flex>
-                )}
-                {isAdmin && (
-                  <Text variant="caption" color="muted">
-                    PNG, JPEG, or WebP. Max 2 MB.
-                  </Text>
-                )}
+                      {org.hasLogo && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          loading={removeLogo.isPending}
+                          onClick={() => removeLogo.mutate({ path: { orgId } })}
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </Flex>
+                  )}
+                  {isAdmin && (
+                    <Text variant="caption" color="muted">
+                      PNG, JPEG, or WebP. Max 2 MB.
+                    </Text>
+                  )}
+                </Flex>
               </Flex>
-            </Flex>
-          </SettingsRow>
+            </SettingsRow>
 
-          <SettingsRow label="Organization name">
-            <Input disabled={!isAdmin} {...form.register('name')} />
-            <FieldError message={form.formState.errors.name?.message} />
-          </SettingsRow>
-          <SettingsRow label="Description">
-            <Textarea
-              rows={3}
-              disabled={!isAdmin}
-              placeholder="What does this team work on?"
-              {...form.register('description')}
-            />
-          </SettingsRow>
-          <SettingsRow label="Website">
-            <Input disabled={!isAdmin} placeholder="https://" {...form.register('website')} />
-          </SettingsRow>
-          <SettingsRow label="Contact email">
-            <Input
-              disabled={!isAdmin}
-              placeholder="team@company.com"
-              {...form.register('contactEmail')}
-            />
-          </SettingsRow>
+            <SettingsRow label="Organization name">
+              <Input {...form.register('name')} />
+              <FieldError message={form.formState.errors.name?.message} />
+            </SettingsRow>
+            <SettingsRow label="Description">
+              <Textarea
+                rows={3}
+                placeholder="What does this team work on?"
+                {...form.register('description')}
+              />
+            </SettingsRow>
+            <SettingsRow label="Website">
+              <Input placeholder="https://" {...form.register('website')} />
+            </SettingsRow>
+            <SettingsRow label="Contact email">
+              <Input placeholder="team@company.com" {...form.register('contactEmail')} />
+            </SettingsRow>
+          </LockedFields>
         </SettingsPanel>
       </form>
 

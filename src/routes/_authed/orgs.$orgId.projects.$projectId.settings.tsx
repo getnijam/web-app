@@ -24,6 +24,8 @@ import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState, ErrorBanner } from '@/components/states/ErrorState';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
+import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
+import { useEditMode } from '@/hooks/use-edit-mode';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { GlyphPicker } from '@/components/projects/GlyphPicker';
 import { FRAMEWORK_LABELS, type TestFramework } from '@/lib/test-framework';
@@ -70,6 +72,7 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
   const isAdmin = useIsOrgAdmin(orgId);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { editing, startEditing, stopEditing } = useEditMode();
   const [formError, setFormError] = useState<string | null>(null);
   const [icon, setIcon] = useState<IconKey>(toIconKey(project.icon));
   const [color, setColor] = useState<ColorKey>(toColorKey(project.color));
@@ -97,6 +100,8 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
       notify.success('Project settings saved', {
         description: `Your changes to ${project.name} have been saved.`,
       });
+      form.reset(form.getValues()); // saved values become the new clean baseline
+      stopEditing();
     },
     onError: (err) => {
       if (isApiError(err) && err.error.field) {
@@ -129,6 +134,29 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
     },
   });
 
+  const submit = form.handleSubmit((data) => {
+    setFormError(null);
+    save.mutate({
+      path: { id: project.id },
+      body: { name: data.name, description: data.description, icon, color },
+    });
+  });
+
+  const cancel = () => {
+    form.reset();
+    setIcon(toIconKey(project.icon));
+    setColor(toColorKey(project.color));
+    setFormError(null);
+    stopEditing();
+  };
+
+  // Dirty if any RHF field changed or the icon/color picks differ from the saved
+  // project (compared against live props, so it self-clears after a save refetch).
+  const dirty =
+    form.formState.isDirty ||
+    icon !== toIconKey(project.icon) ||
+    color !== toColorKey(project.color);
+
   return (
     <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
       <Flex direction="col" gap={1}>
@@ -136,26 +164,20 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
         <Text color="muted">Configure how this project's runs are displayed and ingested.</Text>
       </Flex>
 
-      <form
-        onSubmit={form.handleSubmit((data) => {
-          setFormError(null);
-          save.mutate({
-            path: { id: project.id },
-            body: {
-              name: data.name,
-              description: data.description,
-              icon,
-              color,
-            },
-          });
-        })}
-      >
+      <form onSubmit={submit}>
         <SettingsPanel
           title="General"
-          footer={
-            <Button type="submit" loading={save.isPending}>
-              Save changes
-            </Button>
+          action={
+            isAdmin ? (
+              <EditActions
+                editing={editing}
+                dirty={dirty}
+                saving={save.isPending}
+                onEdit={startEditing}
+                onCancel={cancel}
+                onSave={submit}
+              />
+            ) : undefined
           }
         >
           {formError && (
@@ -164,27 +186,29 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
             </div>
           )}
 
-          <SettingsRow label="Icon" hint="Shown on the project card and sidebar.">
-            <GlyphPicker
-              icon={icon}
-              color={color}
-              framework={framework}
-              onIconChange={setIcon}
-              onColorChange={setColor}
-              ringOffsetClass="ring-offset-card"
-            />
-          </SettingsRow>
-          <SettingsRow label="Project name">
-            <Input {...form.register('name')} />
-            <FieldError message={form.formState.errors.name?.message} />
-          </SettingsRow>
-          <SettingsRow label="Description">
-            <Textarea
-              rows={3}
-              placeholder="What does this suite cover?"
-              {...form.register('description')}
-            />
-          </SettingsRow>
+          <LockedFields locked={!editing}>
+            <SettingsRow label="Icon" hint="Shown on the project card and sidebar.">
+              <GlyphPicker
+                icon={icon}
+                color={color}
+                framework={framework}
+                onIconChange={setIcon}
+                onColorChange={setColor}
+                ringOffsetClass="ring-offset-card"
+              />
+            </SettingsRow>
+            <SettingsRow label="Project name">
+              <Input {...form.register('name')} />
+              <FieldError message={form.formState.errors.name?.message} />
+            </SettingsRow>
+            <SettingsRow label="Description">
+              <Textarea
+                rows={3}
+                placeholder="What does this suite cover?"
+                {...form.register('description')}
+              />
+            </SettingsRow>
+          </LockedFields>
           <SettingsRow
             label="Test framework"
             hint="Set when the project was created and can't be changed."

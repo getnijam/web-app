@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { UserAvatar } from '@/components/users/UserAvatar';
+import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { useClickAway } from '@/hooks/use-click-away';
 import { useLogout } from '@/hooks/use-logout';
 import { cn } from '@/lib/utils';
@@ -80,7 +81,8 @@ export function AccountMenu({
         <Button
           asChild
           variant="ghost"
-          className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-accent"
+          data-hover-item
+          className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-transparent"
         >
           <Link to="/profile" hash="invitations" onClick={() => setOpen(false)}>
             <HugeiconsIcon icon={Mail01Icon} size={16} strokeWidth={1.8} className="text-primary" />
@@ -94,7 +96,8 @@ export function AccountMenu({
       <Button
         asChild
         variant="ghost"
-        className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-accent"
+        data-hover-item
+        className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-transparent"
       >
         <Link to="/profile" onClick={() => setOpen(false)}>
           <HugeiconsIcon icon={Settings01Icon} size={16} strokeWidth={1.8} />
@@ -104,9 +107,11 @@ export function AccountMenu({
       <Button
         variant="ghost"
         type="button"
+        data-hover-item
+        data-hover-variant="destructive"
         onClick={() => logout.mutate()}
         disabled={logout.isPending}
-        className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-destructive hover:bg-accent disabled:opacity-60"
+        className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-destructive hover:bg-transparent disabled:opacity-60"
       >
         <HugeiconsIcon icon={Logout01Icon} size={16} strokeWidth={1.8} />
         Sign out
@@ -140,7 +145,7 @@ export function AccountMenu({
                 : 'top-full right-0 mt-2 w-56 origin-top-right',
             )}
           >
-            {menu}
+            <HoverHighlight>{menu}</HoverHighlight>
           </motion.div>
         )}
       </AnimatePresence>
@@ -149,10 +154,13 @@ export function AccountMenu({
         <Button
           variant="ghost"
           type="button"
+          data-sidebar-hover
           onClick={() => setOpen((o) => !o)}
           className={cn(
-            'h-auto w-full justify-start gap-2.5 rounded-lg border border-sidebar-border bg-card p-2 text-left',
-            open && 'bg-accent',
+            // Keep the card outline, but let the sidebar's sliding hover highlight
+            // fill the interior (so stay transparent rather than an opaque bg-card).
+            'h-auto w-full justify-start gap-2.5 rounded-xl border border-sidebar-border p-2 text-left hover:bg-transparent',
+            open && 'bg-accent hover:bg-accent',
           )}
         >
           <span className="relative shrink-0">

@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { TestRow } from '@/components/explorer/TestRow';
+import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { DateRangeFilter } from '@/components/explorer/DateRangeFilter';
 import {
   validateDateRangeSearch,
@@ -71,16 +72,18 @@ function FailingPage() {
       return <EmptyState title="No matches" description="No failing test matches your search." />;
     return (
       <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-        {filtered.map((t) => (
-          <TestRow
-            key={t.testId}
-            test={t}
-            orgId={orgId}
-            projectId={projectId}
-            failCount={t.failCount}
-            from="failing"
-          />
-        ))}
+        <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
+          {filtered.map((t) => (
+            <TestRow
+              key={t.testId}
+              test={t}
+              orgId={orgId}
+              projectId={projectId}
+              failCount={t.failCount}
+              from="failing"
+            />
+          ))}
+        </HoverHighlight>
       </Flex>
     );
   };

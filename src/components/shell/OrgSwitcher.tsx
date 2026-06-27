@@ -11,9 +11,12 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { CreateOrgDialog } from '@/components/orgs/CreateOrgDialog';
+import { HoverHighlight } from '@/components/ui/hover-highlight';
 
+// Background on hover is drawn by the sliding HoverHighlight, so items stay
+// transparent (the ghost Button's own hover bg is overridden too).
 const menuItem =
-  'w-full rounded-md px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent';
+  'w-full rounded-md px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-transparent';
 
 /** Current-org chip + dropdown to switch orgs, create one, or go to the picker. */
 export function OrgSwitcher({ orgId }: { orgId: string }) {
@@ -38,6 +41,7 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
               transition={{ duration: 0.15, ease: 'easeOut' }}
               className="absolute top-full right-0 left-0 z-50 mt-1.5 origin-top rounded-lg border border-border bg-popover p-1.5 shadow-xl"
             >
+              <HoverHighlight>
               <Text as="div" className="px-2 py-1 text-xs font-medium text-muted-foreground">
                 Organizations
               </Text>
@@ -47,6 +51,7 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
                   variant="ghost"
                   key={o.id}
                   type="button"
+                  data-hover-item
                   onClick={() => {
                     setOpen(false);
                     navigate({ to: '/orgs/$orgId/projects', params: { orgId: o.id } });
@@ -68,6 +73,7 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
             <Button
               variant="ghost"
               type="button"
+              data-hover-item
               onClick={() => {
                 setOpen(false);
                 setCreateOpen(true);
@@ -81,6 +87,7 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
             <Flex
               as={Link}
               to="/orgs"
+              data-hover-item
               onClick={() => setOpen(false)}
               align="center"
               gap={2.5}
@@ -89,6 +96,7 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
               <HugeiconsIcon icon={Building03Icon} size={16} className="text-muted-foreground" />
               All organizations
             </Flex>
+            </HoverHighlight>
             </motion.div>
           </>
         )}
@@ -97,10 +105,13 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
       <Button
         variant="ghost"
         type="button"
+        data-sidebar-hover
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          'h-auto w-full justify-start gap-2.5 rounded-lg p-2 text-left hover:bg-sidebar-accent',
-          open && 'bg-sidebar-accent',
+          // Background is drawn by the sidebar's sliding hover highlight, so stay
+          // transparent on hover; keep a solid fill only while the menu is open.
+          'h-auto w-full justify-start gap-2.5 rounded-xl p-2 text-left hover:bg-transparent',
+          open && 'bg-sidebar-accent hover:bg-sidebar-accent',
         )}
       >
         {org ? (

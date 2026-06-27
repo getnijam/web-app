@@ -73,9 +73,10 @@ export function TestRow({
       search={{ from } as never}
       align="center"
       gap={3}
+      data-hover-item
       className={cn(
         'border-b border-border px-4 py-3',
-        'transition-colors last:border-b-0 hover:bg-accent',
+        'transition-colors last:border-b-0',
         { 'pl-12': isGroupEnabled },
       )}
     >

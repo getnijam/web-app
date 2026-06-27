@@ -59,7 +59,10 @@ export function FileGroup({
   const st = fileStatus(counts);
   return (
     <Collapsible defaultOpen={defaultOpen} className="border-b border-border last:border-b-0">
-      <CollapsibleTrigger className="group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-accent">
+      <CollapsibleTrigger
+        data-hover-item
+        className="group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors"
+      >
         <HugeiconsIcon
           icon={ArrowRight01Icon}
           size={16}
@@ -88,7 +91,10 @@ export function FileGroup({
       <CollapsibleContent>
         {/* pl-7 = the header's chevron (size-4) + gap-3, so each row's status icon
             lines up directly under the file icon above. */}
-        <Flex direction="col" className="border-t border-border bg-muted/30">
+        {/* No opaque fill here: the explorer's sliding hover highlight sits behind
+            the rows (-z-10), so a background would hide it. The pl-12 indent + the
+            top border still mark these as nested. */}
+        <Flex direction="col" className="border-t border-border">
           {tests.map((t) => (
             <TestRow isGroupEnabled key={t.testId} test={t} orgId={orgId} projectId={projectId} />
           ))}

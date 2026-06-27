@@ -12,6 +12,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { UserAvatar } from '@/components/users/UserAvatar';
@@ -219,7 +220,9 @@ function RunDetailPage() {
           </Flex>
         )}
 
-        {renderFiles()}
+        <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
+          {renderFiles()}
+        </HoverHighlight>
       </Flex>
     </Flex>
   );
