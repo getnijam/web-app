@@ -30,13 +30,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { FilterCombobox, type ComboboxOption } from '@/components/ui/combobox';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -67,6 +61,11 @@ import { timeAgo } from '@/lib/format';
 import { notify } from '@/lib/notify';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { privateSeo } from '@/lib/seo';
+
+const ROLE_OPTIONS: ComboboxOption[] = [
+  { value: 'member', label: 'Member' },
+  { value: 'admin', label: 'Admin' },
+];
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/settings/users')({
   head: () => privateSeo('Members'),
@@ -255,15 +254,17 @@ function InviteDialog({
 
             <Flex direction="col" gap={1.5}>
               <Label htmlFor="invite-role">Role</Label>
-              <Select value={role} onValueChange={(v) => setRole(v as 'admin' | 'member')}>
-                <SelectTrigger id="invite-role" aria-label="Role" className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="member">Member</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                </SelectContent>
-              </Select>
+              <FilterCombobox
+                id="invite-role"
+                ariaLabel="Role"
+                value={role}
+                onChange={(v) => v && setRole(v as 'admin' | 'member')}
+                options={ROLE_OPTIONS}
+                placeholder="Role"
+                clearable={false}
+                searchable={false}
+                width="w-full"
+              />
             </Flex>
           </Flex>
 
@@ -364,27 +365,23 @@ function MemberRow({
         </Text>
       </Flex>
       {isAdmin && !isYou ? (
-        <Select
+        <FilterCombobox
+          ariaLabel={`Role for ${displayName}`}
           value={member.role}
-          onValueChange={(v) =>
+          onChange={(v) =>
+            v &&
             roleMutation.mutate({
               path: { orgId, userId: member.userId },
               body: { role: v as 'admin' | 'member' },
             })
           }
-        >
-          <SelectTrigger
-            aria-label={`Role for ${displayName}`}
-            className="w-28 shrink-0"
-            disabled={roleMutation.isPending}
-          >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="member">Member</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-          </SelectContent>
-        </Select>
+          options={ROLE_OPTIONS}
+          placeholder="Role"
+          clearable={false}
+                searchable={false}
+          disabled={roleMutation.isPending}
+          width="w-28 shrink-0"
+        />
       ) : (
         <Badge
           variant={member.role === 'admin' ? 'default' : 'secondary'}

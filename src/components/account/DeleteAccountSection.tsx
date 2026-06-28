@@ -21,13 +21,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { FilterCombobox } from '@/components/ui/combobox';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
@@ -171,18 +165,15 @@ function BlockingOrgRow({
         </Text>
       </Flex>
       <Flex gap={2} align="center" className="w-full">
-        <Select value={selected} onValueChange={setSelected}>
-          <SelectTrigger className="min-w-0 flex-1">
-            <SelectValue placeholder="Choose a new admin…" />
-          </SelectTrigger>
-          <SelectContent>
-            {candidates.map((m) => (
-              <SelectItem key={m.userId} value={m.userId}>
-                {m.name ?? m.email}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <FilterCombobox
+          value={selected}
+          onChange={(v) => v && setSelected(v)}
+          options={candidates.map((m) => ({ value: m.userId, label: m.name ?? m.email }))}
+          placeholder="Choose a new admin…"
+          emptyText="No members"
+          clearable={false}
+          width="min-w-0 flex-1"
+        />
         <Button
           size="sm"
           variant="outline"

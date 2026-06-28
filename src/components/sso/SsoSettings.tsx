@@ -39,13 +39,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { FilterCombobox, type ComboboxOption } from '@/components/ui/combobox';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,6 +63,11 @@ import { cn } from '@/lib/utils';
 
 const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
 const REDIRECT_URI = `${API_BASE}/v1/auth/sso/callback`;
+
+const ROLE_OPTIONS: ComboboxOption[] = [
+  { value: 'member', label: 'Member' },
+  { value: 'admin', label: 'Admin' },
+];
 
 export function SsoSettings({ orgId }: { orgId: string }) {
   const isAdmin = useIsOrgAdmin(orgId);
@@ -624,18 +623,16 @@ function ConnectionEdit({
       )}
 
       <SettingsRow label="Default role" hint="The role new members get when provisioned.">
-        <Select
+        <FilterCombobox
+          ariaLabel="Default role"
           value={draft.defaultRole}
-          onValueChange={(v) => set({ defaultRole: v as 'admin' | 'member' })}
-        >
-          <SelectTrigger className="w-full max-w-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="member">Member</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-          </SelectContent>
-        </Select>
+          onChange={(v) => v && set({ defaultRole: v as 'admin' | 'member' })}
+          options={ROLE_OPTIONS}
+          placeholder="Role"
+          clearable={false}
+          searchable={false}
+          width="w-full max-w-xs"
+        />
       </SettingsRow>
 
       {connection && (

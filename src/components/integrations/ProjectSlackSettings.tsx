@@ -13,13 +13,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { FilterCombobox, type ComboboxOption } from '@/components/ui/combobox';
 import { TagInput } from '@/components/ui/tag-input';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
@@ -235,9 +229,11 @@ function ProjectSlackInner({
           hint="Override the organization default channel for this project, or inherit it."
         >
           {isAdmin ? (
-            <Select
+            <FilterCombobox
+              ariaLabel="Slack channel"
               value={draft.channelId ?? INHERIT}
-              onValueChange={(value) => {
+              onChange={(value) => {
+                if (!value) return;
                 if (value === INHERIT) {
                   setDraft((d) => ({ ...d, channelId: null, channelName: null }));
                 } else {
@@ -245,28 +241,31 @@ function ProjectSlackInner({
                   setDraft((d) => ({ ...d, channelId: value, channelName: ch?.name ?? value }));
                 }
               }}
+              options={[
+                {
+                  value: INHERIT,
+                  label: `Default${data.orgDefaultChannel ? ` (#${data.orgDefaultChannel.name})` : ''}`,
+                },
+                ...(draft.channelId &&
+                !channels.data?.channels.some((c) => c.id === draft.channelId)
+                  ? [
+                      {
+                        value: draft.channelId,
+                        label: `#${draft.channelName ?? draft.channelId}`,
+                      } satisfies ComboboxOption,
+                    ]
+                  : []),
+                ...(channels.data?.channels ?? []).map((c) => ({
+                  value: c.id,
+                  label: `#${c.name}`,
+                })),
+              ]}
+              placeholder="Default"
+              emptyText="No channels"
+              clearable={false}
               disabled={!draft.enabled}
-            >
-              <SelectTrigger className="w-full max-w-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={INHERIT}>
-                  Default{data.orgDefaultChannel ? ` (#${data.orgDefaultChannel.name})` : ''}
-                </SelectItem>
-                {draft.channelId &&
-                  !channels.data?.channels.some((c) => c.id === draft.channelId) && (
-                    <SelectItem value={draft.channelId}>
-                      #{draft.channelName ?? draft.channelId}
-                    </SelectItem>
-                  )}
-                {channels.data?.channels.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    #{c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              width="w-full max-w-xs"
+            />
           ) : (
             <Text className="text-sm">
               {data.channel ? `#${data.channel.name}` : `Default (${orgDefaultLabel})`}
