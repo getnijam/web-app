@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowLeft01Icon, ArrowUpRight01Icon } from '@hugeicons/core-free-icons';
+import { ArrowLeft01Icon, ArrowUpRight01Icon, Clock01Icon } from '@hugeicons/core-free-icons';
 import type { ArtifactSummary } from '@/client';
 import { getRunOptions, getRunFileTestsOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
@@ -22,6 +22,8 @@ import { CountDots } from '@/components/runs/CountDots';
 import { AttemptBlock } from '@/components/runs/AttemptBlock';
 import { ArtifactPreviewModal } from '@/components/runs/ArtifactPreviewModal';
 import { testStatusMeta } from '@/components/runs/test-status';
+import { TestHistorySheet } from '@/components/explorer/TestHistorySheet';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { privateSeo } from '@/lib/seo';
 
@@ -37,6 +39,8 @@ function FileDetailPage() {
   const { orgId, projectId, runId } = Route.useParams();
   const { path } = Route.useSearch();
   const [preview, setPreview] = useState<ArtifactSummary | null>(null);
+  // The test whose cross-run history is shown in the side sheet (null = closed).
+  const [historyTest, setHistoryTest] = useState<{ testId: string; title: string } | null>(null);
 
   const run = useQuery(getRunOptions({ path: { id: runId } }));
   const fileTests = useQuery(getRunFileTestsOptions({ path: { runId }, query: { file: path } }));
@@ -109,7 +113,25 @@ function FileDetailPage() {
                 value={t.testId}
                 className="overflow-hidden rounded-xl border border-border bg-card"
               >
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                <AccordionTrigger
+                  className="px-4 py-3 hover:no-underline"
+                  action={
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          className="mr-2 shrink-0 text-muted-foreground"
+                          onClick={() => setHistoryTest({ testId: t.testId, title: t.title })}
+                          aria-label={`Open history for ${t.title}`}
+                        >
+                          <HugeiconsIcon icon={Clock01Icon} size={16} />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Open history</TooltipContent>
+                    </Tooltip>
+                  }
+                >
                   <Flex align="center" gap={3} className="min-w-0 flex-1">
                     <HugeiconsIcon
                       icon={meta.icon}
@@ -152,6 +174,14 @@ function FileDetailPage() {
       )}
 
       <ArtifactPreviewModal artifact={preview} onOpenChange={(o) => !o && setPreview(null)} />
+      <TestHistorySheet
+        open={!!historyTest}
+        onOpenChange={(o) => !o && setHistoryTest(null)}
+        test={historyTest}
+        orgId={orgId}
+        projectId={projectId}
+        file={path}
+      />
     </Flex>
   );
 }

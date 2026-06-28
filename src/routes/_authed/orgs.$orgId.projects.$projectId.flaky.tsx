@@ -50,8 +50,9 @@ function FlakyPage() {
   // time the list is loading (first load and filter-change refetches alike); only
   // a settled, unfiltered, empty project hides them. They never wait on data.
   const filterActive = Boolean(search.from || search.to);
-  const showControls =
-    !q.error && (q.isLoading || q.isPlaceholderData || filterActive || tests.length > 0);
+  // Always show the search + date filter (unless the query errored): even with no
+  // results the date range stays adjustable to look in a different window.
+  const showControls = !q.error;
 
   // Default window is the last 2 weeks; a date filter overrides it (the pill shows
   // the chosen range, so the subtitle drops the window phrase).

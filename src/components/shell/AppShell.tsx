@@ -58,7 +58,7 @@ export function AppShell() {
       <AppSidebar />
       <SidebarInset className="min-w-0">
         <TopBar />
-        <div className="scroll-area min-h-0 flex-1 overflow-y-auto px-7 pt-7 pb-12">
+        <div className="scroll-area min-h-0 flex-1 overflow-y-auto p-7">
           <Outlet />
         </div>
         <UsageLimitBanner />

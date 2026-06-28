@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/auth/Logo';
 import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl';
 import { AccountMenu } from '@/components/users/AccountMenu';
+import { HoverHighlight } from '@/components/ui/hover-highlight';
 
 const SECTIONS = [
   { to: '/profile', label: 'Profile', icon: UserIcon, exact: true },
@@ -72,19 +73,22 @@ export function SettingsLayout({ children }: { children: ReactNode }) {
         </Flex>
 
         <Flex direction="col" gap={8} align="start" className="w-full md:flex-row">
-          <Flex as="nav" direction="col" gap={1} className="w-full shrink-0 md:w-48">
-            {SECTIONS.map((s) => (
-              <Link
-                key={s.to}
-                to={s.to}
-                activeOptions={{ exact: s.exact }}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                activeProps={{ className: 'bg-accent text-foreground' }}
-              >
-                <HugeiconsIcon icon={s.icon} size={17} strokeWidth={1.8} />
-                {s.label}
-              </Link>
-            ))}
+          <Flex as="nav" direction="col" className="w-full shrink-0 md:w-48">
+            <HoverHighlight highlightClassName="rounded-lg bg-accent" className="flex flex-col gap-1">
+              {SECTIONS.map((s) => (
+                <Link
+                  key={s.to}
+                  to={s.to}
+                  data-hover-item
+                  activeOptions={{ exact: s.exact }}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  activeProps={{ className: 'bg-accent text-foreground' }}
+                >
+                  <HugeiconsIcon icon={s.icon} size={17} strokeWidth={1.8} />
+                  {s.label}
+                </Link>
+              ))}
+            </HoverHighlight>
           </Flex>
 
           <Flex direction="col" gap={6} className="min-w-0 flex-1">

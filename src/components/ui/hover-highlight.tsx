@@ -47,9 +47,10 @@ export function HoverHighlight({
     lastItem.current = item;
     const rr = root.getBoundingClientRect();
     const ir = item.getBoundingClientRect();
+    // Add scroll offset so the highlight aligns when the layer is a scroll container.
     setHighlight({
-      top: ir.top - rr.top + inset,
-      left: ir.left - rr.left + inset,
+      top: ir.top - rr.top + root.scrollTop + inset,
+      left: ir.left - rr.left + root.scrollLeft + inset,
       width: ir.width - inset * 2,
       height: ir.height - inset * 2,
       destructive: item.dataset.hoverVariant === 'destructive',

@@ -139,7 +139,9 @@ export function FilterCombobox({
             onInteractOutside={(e) => {
               if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
             }}
-            className="w-(--radix-popover-trigger-width) min-w-48 gap-0 overflow-hidden p-1"
+            // Fit the content, but never narrower than the field and never wider
+            // than a comfortable cap (long labels truncate beyond it).
+            className="w-auto min-w-(--radix-popover-trigger-width) max-w-64 gap-0 overflow-hidden p-1"
           >
             <CommandList>
               <CommandEmpty>{emptyText}</CommandEmpty>

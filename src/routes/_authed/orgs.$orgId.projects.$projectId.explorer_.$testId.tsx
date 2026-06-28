@@ -73,7 +73,7 @@ function TestDetailPage() {
   const next = idx >= 0 && idx < tests.length - 1 ? tests[idx + 1] : undefined;
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl md:min-h-full">
       <Flex align="center" justify="between" gap={3}>
         <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
           <Link to={back.to} params={{ orgId, projectId }}>
@@ -140,12 +140,19 @@ function TestDetailPage() {
         )}
       </Flex>
 
-      {/* source (2/3) + history (1/3) */}
-      <Grid cols={[1, 1, 3]} gap={4} className="items-start">
+      {/* source (2/3) + history (1/3). On md the grid fills the remaining page height
+          (flex-1) and each column scrolls internally; on mobile it stacks and flows. */}
+      <Grid cols={[1, 1, 3]} gap={4} className="items-stretch md:min-h-0 md:flex-1 md:auto-rows-fr">
         <div className="min-w-0 md:col-span-2">
           <SourcePanel source={source} test={test} />
         </div>
-        <RunHistory history={history} orgId={orgId} projectId={projectId} file={test.file} />
+        <RunHistory
+          history={history}
+          orgId={orgId}
+          projectId={projectId}
+          file={test.file}
+          className="min-h-0"
+        />
       </Grid>
     </Flex>
   );
@@ -195,7 +202,7 @@ function SourcePanel({ source, test }: { source: TestSourceRef | null; test: Tes
   if (!source) {
     return <EmptyPanel>Source not uploaded, enable uploadSource in the reporter.</EmptyPanel>;
   }
-  if (src.isLoading) return <Skeleton className="h-96 w-full rounded-2xl" />;
+  if (src.isLoading) return <Skeleton className="h-full min-h-96 w-full rounded-2xl" />;
   if (src.error || !src.data)
     return <EmptyPanel>Source not available for this version.</EmptyPanel>;
   return (
@@ -208,7 +215,7 @@ function EmptyPanel({ children }: { children: React.ReactNode }) {
     <Flex
       align="center"
       justify="center"
-      className="min-h-48 rounded-2xl border border-dashed border-border px-6 text-center"
+      className="h-full min-h-48 rounded-2xl border border-dashed border-border px-6 text-center"
     >
       <Text color="muted" className="text-sm">
         {children}

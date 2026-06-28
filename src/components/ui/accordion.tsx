@@ -68,10 +68,14 @@ function AccordionItem({
 function AccordionTrigger({
   className,
   children,
+  action,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Trigger> & {
+  /** Optional control rendered beside the trigger (not nested in its button). */
+  action?: React.ReactNode;
+}) {
   return (
-    <AccordionPrimitive.Header className="flex">
+    <AccordionPrimitive.Header className="flex items-center">
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
@@ -94,6 +98,7 @@ function AccordionTrigger({
           className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
         />
       </AccordionPrimitive.Trigger>
+      {action}
     </AccordionPrimitive.Header>
   );
 }

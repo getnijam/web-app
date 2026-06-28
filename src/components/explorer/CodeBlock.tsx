@@ -131,8 +131,16 @@ export function CodeBlock({
 }) {
   const lines = code.replace(/\n$/, '').split('\n');
   return (
-    <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-      <Flex align="center" justify="between" gap={3} className="border-b border-border px-4 py-2.5">
+    <Flex
+      direction="col"
+      className="h-full overflow-hidden rounded-2xl border border-border bg-card"
+    >
+      <Flex
+        align="center"
+        justify="between"
+        gap={3}
+        className="shrink-0 border-b border-border px-4 py-2.5"
+      >
         <Flex align="center" gap={2} className="min-w-0">
           <HugeiconsIcon
             icon={SourceCodeIcon}
@@ -147,7 +155,7 @@ export function CodeBlock({
           {langLabel(name)}
         </Text>
       </Flex>
-      <div className="scroll-area max-h-144 overflow-auto">
+      <div className="scroll-area max-h-144 min-h-0 flex-1 overflow-auto md:max-h-none">
         <pre className="py-2 font-mono text-xs leading-relaxed">
           {lines.map((line, i) => {
             const n = i + 1;

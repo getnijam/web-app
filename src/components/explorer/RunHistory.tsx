@@ -30,18 +30,30 @@ export function RunHistory({
   orgId,
   projectId,
   file,
+  className,
 }: {
   history: TestHistoryEntry[];
   orgId: string;
   projectId: string;
   file: string;
+  /** Constrain the card height; the run list then scrolls inside it. */
+  className?: string;
 }) {
   const newest = [...history].reverse();
-  const passed = history.filter((h) => h.status === 'passed').length;
+  // Flaky runs ultimately passed (after a retry), so they count as passed, not failed.
+  const passed = history.filter((h) => h.status === 'passed' || h.status === 'flaky').length;
 
   return (
-    <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-      <Flex align="center" justify="between" gap={3} className="border-b border-border px-4 py-3">
+    <Flex
+      direction="col"
+      className={cn('overflow-hidden rounded-2xl border border-border bg-card', className)}
+    >
+      <Flex
+        align="center"
+        justify="between"
+        gap={3}
+        className="shrink-0 border-b border-border px-4 py-3"
+      >
         <Text as="span" className="text-sm font-semibold">
           Run history
         </Text>
@@ -52,7 +64,7 @@ export function RunHistory({
 
       {/* chronological strip (oldest → newest), filling the card width */}
       {history.length > 0 && (
-        <Flex gap={1} className="border-b border-border px-4 py-3">
+        <Flex gap={1} className="shrink-0 border-b border-border px-4 py-3">
           {history.map((h) => (
             <span
               key={h.runId}
@@ -63,7 +75,11 @@ export function RunHistory({
         </Flex>
       )}
 
-      <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
+      <HoverHighlight
+        inset={4}
+        highlightClassName="rounded-lg bg-accent"
+        className="min-h-0 flex-1 overflow-y-auto"
+      >
         {newest.map((h) => {
           const meta = testStatusMeta(h.status);
           return (
