@@ -73,7 +73,7 @@ function TestDetailPage() {
   const next = idx >= 0 && idx < tests.length - 1 ? tests[idx + 1] : undefined;
 
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl md:min-h-full">
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl md:h-full">
       <Flex align="center" justify="between" gap={3}>
         <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
           <Link to={back.to} params={{ orgId, projectId }}>
@@ -140,9 +140,14 @@ function TestDetailPage() {
         )}
       </Flex>
 
-      {/* source (2/3) + history (1/3). On md the grid fills the remaining page height
-          (flex-1) and each column scrolls internally; on mobile it stacks and flows. */}
-      <Grid cols={[1, 1, 3]} gap={4} className="items-stretch md:min-h-0 md:flex-1 md:auto-rows-fr">
+      {/* source (2/3) + history (1/3). On md the columns share one row sized by flex to
+          the exact remaining height (so the page never scrolls), floored at 448px and
+          ceilinged at the viewport; past that they scroll internally. Mobile stacks. */}
+      <Grid
+        cols={[1, 1, 3]}
+        gap={4}
+        className="items-stretch md:min-h-112 md:max-h-detail md:flex-1 md:auto-rows-fr"
+      >
         <div className="min-w-0 md:col-span-2">
           <SourcePanel source={source} test={test} />
         </div>

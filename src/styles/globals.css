@@ -253,6 +253,14 @@
   background-color: var(--overlay);
 }
 
+/* Ceiling for the test-explorer detail columns: fit within the viewport below the
+   app top bar + page header (with bottom breathing room) so the panels never grow
+   past the screen, scrolling internally instead. Tune the offset if the header
+   height changes. */
+@utility max-h-detail {
+  max-height: calc(100svh - 14rem);
+}
+
 /* Interactive grid overlay for the hero. A full-bleed CSS grid whose cells are
    aligned to the same 3.5rem rhythm as hero-grid; each cell tints toward the
    brand color on hover and fades back out (the fade lives on the cell in
