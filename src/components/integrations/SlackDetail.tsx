@@ -18,13 +18,7 @@ import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { FilterCombobox } from '@/components/ui/combobox';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -431,31 +425,35 @@ function SlackDetailInner({
                 >
                   {isAdmin ? (
                     <LockedFields locked={!editing}>
-                      <Select
+                      <FilterCombobox
+                        ariaLabel="Slack channel"
                         value={draft.channelId ?? undefined}
-                        onValueChange={(id) => {
+                        onChange={(id) => {
+                          if (!id) return;
                           const ch = channels.data?.channels.find((c) => c.id === id);
                           setDraft((d) => ({ ...d, channelId: id, channelName: ch?.name ?? id }));
                         }}
-                      >
-                        <SelectTrigger className="w-full max-w-xs">
-                          <SelectValue placeholder="Select a channel" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {/* Show the current channel immediately, before the list loads. */}
-                          {draft.channelId &&
-                            !channels.data?.channels.some((c) => c.id === draft.channelId) && (
-                              <SelectItem value={draft.channelId}>
-                                #{draft.channelName ?? draft.channelId}
-                              </SelectItem>
-                            )}
-                          {channels.data?.channels.map((c) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              #{c.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        options={[
+                          // Show the current channel immediately, before the list loads.
+                          ...(draft.channelId &&
+                          !channels.data?.channels.some((c) => c.id === draft.channelId)
+                            ? [
+                                {
+                                  value: draft.channelId,
+                                  label: `#${draft.channelName ?? draft.channelId}`,
+                                },
+                              ]
+                            : []),
+                          ...(channels.data?.channels ?? []).map((c) => ({
+                            value: c.id,
+                            label: `#${c.name}`,
+                          })),
+                        ]}
+                        placeholder="Select a channel"
+                        emptyText="No channels"
+                        clearable={false}
+                        width="w-full max-w-xs"
+                      />
                     </LockedFields>
                   ) : (
                     <Text className="text-sm">

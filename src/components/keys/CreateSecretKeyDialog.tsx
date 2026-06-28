@@ -20,13 +20,7 @@ import {
   DialogDescription,
   DialogClose,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { FilterCombobox } from '@/components/ui/combobox';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -255,32 +249,40 @@ export function CreateSecretKeyDialog({
               {scope === 'project' && (
                 <Flex direction="col" gap={1.5}>
                   <Label htmlFor="key-project">Project</Label>
-                  <Select value={projectId} onValueChange={setProjectId}>
-                    <SelectTrigger id="key-project" className="w-full">
-                      <SelectValue placeholder="Select a project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {projects.map((p) => {
-                        // Repo slug from the project's latest run (reporter-sent), not config.
-                        const repo = p.stats?.repository ?? null;
-                        return (
-                          <SelectItem key={p.id} value={p.id} textValue={p.name}>
-                            <Flex align="center" gap={2}>
-                              <ProjectGlyphMini project={p} />
-                              <Text as="span" weight="medium" className="text-sm">
-                                {p.name}
+                  <FilterCombobox
+                    id="key-project"
+                    value={projectId}
+                    onChange={(v) => v && setProjectId(v)}
+                    options={projects.map((p) => {
+                      // Repo slug from the project's latest run (reporter-sent), not config.
+                      const repo = p.stats?.repository ?? null;
+                      return {
+                        value: p.id,
+                        label: p.name,
+                        node: (
+                          <Flex align="center" gap={2} className="min-w-0 flex-1">
+                            <ProjectGlyphMini project={p} />
+                            <Text as="span" weight="medium" truncate className="text-sm">
+                              {p.name}
+                            </Text>
+                            {repo && (
+                              <Text
+                                as="span"
+                                truncate
+                                className="font-mono text-xs text-muted-foreground"
+                              >
+                                {repo}
                               </Text>
-                              {repo && (
-                                <Text as="span" className="font-mono text-xs text-muted-foreground">
-                                  {repo}
-                                </Text>
-                              )}
-                            </Flex>
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
+                            )}
+                          </Flex>
+                        ),
+                      };
+                    })}
+                    placeholder="Select a project"
+                    emptyText="No projects"
+                    clearable={false}
+                    width="w-full"
+                  />
                 </Flex>
               )}
             </Flex>
