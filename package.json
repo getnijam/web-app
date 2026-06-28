@@ -36,6 +36,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.4.0",
+    "input-otp": "^1.4.2",
     "lucide-react": "^0.469.0",
     "motion": "^12.42.0",
     "qrcode.react": "^4.2.0",

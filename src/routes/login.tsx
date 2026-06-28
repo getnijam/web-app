@@ -9,6 +9,7 @@ import { oauthErrorMessage } from '@/lib/oauth-error';
 import { ssoErrorMessage } from '@/lib/sso-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { OtpInput } from '@/components/ui/otp-input';
 import { Label } from '@/components/ui/label';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -412,16 +413,32 @@ function TwoFactorStep({
 
         <Flex direction="col" gap={1.5}>
           <Label htmlFor="totp-code">{useBackup ? 'Backup code' : 'Verification code'}</Label>
-          <Input
-            id="totp-code"
-            inputMode={useBackup ? 'text' : 'numeric'}
-            autoComplete="one-time-code"
-            autoFocus
-            placeholder={useBackup ? 'XXXX-XXXX' : '123456'}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            data-testid="login-2fa-code"
-          />
+          {useBackup ? (
+            <Input
+              id="totp-code"
+              inputMode="text"
+              autoComplete="one-time-code"
+              autoFocus
+              placeholder="XXXX-XXXX"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              aria-invalid={error ? true : undefined}
+              data-testid="login-2fa-code"
+            />
+          ) : (
+            <OtpInput
+              id="totp-code"
+              autoFocus
+              value={code}
+              onChange={setCode}
+              disabled={verify.isPending}
+              aria-invalid={error ? true : undefined}
+              onComplete={(v) => {
+                setError(null);
+                verify.mutate({ challengeToken, code: v });
+              }}
+            />
+          )}
         </Flex>
 
         <Button
