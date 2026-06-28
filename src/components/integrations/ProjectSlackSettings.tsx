@@ -13,8 +13,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { FilterCombobox, type ComboboxOption } from '@/components/ui/combobox';
-import { TagInput } from '@/components/ui/tag-input';
+import { FilterCombobox, TagCombobox, type ComboboxOption } from '@/components/ui/combobox';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
@@ -278,13 +277,13 @@ function ProjectSlackInner({
           hint="Only post runs from these branches. Leave empty to post on every branch."
         >
           {isAdmin ? (
-            <TagInput
+            <TagCombobox
               value={draft.branches}
               onChange={(branches) => setDraft((d) => ({ ...d, branches }))}
-              suggestions={branchSuggestions}
+              options={branchSuggestions}
               placeholder="All branches, type to filter"
               disabled={!draft.enabled}
-              aria-label="Branch allow-list"
+              ariaLabel="Branch allow-list"
             />
           ) : (
             <Text className="text-sm">

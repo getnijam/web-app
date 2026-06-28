@@ -8,6 +8,7 @@ import { listOrgsOptions, getOrgOptions } from '@/client/@tanstack/react-query.g
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { CreateOrgDialog } from '@/components/orgs/CreateOrgDialog';
@@ -26,6 +27,36 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
   const current = useQuery(getOrgOptions({ path: { orgId } }));
   const list = useQuery({ ...listOrgsOptions(), enabled: open });
   const org = current.data;
+
+  // The org list is fetched lazily on open; show placeholder rows while it loads.
+  const renderOrgRows = () => {
+    if (list.isLoading) {
+      return ['w-28', 'w-20', 'w-24'].map((w, i) => (
+        <Flex key={`org-skeleton-${i}`} align="center" gap={2.5} className="px-2 py-1.5">
+          <Skeleton className="size-6.5 shrink-0 rounded-md" />
+          <Skeleton className={cn('h-4 rounded-md', w)} />
+        </Flex>
+      ));
+    }
+    return (list.data?.orgs ?? []).map((o) => (
+      <Button
+        variant="ghost"
+        key={o.id}
+        type="button"
+        data-hover-item
+        onClick={() => {
+          setOpen(false);
+          navigate({ to: '/orgs/$orgId/projects', params: { orgId: o.id } });
+        }}
+        className={cn('h-auto justify-start gap-2.5', menuItem, o.id === orgId && 'bg-accent')}
+      >
+        <OrgAvatar org={o} size="sm" />
+        <Text as="span" truncate className="min-w-0 flex-1">
+          {o.name}
+        </Text>
+      </Button>
+    ));
+  };
 
   return (
     <div className="relative mb-1.5">
@@ -46,28 +77,7 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
                 Organizations
               </Text>
             <Flex direction="col" gap={0.5} className="max-h-64 overflow-y-auto">
-              {(list.data?.orgs ?? []).map((o) => (
-                <Button
-                  variant="ghost"
-                  key={o.id}
-                  type="button"
-                  data-hover-item
-                  onClick={() => {
-                    setOpen(false);
-                    navigate({ to: '/orgs/$orgId/projects', params: { orgId: o.id } });
-                  }}
-                  className={cn(
-                    'h-auto justify-start gap-2.5',
-                    menuItem,
-                    o.id === orgId && 'bg-accent',
-                  )}
-                >
-                  <OrgAvatar org={o} size="sm" />
-                  <Text as="span" truncate className="min-w-0 flex-1">
-                    {o.name}
-                  </Text>
-                </Button>
-              ))}
+              {renderOrgRows()}
             </Flex>
             <div className="my-1 h-px bg-border" />
             <Button

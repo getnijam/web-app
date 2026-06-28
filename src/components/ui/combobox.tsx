@@ -1,7 +1,7 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { Command as CommandPrimitive } from 'cmdk';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { UnfoldMoreIcon, Tick02Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
+import { UnfoldMoreIcon, Tick02Icon, Cancel01Icon, PlusSignIcon } from '@hugeicons/core-free-icons';
 import {
   Command,
   CommandEmpty,
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/command';
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 export interface ComboboxOption {
@@ -166,5 +167,161 @@ export function FilterCombobox({
         </Popover>
       </Command>
     </div>
+  );
+}
+
+/**
+ * Multiselect sibling of {@link FilterCombobox}: the same field-is-the-search +
+ * portaled dropdown + sliding highlight, but the value is an array rendered as
+ * removable `Badge` tokens, and unknown text is creatable. Type to filter known
+ * `options`; Enter/click a row to add it, comma commits free text, Backspace on an
+ * empty field removes the last token.
+ */
+export function TagCombobox({
+  value,
+  onChange,
+  options,
+  placeholder,
+  emptyText = 'No results',
+  disabled = false,
+  id,
+  ariaLabel,
+}: {
+  value: string[];
+  onChange: (next: string[]) => void;
+  /** Known values offered in the dropdown; any free-text value is still allowed. */
+  options: string[];
+  placeholder?: string;
+  emptyText?: string;
+  disabled?: boolean;
+  id?: string;
+  ariaLabel?: string;
+}) {
+  const [input, setInput] = useState('');
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const query = input.trim();
+  // Offer every not-yet-selected option; cmdk filters them by the typed text.
+  const available = options.filter((o) => !value.includes(o));
+  const showCreate =
+    query.length > 0 &&
+    !value.includes(query) &&
+    !options.some((o) => o.toLowerCase() === query.toLowerCase());
+  const dropdownOpen = open && !disabled && (available.length > 0 || showCreate);
+
+  const addOne = (tag: string) => {
+    const t = tag.trim();
+    if (t && !value.includes(t)) onChange([...value, t]);
+    setInput('');
+  };
+
+  // Commit free text, splitting on commas so a paste like "main, develop" works.
+  const commit = (raw: string) => {
+    const parts = raw
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (parts.length) {
+      const next = [...value];
+      for (const p of parts) if (!next.includes(p)) next.push(p);
+      onChange(next);
+    }
+    setInput('');
+  };
+
+  const remove = (tag: string) => onChange(value.filter((v) => v !== tag));
+
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Enter/Arrows are owned by cmdk (it selects the highlighted row → addOne).
+    if (e.key === ',') {
+      e.preventDefault();
+      if (query) commit(query);
+    } else if (e.key === 'Backspace' && input === '' && value.length > 0) {
+      remove(value[value.length - 1]!);
+    } else if (e.key === 'Escape') {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <Command shouldFilter className="bg-transparent p-0">
+      <Popover open={dropdownOpen} onOpenChange={(o) => !o && setOpen(false)}>
+        <PopoverAnchor asChild>
+          <div
+            ref={anchorRef}
+            className={cn(
+              'flex min-h-8 w-full flex-wrap items-center gap-1 rounded-2xl border border-transparent bg-input/50 px-1.5 py-1 text-sm transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30',
+              disabled && 'pointer-events-none opacity-50',
+            )}
+            onClick={() => inputRef.current?.focus()}
+          >
+            {value.map((tag) => (
+              <Badge key={tag} variant="secondary" className="max-w-full gap-1 pr-1">
+                <span className="truncate">{tag}</span>
+                <button
+                  type="button"
+                  aria-label={`Remove ${tag}`}
+                  className="inline-flex shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    remove(tag);
+                  }}
+                  disabled={disabled}
+                >
+                  <HugeiconsIcon icon={Cancel01Icon} size={12} />
+                </button>
+              </Badge>
+            ))}
+            <CommandPrimitive.Input
+              ref={inputRef}
+              id={id}
+              aria-label={ariaLabel}
+              disabled={disabled}
+              value={input}
+              placeholder={value.length === 0 ? placeholder : undefined}
+              className="h-6 min-w-24 flex-1 bg-transparent px-1 outline-none placeholder:text-muted-foreground"
+              onValueChange={(v) => {
+                setInput(v);
+                if (!disabled) setOpen(true);
+              }}
+              onFocus={() => !disabled && setOpen(true)}
+              onKeyDown={onKeyDown}
+            />
+          </div>
+        </PopoverAnchor>
+
+        <PopoverContent
+          align="start"
+          sideOffset={6}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+          onInteractOutside={(e) => {
+            if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
+          }}
+          className="w-(--radix-popover-trigger-width) gap-0 overflow-hidden p-1"
+        >
+          <CommandList>
+            <CommandEmpty>{emptyText}</CommandEmpty>
+            <CommandGroup>
+              {showCreate && (
+                <CommandItem value={query} onSelect={() => addOne(query)}>
+                  <HugeiconsIcon icon={PlusSignIcon} size={14} className="text-muted-foreground" />
+                  <span className="truncate">
+                    Add “<span className="font-medium">{query}</span>”
+                  </span>
+                </CommandItem>
+              )}
+              {available.map((o) => (
+                <CommandItem key={o} value={o} onSelect={() => addOne(o)}>
+                  <span className="truncate">{o}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </PopoverContent>
+      </Popover>
+    </Command>
   );
 }
