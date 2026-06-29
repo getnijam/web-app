@@ -1,5 +1,6 @@
 import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
+import { RouteProgress } from '@/components/shell/RouteProgress';
 import { baseHead } from '@/lib/seo';
 
 export interface RouterContext {
@@ -21,6 +22,7 @@ function RootDocument() {
       {/* React 19 hoists these route-managed <title>/<meta>/<link> tags into <head>. */}
       <HeadContent />
       <Outlet />
+      <RouteProgress />
     </>
   );
 }

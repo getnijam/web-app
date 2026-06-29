@@ -253,6 +253,13 @@
   background-color: var(--overlay);
 }
 
+/* Glow for the top route-change progress bar (nprogress style). */
+@utility shadow-progress {
+  box-shadow:
+    0 0 10px var(--primary),
+    0 0 5px var(--primary);
+}
+
 /* Ceiling for the test-explorer detail columns: fit within the viewport below the
    app top bar + page header (with bottom breathing room) so the panels never grow
    past the screen, scrolling internally instead. Tune the offset if the header
