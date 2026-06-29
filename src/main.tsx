@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Flex } from '@/components/ui/flex';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
+import { UpdatePrompt } from '@/components/shell/UpdatePrompt';
 import { LoadingState } from '@/components/states/LoadingState';
 import { FullPageError } from '@/components/states/FullPageError';
 import { NotFound } from '@/components/states/NotFound';
@@ -22,6 +23,15 @@ import './styles/globals.css';
 // (both no-op in dev / without their tokens).
 initSentry();
 initBetterStackAnalytics();
+
+// With code-split routes, an open tab may try to load a lazy chunk that a newer
+// deploy has already removed (Vercel re-points the domain to the new build). Vite
+// fires `vite:preloadError` when that import 404s; reload to fetch the fresh build.
+// `event.preventDefault()` stops Vite from also throwing, so the reload is clean.
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault();
+  window.location.reload();
+});
 
 // Point the generated client at the API and send the session cookie.
 client.setConfig({
@@ -49,8 +59,11 @@ const router = createRouter({
   context: { queryClient },
   // Covers the window after React mounts while the auth gate (/v1/auth/me) and
   // route loaders resolve, so a refresh shows a spinner, never a blank screen.
+  // `h-full` (not min-h-screen) so the spinner fills whatever it's nested in: the
+  // whole viewport on a cold refresh, or just the shell's content area on a
+  // code-split route change, where 100vh would overflow and add a scrollbar.
   defaultPendingComponent: () => (
-    <Flex align="center" justify="center" className="min-h-screen bg-background">
+    <Flex align="center" justify="center" className="h-full bg-background">
       <LoadingState message={null} />
     </Flex>
   ),
@@ -95,6 +108,7 @@ createRoot(rootEl).render(
         </TooltipProvider>
       </QueryClientProvider>
       <Toaster />
+      <UpdatePrompt />
     </ThemeProvider>
   </StrictMode>,
 );
