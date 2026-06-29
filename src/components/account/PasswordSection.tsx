@@ -42,11 +42,12 @@ export function PasswordSection({ user }: { user: UserPublic }) {
         />
         <Flex
           direction="col"
-          gap={3}
+          gap={2}
           className="min-w-0 flex-1 sm:flex-row sm:items-center sm:justify-between"
         >
           <Flex direction="col" className="min-w-0 flex-1">
-            <Flex align="center" justify="between" gap={2}>
+            {/* Badge: pushed right on mobile, tucked beside the title on desktop. */}
+            <Flex align="center" gap={2} className="justify-between sm:justify-start">
               <Text as="span" className="min-w-0 truncate text-sm font-medium">
                 Password
               </Text>
@@ -56,7 +57,7 @@ export function PasswordSection({ user }: { user: UserPublic }) {
                 <StatusBadge icon={CircleIcon} label="Not set" variant="outline" />
               )}
             </Flex>
-            <Text as="span" className="text-xs text-muted-foreground">
+            <Text as="span" className="pt-1.5 text-xs text-muted-foreground sm:pt-0">
               {user.hasPassword
                 ? 'Use your email and a password to sign in.'
                 : 'You sign in with Google or GitHub. Set a password to also sign in with your email.'}

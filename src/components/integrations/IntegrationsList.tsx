@@ -67,10 +67,44 @@ interface Entry {
   installing: boolean;
 }
 
-function CardRow({ children }: { children: ReactNode }) {
+/** One available/coming-soon integration row: a logo badge, then a title + description
+ *  beside the action. On mobile the action drops below the text (starting after the
+ *  badge) instead of squeezing it into a narrow column. */
+function CardRow({
+  icon,
+  action,
+  children,
+}: {
+  icon: ReactNode;
+  action: ReactNode;
+  children: ReactNode;
+}) {
   return (
-    <Flex align="center" gap={3.5} className="border-b border-border px-5 py-4 last:border-b-0">
-      {children}
+    <Flex
+      align="start"
+      gap={3.5}
+      className="border-b border-border px-5 py-4 last:border-b-0 sm:items-center"
+    >
+      <Flex
+        as="span"
+        align="center"
+        justify="center"
+        className="size-9 shrink-0 rounded-lg bg-muted"
+      >
+        {icon}
+      </Flex>
+      <Flex
+        direction="col"
+        gap={3}
+        className="min-w-0 flex-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+      >
+        <Flex direction="col" gap={0.5} className="min-w-0">
+          {children}
+        </Flex>
+        <Flex align="center" className="shrink-0 self-start sm:self-auto">
+          {action}
+        </Flex>
+      </Flex>
     </Flex>
   );
 }
@@ -260,71 +294,43 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
         </Text>
         <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
           {available.map((e) => (
-            <CardRow key={e.key}>
-              <Flex
-                as="span"
-                align="center"
-                justify="center"
-                className="size-9 shrink-0 rounded-lg bg-muted"
-              >
-                {e.logo(22)}
-              </Flex>
-              <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
-                <Text as="span" className="text-sm font-semibold">
-                  {e.name}
-                </Text>
-                <Text as="span" className="text-xs text-muted-foreground">
-                  {e.desc}
-                </Text>
-              </Flex>
-              {connectButton(e)}
+            <CardRow key={e.key} icon={e.logo(22)} action={connectButton(e)}>
+              <Text as="span" className="text-sm font-semibold">
+                {e.name}
+              </Text>
+              <Text as="span" className="text-xs text-muted-foreground">
+                {e.desc}
+              </Text>
             </CardRow>
           ))}
           {/* The MCP server has no server-side connection state, the setup
               (a read key + a copy-paste command) lives on the keys page. */}
-          <CardRow>
-            <Flex
-              as="span"
-              align="center"
-              justify="center"
-              className="size-9 shrink-0 rounded-lg bg-muted"
-            >
-              <HugeiconsIcon icon={AiChat02Icon} size={20} className="text-muted-foreground" />
-            </Flex>
-            <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
-              <Text as="span" className="text-sm font-semibold">
-                MCP server
-              </Text>
-              <Text as="span" className="text-xs text-muted-foreground">
-                Let AI agents query your runs, failures, history, flakiness, from any MCP-capable
-                client.
-              </Text>
-            </Flex>
-            <Button asChild variant="outline">
-              <Link to="/orgs/$orgId/keys/mcp" params={{ orgId } as never}>
-                Set up
-              </Link>
-            </Button>
+          <CardRow
+            icon={<HugeiconsIcon icon={AiChat02Icon} size={20} className="text-muted-foreground" />}
+            action={
+              <Button asChild variant="outline">
+                <Link to="/orgs/$orgId/keys/mcp" params={{ orgId } as never}>
+                  Set up
+                </Link>
+              </Button>
+            }
+          >
+            <Text as="span" className="text-sm font-semibold">
+              MCP server
+            </Text>
+            <Text as="span" className="text-xs text-muted-foreground">
+              Let AI agents query your runs, failures, history, flakiness, from any MCP-capable
+              client.
+            </Text>
           </CardRow>
           {COMING_SOON.map((c) => (
-            <CardRow key={c.key}>
-              <Flex
-                as="span"
-                align="center"
-                justify="center"
-                className="size-9 shrink-0 rounded-lg bg-muted"
-              >
-                {c.logo}
-              </Flex>
-              <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
-                <Text as="span" className="text-sm font-semibold">
-                  {c.name}
-                </Text>
-                <Text as="span" className="text-xs text-muted-foreground">
-                  {c.desc}
-                </Text>
-              </Flex>
-              <Badge variant="outline">Coming soon</Badge>
+            <CardRow key={c.key} icon={c.logo} action={<Badge variant="outline">Coming soon</Badge>}>
+              <Text as="span" className="text-sm font-semibold">
+                {c.name}
+              </Text>
+              <Text as="span" className="text-xs text-muted-foreground">
+                {c.desc}
+              </Text>
             </CardRow>
           ))}
         </Flex>

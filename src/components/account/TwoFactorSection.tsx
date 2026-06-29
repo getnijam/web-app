@@ -53,11 +53,12 @@ export function TwoFactorSection({ user }: { user: UserPublic }) {
         />
         <Flex
           direction="col"
-          gap={3}
+          gap={2}
           className="min-w-0 flex-1 sm:flex-row sm:items-center sm:justify-between"
         >
           <Flex direction="col" className="min-w-0 flex-1">
-            <Flex align="center" justify="between" gap={2}>
+            {/* Badge: pushed right on mobile, tucked beside the title on desktop. */}
+            <Flex align="center" gap={2} className="justify-between sm:justify-start">
               <Text as="span" className="min-w-0 truncate text-sm font-medium">
                 Authenticator app
               </Text>
@@ -67,7 +68,7 @@ export function TwoFactorSection({ user }: { user: UserPublic }) {
                 <StatusBadge icon={CircleIcon} label="Off" variant="outline" />
               )}
             </Flex>
-            <Text as="span" className="text-xs text-muted-foreground">
+            <Text as="span" className="pt-1.5 text-xs text-muted-foreground sm:pt-0">
               {user.twoFactorEnabled
                 ? "You'll enter a code from your authenticator app when signing in."
                 : 'Protect your account with time-based one-time codes.'}
