@@ -73,15 +73,19 @@ export function SettingsLayout({ children }: { children: ReactNode }) {
         </Flex>
 
         <Flex direction="col" gap={8} align="start" className="w-full md:flex-row">
+          {/* Mobile: a horizontal, scroll-if-needed tab strip; md+: the vertical rail. */}
           <Flex as="nav" direction="col" className="w-full shrink-0 md:w-48">
-            <HoverHighlight highlightClassName="rounded-lg bg-accent" className="flex flex-col gap-1">
+            <HoverHighlight
+              highlightClassName="rounded-lg bg-accent"
+              className="no-scrollbar flex gap-1 overflow-x-auto md:flex-col md:overflow-visible"
+            >
               {SECTIONS.map((s) => (
                 <Link
                   key={s.to}
                   to={s.to}
                   data-hover-item
                   activeOptions={{ exact: s.exact }}
-                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                   activeProps={{ className: 'bg-accent text-foreground' }}
                 >
                   <HugeiconsIcon icon={s.icon} size={17} strokeWidth={1.8} />

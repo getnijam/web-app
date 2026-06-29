@@ -31,6 +31,7 @@ export function RunHistory({
   projectId,
   file,
   className,
+  onNavigate,
 }: {
   history: TestHistoryEntry[];
   orgId: string;
@@ -38,6 +39,8 @@ export function RunHistory({
   file: string;
   /** Constrain the card height; the run list then scrolls inside it. */
   className?: string;
+  /** Fired when a run row is clicked (e.g. to close the sheet hosting this list). */
+  onNavigate?: () => void;
 }) {
   const newest = [...history].reverse();
   // Flaky runs ultimately passed (after a retry), so they count as passed, not failed.
@@ -89,6 +92,7 @@ export function RunHistory({
               to="/orgs/$orgId/projects/$projectId/runs/$runId/file"
               params={{ orgId, projectId, runId: h.runId } as never}
               search={{ path: file } as never}
+              onClick={onNavigate}
               data-hover-item
               align="stretch"
               gap={3}

@@ -20,6 +20,7 @@ import {
 import { getProjectOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Sidebar,
   SidebarContent,
@@ -110,28 +111,41 @@ function ProjectSwitcherChip({ projectId }: { projectId: string }) {
       gap={2.5}
       className="rounded-lg border border-sidebar-border bg-card px-2.5 py-2"
     >
-      <Flex
-        align="center"
-        justify="center"
-        className={cn(
-          'size-6.5 shrink-0 rounded-lg font-mono text-xs font-bold',
-          glyph ? 'text-primary-foreground' : 'bg-primary/15 text-primary',
-        )}
-        style={glyph ? { background: glyph.background } : undefined}
-      >
-        {glyph ? (
-          <ProjectGlyphIcon iconKey={glyph.iconKey} size={14} strokeWidth={1.9} />
+      {project.isLoading ? (
+        <Skeleton className="size-6.5 shrink-0 rounded-lg" />
+      ) : (
+        <Flex
+          align="center"
+          justify="center"
+          className={cn(
+            'size-6.5 shrink-0 rounded-lg font-mono text-xs font-bold',
+            glyph ? 'text-primary-foreground' : 'bg-primary/15 text-primary',
+          )}
+          style={glyph ? { background: glyph.background } : undefined}
+        >
+          {glyph ? (
+            <ProjectGlyphIcon iconKey={glyph.iconKey} size={14} strokeWidth={1.9} />
+          ) : (
+            initialsFrom(name)
+          )}
+        </Flex>
+      )}
+      <Flex direction="col" gap={1} className="min-w-0 flex-1 leading-tight">
+        {project.isLoading ? (
+          <>
+            <Skeleton className="h-3.5 w-24 rounded-md" />
+            <Skeleton className="h-3 w-12 rounded-md" />
+          </>
         ) : (
-          initialsFrom(name)
+          <>
+            <Text as="span" truncate className="text-sm font-semibold">
+              {name}
+            </Text>
+            <Text as="span" className="font-mono text-xs text-muted-foreground">
+              {runCount} {runCount === 1 ? 'run' : 'runs'}
+            </Text>
+          </>
         )}
-      </Flex>
-      <Flex direction="col" className="min-w-0 leading-tight">
-        <Text as="span" truncate className="text-sm font-semibold">
-          {name}
-        </Text>
-        <Text as="span" className="font-mono text-xs text-muted-foreground">
-          {runCount} {runCount === 1 ? 'run' : 'runs'}
-        </Text>
       </Flex>
     </Flex>
   );
@@ -151,7 +165,13 @@ function ProjectNav({
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <Link to="/orgs/$orgId/projects" params={{ orgId }}>
+            {/* Stop the delegated close-on-nav: this switches the sidebar to the
+                org-level nav, so the mobile sheet should stay open to show it. */}
+            <Link
+              to="/orgs/$orgId/projects"
+              params={{ orgId }}
+              onClick={(e) => e.stopPropagation()}
+            >
               <NavGlyph icon={ArrowLeft01Icon} active={false} />
               <span>Back to projects</span>
             </Link>

@@ -47,6 +47,7 @@ export function TestHistorySheet({
         projectId={projectId}
         file={file}
         className="h-full border-0 bg-transparent"
+        onNavigate={() => onOpenChange(false)}
       />
     );
   };

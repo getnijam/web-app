@@ -45,16 +45,20 @@ export function TwoFactorSection({ user }: { user: UserPublic }) {
       title="Two-factor authentication"
       description="Add a one-time code from an authenticator app as a second step when you sign in."
     >
-      <Flex align="center" justify="between" gap={3}>
-        <Flex align="center" gap={3} className="min-w-0">
-          <HugeiconsIcon
-            icon={SecurityPasswordIcon}
-            size={20}
-            className="shrink-0 text-muted-foreground"
-          />
-          <Flex direction="col" className="min-w-0">
-            <Flex align="center" gap={2}>
-              <Text as="span" className="text-sm font-medium">
+      <Flex align="start" gap={3} className="sm:items-center">
+        <HugeiconsIcon
+          icon={SecurityPasswordIcon}
+          size={20}
+          className="mt-0.5 shrink-0 text-muted-foreground sm:mt-0"
+        />
+        <Flex
+          direction="col"
+          gap={3}
+          className="min-w-0 flex-1 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <Flex direction="col" className="min-w-0 flex-1">
+            <Flex align="center" justify="between" gap={2}>
+              <Text as="span" className="min-w-0 truncate text-sm font-medium">
                 Authenticator app
               </Text>
               {user.twoFactorEnabled ? (
@@ -69,22 +73,26 @@ export function TwoFactorSection({ user }: { user: UserPublic }) {
                 : 'Protect your account with time-based one-time codes.'}
             </Text>
           </Flex>
-        </Flex>
 
-        {user.twoFactorEnabled ? (
-          <Flex gap={2} className="shrink-0">
-            <Button variant="outline" size="sm" onClick={() => setRegenOpen(true)}>
-              Backup codes
+          {user.twoFactorEnabled ? (
+            <Flex gap={2} className="shrink-0 self-start sm:self-auto">
+              <Button variant="outline" size="sm" onClick={() => setRegenOpen(true)}>
+                Backup codes
+              </Button>
+              <Button variant="destructive" size="sm" onClick={() => setDisableOpen(true)}>
+                Disable
+              </Button>
+            </Flex>
+          ) : (
+            <Button
+              size="sm"
+              className="shrink-0 self-start sm:self-auto"
+              onClick={() => setSetupOpen(true)}
+            >
+              Enable
             </Button>
-            <Button variant="destructive" size="sm" onClick={() => setDisableOpen(true)}>
-              Disable
-            </Button>
-          </Flex>
-        ) : (
-          <Button size="sm" className="shrink-0" onClick={() => setSetupOpen(true)}>
-            Enable
-          </Button>
-        )}
+          )}
+        </Flex>
       </Flex>
 
       <TwoFactorSetupDialog open={setupOpen} onOpenChange={setSetupOpen} />

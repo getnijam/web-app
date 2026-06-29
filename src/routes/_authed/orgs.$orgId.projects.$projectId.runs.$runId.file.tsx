@@ -81,7 +81,7 @@ function FileDetailPage() {
 
       {/* header */}
       <Flex align="center" justify="between" gap={3} wrap>
-        <Text variant="code" className="min-w-0 truncate text-lg font-semibold">
+        <Text variant="code" title={path} className="min-w-0 truncate text-lg font-semibold">
           {displayFile(path)}
         </Text>
         {fileSummary && (
@@ -114,7 +114,7 @@ function FileDetailPage() {
                 className="overflow-hidden rounded-xl border border-border bg-card"
               >
                 <AccordionTrigger
-                  className="px-4 py-3 hover:no-underline"
+                  className="px-4 py-3 transition-colors hover:bg-accent hover:no-underline"
                   action={
                     <Tooltip>
                       <TooltipTrigger asChild>

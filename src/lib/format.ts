@@ -69,6 +69,13 @@ export function displayFile(file: string): string {
     const parts = file.split(/[\\/]/);
     return parts[parts.length - 1] || file;
   }
+  // Deep relative paths keep the first folder and the filename with a middle
+  // ellipsis (e.g. `apps/…/document-chat.spec.ts`), so long paths stay readable and
+  // the filename (the useful part) survives instead of being truncated off the end.
+  const segments = file.split('/');
+  if (segments.length > 3) {
+    return `${segments[0]}/…/${segments[segments.length - 1]}`;
+  }
   return file;
 }
 

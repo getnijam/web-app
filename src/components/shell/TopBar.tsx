@@ -6,7 +6,9 @@ import { getProjectOptions, getRunOptions } from '@/client/@tanstack/react-query
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl';
+import { cn } from '@/lib/utils';
 import { useShellNav, ROUTE_TITLES } from './use-shell-nav';
 
 /** Breadcrumb separator. */
@@ -52,12 +54,16 @@ function Breadcrumbs() {
 
   const projectName = project.data?.name ?? 'Project';
   const onRunLeaf = active === 'runs' && Boolean(runId);
+  // The runs list IS the project's home, so it gets no trailing crumb; the project
+  // name itself reads as the current page instead of a "/ Runs" leaf.
+  const projectIsCurrent = active === 'runs' && !onRunLeaf;
   const commit = run.data?.run.commitSha ? `#${run.data.run.commitSha.slice(0, 7)}` : 'Run';
   const fileName = filePath ? (filePath.split('/').pop() ?? filePath) : '';
 
   // The crumbs after the project link: a run-detail page shows the commit (and
   // file, on the file view); any other section shows its title.
   const leafCrumbs = () => {
+    if (projectIsCurrent) return null;
     if (!onRunLeaf) {
       return (
         <>
@@ -78,7 +84,7 @@ function Breadcrumbs() {
             params={{ orgId, projectId: projectId!, runId: runId! }}
             className="shrink-0 font-mono text-muted-foreground hover:text-foreground"
           >
-            {commit}
+            {run.isLoading ? <Skeleton className="h-4 w-16 rounded-md" /> : commit}
           </Link>
           <Sep />
           <Text as="span" truncate className="min-w-0 font-mono font-semibold">
@@ -91,9 +97,13 @@ function Breadcrumbs() {
       <>
         {/* No "Runs" crumb, the project link above already points to the runs list. */}
         <Sep />
-        <Text as="span" className="shrink-0 font-mono font-semibold">
-          {commit}
-        </Text>
+        {run.isLoading ? (
+          <Skeleton className="h-4 w-16 shrink-0 rounded-md" />
+        ) : (
+          <Text as="span" className="shrink-0 font-mono font-semibold">
+            {commit}
+          </Text>
+        )}
       </>
     );
   };
@@ -112,13 +122,22 @@ function Breadcrumbs() {
         <HugeiconsIcon icon={Home01Icon} size={16} strokeWidth={1.8} />
       </Flex>
       <Sep />
-      <Link
-        to="/orgs/$orgId/projects/$projectId/runs"
-        params={{ orgId, projectId: projectId! }}
-        className="min-w-0 shrink truncate text-muted-foreground hover:text-foreground"
-      >
-        {projectName}
-      </Link>
+      {project.isLoading ? (
+        <Skeleton className="h-4 w-24 shrink-0 rounded-md" />
+      ) : (
+        <Link
+          to="/orgs/$orgId/projects/$projectId/runs"
+          params={{ orgId, projectId: projectId! }}
+          className={cn(
+            'min-w-0 shrink truncate',
+            projectIsCurrent
+              ? 'font-semibold text-foreground'
+              : 'text-muted-foreground hover:text-foreground',
+          )}
+        >
+          {projectName}
+        </Link>
+      )}
 
       {leafCrumbs()}
     </Flex>

@@ -34,16 +34,20 @@ export function PasswordSection({ user }: { user: UserPublic }) {
 
   return (
     <AccountSection title="Password">
-      <Flex align="center" justify="between" gap={3}>
-        <Flex align="center" gap={3} className="min-w-0">
-          <HugeiconsIcon
-            icon={LockPasswordIcon}
-            size={20}
-            className="shrink-0 text-muted-foreground"
-          />
-          <Flex direction="col" className="min-w-0">
-            <Flex align="center" gap={2}>
-              <Text as="span" className="text-sm font-medium">
+      <Flex align="start" gap={3} className="sm:items-center">
+        <HugeiconsIcon
+          icon={LockPasswordIcon}
+          size={20}
+          className="mt-0.5 shrink-0 text-muted-foreground sm:mt-0"
+        />
+        <Flex
+          direction="col"
+          gap={3}
+          className="min-w-0 flex-1 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <Flex direction="col" className="min-w-0 flex-1">
+            <Flex align="center" justify="between" gap={2}>
+              <Text as="span" className="min-w-0 truncate text-sm font-medium">
                 Password
               </Text>
               {user.hasPassword ? (
@@ -58,11 +62,16 @@ export function PasswordSection({ user }: { user: UserPublic }) {
                 : 'You sign in with Google or GitHub. Set a password to also sign in with your email.'}
             </Text>
           </Flex>
-        </Flex>
 
-        <Button variant="outline" size="sm" className="shrink-0" onClick={() => setOpen(true)}>
-          {user.hasPassword ? 'Change' : 'Set password'}
-        </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0 self-start sm:self-auto"
+            onClick={() => setOpen(true)}
+          >
+            {user.hasPassword ? 'Change' : 'Set password'}
+          </Button>
+        </Flex>
       </Flex>
 
       <PasswordDialog user={user} open={open} onOpenChange={setOpen} />

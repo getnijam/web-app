@@ -43,8 +43,15 @@ describe('repoFromUrl', () => {
 });
 
 describe('displayFile', () => {
-  it('keeps relative paths as-is', () => {
+  it('keeps short relative paths as-is', () => {
     expect(displayFile('e2e/login.spec.ts')).toBe('e2e/login.spec.ts');
+    expect(displayFile('apps/web/auth.spec.ts')).toBe('apps/web/auth.spec.ts');
+  });
+
+  it('middle-ellipsizes deep relative paths to first folder + filename', () => {
+    expect(displayFile('apps/product-frontend/apps/web-ui/qa/document-chat.spec.ts')).toBe(
+      'apps/…/document-chat.spec.ts',
+    );
   });
 
   it('collapses absolute posix + windows paths to the basename', () => {
