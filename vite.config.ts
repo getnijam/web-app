@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
@@ -18,6 +18,24 @@ import path from 'node:path';
 const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
 const uploadSourceMaps = !!sentryAuthToken;
 
+// A unique id per build, baked into the bundle (`__BUILD_ID__`) and written to
+// `version.json`. The deployment-update hook polls version.json and compares it to
+// `__BUILD_ID__` to detect when a newer build has shipped. On Vercel this is the
+// commit SHA (stable per deploy); locally it falls back to the build timestamp.
+const buildId = process.env.VERCEL_GIT_COMMIT_SHA ?? String(Date.now());
+
+// Writes /version.json into the build output (build-only; not served in dev).
+const emitVersionJson: Plugin = {
+  name: 'nijam:emit-version-json',
+  generateBundle() {
+    this.emitFile({
+      type: 'asset' as const,
+      fileName: 'version.json',
+      source: JSON.stringify({ buildId }),
+    });
+  },
+};
+
 export default defineConfig({
   plugins: [
     // Split each route's component into its own lazy chunk (loaded on navigation)
@@ -26,6 +44,7 @@ export default defineConfig({
     tanstackRouter({ autoCodeSplitting: true }),
     react(),
     tailwindcss(),
+    emitVersionJson,
     ...(uploadSourceMaps
       ? [
           sentryVitePlugin({
@@ -38,6 +57,9 @@ export default defineConfig({
         ]
       : []),
   ],
+  define: {
+    __BUILD_ID__: JSON.stringify(buildId),
+  },
   build: {
     sourcemap: uploadSourceMaps ? 'hidden' : false,
   },

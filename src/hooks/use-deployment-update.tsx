@@ -6,31 +6,25 @@ import { notify } from '@/lib/notify';
 // How often to re-check for a newer deployment (also checks on tab re-focus).
 const POLL_INTERVAL = 5 * 60 * 1000;
 
-/** The hashed entry-script path of the build currently running in this tab. */
-function bootedEntrySrc(): string | null {
-  const el = document.querySelector('script[type="module"][src*="/assets/"]');
-  return el?.getAttribute('src') ?? null;
-}
-
-/** Read the deployed index.html's entry-script path (changes hash on every build). */
-async function deployedEntrySrc(signal: AbortSignal): Promise<string | null> {
-  const res = await fetch(`${import.meta.env.BASE_URL}index.html`, { cache: 'no-store', signal });
+/** Read the deployed build id from version.json (emitted fresh on every build). */
+async function deployedBuildId(signal: AbortSignal): Promise<string | null> {
+  const res = await fetch(`${import.meta.env.BASE_URL}version.json`, { cache: 'no-store', signal });
   if (!res.ok) return null;
-  const html = await res.text();
-  return html.match(/<script[^>]+type="module"[^>]+src="([^"]+)"/)?.[1] ?? null;
+  const data: unknown = await res.json();
+  const id = (data as { buildId?: unknown })?.buildId;
+  return typeof id === 'string' ? id : null;
 }
 
 /**
- * Watches for a newer deployment than the one running in this tab (every build
- * re-hashes the entry script) and, once detected, raises a persistent toast with a
- * Reload action. Polls every few minutes and on tab re-focus, then stops. No-op in
- * dev, where Vite HMR handles updates and assets aren't hashed.
+ * Watches for a newer deployment than the one running in this tab by polling
+ * version.json and comparing its build id to `__BUILD_ID__` (baked in at build time);
+ * once they differ, raises a persistent toast with a Reload action. Polls every few
+ * minutes and on tab re-focus, then stops. No-op in dev, where Vite HMR handles
+ * updates and version.json isn't emitted.
  */
 export function useDeploymentUpdateNotice(): void {
   useEffect(() => {
     if (!import.meta.env.PROD) return;
-    const booted = bootedEntrySrc();
-    if (!booted) return;
 
     let timer: ReturnType<typeof setTimeout>;
     let stopped = false;
@@ -44,8 +38,8 @@ export function useDeploymentUpdateNotice(): void {
     const run = async () => {
       if (stopped) return;
       try {
-        const deployed = await deployedEntrySrc(controller.signal);
-        if (deployed && deployed !== booted) {
+        const deployed = await deployedBuildId(controller.signal);
+        if (deployed && deployed !== __BUILD_ID__) {
           stopped = true;
           notify.info('New version available', {
             description: 'Reload to get the latest updates.',
