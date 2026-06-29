@@ -7,6 +7,7 @@ import {
   ArrowUpRight01Icon,
   MoreVerticalIcon,
   Delete02Icon,
+  LinkSquare02Icon,
 } from '@hugeicons/core-free-icons';
 import type { RunSummary } from '@/client';
 import { deleteRunMutation, listProjectRunsQueryKey } from '@/client/@tanstack/react-query.gen';
@@ -20,10 +21,18 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from '@/components/ui/context-menu';
 import { ConfirmDeleteDialog } from '@/components/settings/ConfirmDeleteDialog';
 import { cn } from '@/lib/utils';
 import { UserAvatar } from '@/components/users/UserAvatar';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
+import { useIsMobile } from '@/hooks/use-is-mobile';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { timeAgo, formatDuration, displayAuthor } from '@/lib/format';
@@ -31,9 +40,9 @@ import { CountDots } from './CountDots';
 import { RunStatusBadge } from './RunStatusBadge';
 import { runDisplayStatus, runDurationSec, RUN_BAR_CLASS } from './run-status';
 
-/** One run in the history list. The whole row links to the run detail; the
- *  actions menu (Open run / Delete run) sits above the overlay so it stays
- *  independently clickable. Deleting a run is admin-only. */
+/** One run in the history list. The whole row links to the run detail. On desktop the
+ *  actions menu (Open run source / Delete run) reveals on hover; on mobile (no hover)
+ *  the same actions live in a long-press context menu. Deleting a run is admin-only. */
 export function RunRow({
   run,
   orgId,
@@ -48,9 +57,12 @@ export function RunRow({
   const author = displayAuthor(run.authorEmail, run.authorName);
 
   const isAdmin = useIsOrgAdmin(orgId);
+  const { isMobile } = useIsMobile();
   const queryClient = useQueryClient();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const shortSha = run.commitSha ? run.commitSha.slice(0, 7) : run.id.slice(0, 7);
+  const ciRunUrl = run.ciRunUrl;
+  const runHref = `/orgs/${orgId}/projects/${projectId}/runs/${run.id}`;
 
   const remove = useMutation({
     ...deleteRunMutation(),
@@ -73,105 +85,140 @@ export function RunRow({
     },
   });
 
+  const openInNewTab = () => window.open(runHref, '_blank', 'noopener,noreferrer');
+  const openRunSource = () => {
+    if (ciRunUrl) window.open(ciRunUrl, '_blank', 'noopener,noreferrer');
+  };
+
   // The menu only appears when there's something to do: open the CI run or
   // (for admins) delete the run.
-  const showMenu = !!run.ciRunUrl || isAdmin;
+  const showMenu = !!ciRunUrl || isAdmin;
+
+  const row = (
+    <Flex
+      align="center"
+      data-hover-item
+      className="group relative border-b border-border transition-colors last:border-b-0"
+    >
+      <Link
+        to="/orgs/$orgId/projects/$projectId/runs/$runId"
+        params={{ orgId, projectId, runId: run.id }}
+        aria-label={`Run ${run.commitSha ? run.commitSha.slice(0, 7) : run.id}`}
+        className="absolute inset-0 z-0"
+      />
+      {/* short, rounded status indicator (vertically centered) */}
+      <div className={cn('ml-3 h-9 w-1 shrink-0 rounded-full', RUN_BAR_CLASS[ds])} />
+      <Flex align="center" gap={4} wrap className="min-w-0 flex-1 px-4 py-3">
+        <Flex direction="col" gap={1} className="min-w-0 flex-1">
+          <Flex align="center" gap={2} className="min-w-0">
+            <Text as="span" variant="code" className="font-medium">
+              #{run.commitSha ? run.commitSha.slice(0, 7) : '---'}
+            </Text>
+            <RunStatusBadge status={ds} className="shrink-0" />
+            {run.shardTotal != null && run.shardTotal > 1 && (
+              <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
+                {run.shardTotal} shards
+              </span>
+            )}
+            {run.environment && (
+              <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                {run.environment}
+              </span>
+            )}
+          </Flex>
+          <Flex align="center" gap={2.5} wrap className="min-w-0 text-xs text-muted-foreground">
+            <span>{timeAgo(run.startedAt)}</span>
+            <Flex align="center" gap={1} className="min-w-0">
+              <HugeiconsIcon icon={GitBranchIcon} size={13} className="shrink-0" />
+              <span className="truncate font-mono">{run.branch ?? 'no branch'}</span>
+            </Flex>
+            <Flex align="center" gap={1.5} className="min-w-0">
+              <UserAvatar name={run.authorName} email={author} size="sm" />
+              <span className="truncate">{author}</span>
+            </Flex>
+          </Flex>
+        </Flex>
+
+        <Flex align="center" gap={4} className="shrink-0">
+          {dur !== null && (
+            <Text as="span" className="font-mono text-xs text-muted-foreground tabular-nums">
+              {formatDuration(dur)}
+            </Text>
+          )}
+          {run.stats && (
+            <CountDots
+              passed={run.stats.passed}
+              failed={run.stats.failed}
+              flaky={run.stats.flaky}
+              skipped={run.stats.skipped}
+              link={{ orgId, projectId, runId: run.id }}
+            />
+          )}
+          {/* Desktop: hover-revealed actions menu. Mobile uses the context menu below. */}
+          {showMenu && !isMobile && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Run actions"
+                  className="relative z-10 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100"
+                >
+                  <HugeiconsIcon icon={MoreVerticalIcon} size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {ciRunUrl && (
+                  <DropdownMenuItem asChild>
+                    <a href={ciRunUrl} target="_blank" rel="noreferrer">
+                      <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} />
+                      Open run source
+                    </a>
+                  </DropdownMenuItem>
+                )}
+                {ciRunUrl && isAdmin && <DropdownMenuSeparator />}
+                {isAdmin && (
+                  <DropdownMenuItem variant="destructive" onSelect={() => setDeleteOpen(true)}>
+                    <HugeiconsIcon icon={Delete02Icon} size={16} />
+                    Delete run
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </Flex>
+      </Flex>
+    </Flex>
+  );
 
   return (
     <>
-      <Flex
-        align="center"
-        data-hover-item
-        className="group relative border-b border-border transition-colors last:border-b-0"
-      >
-        <Link
-          to="/orgs/$orgId/projects/$projectId/runs/$runId"
-          params={{ orgId, projectId, runId: run.id }}
-          aria-label={`Run ${run.commitSha ? run.commitSha.slice(0, 7) : run.id}`}
-          className="absolute inset-0 z-0"
-        />
-        {/* short, rounded status indicator (vertically centered) */}
-        <div className={cn('ml-3 h-9 w-1 shrink-0 rounded-full', RUN_BAR_CLASS[ds])} />
-        <Flex align="center" gap={4} wrap className="min-w-0 flex-1 px-4 py-3">
-          <Flex direction="col" gap={1} className="min-w-0 flex-1">
-            <Flex align="center" gap={2} className="min-w-0">
-              <Text as="span" variant="code" className="font-medium">
-                #{run.commitSha ? run.commitSha.slice(0, 7) : '---'}
-              </Text>
-              <RunStatusBadge status={ds} className="shrink-0" />
-              {run.shardTotal != null && run.shardTotal > 1 && (
-                <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
-                  {run.shardTotal} shards
-                </span>
-              )}
-              {run.environment && (
-                <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                  {run.environment}
-                </span>
-              )}
-            </Flex>
-            <Flex align="center" gap={2.5} wrap className="min-w-0 text-xs text-muted-foreground">
-              <span>{timeAgo(run.startedAt)}</span>
-              <Flex align="center" gap={1} className="min-w-0">
-                <HugeiconsIcon icon={GitBranchIcon} size={13} className="shrink-0" />
-                <span className="truncate font-mono">{run.branch ?? 'no branch'}</span>
-              </Flex>
-              <Flex align="center" gap={1.5} className="min-w-0">
-                <UserAvatar name={run.authorName} email={author} size="sm" />
-                <span className="truncate">{author}</span>
-              </Flex>
-            </Flex>
-          </Flex>
-
-          <Flex align="center" gap={4} className="shrink-0">
-            {dur !== null && (
-              <Text as="span" className="font-mono text-xs text-muted-foreground tabular-nums">
-                {formatDuration(dur)}
-              </Text>
+      {isMobile ? (
+        <ContextMenu>
+          <ContextMenuTrigger asChild>{row}</ContextMenuTrigger>
+          <ContextMenuContent>
+            <ContextMenuItem onSelect={openInNewTab}>
+              <HugeiconsIcon icon={LinkSquare02Icon} size={16} />
+              Open in new tab
+            </ContextMenuItem>
+            {ciRunUrl && (
+              <ContextMenuItem onSelect={openRunSource}>
+                <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} />
+                Open run source
+              </ContextMenuItem>
             )}
-            {run.stats && (
-              <CountDots
-                passed={run.stats.passed}
-                failed={run.stats.failed}
-                flaky={run.stats.flaky}
-                skipped={run.stats.skipped}
-                link={{ orgId, projectId, runId: run.id }}
-              />
+            {isAdmin && <ContextMenuSeparator />}
+            {isAdmin && (
+              <ContextMenuItem variant="destructive" onSelect={() => setDeleteOpen(true)}>
+                <HugeiconsIcon icon={Delete02Icon} size={16} />
+                Delete run
+              </ContextMenuItem>
             )}
-            {showMenu && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Run actions"
-                    className="relative z-10 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100"
-                  >
-                    <HugeiconsIcon icon={MoreVerticalIcon} size={16} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {run.ciRunUrl && (
-                    <DropdownMenuItem asChild>
-                      <a href={run.ciRunUrl} target="_blank" rel="noreferrer">
-                        <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} />
-                        Open run
-                      </a>
-                    </DropdownMenuItem>
-                  )}
-                  {run.ciRunUrl && isAdmin && <DropdownMenuSeparator />}
-                  {isAdmin && (
-                    <DropdownMenuItem variant="destructive" onSelect={() => setDeleteOpen(true)}>
-                      <HugeiconsIcon icon={Delete02Icon} size={16} />
-                      Delete run
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </Flex>
-        </Flex>
-      </Flex>
+          </ContextMenuContent>
+        </ContextMenu>
+      ) : (
+        row
+      )}
 
       <ConfirmDeleteDialog
         open={deleteOpen}

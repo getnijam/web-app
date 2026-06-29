@@ -88,25 +88,31 @@ export function SecretKeySection({
         >
           <HugeiconsIcon icon={noteIcon} size={18} strokeWidth={1.8} />
         </Flex>
-        <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
-          <Text as="span" weight="semibold" className="text-sm">
-            {noteTitle}
-          </Text>
-          <Text as="span" className="text-sm text-muted-foreground">
-            {noteBody}
-          </Text>
-        </Flex>
         <Flex
-          as="a"
-          href={docHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          align="center"
-          gap={1}
-          className="shrink-0 self-center rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent"
+          direction="col"
+          gap={3}
+          className="min-w-0 flex-1 sm:flex-row sm:items-center sm:gap-4"
         >
-          {docLabel}
-          <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} />
+          <Flex direction="col" gap={0.5} className="min-w-0 flex-1">
+            <Text as="span" weight="semibold" className="text-sm">
+              {noteTitle}
+            </Text>
+            <Text as="span" className="text-sm text-muted-foreground">
+              {noteBody}
+            </Text>
+          </Flex>
+          <Flex
+            as="a"
+            href={docHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            align="center"
+            gap={1}
+            className="shrink-0 self-start rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent sm:self-auto"
+          >
+            {docLabel}
+            <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} />
+          </Flex>
         </Flex>
       </Flex>
 
