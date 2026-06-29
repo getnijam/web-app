@@ -9,7 +9,6 @@ import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Flex } from '@/components/ui/flex';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
-import { UpdatePrompt } from '@/components/shell/UpdatePrompt';
 import { LoadingState } from '@/components/states/LoadingState';
 import { FullPageError } from '@/components/states/FullPageError';
 import { NotFound } from '@/components/states/NotFound';
@@ -108,7 +107,6 @@ createRoot(rootEl).render(
         </TooltipProvider>
       </QueryClientProvider>
       <Toaster />
-      <UpdatePrompt />
     </ThemeProvider>
   </StrictMode>,
 );

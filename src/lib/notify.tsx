@@ -9,9 +9,13 @@ import {
 } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 type Variant = 'success' | 'error' | 'info' | 'message';
+
+/** An optional call-to-action button rendered under the toast body. */
+type ToastAction = { label: React.ReactNode; onClick: () => void; icon?: React.ReactNode };
 
 const VARIANT: Record<
   Variant,
@@ -35,6 +39,7 @@ interface ProgressToastProps {
   title: React.ReactNode;
   description?: React.ReactNode;
   duration: number;
+  action?: ToastAction;
 }
 
 /**
@@ -44,12 +49,15 @@ interface ProgressToastProps {
  * via sonner's `toast.custom` with `duration: Infinity` so sonner doesn't also
  * try to dismiss it.
  */
-function ProgressToast({ id, variant, title, description, duration }: ProgressToastProps) {
+function ProgressToast({ id, variant, title, description, duration, action }: ProgressToastProps) {
   const barRef = React.useRef<HTMLDivElement>(null);
   const pausedRef = React.useRef(false);
   const v = VARIANT[variant];
+  // Infinity (or any non-finite) duration = persistent: no timer, no progress bar.
+  const autoCloses = Number.isFinite(duration);
 
   React.useEffect(() => {
+    if (!autoCloses) return;
     let raf = 0;
     let last = performance.now();
     let elapsed = 0;
@@ -69,7 +77,7 @@ function ProgressToast({ id, variant, title, description, duration }: ProgressTo
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [duration, id]);
+  }, [autoCloses, duration, id]);
 
   const pause = () => {
     pausedRef.current = true;
@@ -105,6 +113,19 @@ function ProgressToast({ id, variant, title, description, duration }: ProgressTo
               {description}
             </Text>
           )}
+          {action && (
+            <Button
+              size="sm"
+              className="mt-2 w-fit"
+              onClick={() => {
+                action.onClick();
+                toast.dismiss(id);
+              }}
+            >
+              {action.icon}
+              {action.label}
+            </Button>
+          )}
         </Flex>
       </Flex>
 
@@ -117,22 +138,26 @@ function ProgressToast({ id, variant, title, description, duration }: ProgressTo
         <HugeiconsIcon icon={Cancel01Icon} size={16} strokeWidth={2} />
       </button>
 
-      {/* auto-close progress bar */}
-      <div className="absolute inset-x-0 bottom-0 h-1 bg-muted">
-        <div
-          ref={barRef}
-          className={cn('h-full origin-left', v.barClass)}
-          style={{ transform: 'scaleX(1)' }}
-        />
-      </div>
+      {/* auto-close progress bar (omitted for persistent toasts) */}
+      {autoCloses && (
+        <div className="absolute inset-x-0 bottom-0 h-1 bg-muted">
+          <div
+            ref={barRef}
+            className={cn('h-full origin-left', v.barClass)}
+            style={{ transform: 'scaleX(1)' }}
+          />
+        </div>
+      )}
     </div>
   );
 }
 
 interface NotifyOptions {
   description?: React.ReactNode;
-  /** Auto-close time in ms (default 5000). */
+  /** Auto-close time in ms (default 5000). Pass `Infinity` for a persistent toast. */
   duration?: number;
+  /** Optional CTA button under the body; clicking it runs `onClick` then dismisses. */
+  action?: ToastAction;
 }
 
 function show(variant: Variant, title: React.ReactNode, opts: NotifyOptions = {}) {
@@ -145,6 +170,7 @@ function show(variant: Variant, title: React.ReactNode, opts: NotifyOptions = {}
         title={title}
         description={opts.description}
         duration={duration}
+        action={opts.action}
       />
     ),
     // We control dismissal; sonner just hosts/positions/animates the toast.

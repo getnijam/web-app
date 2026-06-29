@@ -1,6 +1,7 @@
 import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 import { RouteProgress } from '@/components/shell/RouteProgress';
+import { useDeploymentUpdateNotice } from '@/hooks/use-deployment-update';
 import { baseHead } from '@/lib/seo';
 
 export interface RouterContext {
@@ -17,6 +18,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootDocument() {
+  // Watch for a newer deployment and raise a Reload toast (no-op in dev).
+  useDeploymentUpdateNotice();
   return (
     <>
       {/* React 19 hoists these route-managed <title>/<meta>/<link> tags into <head>. */}

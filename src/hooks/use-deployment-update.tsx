@@ -1,4 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { RefreshIcon } from '@hugeicons/core-free-icons';
+import { notify } from '@/lib/notify';
 
 // How often to re-check for a newer deployment (also checks on tab re-focus).
 const POLL_INTERVAL = 5 * 60 * 1000;
@@ -11,24 +14,19 @@ function bootedEntrySrc(): string | null {
 
 /** Read the deployed index.html's entry-script path (changes hash on every build). */
 async function deployedEntrySrc(signal: AbortSignal): Promise<string | null> {
-  const res = await fetch(`${import.meta.env.BASE_URL}index.html`, {
-    cache: 'no-store',
-    signal,
-  });
+  const res = await fetch(`${import.meta.env.BASE_URL}index.html`, { cache: 'no-store', signal });
   if (!res.ok) return null;
   const html = await res.text();
   return html.match(/<script[^>]+type="module"[^>]+src="([^"]+)"/)?.[1] ?? null;
 }
 
 /**
- * True once a newer build has been deployed than the one running in this tab. Works
- * by polling the deployed index.html and comparing its hashed entry-script path to
- * the one we booted with (every build re-hashes it). Stops once an update is found.
- * No-op in dev, where Vite HMR already handles updates and assets aren't hashed.
+ * Watches for a newer deployment than the one running in this tab (every build
+ * re-hashes the entry script) and, once detected, raises a persistent toast with a
+ * Reload action. Polls every few minutes and on tab re-focus, then stops. No-op in
+ * dev, where Vite HMR handles updates and assets aren't hashed.
  */
-export function useDeploymentUpdate(): boolean {
-  const [updateAvailable, setUpdateAvailable] = useState(false);
-
+export function useDeploymentUpdateNotice(): void {
   useEffect(() => {
     if (!import.meta.env.PROD) return;
     const booted = bootedEntrySrc();
@@ -49,7 +47,15 @@ export function useDeploymentUpdate(): boolean {
         const deployed = await deployedEntrySrc(controller.signal);
         if (deployed && deployed !== booted) {
           stopped = true;
-          setUpdateAvailable(true);
+          notify.info('New version available', {
+            description: 'Reload to get the latest updates.',
+            duration: Infinity,
+            action: {
+              label: 'Reload',
+              icon: <HugeiconsIcon icon={RefreshIcon} size={15} strokeWidth={2} />,
+              onClick: () => window.location.reload(),
+            },
+          });
           return;
         }
       } catch {
@@ -74,6 +80,4 @@ export function useDeploymentUpdate(): boolean {
       document.removeEventListener('visibilitychange', onVisible);
     };
   }, []);
-
-  return updateAvailable;
 }
