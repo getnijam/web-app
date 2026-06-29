@@ -19,6 +19,7 @@ import { UserAvatar } from '@/components/users/UserAvatar';
 import { RunDetailSkeleton } from '@/components/runs/RunSkeletons';
 import { RunSummaryBar } from '@/components/runs/RunSummaryBar';
 import { RunStatusBadge } from '@/components/runs/RunStatusBadge';
+import { AttemptSwitcher } from '@/components/runs/AttemptSwitcher';
 import { SpecFileRow } from '@/components/runs/SpecFileRow';
 import { fileStatus } from '@/components/runs/file-status';
 import { STATUS_OPTIONS, type RunStatusFilter } from '@/components/runs/status-filter';
@@ -63,7 +64,7 @@ function RunDetailPage() {
   if (q.isLoading) return <RunDetailSkeleton />;
   if (q.error || !q.data) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
 
-  const { run, summary, files } = q.data;
+  const { run, summary, files, group } = q.data;
   const ds = runDisplayStatus(run);
   const author = displayAuthor(run.authorEmail, run.authorName);
   const branchHref = gitBranchUrl(run);
@@ -121,6 +122,14 @@ function RunDetailPage() {
             <Text variant="code" className="text-lg font-semibold">
               #{run.commitSha ? run.commitSha.slice(0, 7) : '---'}
             </Text>
+            {run.attemptCount > 1 && (
+              <Text
+                as="span"
+                className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground"
+              >
+                {run.attemptCount} attempts
+              </Text>
+            )}
             {run.shardTotal != null && run.shardTotal > 1 && (
               <Text
                 as="span"
@@ -168,6 +177,15 @@ function RunDetailPage() {
           Refresh
         </Button>
       </Flex>
+
+      {group && (
+        <AttemptSwitcher
+          group={group}
+          orgId={orgId}
+          projectId={projectId}
+          currentRunId={runId}
+        />
+      )}
 
       <RunSummaryBar summary={summary} />
 

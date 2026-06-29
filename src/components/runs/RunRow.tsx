@@ -109,6 +109,11 @@ export function RunRow({
               #{run.commitSha ? run.commitSha.slice(0, 7) : '---'}
             </Text>
             <RunStatusBadge status={ds} className="shrink-0" />
+            {run.attemptCount > 1 && (
+              <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
+                {run.attemptCount} attempts
+              </span>
+            )}
             {run.shardTotal != null && run.shardTotal > 1 && (
               <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
                 {run.shardTotal} shards

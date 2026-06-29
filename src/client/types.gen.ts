@@ -497,6 +497,7 @@ export type CreateRunBody = {
     ciRunId?: string;
     ciRunUrl?: string;
     ciRunAttempt?: string;
+    partialRerun?: boolean | null;
     shardIndex?: number;
     shardTotal?: number;
 };
@@ -554,6 +555,22 @@ export type UploadSourceBody = {
     content: string;
 };
 
+export type FailedTestIdentifier = {
+    testId: string;
+    file: string;
+    line: number | null;
+    title: string;
+    titlePath: Array<string>;
+    projectName: string | null;
+};
+
+export type FailedTestsResponse = {
+    runId: string | null;
+    ciRunId: string;
+    attempt: number | null;
+    tests: Array<FailedTestIdentifier>;
+};
+
 export type RunFiltersResponse = {
     branches: Array<string>;
     users: Array<{
@@ -590,6 +607,10 @@ export type RunSummary = {
         flaky: number;
     } | null;
     shardTotal: number | null;
+    ciRunAttempt: number | null;
+    partialRerun: boolean;
+    attemptCount: number;
+    rolledUpStatus: string | null;
     createdAt: string;
 };
 
@@ -619,10 +640,43 @@ export type RunFileSummary = {
     skipped: number;
 };
 
+export type RunAttemptSummary = {
+    runId: string;
+    attempt: number | null;
+    status: string;
+    startedAt: string;
+    finishedAt: string | null;
+    partialRerun: boolean;
+    stats: {
+        total: number;
+        passed: number;
+        failed: number;
+        skipped: number;
+        flaky: number;
+    } | null;
+};
+
+export type RunGroupRollup = {
+    total: number;
+    passed: number;
+    failed: number;
+    flaky: number;
+    skipped: number;
+    recovered: number;
+};
+
+export type RunGroup = {
+    ciRunId: string;
+    status: string;
+    attempts: Array<RunAttemptSummary>;
+    rolledUp: RunGroupRollup;
+} | null;
+
 export type RunDetailResponse = {
     run: RunSummary;
     summary: RunAggregate;
     files: Array<RunFileSummary>;
+    group: RunGroup;
 };
 
 export type RunDeletedResponse = {
@@ -3142,6 +3196,40 @@ export type UploadRunSourceResponses = {
 };
 
 export type UploadRunSourceResponse = UploadRunSourceResponses[keyof UploadRunSourceResponses];
+
+export type GetFailedTestsData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query: {
+        ciRunId: string;
+        attempt?: number | null;
+    };
+    url: '/v1/projects/{projectId}/failed-tests';
+};
+
+export type GetFailedTestsErrors = {
+    /**
+     * Invalid or missing API key
+     */
+    401: ApiError;
+    /**
+     * Project not found
+     */
+    404: ApiError;
+};
+
+export type GetFailedTestsError = GetFailedTestsErrors[keyof GetFailedTestsErrors];
+
+export type GetFailedTestsResponses = {
+    /**
+     * OK
+     */
+    200: FailedTestsResponse;
+};
+
+export type GetFailedTestsResponse = GetFailedTestsResponses[keyof GetFailedTestsResponses];
 
 export type GetProjectRunFiltersData = {
     body?: never;
