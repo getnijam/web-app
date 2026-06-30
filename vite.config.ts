@@ -2,6 +2,7 @@ import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import { nitro } from 'nitro/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import path from 'node:path';
 
@@ -47,6 +48,7 @@ export default defineConfig({
       // entry-client (not client.tsx) so it doesn't collide with the generated `@/client` dir.
       client: { entry: './entry-client.tsx' },
     }),
+    nitro(),
     react(),
     tailwindcss(),
     emitVersionJson,

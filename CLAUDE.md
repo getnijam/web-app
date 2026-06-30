@@ -31,11 +31,9 @@ src/
   router.tsx              # getRouter() factory (per-request QueryClient + router) + client.setConfig
   entry-client.tsx        # client entry: browser-only init (Sentry/analytics) then hydrateRoot(document)
   routes/__root.tsx       # renders the FULL html document: providers + HeadContent + Scripts + theme no-flash script
-server.mjs                # repo root: prod Node server (`npm run start`) = static dist/client + the SSR fetch handler
-api/ssr.ts                # repo root: Vercel function wrapping the SSR handler (best-effort; see Deploy below)
 ```
 
-The server entry is Start's default (`createStartHandler`); `npm run build` emits `dist/client` (static) + `dist/server/server.js` (a Web `fetch` SSR handler). No `main.tsx`/`index.html` anymore, the root route owns the document.
+The server entry is Start's default (`createStartHandler`). Deployment is handled by **Nitro** (`nitro()` in `vite.config.ts`), the official Vercel path, see Deploy below. No `main.tsx`/`index.html` anymore, the root route owns the document.
 
 ## Conventions
 
@@ -59,11 +57,11 @@ The server entry is Start's default (`createStartHandler`); `npm run build` emit
 
 ## Deploy
 
-`npm run build` -> `dist/client` (static assets) + `dist/server/server.js` (a Web `fetch` SSR handler; Start ships no host adapter). Two ways to run it:
-- **Any Node host** (Railway/Render/Fly/container): `npm run start` runs `server.mjs`, which serves `dist/client` statically and pipes everything else to the SSR handler. `npm run preview` = build then start, for a local prod check.
-- **Vercel** (current host): `vercel.json` serves static from `dist/client` and rewrites the rest to `api/ssr.ts` (a function wrapping the SSR handler, with `includeFiles: dist/server/**`). **This Vercel adapter is best-effort and must be verified on a preview deploy** (the unproven piece is Vercel bundling the Vite-built server into the function). The Node-server path above is the proven fallback.
+Deployment is via **Nitro** (`nitro()` in `vite.config.ts`), [Vercel's official TanStack Start path](https://vercel.com/docs/frameworks/full-stack/tanstack-start). No `vercel.json`, no hand-rolled function, Nitro auto-detects the host:
+- **Vercel** (current host): on Vercel (`VERCEL=1`), `npm run build` emits the **Build Output API** at `.vercel/output/` (`config.json` + `static/` + `functions/__server.func`, `nodejs22.x`). Vercel consumes it natively, zero config.
+- **Local / any Node host** (Railway/Render/Fly): a normal build uses the `node-server` preset -> `.output/server/index.mjs`; `npm run start` runs it, `npm run preview` = build then start.
 
-The old SPA `vercel.json` (`framework: vite` + catch-all rewrite to `/index.html`) is gone, it would break SSR routing.
+**`nf3` is pinned to `0.3.17` via `overrides`** (package.json). `nf3@0.3.18` (published 2026-06-29) ships a minified vendored `@vercel/nft` whose `nodeFileTrace` getter export Node's CJS lexer can't detect, so Nitro's externals tracing throws `does not provide an export named 'nodeFileTrace'` on the Vite-7/Rollup build. `0.3.17` predates that. **Remove the override** once a fixed `nf3` (0.3.19+) ships. (The SPA-era `vercel.json` + the hand-rolled `api/ssr.ts`/`server.mjs` are gone, they predated the Nitro path.)
 
 ## Current scope (v0.1)
 
