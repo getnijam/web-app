@@ -15,7 +15,7 @@ import {
   CancelSquareIcon,
   Settings01Icon,
   Book02Icon,
-  SquareArrowUpRightIcon,
+  ArrowUpRight01Icon,
 } from '@hugeicons/core-free-icons';
 import { getProjectOptions } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
@@ -338,9 +338,9 @@ export function AppSidebar() {
                 <NavGlyph icon={Book02Icon} active={false} />
                 <span>Docs</span>
                 <HugeiconsIcon
-                  icon={SquareArrowUpRightIcon}
+                  icon={ArrowUpRight01Icon}
                   size={14}
-                  strokeWidth={1.8}
+                  strokeWidth={2}
                   className="ml-auto shrink-0 text-muted-foreground"
                 />
               </a>

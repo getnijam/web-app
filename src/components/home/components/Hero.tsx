@@ -61,7 +61,7 @@ export function Hero() {
       {/* Content sits above the grid, but is pointer-events-none so the cursor
           falls through the empty space (and behind the text) to light the cells;
           only genuinely interactive bits re-enable events. */}
-      <div className="pointer-events-none relative z-10 mx-auto max-w-6xl px-6 pt-34 pb-16 md:pt-38">
+      <div className="pointer-events-none relative z-10 mx-auto max-w-6xl px-6 pt-34 pb-16 md:pt-30">
         <Grid cols={[1, 1, 2]} className="items-center gap-12">
           <div>
             <Flex
@@ -83,8 +83,8 @@ export function Hero() {
 
             <Text className="mt-5 max-w-xl text-lg text-pretty text-muted-foreground">
               Nijam reads the test results your CI already uploads, from Playwright, pytest, or
-              Vitest, and turns them into flakiness detection, failure analytics, and a clear answer
-              to <em>why</em> (and <em>since when</em>) your tests started failing.
+              Vitest, and answers the two questions a pass-or-fail build never does:{' '}
+              <em>why</em> a test failed, and <em>since when</em> it has been flaky.
             </Text>
 
             <Flex gap={3} wrap className="pointer-events-auto mt-7">

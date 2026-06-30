@@ -7,11 +7,12 @@ import { useQuery } from '@tanstack/react-query';
 import { getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { DashboardLink } from './DashboardLink';
 import { Reveal } from '../Reveal';
+import { DOCS_URL } from '../config';
 
 /**
  * Closing call-to-action band. Sits right above the Footer on every public page;
  * the heading/blurb vary per page (defaults to the home copy) but the buttons +
- * note stay identical.
+ * note stay identical. Guest funnel matches Nav: primary CTA is "Start free".
  */
 export function CTA({
   title = 'Stop guessing why your tests fail',
@@ -33,7 +34,7 @@ export function CTA({
             {user ? (
               <DashboardLink>Go to dashboard</DashboardLink>
             ) : (
-              <Link to="/login">Log in to your dashboard</Link>
+              <Link to="/signup">Start free</Link>
             )}
           </Button>
           <Button
@@ -42,9 +43,9 @@ export function CTA({
             variant="outline"
             className="border-background/25 bg-transparent text-background hover:bg-background/10 hover:text-background"
           >
-            <Link to="/" hash="features">
-              Explore features
-            </Link>
+            <a href={DOCS_URL} target="_blank" rel="noopener noreferrer">
+              Read the docs
+            </a>
           </Button>
         </Flex>
         <Text className="mt-4.5 text-xs text-background/60">

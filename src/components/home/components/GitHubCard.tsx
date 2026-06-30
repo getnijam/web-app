@@ -13,7 +13,7 @@ const TESTS = [
 
 export function GitHubCard() {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4.5 shadow-sm">
+    <div className="rounded-2xl border border-border bg-card p-4.5">
       {/* Pull request title */}
       <Flex align="center" gap={2}>
         <HugeiconsIcon icon={GitPullRequestIcon} size={18} className="shrink-0 text-success" />

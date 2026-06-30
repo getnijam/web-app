@@ -66,7 +66,7 @@ export function FooterStatus() {
       <span className="relative flex size-2 shrink-0" aria-hidden="true">
         <span
           className={cn(
-            'absolute inline-flex size-full animate-ping rounded-full opacity-75',
+            'absolute inline-flex size-full rounded-full opacity-75 motion-safe:animate-ping',
             color,
           )}
         />

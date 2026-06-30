@@ -4,7 +4,7 @@ import { seo } from '@/lib/seo';
 
 // Public marketing landing page. (Signed-in visitors see it too and can head
 // into the app via the CTAs, no auth gate here.)
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_marketing/')({
   head: () => seo(),
   component: Home,
 });

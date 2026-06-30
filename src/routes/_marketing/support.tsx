@@ -2,8 +2,6 @@ import type { ReactNode } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Mail01Icon, BookOpen01Icon, PlugSocketIcon, Bug01Icon } from '@hugeicons/core-free-icons';
-import { Nav } from '@/components/home/components/Nav';
-import { Footer } from '@/components/home/components/Footer';
 import { CTA } from '@/components/home/components/CTA';
 import { Section, P, Bullets } from '@/components/legal/LegalLayout';
 import { DOCS_URL } from '@/components/home/config';
@@ -13,7 +11,7 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { seo } from '@/lib/seo';
 
-export const Route = createFileRoute('/support')({
+export const Route = createFileRoute('/_marketing/support')({
   head: () =>
     seo({
       title: 'Support',
@@ -89,9 +87,7 @@ const CHANNELS: Channel[] = [
 
 function SupportPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Nav />
-
+    <>
       <main>
         {/* hero */}
         <section className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center md:pt-24">
@@ -250,7 +246,6 @@ function SupportPage() {
         title="Still stuck? We’re one email away"
         description="Tell us what you’re trying to do and we’ll help you get your test results flowing into Nijam."
       />
-      <Footer />
-    </div>
+    </>
   );
 }

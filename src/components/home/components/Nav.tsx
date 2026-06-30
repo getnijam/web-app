@@ -1,8 +1,9 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import { Link } from '@tanstack/react-router';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Link, useRouterState } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { motion, type Transition } from 'motion/react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Cancel01Icon, Menu01Icon } from '@hugeicons/core-free-icons';
+import { ArrowUpRight01Icon, Cancel01Icon, Menu01Icon } from '@hugeicons/core-free-icons';
 import { getMeOptions } from '@/client/@tanstack/react-query.gen';
 import { DashboardLink } from './DashboardLink';
 import { Logo } from '@/components/auth/Logo';
@@ -14,36 +15,113 @@ import { AccountMenu } from '@/components/users/AccountMenu';
 import { cn } from '@/lib/utils';
 import { DOCS_URL } from '../config';
 
-// Quiet link that lights up in brand color on hover (no hover pill), the
-// reframe.shadcn.io treatment, shared by the desktop bar and the mobile menu.
-const LINK =
-  'rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary';
+// Quiet links that light up in brand color on hover. The active route gets a
+// brand-tinted pill: a static one per link on mobile (LINK_ACTIVE), or, on
+// desktop, a single shared pill that slides between links, so there
+// LINK_ACTIVE_TEXT keeps only the text treatment and the sliding pill owns the
+// background. Colour/weight live in the active/inactive prop sets (not LINK) so
+// TanStack's class-join never leaves two conflicting Tailwind utilities on one
+// element.
+const LINK = 'relative z-10 rounded-full px-3 py-2 text-sm transition-colors';
+const LINK_INACTIVE = 'font-medium text-muted-foreground hover:text-primary';
+const LINK_ACTIVE = 'bg-primary/10 font-semibold text-primary ring-1 ring-inset ring-primary/15';
+const LINK_ACTIVE_TEXT = 'font-semibold text-primary';
 
-function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+// Same spring the tabs indicator uses, so both highlights feel identical.
+const INDICATOR_TRANSITION: Transition = { type: 'spring', stiffness: 250, damping: 30 };
+
+function NavLinks({ onNavigate, withPill }: { onNavigate?: () => void; withPill?: boolean }) {
+  const linkProps = {
+    className: LINK,
+    activeProps: {
+      className: withPill ? LINK_ACTIVE_TEXT : LINK_ACTIVE,
+      'aria-current': 'page' as const,
+    },
+    inactiveProps: { className: LINK_INACTIVE },
+  };
   return (
     <>
-      <Link to="/" hash="features" className={LINK} onClick={onNavigate}>
+      {/* `/` is a prefix of every route, so match it exactly or it's always active. */}
+      <Link to="/" activeOptions={{ exact: true }} onClick={onNavigate} {...linkProps}>
+        Home
+      </Link>
+      <Link to="/features" onClick={onNavigate} {...linkProps}>
         Features
       </Link>
-      <Link to="/" hash="flakiness" className={LINK} onClick={onNavigate}>
-        Flakiness
-      </Link>
-      <Link to="/" hash="integrations" className={LINK} onClick={onNavigate}>
-        Integrations
-      </Link>
-      <Link to="/pricing" className={LINK} onClick={onNavigate}>
+      <Link to="/pricing" onClick={onNavigate} {...linkProps}>
         Pricing
       </Link>
+      {/* External: no active state; the new-tab arrow appears on hover. */}
       <a
         href={DOCS_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className={LINK}
+        className={cn(LINK, LINK_INACTIVE, 'group inline-flex items-center gap-1')}
         onClick={onNavigate}
       >
         Docs
+        <HugeiconsIcon
+          icon={ArrowUpRight01Icon}
+          size={14}
+          strokeWidth={2}
+          className="opacity-0 transition-opacity group-hover:opacity-100"
+        />
       </a>
     </>
+  );
+}
+
+type PillRect = { left: number; width: number };
+
+/**
+ * Desktop nav links with a single brand pill that springs to the active route
+ * (mirrors the tabs indicator). A raw div holds the ref so we can measure the
+ * active link; the pill sits behind the links (z-0) and slides on navigation.
+ */
+function DesktopNavLinks() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const ref = useRef<HTMLDivElement>(null);
+  const [rect, setRect] = useState<PillRect | null>(null);
+
+  const measure = useCallback(() => {
+    const container = ref.current;
+    if (!container) return;
+    const active = container.querySelector<HTMLElement>('[data-status="active"]');
+    setRect(active ? { left: active.offsetLeft, width: active.offsetWidth } : null);
+  }, []);
+
+  // Re-measure after paint, on route change, and on resize. Scheduled via rAF so
+  // setState never runs synchronously inside the observer/effect body.
+  useEffect(() => {
+    let raf = requestAnimationFrame(measure);
+    const observer =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => {
+            raf = requestAnimationFrame(measure);
+          })
+        : null;
+    if (observer && ref.current) observer.observe(ref.current);
+    window.addEventListener('resize', measure);
+    return () => {
+      cancelAnimationFrame(raf);
+      observer?.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [measure, pathname]);
+
+  return (
+    <div ref={ref} className="relative ml-4 hidden items-center gap-1 md:flex">
+      {rect && (
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute top-0 bottom-0 z-0 rounded-full bg-primary/10 ring-1 ring-inset ring-primary/15"
+          initial={false}
+          animate={{ left: rect.left, width: rect.width }}
+          transition={INDICATOR_TRANSITION}
+        />
+      )}
+      <NavLinks withPill />
+    </div>
   );
 }
 
@@ -120,7 +198,7 @@ export function Nav() {
           as="nav"
           direction="col"
           className={cn(
-            'mx-auto w-full max-w-6xl rounded-lg border bg-background/80 px-2.5 py-2 backdrop-blur-md transition-shadow',
+            'mx-auto w-full max-w-6xl rounded-lg border bg-background px-2.5 py-2 transition-shadow',
             scrolled && 'shadow-sm',
           )}
         >
@@ -129,15 +207,12 @@ export function Nav() {
                 space under the lockup and the logo centers exactly in the card. */}
             <Link
               to="/"
-              hash="top"
               aria-label="Nijam.dev home"
               className="flex shrink-0 items-center pl-1.5"
             >
               <Logo />
             </Link>
-            <Flex align="center" gap={1} className="ml-4 hidden md:flex">
-              <NavLinks />
-            </Flex>
+            <DesktopNavLinks />
             <Flex align="center" gap={2} className="ml-auto shrink-0">
               <ThemeSegmentedControl minified />
               {actions}
@@ -147,6 +222,7 @@ export function Nav() {
                 type="button"
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
+                aria-controls="nav-mobile-menu"
                 onClick={() => setMenuOpen((open) => !open)}
                 className="size-9 text-muted-foreground md:hidden"
               >
@@ -155,11 +231,17 @@ export function Nav() {
             </Flex>
           </Flex>
           {menuOpen && (
-            <Flex direction="col" gap={1} className="w-full pt-2 pb-1 md:hidden">
+            <Flex
+              id="nav-mobile-menu"
+              direction="col"
+              gap={1}
+              className="w-full pt-2 pb-1 md:hidden"
+            >
               <NavLinks onNavigate={closeMenu} />
               {menuExtras}
             </Flex>
           )}
+
         </Flex>
       </div>
     </header>

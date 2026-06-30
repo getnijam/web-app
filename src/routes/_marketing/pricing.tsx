@@ -1,6 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Nav } from '@/components/home/components/Nav';
-import { Footer } from '@/components/home/components/Footer';
 import { CTA } from '@/components/home/components/CTA';
 import { Reveal } from '@/components/home/Reveal';
 import { Flex } from '@/components/ui/flex';
@@ -9,7 +7,7 @@ import { PricingPlans } from '@/components/pricing/PricingPlans';
 import { EstimateCalculator } from '@/components/pricing/EstimateCalculator';
 import { seo } from '@/lib/seo';
 
-export const Route = createFileRoute('/pricing')({
+export const Route = createFileRoute('/_marketing/pricing')({
   head: () =>
     seo({
       title: 'Pricing',
@@ -22,8 +20,7 @@ export const Route = createFileRoute('/pricing')({
 
 function PricingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Nav />
+    <>
       <main className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
         <Reveal className="mx-auto mb-12 max-w-2xl text-center">
           <Text className="text-xs font-semibold tracking-wide text-primary uppercase">
@@ -85,7 +82,6 @@ function PricingPage() {
         title="Start free. Pay only when you grow."
         description="Connect your CI in minutes and only pay for the test volume you actually report, no per-seat pricing, ever."
       />
-      <Footer />
-    </div>
+    </>
   );
 }

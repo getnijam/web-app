@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
-import { Nav } from './components/Nav';
 import { Hero } from './components/Hero';
-import { Features } from './components/Features';
-import { HighlightRows } from './components/HighlightRows';
+import { Install } from './components/Install';
+import { HomeFeatures } from './components/HomeFeatures';
 import { CTA } from './components/CTA';
-import { Footer } from './components/Footer';
 
 /** Public marketing landing page, rendered at the dashboard root (`/`). */
 export function Home() {
@@ -18,14 +16,12 @@ export function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Nav />
+    <>
       <span id="top" />
       <Hero />
-      <Features />
-      <HighlightRows />
+      <Install />
+      <HomeFeatures />
       <CTA />
-      <Footer />
-    </div>
+    </>
   );
 }

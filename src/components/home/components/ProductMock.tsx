@@ -64,7 +64,7 @@ export function ProductMock() {
       <Flex direction="col">
         <Grid cols={2} className="gap-3">
           {/* Top-left, the headline metric Nijam reports back. */}
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+          <div className="rounded-2xl border border-border bg-card p-4">
             <Flex align="center" justify="between">
               <Flex
                 inline
@@ -103,7 +103,7 @@ export function ProductMock() {
           </div>
 
           {/* Top-right, the test results streaming in from CI. */}
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+          <div className="rounded-2xl border border-border bg-card p-4">
             <Flex align="center" gap={1.5} className="text-xs font-semibold text-muted-foreground">
               <HugeiconsIcon icon={CloudUploadIcon} size={15} />
               From CI
@@ -160,7 +160,7 @@ export function ProductMock() {
         </div>
 
         {/* Bottom, Nijam's analysis: success / flaky / failed + run history. */}
-        <div className="rounded-2xl border border-border bg-card p-4 shadow-md">
+        <div className="rounded-2xl border border-border bg-card p-4 ring-1 ring-foreground/5">
           <Flex align="center" justify="between" className="mb-3">
             <Flex align="center" gap={2.5}>
               <Flex

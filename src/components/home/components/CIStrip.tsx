@@ -17,26 +17,22 @@ const PROVIDERS: { name: string; logo: ReactNode }[] = [
 
 export function CIStrip() {
   return (
-    <div className="pt-12">
-      <Text
-        align="center"
-        className="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
-      >
-        Ingests results from your CI
+    <Flex
+      align="center"
+      justify="center"
+      wrap
+      gap={8}
+      className="pt-12 text-base font-semibold text-muted-foreground"
+    >
+      <Text as="span" className="text-sm text-muted-foreground">
+        Ingests from
       </Text>
-      <Flex align="center" justify="center" wrap gap={8} className="mt-5">
-        {PROVIDERS.map((p) => (
-          <Flex
-            align="center"
-            gap={2}
-            key={p.name}
-            className="text-base font-semibold text-muted-foreground"
-          >
-            {p.logo}
-            {p.name}
-          </Flex>
-        ))}
-      </Flex>
-    </div>
+      {PROVIDERS.map((p) => (
+        <Flex align="center" gap={2} key={p.name}>
+          {p.logo}
+          {p.name}
+        </Flex>
+      ))}
+    </Flex>
   );
 }

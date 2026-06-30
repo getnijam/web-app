@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { LegalLayout, Section, P, Bullets } from '@/components/legal/LegalLayout';
 import { seo } from '@/lib/seo';
 
-export const Route = createFileRoute('/terms')({
+export const Route = createFileRoute('/_marketing/terms')({
   head: () =>
     seo({
       title: 'Terms of Service',

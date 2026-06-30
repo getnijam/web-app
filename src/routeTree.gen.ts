@@ -10,18 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyRouteImport } from './routes/verify'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as SecurityRouteImport } from './routes/security'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InviteRouteImport } from './routes/invite'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as MarketingRouteRouteImport } from './routes/_marketing/route'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
+import { Route as MarketingTermsRouteImport } from './routes/_marketing/terms'
+import { Route as MarketingSupportRouteImport } from './routes/_marketing/support'
+import { Route as MarketingSecurityRouteImport } from './routes/_marketing/security'
+import { Route as MarketingPrivacyRouteImport } from './routes/_marketing/privacy'
+import { Route as MarketingPricingRouteImport } from './routes/_marketing/pricing'
+import { Route as MarketingFeaturesRouteImport } from './routes/_marketing/features'
 import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
 import { Route as AuthedProfileIndexRouteImport } from './routes/_authed/profile.index'
 import { Route as AuthedOrgsIndexRouteImport } from './routes/_authed/orgs.index'
@@ -58,39 +60,14 @@ const VerifyRoute = VerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportRoute = SupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SecurityRoute = SecurityRouteImport.update({
-  id: '/security',
-  path: '/security',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -108,14 +85,48 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketingRouteRoute = MarketingRouteRouteImport.update({
+  id: '/_marketing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthedRouteRoute = AuthedRouteRouteImport.update({
   id: '/_authed',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const MarketingIndexRoute = MarketingIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingTermsRoute = MarketingTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingSupportRoute = MarketingSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingSecurityRoute = MarketingSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingPrivacyRoute = MarketingPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingPricingRoute = MarketingPricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingFeaturesRoute = MarketingFeaturesRouteImport.update({
+  id: '/features',
+  path: '/features',
+  getParentRoute: () => MarketingRouteRoute,
 } as any)
 const AuthedProfileRoute = AuthedProfileRouteImport.update({
   id: '/profile',
@@ -288,19 +299,20 @@ const AuthedOrgsOrgIdProjectsProjectIdRunsRunIdFileRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof MarketingIndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
-  '/pricing': typeof PricingRoute
-  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
-  '/support': typeof SupportRoute
-  '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
   '/profile': typeof AuthedProfileRouteWithChildren
+  '/features': typeof MarketingFeaturesRoute
+  '/pricing': typeof MarketingPricingRoute
+  '/privacy': typeof MarketingPrivacyRoute
+  '/security': typeof MarketingSecurityRoute
+  '/support': typeof MarketingSupportRoute
+  '/terms': typeof MarketingTermsRoute
   '/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/profile/danger': typeof AuthedProfileDangerRoute
   '/profile/security': typeof AuthedProfileSecurityRoute
@@ -332,18 +344,19 @@ export interface FileRoutesByFullPath {
   '/orgs/$orgId/projects/$projectId/runs/$runId/': typeof AuthedOrgsOrgIdProjectsProjectIdRunsRunIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof MarketingIndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
-  '/pricing': typeof PricingRoute
-  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
-  '/support': typeof SupportRoute
-  '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
+  '/features': typeof MarketingFeaturesRoute
+  '/pricing': typeof MarketingPricingRoute
+  '/privacy': typeof MarketingPrivacyRoute
+  '/security': typeof MarketingSecurityRoute
+  '/support': typeof MarketingSupportRoute
+  '/terms': typeof MarketingTermsRoute
   '/profile/danger': typeof AuthedProfileDangerRoute
   '/profile/security': typeof AuthedProfileSecurityRoute
   '/orgs': typeof AuthedOrgsIndexRoute
@@ -372,20 +385,22 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_authed': typeof AuthedRouteRouteWithChildren
+  '/_marketing': typeof MarketingRouteRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
-  '/pricing': typeof PricingRoute
-  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
-  '/support': typeof SupportRoute
-  '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
   '/_authed/profile': typeof AuthedProfileRouteWithChildren
+  '/_marketing/features': typeof MarketingFeaturesRoute
+  '/_marketing/pricing': typeof MarketingPricingRoute
+  '/_marketing/privacy': typeof MarketingPrivacyRoute
+  '/_marketing/security': typeof MarketingSecurityRoute
+  '/_marketing/support': typeof MarketingSupportRoute
+  '/_marketing/terms': typeof MarketingTermsRoute
+  '/_marketing/': typeof MarketingIndexRoute
   '/_authed/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/_authed/profile/danger': typeof AuthedProfileDangerRoute
   '/_authed/profile/security': typeof AuthedProfileSecurityRoute
@@ -423,15 +438,16 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/invite'
     | '/login'
-    | '/pricing'
-    | '/privacy'
     | '/reset-password'
-    | '/security'
     | '/signup'
-    | '/support'
-    | '/terms'
     | '/verify'
     | '/profile'
+    | '/features'
+    | '/pricing'
+    | '/privacy'
+    | '/security'
+    | '/support'
+    | '/terms'
     | '/orgs/$orgId'
     | '/profile/danger'
     | '/profile/security'
@@ -467,14 +483,15 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/invite'
     | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/verify'
+    | '/features'
     | '/pricing'
     | '/privacy'
-    | '/reset-password'
     | '/security'
-    | '/signup'
     | '/support'
     | '/terms'
-    | '/verify'
     | '/profile/danger'
     | '/profile/security'
     | '/orgs'
@@ -502,20 +519,22 @@ export interface FileRouteTypes {
     | '/orgs/$orgId/projects/$projectId/runs/$runId'
   id:
     | '__root__'
-    | '/'
     | '/_authed'
+    | '/_marketing'
     | '/forgot-password'
     | '/invite'
     | '/login'
-    | '/pricing'
-    | '/privacy'
     | '/reset-password'
-    | '/security'
     | '/signup'
-    | '/support'
-    | '/terms'
     | '/verify'
     | '/_authed/profile'
+    | '/_marketing/features'
+    | '/_marketing/pricing'
+    | '/_marketing/privacy'
+    | '/_marketing/security'
+    | '/_marketing/support'
+    | '/_marketing/terms'
+    | '/_marketing/'
     | '/_authed/orgs/$orgId'
     | '/_authed/profile/danger'
     | '/_authed/profile/security'
@@ -548,18 +567,13 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
+  MarketingRouteRoute: typeof MarketingRouteRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   InviteRoute: typeof InviteRoute
   LoginRoute: typeof LoginRoute
-  PricingRoute: typeof PricingRoute
-  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  SecurityRoute: typeof SecurityRoute
   SignupRoute: typeof SignupRoute
-  SupportRoute: typeof SupportRoute
-  TermsRoute: typeof TermsRoute
   VerifyRoute: typeof VerifyRoute
 }
 
@@ -572,20 +586,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -593,32 +593,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/security': {
-      id: '/security'
-      path: '/security'
-      fullPath: '/security'
-      preLoaderRoute: typeof SecurityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -642,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_marketing': {
+      id: '/_marketing'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof MarketingRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authed': {
       id: '/_authed'
       path: ''
@@ -649,12 +635,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_marketing/': {
+      id: '/_marketing/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof MarketingIndexRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/terms': {
+      id: '/_marketing/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof MarketingTermsRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/support': {
+      id: '/_marketing/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof MarketingSupportRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/security': {
+      id: '/_marketing/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof MarketingSecurityRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/privacy': {
+      id: '/_marketing/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof MarketingPrivacyRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/pricing': {
+      id: '/_marketing/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof MarketingPricingRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/features': {
+      id: '/_marketing/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof MarketingFeaturesRouteImport
+      parentRoute: typeof MarketingRouteRoute
     }
     '/_authed/profile': {
       id: '/_authed/profile'
@@ -1003,19 +1031,38 @@ const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
   AuthedRouteRouteChildren,
 )
 
+interface MarketingRouteRouteChildren {
+  MarketingFeaturesRoute: typeof MarketingFeaturesRoute
+  MarketingPricingRoute: typeof MarketingPricingRoute
+  MarketingPrivacyRoute: typeof MarketingPrivacyRoute
+  MarketingSecurityRoute: typeof MarketingSecurityRoute
+  MarketingSupportRoute: typeof MarketingSupportRoute
+  MarketingTermsRoute: typeof MarketingTermsRoute
+  MarketingIndexRoute: typeof MarketingIndexRoute
+}
+
+const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
+  MarketingFeaturesRoute: MarketingFeaturesRoute,
+  MarketingPricingRoute: MarketingPricingRoute,
+  MarketingPrivacyRoute: MarketingPrivacyRoute,
+  MarketingSecurityRoute: MarketingSecurityRoute,
+  MarketingSupportRoute: MarketingSupportRoute,
+  MarketingTermsRoute: MarketingTermsRoute,
+  MarketingIndexRoute: MarketingIndexRoute,
+}
+
+const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
+  MarketingRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthedRouteRoute: AuthedRouteRouteWithChildren,
+  MarketingRouteRoute: MarketingRouteRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   InviteRoute: InviteRoute,
   LoginRoute: LoginRoute,
-  PricingRoute: PricingRoute,
-  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  SecurityRoute: SecurityRoute,
   SignupRoute: SignupRoute,
-  SupportRoute: SupportRoute,
-  TermsRoute: TermsRoute,
   VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport

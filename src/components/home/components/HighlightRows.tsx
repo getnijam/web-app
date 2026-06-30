@@ -1,33 +1,25 @@
 import type { ReactNode } from 'react';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Tick02Icon } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { Reveal } from '../Reveal';
-import { FlakyList } from './FlakyList';
 import { FailureCard } from './FailureCard';
-import { SlackCard } from './SlackCard';
 import { GitHubCard } from './GitHubCard';
 
 function Row({
   id,
   flip,
-  kicker,
-  soon,
   heading,
   body,
-  items,
+  proof,
   children,
 }: {
   id?: string;
   flip?: boolean;
-  kicker: string;
-  soon?: boolean;
   heading: ReactNode;
   body: ReactNode;
-  items: string[];
+  proof: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -35,38 +27,16 @@ function Row({
       <Reveal>
         <Grid cols={[1, 1, 2]} className="items-center gap-12">
           <div className={cn(flip && 'md:order-2')}>
-            <Text className="text-xs font-semibold tracking-wide text-primary uppercase">
-              {kicker}
-              {soon && (
-                <Flex
-                  as="span"
-                  inline
-                  align="center"
-                  className="ml-2 rounded-full border border-info/30 bg-info/10 px-2 py-0.5 align-middle text-xs font-medium tracking-normal text-info normal-case"
-                >
-                  Coming soon
-                </Flex>
-              )}
-            </Text>
             <Text
               as="h3"
-              className="mt-3 text-2xl font-bold tracking-tight text-balance sm:text-3xl"
+              className="text-2xl font-bold tracking-tight text-balance sm:text-3xl"
             >
               {heading}
             </Text>
             <Text className="mt-3.5 max-w-md text-base text-muted-foreground">{body}</Text>
-            <ul className="mt-5 space-y-2.5">
-              {items.map((it, i) => (
-                <Flex as="li" key={i} align="start" gap={2.5} className="text-sm">
-                  <HugeiconsIcon
-                    icon={Tick02Icon}
-                    size={18}
-                    className="mt-0.5 shrink-0 text-success"
-                  />
-                  {it}
-                </Flex>
-              ))}
-            </ul>
+            <Text as="p" className="mt-5 max-w-md text-base font-medium text-foreground">
+              {proof}
+            </Text>
           </div>
           <div className={cn(flip && 'md:order-1')}>{children}</div>
         </Grid>
@@ -80,58 +50,19 @@ export function HighlightRows() {
     <section className="mx-auto max-w-6xl px-6 py-20">
       <Flex direction="col" className="gap-20">
         <Row
-          id="flakiness"
-          kicker="Flakiness detector"
-          heading="Find the tests quietly wasting your team's time"
-          body="Nijam watches every retry across every run and scores each test for instability, so the worst offenders rise to the top instead of hiding in green builds."
-          items={[
-            'Ranked by flake rate, not just pass/fail',
-            'Per-test retry history across runs',
-            'Catch regressions before they erode trust',
-          ]}
-        >
-          <FlakyList />
-        </Row>
-
-        <Row
-          flip
-          kicker="Root cause, fast"
           heading="Why it broke, and the commit that broke it"
-          body="Open any failure to get the assertion, the trace and the artifacts, then jump to the exact run and commit where the test first turned red."
-          items={[
-            'Full error, screenshots, video & trace',
-            'First-failing run and commit, pinpointed',
-            'Link straight out to the CI workflow',
-          ]}
+          body="Open any failure to read the assertion, scrub the trace and the artifacts, then jump to the exact run and commit where the test first turned red."
+          proof="First-failing commit pinpointed, with the trace, the artifacts, and the link to the CI run on one page."
         >
           <FailureCard />
         </Row>
 
         <Row
-          id="integrations"
-          kicker="Integrations"
-          heading="Results land where your team already talks"
-          body="Connect a Slack channel and Nijam posts a summary of every run by your rules, passing, flaky or failing, with each suite and test linked back to its results."
-          items={[
-            'Post on failures, flaky runs or regressions',
-            'Route each project to its own channel, or mute it',
-            'Scoped secret keys to ingest from any CI',
-          ]}
-        >
-          <SlackCard />
-        </Row>
-
-        <Row
           flip
           id="github"
-          kicker="GitHub checks"
           heading="Every pull request gets a verdict"
-          body="Install the GitHub App and Nijam posts a status check on each PR, green when it passes, red when it fails, plus a results comment it keeps up to date as you push."
-          items={[
-            'Pass / fail status check on the PR head commit',
-            'A sticky results comment, updated in place each run',
-            'Mute a project or limit it to specific branches',
-          ]}
+          body="Install the GitHub App and Nijam posts a status check on each PR (green when it passes, red when it fails), plus a results comment it keeps up to date as you push."
+          proof="One status check and one sticky results comment per PR. Updated in place on each rerun."
         >
           <GitHubCard />
         </Row>

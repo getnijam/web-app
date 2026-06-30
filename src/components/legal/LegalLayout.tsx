@@ -1,6 +1,4 @@
 import type { ReactNode } from 'react';
-import { Nav } from '@/components/home/components/Nav';
-import { Footer } from '@/components/home/components/Footer';
 import { CTA } from '@/components/home/components/CTA';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -22,8 +20,7 @@ export function LegalLayout({
   ctaDescription?: ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Nav />
+    <>
       <main className="mx-auto w-full max-w-3xl px-6 py-12 md:py-16">
         <Text as="h1" className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">
           {title}
@@ -40,8 +37,7 @@ export function LegalLayout({
         </Flex>
       </main>
       <CTA title={ctaTitle} description={ctaDescription} />
-      <Footer />
-    </div>
+    </>
   );
 }
 

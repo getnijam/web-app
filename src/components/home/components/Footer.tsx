@@ -1,9 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { SquareArrowUpRightIcon } from '@hugeicons/core-free-icons';
+import { ArrowUpRight01Icon } from '@hugeicons/core-free-icons';
 import { Logo } from '@/components/auth/Logo';
 import { FooterStatus } from './FooterStatus';
-import { DashboardLink } from './DashboardLink';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -15,7 +14,7 @@ const COL = 'block py-1 text-sm text-background/80 transition-colors hover:text-
 // laid out as a flex row so the icon sits next to the label.
 const COL_EXT =
   'flex w-fit items-center gap-1 py-1 text-sm text-background/80 transition-colors hover:text-background';
-const H5 = 'mb-3.5 text-xs font-bold tracking-wide text-background/60 uppercase';
+const H5 = 'mb-3.5 text-sm font-semibold text-background';
 
 // The published reporter packages, linked to their registry pages.
 const REPORTERS = [
@@ -27,7 +26,7 @@ const REPORTERS = [
 /** New-tab indicator for the footer's external links. */
 function ExtIcon() {
   return (
-    <HugeiconsIcon icon={SquareArrowUpRightIcon} size={12} strokeWidth={1.8} className="shrink-0" />
+    <HugeiconsIcon icon={ArrowUpRight01Icon} size={12} strokeWidth={2} className="shrink-0" />
   );
 }
 
@@ -35,12 +34,13 @@ export function Footer() {
   return (
     <footer className="bg-foreground text-background/80">
       <div className="mx-auto max-w-6xl px-6 py-14">
-        <Grid cols={[1, 2, 5]} gap={8}>
-          <div className="sm:col-span-2 md:col-span-1">
+        {/* Brand on the left, link columns left-aligned on the right; justify-between
+            opens a wide gap between the brand block and the links. */}
+        <Flex direction="col" gap={10} className="md:flex-row md:items-start md:justify-between">
+          <div className="shrink-0">
             <Flex
               as={Link}
               to="/"
-              hash="top"
               aria-label="Nijam.dev home"
               inline
               className="text-background"
@@ -55,82 +55,60 @@ export function Footer() {
             </Text>
           </div>
 
-          <div>
-            <Text as="p" className={H5}>
-              Product
-            </Text>
-            <Link to="/" hash="features" className={COL}>
-              Features
-            </Link>
-            <Link to="/" hash="flakiness" className={COL}>
-              Flakiness detector
-            </Link>
-            <Link to="/" hash="integrations" className={COL}>
-              Integrations
-            </Link>
-            <Link to="/pricing" className={COL}>
-              Pricing
-            </Link>
-            <DashboardLink className={COL}>Dashboard</DashboardLink>
-          </div>
+          <Grid cols={[2, 3]} gap={8}>
+            <div>
+              <Text as="p" className={H5}>
+                Product
+              </Text>
+              <Link to="/features" className={COL}>
+                Features
+              </Link>
+              <Link to="/pricing" className={COL}>
+                Pricing
+              </Link>
+              <Link to="/login" className={COL}>
+                Log in
+              </Link>
+              <Link to="/signup" className={COL}>
+                Sign up
+              </Link>
+            </div>
 
-          <div>
-            <Text as="p" className={H5}>
-              Connect
-            </Text>
-            {['GitHub Actions', 'Jenkins', 'GitLab CI', 'CircleCI'].map((p) => (
-              <a
-                key={p}
-                href={`${DOCS_URL}/reporter/ci-integration/#supported-providers`}
-                {...ext}
-                className={COL_EXT}
-              >
-                {p}
+            <div>
+              <Text as="p" className={H5}>
+                Reporters
+              </Text>
+              {REPORTERS.map((r) => (
+                <a key={r.label} href={r.href} {...ext} className={COL_EXT}>
+                  {r.label}
+                  <ExtIcon />
+                </a>
+              ))}
+            </div>
+
+            <div>
+              <Text as="p" className={H5}>
+                Resources
+              </Text>
+              <a href={DOCS_URL} {...ext} className={COL_EXT}>
+                Docs
                 <ExtIcon />
               </a>
-            ))}
-          </div>
-
-          <div>
-            <Text as="p" className={H5}>
-              Reporters
-            </Text>
-            {REPORTERS.map((r) => (
-              <a key={r.label} href={r.href} {...ext} className={COL_EXT}>
-                {r.label}
-                <ExtIcon />
-              </a>
-            ))}
-          </div>
-
-          <div>
-            <Text as="p" className={H5}>
-              Resources
-            </Text>
-            <a href={DOCS_URL} {...ext} className={COL_EXT}>
-              Docs
-              <ExtIcon />
-            </a>
-            <Link to="/support" className={COL}>
-              Support
-            </Link>
-            <Link to="/terms" className={COL}>
-              Terms of Service
-            </Link>
-            <Link to="/privacy" className={COL}>
-              Privacy Policy
-            </Link>
-            <Link to="/security" className={COL}>
-              Security
-            </Link>
-            <Link to="/signup" className={COL}>
-              Start free
-            </Link>
-            <Link to="/login" className={COL}>
-              Log in
-            </Link>
-          </div>
-        </Grid>
+              <Link to="/support" className={COL}>
+                Support
+              </Link>
+              <Link to="/terms" className={COL}>
+                Terms of Service
+              </Link>
+              <Link to="/privacy" className={COL}>
+                Privacy Policy
+              </Link>
+              <Link to="/security" className={COL}>
+                Security
+              </Link>
+            </div>
+          </Grid>
+        </Flex>
 
         <Flex
           align="center"

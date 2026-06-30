@@ -9,8 +9,6 @@ import {
   EyeOffIcon,
   ServerStack01Icon,
 } from '@hugeicons/core-free-icons';
-import { Nav } from '@/components/home/components/Nav';
-import { Footer } from '@/components/home/components/Footer';
 import { CTA } from '@/components/home/components/CTA';
 import { Section, P, Bullets } from '@/components/legal/LegalLayout';
 import { Flex } from '@/components/ui/flex';
@@ -19,7 +17,7 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { seo } from '@/lib/seo';
 
-export const Route = createFileRoute('/security')({
+export const Route = createFileRoute('/_marketing/security')({
   head: () =>
     seo({
       title: 'Security',
@@ -76,9 +74,7 @@ const PILLARS: Pillar[] = [
 
 function SecurityPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Nav />
-
+    <>
       <main>
         {/* hero */}
         <section className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center md:pt-24">
@@ -334,7 +330,6 @@ function SecurityPage() {
         title="Bring your test results somewhere safe"
         description="Point your CI at Nijam and turn the results you already produce into flakiness detection and failure analytics, no agents, no re-runs."
       />
-      <Footer />
-    </div>
+    </>
   );
 }

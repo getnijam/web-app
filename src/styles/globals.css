@@ -183,10 +183,15 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* Sidebar collapse/expand easing (animate-ui feel): a gentle overshoot for the
-     gap, a smooth in-out for the panel. Used by ui/sidebar via ease-sidebar*. */
+  /* Sidebar collapse/expand easing (animate-ui feel): a gentle in-out for the
+     gap, a firmer in-out for the panel. Used by ui/sidebar via ease-sidebar*. */
   --ease-sidebar: cubic-bezier(0.75, 0, 0.25, 1);
-  --ease-sidebar-gap: cubic-bezier(0.7, -0.15, 0.25, 1.15);
+  --ease-sidebar-gap: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Long ambient transition for the hero-grid cell hover trail. Sits outside the
+     default duration scale, declared as a token so Hero.tsx uses `duration-2000`
+     instead of an arbitrary value. */
+  --duration-2000: 2000ms;
 }
 
 @layer base {
@@ -227,7 +232,7 @@
 }
 .scroll-area::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-4xl);
   border: 3px solid transparent;
   background-clip: padding-box;
 }

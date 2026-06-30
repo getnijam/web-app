@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { LegalLayout, Section, P, Bullets } from '@/components/legal/LegalLayout';
 import { seo } from '@/lib/seo';
 
-export const Route = createFileRoute('/privacy')({
+export const Route = createFileRoute('/_marketing/privacy')({
   head: () =>
     seo({
       title: 'Privacy Policy',
