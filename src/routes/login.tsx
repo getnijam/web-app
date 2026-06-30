@@ -17,10 +17,14 @@ import { ErrorBanner } from '@/components/states/ErrorState';
 import { isApiError } from '@/lib/api-error';
 import { redirectAuthedToDashboard, safeNextPath } from '@/lib/auth-redirect';
 import { seo } from '@/lib/seo';
+import { openExternal } from '@/lib/navigation';
 
 const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
 
 export const Route = createFileRoute('/login')({
+  // Client-rendered auth/utility form: beforeLoad (redirect-if-authed) runs in the
+  // browser with the session cookie, and these are forms with no SEO value.
+  ssr: false,
   head: () =>
     seo({
       title: 'Log in',
@@ -114,7 +118,7 @@ function LoginPage() {
       const data = res.data;
       // Enforced → SSO is the only way in for this domain; go straight to the IdP.
       if (data?.available && data.enforced) {
-        window.location.href = ssoStartUrl(e, postLogin);
+        openExternal(ssoStartUrl(e, postLogin));
         return;
       }
       // Available but optional → continue to the password step, but also offer SSO there.
@@ -128,7 +132,7 @@ function LoginPage() {
   };
 
   const goToSso = () => {
-    window.location.href = ssoStartUrl(email.trim(), postLogin);
+    openExternal(ssoStartUrl(email.trim(), postLogin));
   };
 
   const passwordLogin = useMutation({

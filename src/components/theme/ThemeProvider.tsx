@@ -21,6 +21,9 @@ function isTheme(value: unknown): value is Theme {
 }
 
 function readStoredTheme(): Theme {
+  // SSR has no localStorage; return the stable default so the server render and the
+  // first client render agree (the real value is adopted in a mount effect).
+  if (typeof window === 'undefined') return 'system';
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (isTheme(stored)) return stored;
@@ -31,6 +34,7 @@ function readStoredTheme(): Theme {
 }
 
 function systemPrefersDark(): boolean {
+  if (typeof window === 'undefined') return false; // SSR default: light
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
@@ -48,8 +52,21 @@ interface ThemeContextValue {
 const ThemeContext = React.createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = React.useState<Theme>(readStoredTheme);
-  const [resolvedTheme, setResolvedTheme] = React.useState<ResolvedTheme>(() => resolve(theme));
+  // SSR-safe deterministic defaults so the server render and the first client render
+  // match (no hydration mismatch). The no-flash script in __root already applied the
+  // real theme class to <html>; the mount effect below adopts the stored preference
+  // into React state.
+  const [theme, setThemeState] = React.useState<Theme>('system');
+  const [resolvedTheme, setResolvedTheme] = React.useState<ResolvedTheme>('light');
+
+  // After hydration, adopt the persisted preference (client-only; reads localStorage).
+  // SSR rendered the 'system' default, so syncing the stored value here is the
+  // intentional one-time post-hydration update (not derived/synchronizable state).
+  React.useEffect(() => {
+    const stored = readStoredTheme();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setThemeState((current) => (stored === current ? current : stored));
+  }, []);
 
   // Apply the resolved mode to <html> whenever the preference changes, and keep
   // it in sync with the OS while in `system` mode.

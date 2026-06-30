@@ -24,6 +24,7 @@ declare global {
 }
 
 export function initBetterStackAnalytics(): void {
+  if (typeof window === 'undefined') return; // never on the server
   const enabledInDev = import.meta.env.VITE_MONITORING_DEV === 'true';
   if (!import.meta.env.PROD && !enabledInDev) return;
   const token = import.meta.env.VITE_BETTERSTACK_ANALYTICS_TOKEN;
@@ -83,17 +84,19 @@ type TrackArgs<K extends EventName> = keyof AnalyticsEvents[K] extends never
  * its properties always match. Fire-and-forget, never awaited, never throws.
  */
 export function track<K extends EventName>(...args: TrackArgs<K>): void {
-  if (!window.betterstack) return;
+  if (typeof window === 'undefined' || !window.betterstack) return;
   const [event, props] = args;
   window.betterstack('track', event, props ?? {});
 }
 
 /** Associate the current session with the signed-in user (pairs with `Sentry.setUser`). */
 export function identify(user: { id: string; email: string }): void {
+  if (typeof window === 'undefined') return;
   window.betterstack?.('user', { id: user.id, email: user.email });
 }
 
 /** Clear the identified user on sign-out (pairs with `Sentry.setUser(null)`). */
 export function resetAnalyticsUser(): void {
+  if (typeof window === 'undefined') return;
   window.betterstack?.('user', null);
 }

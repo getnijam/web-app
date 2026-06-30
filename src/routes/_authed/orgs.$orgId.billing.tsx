@@ -30,6 +30,7 @@ import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { privateSeo } from '@/lib/seo';
+import { openExternal } from '@/lib/navigation';
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/billing')({
   head: () => privateSeo('Billing & usage'),
@@ -79,7 +80,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   const checkout = useMutation({
     ...createBillingCheckoutMutation(),
     onSuccess: (data) => {
-      window.location.href = data.url; // leave the SPA for Polar's hosted checkout
+      openExternal(data.url); // leave the SPA for Polar's hosted checkout
     },
     onError: (err) =>
       notify.error("Couldn't start checkout", {
@@ -92,7 +93,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   const portal = useMutation({
     ...createBillingPortalMutation(),
     onSuccess: (data) => {
-      window.location.href = data.url;
+      openExternal(data.url);
     },
     onError: (err) =>
       notify.error("Couldn't open billing portal", {

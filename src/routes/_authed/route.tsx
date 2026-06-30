@@ -8,6 +8,11 @@ import { DashboardNotFound } from '@/components/states/DashboardNotFound';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed')({
+  // The dashboard stays client-rendered: it's cookie-authed and API-heavy, so SSR
+  // would mean forwarding the session cookie to the API on every loader. ssr:false
+  // keeps the whole subtree client-only, beforeLoad (getMe) runs in the browser with
+  // the cookie, exactly as before. Public/marketing routes still SSR for SEO.
+  ssr: false,
   // Every dashboard page is noindex + gets a baseline title. Leaf routes override
   // the title; this guarantees none are titleless or indexable even if one is missed.
   head: () => privateSeo('Dashboard'),

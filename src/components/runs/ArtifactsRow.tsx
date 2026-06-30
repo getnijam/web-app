@@ -10,6 +10,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
+import { openBlankTab, openInNewTab } from '@/lib/navigation';
 
 const TRACE_VIEWER = 'https://trace.playwright.dev/';
 
@@ -38,7 +39,7 @@ export function ArtifactsRow({
   // Open a blank tab synchronously (within the click gesture, so it isn't blocked),
   // mint a fresh 15-min signed URL, then load it in the Playwright trace viewer.
   async function openTrace(attachmentId: string) {
-    const win = window.open('', '_blank');
+    const win = openBlankTab();
     setLoadingId(attachmentId);
     try {
       const { url } = await queryClient.fetchQuery(
@@ -46,7 +47,7 @@ export function ArtifactsRow({
       );
       const viewer = `${TRACE_VIEWER}?trace=${encodeURIComponent(url)}`;
       if (win) win.location.href = viewer;
-      else window.open(viewer, '_blank', 'noopener');
+      else openInNewTab(viewer);
     } catch (err) {
       win?.close();
       notify.error("Couldn't open trace", {

@@ -19,6 +19,9 @@ import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
 import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/signup')({
+  // Client-rendered auth/utility form: beforeLoad (redirect-if-authed) runs in the
+  // browser with the session cookie, and these are forms with no SEO value.
+  ssr: false,
   head: () =>
     seo({
       title: 'Create your account',

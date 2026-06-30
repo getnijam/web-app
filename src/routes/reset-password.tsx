@@ -19,6 +19,9 @@ import { seo } from '@/lib/seo';
 const ResetSearch = z.object({ token: z.string().optional() });
 
 export const Route = createFileRoute('/reset-password')({
+  // Client-rendered auth/utility form: beforeLoad (redirect-if-authed) runs in the
+  // browser with the session cookie, and these are forms with no SEO value.
+  ssr: false,
   head: () => seo({ title: 'Set a new password', path: '/reset-password', noindex: true }),
   beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   validateSearch: ResetSearch,

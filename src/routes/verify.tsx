@@ -15,6 +15,9 @@ import { seo } from '@/lib/seo';
 const VerifySearch = z.object({ token: z.string().optional() });
 
 export const Route = createFileRoute('/verify')({
+  // Client-rendered auth/utility form: beforeLoad (redirect-if-authed) runs in the
+  // browser with the session cookie, and these are forms with no SEO value.
+  ssr: false,
   head: () => seo({ title: 'Verify your email', path: '/verify', noindex: true }),
   beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   validateSearch: VerifySearch,

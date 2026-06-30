@@ -23,6 +23,7 @@ import { SlackLogo } from './SlackLogo';
 import { GitHubLogo } from './GitHubLogo';
 import { TeamsLogo } from './TeamsLogo';
 import { DiscordLogo } from './DiscordLogo';
+import { openExternal } from '@/lib/navigation';
 
 const TRIGGER_SUMMARY: Record<string, string> = {
   every: 'every run',
@@ -117,7 +118,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
   const slackInstall = useMutation({
     ...installOrgSlackMutation(),
     onSuccess: (res) => {
-      window.location.href = res.url;
+      openExternal(res.url);
     },
     onError: (err) =>
       notify.error("Couldn't connect Slack", {
@@ -129,7 +130,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
   const githubInstall = useMutation({
     ...installOrgGithubMutation(),
     onSuccess: (res) => {
-      window.location.href = res.url;
+      openExternal(res.url);
     },
     onError: (err) =>
       notify.error("Couldn't connect GitHub", {
