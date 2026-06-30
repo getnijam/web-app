@@ -1,7 +1,8 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import { nitro } from 'nitro/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import path from 'node:path';
 
@@ -38,10 +39,16 @@ const emitVersionJson: Plugin = {
 
 export default defineConfig({
   plugins: [
-    // Split each route's component into its own lazy chunk (loaded on navigation)
-    // instead of shipping the whole app as one bundle. See the `vite:preloadError`
-    // handler in main.tsx, which reloads when a deploy has removed a stale chunk.
-    tanstackRouter({ autoCodeSplitting: true }),
+    // TanStack Start: SSR + the same file-based routing (it subsumes the router
+    // plugin's code-splitting). `getRouter` (src/router.tsx) is the shared factory;
+    // src/client.tsx is our custom client entry (browser-only init then hydrate); the
+    // server entry uses Start's default. Must come before the React plugin.
+    tanstackStart({
+      router: { entry: './router.tsx' },
+      // entry-client (not client.tsx) so it doesn't collide with the generated `@/client` dir.
+      client: { entry: './entry-client.tsx' },
+    }),
+    nitro(),
     react(),
     tailwindcss(),
     emitVersionJson,

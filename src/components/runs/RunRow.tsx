@@ -62,7 +62,6 @@ export function RunRow({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const shortSha = run.commitSha ? run.commitSha.slice(0, 7) : run.id.slice(0, 7);
   const ciRunUrl = run.ciRunUrl;
-  const runHref = `/orgs/${orgId}/projects/${projectId}/runs/${run.id}`;
 
   const remove = useMutation({
     ...deleteRunMutation(),
@@ -84,11 +83,6 @@ export function RunRow({
       });
     },
   });
-
-  const openInNewTab = () => window.open(runHref, '_blank', 'noopener,noreferrer');
-  const openRunSource = () => {
-    if (ciRunUrl) window.open(ciRunUrl, '_blank', 'noopener,noreferrer');
-  };
 
   // The menu only appears when there's something to do: open the CI run or
   // (for admins) delete the run.
@@ -197,14 +191,23 @@ export function RunRow({
         <ContextMenu>
           <ContextMenuTrigger asChild>{row}</ContextMenuTrigger>
           <ContextMenuContent>
-            <ContextMenuItem onSelect={openInNewTab}>
-              <HugeiconsIcon icon={LinkSquare02Icon} size={16} />
-              Open in new tab
+            <ContextMenuItem asChild>
+              <Link
+                to="/orgs/$orgId/projects/$projectId/runs/$runId"
+                params={{ orgId, projectId, runId: run.id }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <HugeiconsIcon icon={LinkSquare02Icon} size={16} />
+                Open in new tab
+              </Link>
             </ContextMenuItem>
             {ciRunUrl && (
-              <ContextMenuItem onSelect={openRunSource}>
-                <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} />
-                Open run source
+              <ContextMenuItem asChild>
+                <a href={ciRunUrl} target="_blank" rel="noopener noreferrer">
+                  <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} />
+                  Open run source
+                </a>
               </ContextMenuItem>
             )}
             {isAdmin && <ContextMenuSeparator />}

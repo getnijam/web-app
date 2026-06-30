@@ -28,8 +28,9 @@ export function ConnectedAccounts({ user }: { user: UserPublic }) {
   const accountsQuery = useQuery(listMyOAuthAccountsOptions());
   const accounts = accountsQuery.data?.accounts ?? [];
   // Return to the current page after the connect round-trip; the account menu mounted
-  // there re-opens this dialog (via ?connected / ?connectError).
-  const next = window.location.pathname;
+  // there re-opens this dialog (via ?connected / ?connectError). SSR-guarded (this lives
+  // under the ssr:false dashboard, so window is always present in practice).
+  const next = typeof window === 'undefined' ? '/' : window.location.pathname;
 
   const unlink = useMutation({
     ...unlinkMyOAuthAccountMutation(),

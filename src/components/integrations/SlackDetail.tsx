@@ -42,6 +42,7 @@ import { cn } from '@/lib/utils';
 import { SlackLogo } from './SlackLogo';
 import { SlackPreview, type PreviewState } from './SlackPreview';
 import { Segmented } from './Segmented';
+import { openExternal } from '@/lib/navigation';
 
 type TriggerMode = SlackStatusResponse['triggerMode'];
 type DetailLevel = SlackStatusResponse['detailLevel'];
@@ -193,7 +194,7 @@ function SlackDetailInner({
   const reconnect = useMutation({
     ...installOrgSlackMutation(),
     onSuccess: (res) => {
-      window.location.href = res.url;
+      openExternal(res.url);
     },
     onError: (err) =>
       notify.error("Couldn't start Slack reconnect", {

@@ -19,6 +19,9 @@ import { useLogout } from '@/hooks/use-logout';
 import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/invite')({
+  // Client-rendered auth/utility form: beforeLoad (redirect-if-authed) runs in the
+  // browser with the session cookie, and these are forms with no SEO value.
+  ssr: false,
   head: () => seo({ title: 'Accept your invitation', path: '/invite', noindex: true }),
   component: InvitePage,
   validateSearch: (search: Record<string, unknown>): { token?: string } => ({

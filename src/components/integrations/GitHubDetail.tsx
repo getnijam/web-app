@@ -35,6 +35,7 @@ import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 import { GitHubLogo } from './GitHubLogo';
+import { openExternal } from '@/lib/navigation';
 
 const errMsg = (err: unknown, fallback = 'Something went wrong. Please try again.') =>
   isApiError(err) ? err.error.message : fallback;
@@ -87,7 +88,7 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
   const install = useMutation({
     ...installOrgGithubMutation(),
     onSuccess: (res) => {
-      window.location.href = res.url; // full redirect to GitHub's install page
+      openExternal(res.url); // full redirect to GitHub's install page
     },
     onError: (err) => notify.error("Couldn't start GitHub install", { description: errMsg(err) }),
   });

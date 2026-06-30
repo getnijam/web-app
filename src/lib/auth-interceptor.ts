@@ -7,6 +7,10 @@ import { client } from '@/client/client.gen';
 const AUTHED_PREFIXES = ['/orgs', '/profile'];
 
 let redirecting = false;
+// Guard against double-registration: under SSR the root component mounts (and its
+// effects run, twice under StrictMode in dev) so this can be called more than once;
+// only the first call wires the interceptor.
+let registered = false;
 
 /**
  * Send the user to `/login?nextUrl=<here>` whenever the API returns **401** while
@@ -16,6 +20,8 @@ let redirecting = false;
  * a page". Registered once, after the router exists, so it can navigate in-SPA.
  */
 export function registerAuthInterceptor(router: AnyRouter): void {
+  if (registered) return;
+  registered = true;
   client.interceptors.response.use((response) => {
     if (response.status !== 401) return response;
 

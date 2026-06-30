@@ -18,6 +18,9 @@ import { redirectAuthedToDashboard } from '@/lib/auth-redirect';
 import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/forgot-password')({
+  // Client-rendered auth/utility form: beforeLoad (redirect-if-authed) runs in the
+  // browser with the session cookie, and these are forms with no SEO value.
+  ssr: false,
   head: () => seo({ title: 'Reset your password', path: '/forgot-password', noindex: true }),
   beforeLoad: ({ context }) => redirectAuthedToDashboard(context.queryClient),
   component: ForgotPasswordPage,
