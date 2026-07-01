@@ -3,8 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
-import { useQuery } from '@tanstack/react-query';
-import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { useSessionUser } from '@/hooks/use-session-user';
 import { DashboardLink } from './DashboardLink';
 import { Reveal } from '../Reveal';
 import { DOCS_URL } from '../config';
@@ -21,7 +20,7 @@ export function CTA({
   title?: string;
   description?: ReactNode;
 } = {}) {
-  const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
+  const user = useSessionUser().data?.user;
   return (
     <section className="bg-foreground text-background">
       <Reveal className="mx-auto max-w-6xl px-6 py-24 text-center">

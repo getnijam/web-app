@@ -1,7 +1,6 @@
 import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { useSessionUser } from '@/hooks/use-session-user';
 
 type Props = Pick<ComponentPropsWithoutRef<'a'>, 'className' | 'onClick'> & {
   children: ReactNode;
@@ -18,7 +17,7 @@ type Props = Pick<ComponentPropsWithoutRef<'a'>, 'className' | 'onClick'> & {
  */
 export const DashboardLink = forwardRef<HTMLAnchorElement, Props>(
   function DashboardLink(props, ref) {
-    const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
+    const user = useSessionUser().data?.user;
 
     if (user?.lastOrgId) {
       return (

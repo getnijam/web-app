@@ -1,13 +1,12 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CopyField } from '@/components/ui/copy-field';
 import { CopyButton } from '@/components/ui/copy-button';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
-import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { useSessionUser } from '@/hooks/use-session-user';
 import { Reveal } from '../Reveal';
 import { DashboardLink } from './DashboardLink';
 import { PlaywrightLogo, PytestLogo, VitestLogo } from './framework-logos';
@@ -111,7 +110,7 @@ const HELP_LINK = 'font-medium text-primary hover:underline';
  * Reads the shared, cached `/me` query the home sections already issue, no extra request.
  */
 function CredentialsHelp() {
-  const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
+  const user = useSessionUser().data?.user;
 
   if (!user) {
     return (

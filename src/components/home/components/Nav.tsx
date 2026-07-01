@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
 import { motion, type Transition } from 'motion/react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowUpRight01Icon, Cancel01Icon, Menu01Icon } from '@hugeicons/core-free-icons';
-import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { useSessionUser } from '@/hooks/use-session-user';
 import { DashboardLink } from './DashboardLink';
 import { Logo } from '@/components/auth/Logo';
 import { Button } from '@/components/ui/button';
@@ -114,7 +113,7 @@ function DesktopNavLinks() {
       {rect && (
         <motion.span
           aria-hidden
-          className="pointer-events-none absolute top-0 bottom-0 z-0 rounded-full bg-primary/10 ring-1 ring-inset ring-primary/15"
+          className="pointer-events-none absolute top-0 bottom-0 z-0 rounded-full bg-primary/10 ring-1 ring-primary/15 ring-inset"
           initial={false}
           animate={{ left: rect.left, width: rect.width }}
           transition={INDICATOR_TRANSITION}
@@ -137,7 +136,7 @@ export function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   // Session, read optimistically (a 401 just means "guest"). Cached, so the
   // other home sections that read it share this one request.
-  const me = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 });
+  const me = useSessionUser();
   const user = me.data?.user;
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -205,11 +204,7 @@ export function Nav() {
           <Flex align="center" gap={3} className="w-full">
             {/* `flex` (not the default inline anchor) so no line-box strut adds
                 space under the lockup and the logo centers exactly in the card. */}
-            <Link
-              to="/"
-              aria-label="Nijam.dev home"
-              className="flex shrink-0 items-center pl-1.5"
-            >
+            <Link to="/" aria-label="Nijam.dev home" className="flex shrink-0 items-center pl-1.5">
               <Logo />
             </Link>
             <DesktopNavLinks />
@@ -241,7 +236,6 @@ export function Nav() {
               {menuExtras}
             </Flex>
           )}
-
         </Flex>
       </div>
     </header>

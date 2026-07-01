@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
-import { useQuery } from '@tanstack/react-query';
-import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { useSessionUser } from '@/hooks/use-session-user';
 import { DashboardLink } from './DashboardLink';
 import { ProductMock } from './ProductMock';
 import { CIStrip } from './CIStrip';
@@ -16,7 +15,7 @@ import { CIStrip } from './CIStrip';
 const CELL = 56;
 
 export function Hero() {
-  const user = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 }).data?.user;
+  const user = useSessionUser().data?.user;
 
   // Interactive grid backdrop: we fill it with exactly enough cells to cover the
   // hero, recomputed on resize. Hover lighting/fading is pure CSS on each cell -
@@ -83,8 +82,8 @@ export function Hero() {
 
             <Text className="mt-5 max-w-xl text-lg text-pretty text-muted-foreground">
               Nijam reads the test results your CI already uploads, from Playwright, pytest, or
-              Vitest, and answers the two questions a pass-or-fail build never does:{' '}
-              <em>why</em> a test failed, and <em>since when</em> it has been flaky.
+              Vitest, and answers the two questions a pass-or-fail build never does: <em>why</em> a
+              test failed, and <em>since when</em> it has been flaky.
             </Text>
 
             <Flex gap={3} wrap className="pointer-events-auto mt-7">

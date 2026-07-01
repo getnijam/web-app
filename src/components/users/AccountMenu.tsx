@@ -10,7 +10,7 @@ import {
   Mail01Icon,
 } from '@hugeicons/core-free-icons';
 import { Loader2 } from 'lucide-react';
-import { getMeOptions, listMyInvitationsOptions } from '@/client/@tanstack/react-query.gen';
+import { listMyInvitationsOptions } from '@/client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -18,6 +18,7 @@ import { UserAvatar } from '@/components/users/UserAvatar';
 import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { useClickAway } from '@/hooks/use-click-away';
 import { useLogout } from '@/hooks/use-logout';
+import { useSessionUser } from '@/hooks/use-session-user';
 import { cn } from '@/lib/utils';
 
 export type AccountMenuVariant = 'sidebar' | 'topnav';
@@ -38,7 +39,7 @@ export function AccountMenu({
   variant: AccountMenuVariant;
   onSignedOut?: () => void;
 }) {
-  const me = useQuery({ ...getMeOptions(), retry: false, staleTime: 5 * 60 * 1000 });
+  const me = useSessionUser();
   const user = me.data?.user;
   const email = user?.email ?? '';
   const name = user?.name ?? (email ? email.split('@')[0] : 'Account');
