@@ -7,9 +7,9 @@ import {
   Clock01Icon,
   WorkflowSquare01Icon,
   BellIcon,
-  GitPullRequestIcon,
   AiChat02Icon,
   ShieldKeyIcon,
+  RefreshIcon,
 } from '@hugeicons/core-free-icons';
 import { CTA } from '@/components/home/components/CTA';
 import { Reveal } from '@/components/home/Reveal';
@@ -78,16 +78,16 @@ const READ: Feature[] = [
 
 const WORKFLOW: Feature[] = [
   {
-    icon: BellIcon,
-    tint: 'bg-success/15 text-success',
-    title: 'Slack notifications',
-    body: 'Auto-post passing, flaky, and failing runs to Slack, with green / yellow / red status and every test linked back to its results on Nijam.',
+    icon: RefreshIcon,
+    tint: 'bg-info/15 text-info',
+    title: 'Re-run only what failed',
+    body: 'Pull the exact tests that failed on the last run by ID, re-run just those in CI, and Nijam clubs the retry into the same run as another attempt, so a flake that passes second time flips the run green.',
   },
   {
-    icon: GitPullRequestIcon,
-    tint: 'bg-foreground/10 text-foreground',
-    title: 'GitHub checks and comments',
-    body: 'Install the GitHub App and every pull request gets a Nijam status check, plus a results comment that updates in place on each run.',
+    icon: BellIcon,
+    tint: 'bg-success/15 text-success',
+    title: 'Slack and PR comments',
+    body: 'Get every verdict where your team already works: passing, flaky, and failing runs auto-posted to Slack in green / yellow / red, plus a status check and a results comment on every pull request that updates in place on each run.',
   },
   {
     icon: ShieldKeyIcon,

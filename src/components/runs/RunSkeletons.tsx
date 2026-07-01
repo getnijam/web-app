@@ -60,23 +60,14 @@ export function RunsPageSkeleton() {
   );
 }
 
-/** Run detail: back bar + header + summary bar + spec-files panel. */
-export function RunDetailSkeleton() {
+/**
+ * Just the run-detail body: the summary bar + spec-files panel. Used on its own when
+ * the back bar, header, and attempt switcher stay mounted (switching between clubbed
+ * attempts), so only the parts that actually change reload, not the whole page.
+ */
+export function RunDetailBodySkeleton() {
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
-      <Flex align="center" justify="between">
-        <Skeleton className="h-8 w-20 rounded-md" />
-        <Skeleton className="h-8 w-40 rounded-md" />
-      </Flex>
-
-      <Flex direction="col" gap={2}>
-        <Flex align="center" gap={2.5}>
-          <Skeleton className="h-6 w-20 rounded-full" />
-          <Skeleton className="h-6 w-28 rounded-md" />
-        </Flex>
-        <Skeleton className="h-4 w-80 rounded-md" />
-      </Flex>
-
+    <>
       <Flex gap={8} wrap className="rounded-2xl border border-border bg-card px-5 py-4">
         {Array.from({ length: 5 }).map((_, i) => (
           <Flex key={i} direction="col" gap={1.5}>
@@ -103,6 +94,28 @@ export function RunDetailSkeleton() {
           </Flex>
         ))}
       </Flex>
+    </>
+  );
+}
+
+/** Run detail: back bar + header + summary bar + spec-files panel. */
+export function RunDetailSkeleton() {
+  return (
+    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
+      <Flex align="center" justify="between">
+        <Skeleton className="h-8 w-20 rounded-md" />
+        <Skeleton className="h-8 w-40 rounded-md" />
+      </Flex>
+
+      <Flex direction="col" gap={2}>
+        <Flex align="center" gap={2.5}>
+          <Skeleton className="h-6 w-20 rounded-full" />
+          <Skeleton className="h-6 w-28 rounded-md" />
+        </Flex>
+        <Skeleton className="h-4 w-80 rounded-md" />
+      </Flex>
+
+      <RunDetailBodySkeleton />
     </Flex>
   );
 }
