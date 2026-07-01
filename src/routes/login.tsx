@@ -86,7 +86,7 @@ function LoginPage() {
   const [ssoOptional, setSsoOptional] = useState(false);
 
   const finishLogin = async () => {
-    await queryClient.invalidateQueries({ queryKey: getMeQueryKey() });
+    await queryClient.resetQueries({ queryKey: getMeQueryKey() });
     if (invite) {
       navigate({ to: '/invite', search: { token: invite } });
       return;
