@@ -186,10 +186,26 @@ export function RunRow({
               <HugeiconsIcon icon={GitBranchIcon} size={13} className="shrink-0" />
               <span className="truncate font-mono">{run.branch ?? 'no branch'}</span>
             </Flex>
-            <Flex align="center" gap={1.5} className="min-w-0">
-              <UserAvatar name={run.authorName} email={author} size="sm" />
-              <span className="truncate">{author}</span>
-            </Flex>
+            {run.triggeredBy && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Flex align="center" gap={1.5} className="relative z-10 min-w-0 cursor-help">
+                    <UserAvatar name={run.triggeredBy} email="" size="sm" />
+                    <span className="truncate">{run.triggeredBy}</span>
+                  </Flex>
+                </TooltipTrigger>
+                <TooltipContent>Triggered by {run.triggeredBy}</TooltipContent>
+              </Tooltip>
+            )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Flex align="center" gap={1.5} className="relative z-10 min-w-0 cursor-help">
+                  <UserAvatar name={run.authorName} email={author} size="sm" />
+                  <span className="truncate">{author}</span>
+                </Flex>
+              </TooltipTrigger>
+              <TooltipContent>Last commit by {author}</TooltipContent>
+            </Tooltip>
           </Flex>
         </Flex>
 

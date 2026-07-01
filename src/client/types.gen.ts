@@ -493,11 +493,12 @@ export type CreateRunBody = {
     repository?: string;
     authorEmail?: string;
     authorName?: string;
+    triggeredBy?: string;
     ciProvider?: string;
     ciRunId?: string;
     ciRunUrl?: string;
     ciRunAttempt?: string;
-    partialRerun?: boolean | null;
+    partialRerun?: boolean;
     shardIndex?: number;
     shardTotal?: number;
 };
@@ -594,6 +595,7 @@ export type RunSummary = {
     repository: string | null;
     authorEmail: string | null;
     authorName: string | null;
+    triggeredBy: string | null;
     ciProvider: string | null;
     ciRunId: string | null;
     ciRunUrl: string | null;

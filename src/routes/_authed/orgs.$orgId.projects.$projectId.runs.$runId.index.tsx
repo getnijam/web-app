@@ -12,6 +12,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
@@ -226,10 +227,26 @@ function RunDetailPage() {
                 <span className="font-mono">{run.branch ?? 'no branch'}</span>
               )}
             </Flex>
-            <Flex align="center" gap={1.5}>
-              <UserAvatar name={run.authorName} email={author} size="sm" />
-              <span>{author}</span>
-            </Flex>
+            {run.triggeredBy && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Flex align="center" gap={1.5} className="cursor-help">
+                    <UserAvatar name={run.triggeredBy} email="" size="sm" />
+                    <span>{run.triggeredBy}</span>
+                  </Flex>
+                </TooltipTrigger>
+                <TooltipContent>Triggered by {run.triggeredBy}</TooltipContent>
+              </Tooltip>
+            )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Flex align="center" gap={1.5} className="cursor-help">
+                  <UserAvatar name={run.authorName} email={author} size="sm" />
+                  <span>{author}</span>
+                </Flex>
+              </TooltipTrigger>
+              <TooltipContent>Last commit by {author}</TooltipContent>
+            </Tooltip>
             {run.ciProvider && (
               <Flex align="center" gap={1}>
                 <HugeiconsIcon
