@@ -100,7 +100,12 @@ jobs:
           echo "Timed out waiting for a Vercel preview deployment for $SHA." >&2
           exit 1
 
+      # Attempt 1: run the whole suite. `continue-on-error` lets a failure through so the
+      # retry below decides the job's final status (a flake that passes on the re-run
+      # goes green).
       - name: Run E2E against the Vercel preview
+        id: e2e
+        continue-on-error: true
         env:
           # The exact preview URL Vercel generated for this PR's head commit.
           NIJAM_E2E_BASE_URL: ${{ steps.preview.outputs.url }}
@@ -114,6 +119,35 @@ jobs:
           NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
           NIJAM_PROJECT_ID: ${{ secrets.NIJAM_PROJECT_ID }}
         run: npm run test:e2e
+
+      # If attempt 1 failed, ask Nijam which tests failed. fetch-failed is CI-safe (writes
+      # an empty file + exits 0 on any error); --export-env writes NIJAM_RUN_GROUP /
+      # NIJAM_RUN_ATTEMPT / NIJAM_RERUN so the retry clubs under the original run and is
+      # tagged as a re-run.
+      - name: Fetch the failed tests
+        if: steps.e2e.outcome == 'failure'
+        env:
+          NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
+          NIJAM_PROJECT_ID: ${{ secrets.NIJAM_PROJECT_ID }}
+        run: npx nijam-pw fetch-failed --output failed.txt --export-env "$GITHUB_ENV"
+
+      # Attempt 2: re-run ONLY the failed tests (the `file:line` tokens in failed.txt).
+      # Falls back to the full suite if fetch-failed came back empty (e.g. Nijam unreachable).
+      - name: Re-run only the failed tests
+        if: steps.e2e.outcome == 'failure'
+        env:
+          NIJAM_E2E_BASE_URL: ${{ steps.preview.outputs.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          NIJAM_E2E_EMAIL: ${{ secrets.NIJAM_E2E_EMAIL }}
+          NIJAM_E2E_PASSWORD: ${{ secrets.NIJAM_E2E_PASSWORD }}
+          NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
+          NIJAM_PROJECT_ID: ${{ secrets.NIJAM_PROJECT_ID }}
+        run: |
+          if [ -s failed.txt ]; then
+            npx playwright test $(cat failed.txt)
+          else
+            npm run test:e2e
+          fi
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}

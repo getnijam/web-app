@@ -35,7 +35,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Attempt 1: run the whole suite. `continue-on-error` lets a failure through so the
+      # retry below decides the job's final status (a flake that passes on the re-run
+      # goes green).
       - name: Run unit tests
+        id: unit
+        continue-on-error: true
         env:
           # Optional: dogfood, upload the run to Nijam (the GitHub App then posts a
           # check/comment on the PR). Inert unless both are set; fork PRs get no
@@ -44,3 +49,29 @@ jobs:
           NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
           NIJAM_PROJECT_ID: ${{ secrets.NIJAM_UNIT_PROJECT_ID }}
         run: npm run test:unit
+
+      # If attempt 1 failed, ask Nijam which tests failed. fetch-failed is CI-safe (writes
+      # an empty file + exits 0 on any error); --export-env writes NIJAM_RUN_GROUP /
+      # NIJAM_RUN_ATTEMPT / NIJAM_RERUN + NIJAM_TEST_NAME_PATTERN so the retry clubs under
+      # the original run and is tagged as a re-run.
+      - name: Fetch the failed tests
+        if: steps.unit.outcome == 'failure'
+        env:
+          NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
+          NIJAM_PROJECT_ID: ${{ secrets.NIJAM_UNIT_PROJECT_ID }}
+        run: npx nijam-vitest fetch-failed --output failed.txt --export-env "$GITHUB_ENV"
+
+      # Attempt 2: re-run ONLY the failed tests (the spec files in failed.txt, narrowed to
+      # the failing test names). Falls back to the full suite if fetch-failed came back
+      # empty (e.g. Nijam unreachable).
+      - name: Re-run only the failed tests
+        if: steps.unit.outcome == 'failure'
+        env:
+          NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
+          NIJAM_PROJECT_ID: ${{ secrets.NIJAM_UNIT_PROJECT_ID }}
+        run: |
+          if [ -s failed.txt ]; then
+            npx vitest run $(cat failed.txt) -t "$NIJAM_TEST_NAME_PATTERN"
+          else
+            npm run test:unit
+          fi
