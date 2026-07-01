@@ -9,6 +9,7 @@ import {
   ArrowDown01Icon,
   Mail01Icon,
 } from '@hugeicons/core-free-icons';
+import { Loader2 } from 'lucide-react';
 import { getMeOptions, listMyInvitationsOptions } from '@/client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
@@ -113,7 +114,11 @@ export function AccountMenu({
         disabled={logout.isPending}
         className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-destructive hover:bg-transparent disabled:opacity-60"
       >
-        <HugeiconsIcon icon={Logout01Icon} size={16} strokeWidth={1.8} />
+        {logout.isPending ? (
+          <Loader2 className="size-4 animate-spin" />
+        ) : (
+          <HugeiconsIcon icon={Logout01Icon} size={16} strokeWidth={1.8} />
+        )}
         Sign out
       </Button>
     </>

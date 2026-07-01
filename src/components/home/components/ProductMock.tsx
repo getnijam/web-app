@@ -120,9 +120,10 @@ export function ProductMock() {
           </div>
         </Grid>
 
-        {/* Connector tree: the results reported by CI stream down into the
-            analysis card. A faint static track carries animated dashes that flow
-            from both top cards into the dashboard, ending at a pulsing inlet. */}
+        {/* Connector over a faint static track: two separate pipes so the flow
+            direction is unambiguous. The right pipe streams down, From CI into the
+            dashboard's inlet node; the left pipe streams up, out of the dashboard's
+            source node to the success-rate card (a derived metric, not an input). */}
         <div className="relative h-10">
           <svg
             className="absolute inset-0 size-full"
@@ -136,24 +137,38 @@ export function ProductMock() {
               vectorEffect="non-scaling-stroke"
               stroke="var(--border)"
               strokeWidth="1.25"
-              d="M25 0 V42 Q25 50 33 50 H67 Q75 50 75 42 V0 M50 50 V100"
+              d="M75 0 C75 40 58.33 60 58.33 100 M25 0 C25 40 41.67 60 41.67 100"
             />
+            {/* Right pipe: From CI flows down into the dashboard. */}
             <path
               className="flow-line"
               vectorEffect="non-scaling-stroke"
               stroke="var(--primary)"
               strokeWidth="1.5"
-              d="M25 0 V42 Q25 50 33 50 H50 V100"
+              d="M75 0 C75 40 58.33 60 58.33 100"
             />
+            {/* Left pipe: the dashboard flows up, out to the success-rate card. */}
             <path
               className="flow-line"
               vectorEffect="non-scaling-stroke"
               stroke="var(--primary)"
               strokeWidth="1.5"
-              d="M75 0 V42 Q75 50 67 50 H50 V100"
+              d="M41.67 100 C41.67 60 25 40 25 0"
             />
           </svg>
-          <span className="absolute bottom-0 left-1/2 size-2 -translate-x-1/2 translate-y-1/2">
+          {/* Inlet, right of center: where CI results enter the dashboard. */}
+          <span
+            className="absolute bottom-0 size-2 -translate-x-1/2 translate-y-1/2"
+            style={{ left: '58.33%' }}
+          >
+            <span className="absolute inset-0 rounded-full bg-primary/40 motion-safe:animate-ping" />
+            <span className="relative block size-2 rounded-full bg-primary" />
+          </span>
+          {/* Source, left of center: where the derived success rate leaves the dashboard. */}
+          <span
+            className="absolute bottom-0 size-2 -translate-x-1/2 translate-y-1/2"
+            style={{ left: '41.67%' }}
+          >
             <span className="absolute inset-0 rounded-full bg-primary/40 motion-safe:animate-ping" />
             <span className="relative block size-2 rounded-full bg-primary" />
           </span>
