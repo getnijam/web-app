@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   ArrowLeft01Icon,
@@ -16,7 +16,7 @@ import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { UserAvatar } from '@/components/users/UserAvatar';
-import { RunDetailSkeleton } from '@/components/runs/RunSkeletons';
+import { RunDetailBodySkeleton, RunDetailSkeleton } from '@/components/runs/RunSkeletons';
 import { RunSummaryBar } from '@/components/runs/RunSummaryBar';
 import { RunStatusBadge } from '@/components/runs/RunStatusBadge';
 import { AttemptSwitcher } from '@/components/runs/AttemptSwitcher';
@@ -55,15 +55,21 @@ function RunDetailPage() {
     });
   // While the run is in-progress, poll every 30s so Running→Failing→terminal updates
   // live (sharded runs stay open until their post-matrix /complete step). Stops once
-  // finalized/canceled.
+  // finalized/canceled. keepPreviousData: switching clubbed attempts changes the runId
+  // (a new query key), so instead of blanking the whole page we keep the prior attempt
+  // rendered and only skeleton the body (summary + spec files) while the next loads.
   const q = useQuery({
     ...getRunOptions({ path: { id: runId } }),
     refetchInterval: (query) => (query.state.data?.run.finishedAt ? false : 30_000),
+    placeholderData: keepPreviousData,
   });
 
   if (q.isLoading) return <RunDetailSkeleton />;
   if (q.error || !q.data) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
 
+  // True while a different attempt is being fetched: q.data is still the previous
+  // attempt, so the header + AttemptSwitcher stay put and only the body reloads.
+  const switching = q.isPlaceholderData;
   const { run, summary, files, group } = q.data;
   const ds = runDisplayStatus(run);
   const author = displayAuthor(run.authorEmail, run.authorName);
@@ -92,6 +98,70 @@ function RunDetailPage() {
     return visibleFiles.map((f) => (
       <SpecFileRow key={f.file} file={f} orgId={orgId} projectId={projectId} runId={runId} />
     ));
+  }
+
+  // The summary bar + spec-files panel: everything that changes per attempt. Rendered
+  // on its own so a clubbed-attempt switch can skeleton just this, not the whole page.
+  function renderBody() {
+    return (
+      <>
+        <RunSummaryBar summary={summary} />
+
+        {/* spec files */}
+        <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+          <Flex
+            align="center"
+            justify="between"
+            gap={3}
+            wrap
+            className="border-b border-border px-5 py-4"
+          >
+            <Flex align="center" gap={3}>
+              <Text variant="h4">Spec files</Text>
+              <Text as="span" className="text-sm text-muted-foreground tabular-nums">
+                {status === 'all' ? files.length : `${visibleFiles.length} of ${files.length}`}
+              </Text>
+            </Flex>
+            <Tabs value={status} onValueChange={setStatus}>
+              <TabsList>
+                {STATUS_OPTIONS.map((o) => (
+                  <TabsTrigger key={o.value} value={o.value}>
+                    {o.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </Flex>
+
+          {/* Make it obvious the list is filtered, with a one-click way out. */}
+          {status !== 'all' && (
+            <Flex
+              align="center"
+              justify="between"
+              gap={2}
+              className="border-b border-border bg-muted/40 px-5 py-2.5"
+            >
+              <Text as="span" className="text-sm text-muted-foreground">
+                Showing only <span className="font-medium text-foreground">{activeLabel}</span> spec
+                files
+              </Text>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="-mr-2 text-muted-foreground"
+                onClick={() => setStatus('all')}
+              >
+                Show all
+              </Button>
+            </Flex>
+          )}
+
+          <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
+            {renderFiles()}
+          </HoverHighlight>
+        </Flex>
+      </>
+    );
   }
 
   return (
@@ -179,69 +249,10 @@ function RunDetailPage() {
       </Flex>
 
       {group && (
-        <AttemptSwitcher
-          group={group}
-          orgId={orgId}
-          projectId={projectId}
-          currentRunId={runId}
-        />
+        <AttemptSwitcher group={group} orgId={orgId} projectId={projectId} currentRunId={runId} />
       )}
 
-      <RunSummaryBar summary={summary} />
-
-      {/* spec files */}
-      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
-        <Flex
-          align="center"
-          justify="between"
-          gap={3}
-          wrap
-          className="border-b border-border px-5 py-4"
-        >
-          <Flex align="center" gap={3}>
-            <Text variant="h4">Spec files</Text>
-            <Text as="span" className="text-sm text-muted-foreground tabular-nums">
-              {status === 'all' ? files.length : `${visibleFiles.length} of ${files.length}`}
-            </Text>
-          </Flex>
-          <Tabs value={status} onValueChange={setStatus}>
-            <TabsList>
-              {STATUS_OPTIONS.map((o) => (
-                <TabsTrigger key={o.value} value={o.value}>
-                  {o.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </Flex>
-
-        {/* Make it obvious the list is filtered, with a one-click way out. */}
-        {status !== 'all' && (
-          <Flex
-            align="center"
-            justify="between"
-            gap={2}
-            className="border-b border-border bg-muted/40 px-5 py-2.5"
-          >
-            <Text as="span" className="text-sm text-muted-foreground">
-              Showing only <span className="font-medium text-foreground">{activeLabel}</span> spec
-              files
-            </Text>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="-mr-2 text-muted-foreground"
-              onClick={() => setStatus('all')}
-            >
-              Show all
-            </Button>
-          </Flex>
-        )}
-
-        <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
-          {renderFiles()}
-        </HoverHighlight>
-      </Flex>
+      {switching ? <RunDetailBodySkeleton /> : renderBody()}
     </Flex>
   );
 }

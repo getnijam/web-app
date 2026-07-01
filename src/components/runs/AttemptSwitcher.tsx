@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { motion, type Transition } from 'motion/react';
 import type { RunGroup } from '@/client';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -6,6 +7,11 @@ import { cn } from '@/lib/utils';
 import { timeAgo } from '@/lib/format';
 import { attemptDisplayStatus } from './run-status';
 import { StatusDot } from './StatusDot';
+
+// The active-attempt outline is a single shared element (one layoutId across all
+// attempts): when the selected attempt changes, Motion glides the same box to the
+// new card instead of snapping, matching the spring the tabs/toggle indicators use.
+const HIGHLIGHT_TRANSITION: Transition = { type: 'spring', stiffness: 250, damping: 30 };
 
 /**
  * The clubbed-attempts switcher shown on a run that was re-run. Each attempt links to
@@ -53,13 +59,21 @@ export function AttemptSwitcher({
               params={{ orgId, projectId, runId: a.runId }}
               aria-current={isCurrent ? 'page' : undefined}
               className={cn(
-                'rounded-xl border px-3 py-2 transition-colors',
+                'relative rounded-xl border px-3 py-2 transition-colors',
                 isCurrent
-                  ? 'border-primary bg-accent'
+                  ? 'border-transparent'
                   : 'border-border hover:border-primary/40 hover:bg-accent',
               )}
             >
-              <Flex align="center" gap={2}>
+              {isCurrent && (
+                <motion.span
+                  layoutId="attempt-active"
+                  aria-hidden
+                  className="absolute -inset-px z-0 rounded-xl border border-primary bg-accent"
+                  transition={HIGHLIGHT_TRANSITION}
+                />
+              )}
+              <Flex align="center" gap={2} className="relative z-10">
                 <StatusDot status={ds} />
                 <Flex direction="col" className="min-w-0">
                   <Flex align="center" gap={1.5}>
