@@ -46,9 +46,9 @@ jobs:
         id: pw
         run: echo "version=$(node -p 'require("./package-lock.json").packages["node_modules/@playwright/test"].version')" >> "$GITHUB_OUTPUT"
 
-      - name: Cache Playwright browsers
+      - name: Restore Playwright browsers
         id: pw-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ steps.pw.outputs.version }}-chromium
@@ -62,6 +62,13 @@ jobs:
       - name: Install Playwright OS deps (cache hit)
         if: steps.pw-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
+
+      - name: Save Playwright browsers
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.pw.outputs.version }}-chromium
 
       # Vercel creates a GitHub deployment for the pushed commit and posts
       # statuses as the build progresses. Poll (~10 min budget) until the
@@ -100,12 +107,24 @@ jobs:
           echo "Timed out waiting for a Vercel preview deployment for $SHA." >&2
           exit 1
 
-      # Attempt 1: run the whole suite. `continue-on-error` lets a failure through so the
-      # retry below decides the job's final status (a flake that passes on the re-run
-      # goes green).
+      # Re-run only failed: when you click GitHub's "Re-run failed jobs" (which bumps
+      # GITHUB_RUN_ATTEMPT above 1), first ask Nijam which tests failed in the previous
+      # attempt of THIS run so the re-run executes only those `file:line` tokens. On the
+      # first attempt this is skipped and the whole suite runs. fetch-failed is CI-safe
+      # (writes an empty file + exits 0 on any error); --export-env writes NIJAM_RERUN
+      # (tags the run "failed only"). GitHub keeps the same run id and bumps the attempt,
+      # so Nijam clubs the re-run automatically.
+      - name: Fetch previously-failed tests (on a re-run)
+        if: github.run_attempt != '1'
+        env:
+          NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
+          NIJAM_PROJECT_ID: ${{ secrets.NIJAM_PROJECT_ID }}
+        run: npx nijam-pw fetch-failed --output failed.txt --export-env "$GITHUB_ENV"
+
+      # First attempt runs the whole suite; a re-run runs ONLY the previously-failed tests
+      # (the file:line tokens in failed.txt). Falls back to the full suite if fetch-failed
+      # came back empty (e.g. nothing failed before, or Nijam unreachable).
       - name: Run E2E against the Vercel preview
-        id: e2e
-        continue-on-error: true
         env:
           # The exact preview URL Vercel generated for this PR's head commit.
           NIJAM_E2E_BASE_URL: ${{ steps.preview.outputs.url }}
@@ -118,32 +137,9 @@ jobs:
           # check/comment on the PR). Inert unless both are set.
           NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
           NIJAM_PROJECT_ID: ${{ secrets.NIJAM_PROJECT_ID }}
-        run: npm run test:e2e
-
-      # If attempt 1 failed, ask Nijam which tests failed. fetch-failed is CI-safe (writes
-      # an empty file + exits 0 on any error); --export-env writes NIJAM_RUN_GROUP /
-      # NIJAM_RUN_ATTEMPT / NIJAM_RERUN so the retry clubs under the original run and is
-      # tagged as a re-run.
-      - name: Fetch the failed tests
-        if: steps.e2e.outcome == 'failure'
-        env:
-          NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
-          NIJAM_PROJECT_ID: ${{ secrets.NIJAM_PROJECT_ID }}
-        run: npx nijam-pw fetch-failed --output failed.txt --export-env "$GITHUB_ENV"
-
-      # Attempt 2: re-run ONLY the failed tests (the `file:line` tokens in failed.txt).
-      # Falls back to the full suite if fetch-failed came back empty (e.g. Nijam unreachable).
-      - name: Re-run only the failed tests
-        if: steps.e2e.outcome == 'failure'
-        env:
-          NIJAM_E2E_BASE_URL: ${{ steps.preview.outputs.url }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          NIJAM_E2E_EMAIL: ${{ secrets.NIJAM_E2E_EMAIL }}
-          NIJAM_E2E_PASSWORD: ${{ secrets.NIJAM_E2E_PASSWORD }}
-          NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
-          NIJAM_PROJECT_ID: ${{ secrets.NIJAM_PROJECT_ID }}
         run: |
-          if [ -s failed.txt ]; then
+          if [ "$GITHUB_RUN_ATTEMPT" != "1" ] && [ -s failed.txt ]; then
+            echo "Re-run: executing only the previously-failed tests."
             npx playwright test $(cat failed.txt)
           else
             npm run test:e2e
