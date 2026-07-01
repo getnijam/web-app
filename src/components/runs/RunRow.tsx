@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -14,6 +14,7 @@ import { deleteRunMutation, listProjectRunsQueryKey } from '@/client/@tanstack/r
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -39,6 +40,35 @@ import { timeAgo, formatDuration, displayAuthor } from '@/lib/format';
 import { CountDots } from './CountDots';
 import { RunStatusBadge } from './RunStatusBadge';
 import { runDisplayStatus, runDurationSec, RUN_BAR_CLASS } from './run-status';
+
+/** A small pill on the row that carries an explanatory tooltip. `relative z-10`
+ *  lifts it above the row's full-area overlay link so it can receive hover (same
+ *  trick CountDots uses); `cursor-help` hints there's an explanation. */
+function InfoBadge({
+  children,
+  tip,
+  className,
+}: {
+  children: ReactNode;
+  tip: ReactNode;
+  className: string;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className={cn(
+            'relative z-10 shrink-0 cursor-help rounded-full px-2 py-0.5 text-xs font-medium',
+            className,
+          )}
+        >
+          {children}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs">{tip}</TooltipContent>
+    </Tooltip>
+  );
+}
 
 /** One run in the history list. The whole row links to the run detail. On desktop the
  *  actions menu (Open run source / Delete run) reveals on hover; on mobile (no hover)
@@ -110,19 +140,44 @@ export function RunRow({
             </Text>
             <RunStatusBadge status={ds} className="shrink-0" />
             {run.attemptCount > 1 && (
-              <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
+              <InfoBadge
+                className="bg-secondary text-secondary-foreground"
+                tip={
+                  <>
+                    This CI run was re-run. Nijam clubs all {run.attemptCount} attempts into one run
+                    and rolls the result up across them, a test that failed then passed on a retry
+                    counts as recovered.
+                  </>
+                }
+              >
                 {run.attemptCount} attempts
-              </span>
+              </InfoBadge>
             )}
             {run.shardTotal != null && run.shardTotal > 1 && (
-              <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
+              <InfoBadge
+                className="bg-secondary text-secondary-foreground"
+                tip={
+                  <>
+                    This run was split across {run.shardTotal} CI shards running in parallel,
+                    clubbed back into a single run here.
+                  </>
+                }
+              >
                 {run.shardTotal} shards
-              </span>
+              </InfoBadge>
             )}
             {run.environment && (
-              <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-xs font-medium text-muted-foreground">
+              <InfoBadge
+                className="border border-border text-muted-foreground"
+                tip={
+                  <>
+                    The environment this run tested against, reported by your CI (set via
+                    NIJAM_ENVIRONMENT).
+                  </>
+                }
+              >
                 {run.environment}
-              </span>
+              </InfoBadge>
             )}
           </Flex>
           <Flex align="center" gap={2.5} wrap className="min-w-0 text-xs text-muted-foreground">
