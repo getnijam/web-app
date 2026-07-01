@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
-import { useSessionUser } from '@/hooks/use-session-user';
+import { useQuery } from '@tanstack/react-query';
+import { meQueryOptions } from '@/lib/me-query';
 import { DashboardLink } from './DashboardLink';
 import { ProductMock } from './ProductMock';
 import { CIStrip } from './CIStrip';
@@ -15,7 +16,7 @@ import { CIStrip } from './CIStrip';
 const CELL = 56;
 
 export function Hero() {
-  const user = useSessionUser().data?.user;
+  const user = useQuery(meQueryOptions()).data?.user;
 
   // Interactive grid backdrop: we fill it with exactly enough cells to cover the
   // hero, recomputed on resize. Hover lighting/fading is pure CSS on each cell -

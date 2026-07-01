@@ -3,7 +3,8 @@ import { Link, useRouterState } from '@tanstack/react-router';
 import { motion, type Transition } from 'motion/react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowUpRight01Icon, Cancel01Icon, Menu01Icon } from '@hugeicons/core-free-icons';
-import { useSessionUser } from '@/hooks/use-session-user';
+import { useQuery } from '@tanstack/react-query';
+import { meQueryOptions } from '@/lib/me-query';
 import { DashboardLink } from './DashboardLink';
 import { Logo } from '@/components/auth/Logo';
 import { Button } from '@/components/ui/button';
@@ -136,7 +137,7 @@ export function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   // Session, read optimistically (a 401 just means "guest"). Cached, so the
   // other home sections that read it share this one request.
-  const me = useSessionUser();
+  const me = useQuery(meQueryOptions());
   const user = me.data?.user;
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);

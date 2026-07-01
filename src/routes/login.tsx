@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { login, verifyLogin2Fa, ssoDiscovery } from '@/client';
-import { getMeQueryKey, getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { getMeQueryKey } from '@/client/@tanstack/react-query.gen';
+import { meQueryOptions } from '@/lib/me-query';
 import { AuthLayout, AuthHeading } from '@/components/auth/AuthLayout';
 import { OAuthButtons } from '@/components/auth/OAuthButtons';
 import { oauthErrorMessage } from '@/lib/oauth-error';
@@ -95,8 +96,8 @@ function LoginPage() {
       return;
     }
     // Land returning users on the org they last opened; first-timers get the picker.
-    const me = await queryClient.ensureQueryData(getMeOptions());
-    if (me.user.lastOrgId) {
+    const me = await queryClient.ensureQueryData(meQueryOptions());
+    if (me?.user?.lastOrgId) {
       navigate({ to: '/orgs/$orgId/projects', params: { orgId: me.user.lastOrgId } });
     } else {
       navigate({ to: '/orgs' });

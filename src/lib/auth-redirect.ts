@@ -1,6 +1,6 @@
 import { redirect } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
-import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { meQueryOptions } from '@/lib/me-query';
 
 /**
  * Validate a post-login redirect target. Allows only a **same-origin relative path**
@@ -26,10 +26,11 @@ export async function redirectAuthedToDashboard(
 ): Promise<void> {
   let me;
   try {
-    me = await queryClient.ensureQueryData(getMeOptions());
+    me = await queryClient.ensureQueryData(meQueryOptions());
   } catch {
-    return; // a 401 means guest, let the auth page render
+    return; // a network/unexpected error, let the auth page render
   }
+  if (!me?.user) return; // guest (401 resolves to null), let the auth page render
   const next = safeNextPath(nextUrl);
   if (next) throw redirect({ to: next });
   // Land returning users straight on the org they last opened; first-timers (or anyone

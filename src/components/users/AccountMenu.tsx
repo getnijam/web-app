@@ -18,7 +18,7 @@ import { UserAvatar } from '@/components/users/UserAvatar';
 import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { useClickAway } from '@/hooks/use-click-away';
 import { useLogout } from '@/hooks/use-logout';
-import { useSessionUser } from '@/hooks/use-session-user';
+import { meQueryOptions } from '@/lib/me-query';
 import { cn } from '@/lib/utils';
 
 export type AccountMenuVariant = 'sidebar' | 'topnav';
@@ -39,7 +39,7 @@ export function AccountMenu({
   variant: AccountMenuVariant;
   onSignedOut?: () => void;
 }) {
-  const me = useSessionUser();
+  const me = useQuery(meQueryOptions());
   const user = me.data?.user;
   const email = user?.email ?? '';
   const name = user?.name ?? (email ? email.split('@')[0] : 'Account');

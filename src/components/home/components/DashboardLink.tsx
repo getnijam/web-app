@@ -1,6 +1,7 @@
 import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useSessionUser } from '@/hooks/use-session-user';
+import { useQuery } from '@tanstack/react-query';
+import { meQueryOptions } from '@/lib/me-query';
 
 type Props = Pick<ComponentPropsWithoutRef<'a'>, 'className' | 'onClick'> & {
   children: ReactNode;
@@ -17,7 +18,7 @@ type Props = Pick<ComponentPropsWithoutRef<'a'>, 'className' | 'onClick'> & {
  */
 export const DashboardLink = forwardRef<HTMLAnchorElement, Props>(
   function DashboardLink(props, ref) {
-    const user = useSessionUser().data?.user;
+    const user = useQuery(meQueryOptions()).data?.user;
 
     if (user?.lastOrgId) {
       return (

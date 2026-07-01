@@ -6,7 +6,8 @@ import { CopyButton } from '@/components/ui/copy-button';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
-import { useSessionUser } from '@/hooks/use-session-user';
+import { useQuery } from '@tanstack/react-query';
+import { meQueryOptions } from '@/lib/me-query';
 import { Reveal } from '../Reveal';
 import { DashboardLink } from './DashboardLink';
 import { PlaywrightLogo, PytestLogo, VitestLogo } from './framework-logos';
@@ -110,7 +111,7 @@ const HELP_LINK = 'font-medium text-primary hover:underline';
  * Reads the shared, cached `/me` query the home sections already issue, no extra request.
  */
 function CredentialsHelp() {
-  const user = useSessionUser().data?.user;
+  const user = useQuery(meQueryOptions()).data?.user;
 
   if (!user) {
     return (
