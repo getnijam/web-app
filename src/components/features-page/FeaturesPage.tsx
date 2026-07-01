@@ -7,7 +7,6 @@ import {
   Clock01Icon,
   WorkflowSquare01Icon,
   BellIcon,
-  GitPullRequestIcon,
   AiChat02Icon,
   ShieldKeyIcon,
   RefreshIcon,
@@ -87,14 +86,8 @@ const WORKFLOW: Feature[] = [
   {
     icon: BellIcon,
     tint: 'bg-success/15 text-success',
-    title: 'Slack notifications',
-    body: 'Auto-post passing, flaky, and failing runs to Slack, with green / yellow / red status and every test linked back to its results on Nijam.',
-  },
-  {
-    icon: GitPullRequestIcon,
-    tint: 'bg-foreground/10 text-foreground',
-    title: 'GitHub checks and comments',
-    body: 'Install the GitHub App and every pull request gets a Nijam status check, plus a results comment that updates in place on each run.',
+    title: 'Slack and PR comments',
+    body: 'Get every verdict where your team already works: passing, flaky, and failing runs auto-posted to Slack in green / yellow / red, plus a status check and a results comment on every pull request that updates in place on each run.',
   },
   {
     icon: ShieldKeyIcon,
