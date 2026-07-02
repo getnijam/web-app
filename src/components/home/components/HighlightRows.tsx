@@ -50,7 +50,7 @@ export function HighlightRows() {
     <section className="mx-auto max-w-6xl px-6 py-20">
       <Flex direction="col" className="gap-20">
         <Row
-          heading="Why it broke, and the commit that broke it"
+          heading="Why it broke, down to the commit"
           body="Open any failure to read the assertion, scrub the trace and the artifacts, then jump to the exact run and commit where the test first turned red."
           proof="First-failing commit pinpointed, with the trace, the artifacts, and the link to the CI run on one page."
         >

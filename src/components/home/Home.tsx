@@ -21,7 +21,10 @@ export function Home() {
       <Hero />
       <Install />
       <HomeFeatures />
-      <CTA />
+      <CTA
+        title="Know why every build fails."
+        description="Point your CI at Nijam and stop guessing. Root cause, flaky history, and reliability trends for Playwright, pytest, and Vitest, from the reports you already generate."
+      />
     </>
   );
 }

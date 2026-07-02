@@ -6,7 +6,7 @@ import { AnimatePresence, motion, type HTMLMotionProps, type Transition } from '
 
 import { cn } from '@/lib/utils';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons';
+import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { getStrictContext } from '@/lib/get-strict-context';
 import { useControlledState } from '@/hooks/use-controlled-state';
 
@@ -69,34 +69,48 @@ function AccordionTrigger({
   className,
   children,
   action,
+  iconPosition = 'end',
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Trigger> & {
   /** Optional control rendered beside the trigger (not nested in its button). */
   action?: React.ReactNode;
+  /** Which edge the expand chevron sits on. Defaults to the trailing edge. */
+  iconPosition?: 'start' | 'end';
 }) {
+  // The chevron, wrapped so it owns the same rounded highlight as the ghost icon
+  // button beside it (size-7, rounded-2xl, bg-muted): it is the only thing that
+  // lights up, triggered when the row (the trigger group) is hovered anywhere.
+  // Points right when collapsed and rotates down when the item opens.
+  const arrow = (
+    <span
+      aria-hidden
+      className={cn(
+        'inline-flex size-7 shrink-0 items-center justify-center rounded-2xl text-muted-foreground transition-colors group-hover/accordion-trigger:bg-muted group-hover/accordion-trigger:text-foreground dark:group-hover/accordion-trigger:bg-muted/50',
+        iconPosition === 'end' && 'ml-auto',
+      )}
+    >
+      <HugeiconsIcon
+        icon={ArrowRight01Icon}
+        size={16}
+        strokeWidth={2}
+        className="pointer-events-none shrink-0 transition-transform duration-200 group-aria-expanded/accordion-trigger:rotate-90"
+      />
+    </span>
+  );
+
   return (
     <AccordionPrimitive.Header className="flex items-center">
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          'group/accordion-trigger relative flex min-w-0 flex-1 items-start justify-between gap-6 border border-transparent p-4 text-left text-sm font-medium transition-all outline-none hover:underline disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 **:data-[slot=accordion-trigger-icon]:text-muted-foreground',
+          'group/accordion-trigger relative flex min-w-0 flex-1 items-start justify-between gap-6 border border-transparent p-4 text-left text-sm font-medium transition-all outline-none hover:underline disabled:pointer-events-none disabled:opacity-50',
           className,
         )}
         {...props}
       >
+        {iconPosition === 'start' && arrow}
         {children}
-        <HugeiconsIcon
-          icon={ArrowDown01Icon}
-          strokeWidth={2}
-          data-slot="accordion-trigger-icon"
-          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
-        />
-        <HugeiconsIcon
-          icon={ArrowUp01Icon}
-          strokeWidth={2}
-          data-slot="accordion-trigger-icon"
-          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
-        />
+        {iconPosition === 'end' && arrow}
       </AccordionPrimitive.Trigger>
       {action}
     </AccordionPrimitive.Header>

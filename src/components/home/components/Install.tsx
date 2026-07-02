@@ -147,11 +147,11 @@ export function Install() {
         <Reveal>
           <Flex direction="col" align="center" className="mx-auto max-w-2xl text-center">
             <Text as="h2" className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-              Three lines to start reporting.
+              Add three lines. Keep your workflow.
             </Text>
             <Text className="mt-3.5 max-w-lg text-base text-muted-foreground">
-              Install the reporter for the framework you already use, point it at your project, and
-              Nijam reads every run your CI uploads from there.
+              Install the reporter for the framework you already run, point it at your project, and
+              Nijam reads every CI run from there. No new pipeline, no test changes.
             </Text>
           </Flex>
 

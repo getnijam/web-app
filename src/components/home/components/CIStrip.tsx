@@ -25,7 +25,7 @@ export function CIStrip() {
       className="pt-12 text-base font-semibold text-muted-foreground"
     >
       <Text as="span" className="text-sm text-muted-foreground">
-        Ingests from
+        Works with
       </Text>
       {PROVIDERS.map((p) => (
         <Flex align="center" gap={2} key={p.name}>

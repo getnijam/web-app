@@ -167,7 +167,7 @@ const PRIMARY: Feature[] = [
     icon: Activity03Icon,
     tint: 'bg-warning/15 text-warning',
     title: 'Flakiness, ranked',
-    body: 'Every retry across every run is scored, so the tests quietly wasting your time rise to the top instead of hiding inside green builds.',
+    body: 'Every retry across every run is scored, so the tests quietly wasting your time rise to the top, ranked, with the run where each one started flaking.',
     preview: <FlakyPreview />,
   },
   {
@@ -184,7 +184,7 @@ const SECONDARY: Feature[] = [
   {
     icon: AnalyticsUpIcon,
     tint: 'bg-primary/15 text-primary',
-    title: 'Trends over time',
+    title: 'Track reliability over time',
     body: 'Pass rate, duration, and volume across every run and branch, so you can see the suite getting healthier or slower.',
     preview: <TrendPreview />,
   },

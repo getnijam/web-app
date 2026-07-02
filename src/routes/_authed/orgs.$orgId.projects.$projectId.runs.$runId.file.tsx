@@ -114,7 +114,8 @@ function FileDetailPage() {
                 className="overflow-hidden rounded-xl border border-border bg-card"
               >
                 <AccordionTrigger
-                  className="px-4 py-3 transition-colors hover:bg-accent hover:no-underline"
+                  iconPosition="start"
+                  className="items-center justify-start gap-3 px-4 py-3 hover:no-underline"
                   action={
                     <Tooltip>
                       <TooltipTrigger asChild>

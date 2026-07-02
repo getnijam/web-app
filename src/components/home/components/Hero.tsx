@@ -78,13 +78,13 @@ export function Hero() {
               as="h1"
               className="mt-5 text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl"
             >
-              The missing <span className="text-primary">test dashboard</span>
+              Your CI knows what failed. Nijam knows <span className="text-primary">why</span>.
             </Text>
 
             <Text className="mt-5 max-w-xl text-lg text-pretty text-muted-foreground">
-              Nijam reads the test results your CI already uploads, from Playwright, pytest, or
-              Vitest, and answers the two questions a pass-or-fail build never does: <em>why</em> a
-              test failed, and <em>since when</em> it has been flaky.
+              Nijam reads the Playwright, pytest, and Vitest reports your CI already uploads, then
+              answers what a pass-or-fail build never will: <em>why</em> a test failed, which tests
+              are flaky, and <em>since when</em>. No agents, no reruns.
             </Text>
 
             <Flex gap={3} wrap className="pointer-events-auto mt-7">
@@ -92,17 +92,21 @@ export function Hero() {
                 {user ? (
                   <DashboardLink>Go to dashboard</DashboardLink>
                 ) : (
-                  <Link to="/login">Log in to your dashboard</Link>
+                  <Link to="/signup">Start free</Link>
                 )}
               </Button>
               <Button asChild variant="outline" size="lg">
-                <a href="#features">See features</a>
+                <a href="#features">See how it works</a>
               </Button>
             </Flex>
 
-            <Flex align="center" gap={2} className="mt-5 text-sm text-muted-foreground">
-              <HugeiconsIcon icon={Tick02Icon} size={17} className="text-success" />
-              No agents, no re-runs, just point your CI at Nijam.
+            <Flex align="center" wrap gap={4} className="mt-5 text-sm text-muted-foreground">
+              {['Works with your existing CI', 'No browser agents', 'No reruns'].map((point) => (
+                <Flex key={point} align="center" gap={1.5}>
+                  <HugeiconsIcon icon={Tick02Icon} size={17} className="text-success" />
+                  {point}
+                </Flex>
+              ))}
             </Flex>
           </div>
 

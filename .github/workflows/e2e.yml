@@ -144,12 +144,3 @@ jobs:
           else
             npm run test:e2e
           fi
-
-      - name: Upload Playwright report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          if-no-files-found: ignore
-          retention-days: 14
