@@ -4,6 +4,7 @@ import { SIGNUP_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Tick02Icon, DiscountTag01Icon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -71,11 +72,10 @@ const PLANS: Plan[] = [
 
 function PlanCard({ plan }: { plan: Plan }) {
   return (
-    <Flex
-      direction="col"
+    <Card
       className={cn(
-        'h-full rounded-2xl border bg-card p-7',
-        plan.featured ? 'border-primary/50 shadow-lg ring-1 ring-primary/30' : 'border-border',
+        'flex h-full flex-col p-7',
+        plan.featured && 'border-primary/50 shadow-lg ring-1 ring-primary/30',
       )}
     >
       <Flex align="center" gap={2}>
@@ -147,7 +147,7 @@ function PlanCard({ plan }: { plan: Plan }) {
           </Flex>
         ))}
       </Flex>
-    </Flex>
+    </Card>
   );
 }
 

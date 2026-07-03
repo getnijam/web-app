@@ -4,6 +4,7 @@ import { SIGNUP_ROUTE } from '@/lib/routes';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CopyField } from '@/components/ui/copy-field';
 import { CopyButton } from '@/components/ui/copy-button';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -168,42 +169,40 @@ export function Install() {
 
             {REPORTERS.map((r) => (
               <TabsContent key={r.key} value={r.key} className="mx-auto mt-8 w-full max-w-4xl">
-                <Grid
-                  cols={[1, 1, 2]}
-                  gap={6}
-                  className="items-start rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8"
-                >
-                  <Flex direction="col" gap={6}>
-                    <Block label="Install">
-                      <CopyField value={r.install} />
-                    </Block>
+                <Card className="p-6 shadow-sm sm:p-8">
+                  <Grid cols={[1, 1, 2]} gap={6} className="items-start">
+                    <Flex direction="col" gap={6}>
+                      <Block label="Install">
+                        <CopyField value={r.install} />
+                      </Block>
+
+                      <Block
+                        label={
+                          <>
+                            Set <span className="font-mono">NIJAM_PROJECT_ID</span> and{' '}
+                            <span className="font-mono">NIJAM_API_KEY</span> in your CI environment
+                          </>
+                        }
+                      >
+                        <Flex direction="col" gap={2}>
+                          <CopyField value="NIJAM_PROJECT_ID=prj_a8f2c7e1" />
+                          <CopyField value="NIJAM_API_KEY=nij_sk_..." />
+                        </Flex>
+                        <CredentialsHelp />
+                      </Block>
+                    </Flex>
 
                     <Block
                       label={
                         <>
-                          Set <span className="font-mono">NIJAM_PROJECT_ID</span> and{' '}
-                          <span className="font-mono">NIJAM_API_KEY</span> in your CI environment
+                          Add to <span className="font-mono">{r.file}</span>
                         </>
                       }
                     >
-                      <Flex direction="col" gap={2}>
-                        <CopyField value="NIJAM_PROJECT_ID=prj_a8f2c7e1" />
-                        <CopyField value="NIJAM_API_KEY=nij_sk_..." />
-                      </Flex>
-                      <CredentialsHelp />
+                      <CodeWindow file={r.file} code={r.snippet} />
                     </Block>
-                  </Flex>
-
-                  <Block
-                    label={
-                      <>
-                        Add to <span className="font-mono">{r.file}</span>
-                      </>
-                    }
-                  >
-                    <CodeWindow file={r.file} code={r.snippet} />
-                  </Block>
-                </Grid>
+                  </Grid>
+                </Card>
               </TabsContent>
             ))}
           </Tabs>

@@ -3,6 +3,7 @@ import { RUN_FILE_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { GitBranchIcon } from '@hugeicons/core-free-icons';
 import type { TestHistoryEntry } from '@/client';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { HoverHighlight } from '@/components/ui/hover-highlight';
@@ -48,10 +49,7 @@ export function RunHistory({
   const passed = history.filter((h) => h.status === 'passed' || h.status === 'flaky').length;
 
   return (
-    <Flex
-      direction="col"
-      className={cn('overflow-hidden rounded-2xl border border-border bg-card', className)}
-    >
+    <Card className={cn('flex flex-col overflow-hidden', className)}>
       <Flex
         align="center"
         justify="between"
@@ -131,6 +129,6 @@ export function RunHistory({
           );
         })}
       </HoverHighlight>
-    </Flex>
+    </Card>
   );
 }

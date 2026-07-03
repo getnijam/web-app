@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Cancel01Icon, Tick02Icon, GithubIcon } from '@hugeicons/core-free-icons';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -31,12 +32,8 @@ function Column({
   highlight?: boolean;
 }) {
   return (
-    <Flex
-      direction="col"
-      className={cn(
-        'rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7',
-        highlight && 'ring-1 ring-primary/30',
-      )}
+    <Card
+      className={cn('flex flex-col p-6 shadow-sm sm:p-7', highlight && 'ring-1 ring-primary/30')}
     >
       <Flex align="center" gap={2.5} className="pb-5">
         {header}
@@ -61,7 +58,7 @@ function Column({
           </Flex>
         ))}
       </Flex>
-    </Flex>
+    </Card>
   );
 }
 

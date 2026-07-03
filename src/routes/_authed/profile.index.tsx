@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { LoadingState } from '@/components/states/LoadingState';
 import { ProfileSection } from '@/components/account/ProfileSection';
@@ -18,13 +19,13 @@ function ProfilePage() {
 
   return (
     <Flex direction="col" gap={6}>
-      <Flex direction="col" className="rounded-2xl border border-border bg-card p-6">
+      <Card className="p-6">
         <ProfileSection user={user} />
-      </Flex>
+      </Card>
       <PendingInvitations />
-      <Flex direction="col" className="rounded-2xl border border-border bg-card p-6">
+      <Card className="p-6">
         <OrganizationsSection />
-      </Flex>
+      </Card>
     </Flex>
   );
 }

@@ -32,6 +32,7 @@ import {
   verifyOrgSsoDomainMutation,
   removeOrgSsoDomainMutation,
 } from '@/client/@tanstack/react-query.gen';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -183,12 +184,7 @@ const SSO_FEATURES: { icon: typeof CloudSavingDone02Icon; title: string; body: s
 /** Shown when SSO has never been configured: what it does, plus the CTA to start. */
 function SsoEmptyState({ onConfigure }: { onConfigure: () => void }) {
   return (
-    <Flex
-      direction="col"
-      gap={6}
-      align="center"
-      className="rounded-2xl border border-border bg-card px-6 py-9"
-    >
+    <Card className="flex flex-col items-center gap-6 px-6 py-9">
       <Flex direction="col" gap={2.5} align="center" className="max-w-md text-center">
         <Flex
           inline
@@ -236,7 +232,7 @@ function SsoEmptyState({ onConfigure }: { onConfigure: () => void }) {
       <Button size="lg" onClick={onConfigure}>
         Configure SSO
       </Button>
-    </Flex>
+    </Card>
   );
 }
 
@@ -247,7 +243,7 @@ function SsoEmptyState({ onConfigure }: { onConfigure: () => void }) {
  */
 function LaunchLinkCard({ connection }: { connection: Conn }) {
   return (
-    <Flex direction="col" gap={3} className="rounded-2xl border border-border bg-card p-5">
+    <Card className="flex flex-col gap-3 p-5">
       <Flex align="start" gap={3}>
         <Flex
           inline
@@ -269,7 +265,7 @@ function LaunchLinkCard({ connection }: { connection: Conn }) {
         </Flex>
       </Flex>
       <CopyField value={`${API_BASE}/v1/auth/sso/launch/${connection.id}`} />
-    </Flex>
+    </Card>
   );
 }
 

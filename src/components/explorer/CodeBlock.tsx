@@ -1,6 +1,7 @@
 import { Fragment, type ReactNode } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { SourceCodeIcon } from '@hugeicons/core-free-icons';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
@@ -131,10 +132,7 @@ export function CodeBlock({
 }) {
   const lines = code.replace(/\n$/, '').split('\n');
   return (
-    <Flex
-      direction="col"
-      className="h-full overflow-hidden rounded-2xl border border-border bg-card"
-    >
+    <Card className="flex h-full flex-col overflow-hidden">
       <Flex
         align="center"
         justify="between"
@@ -170,6 +168,6 @@ export function CodeBlock({
           })}
         </pre>
       </div>
-    </Flex>
+    </Card>
   );
 }

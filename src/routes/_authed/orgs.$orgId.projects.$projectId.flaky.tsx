@@ -4,6 +4,7 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Search01Icon } from '@hugeicons/core-free-icons';
 import { listProjectFlakyTestsOptions } from '@/client/@tanstack/react-query.gen';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Input } from '@/components/ui/input';
@@ -70,7 +71,7 @@ function FlakyPage() {
     if (filtered.length === 0)
       return <EmptyState title="No matches" description="No flaky test matches your search." />;
     return (
-      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+      <Card className="flex flex-col overflow-hidden">
         <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
           {filtered.map((t) => (
             <TestRow
@@ -83,7 +84,7 @@ function FlakyPage() {
             />
           ))}
         </HoverHighlight>
-      </Flex>
+      </Card>
     );
   };
 
@@ -121,7 +122,7 @@ function FlakyPage() {
 
 function FlakySkeleton() {
   return (
-    <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+    <Card className="flex flex-col overflow-hidden">
       {Array.from({ length: 6 }).map((_, i) => (
         <Flex
           key={i}
@@ -137,6 +138,6 @@ function FlakySkeleton() {
           <Skeleton className="h-5 w-16 rounded-full" />
         </Flex>
       ))}
-    </Flex>
+    </Card>
   );
 }

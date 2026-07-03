@@ -32,9 +32,10 @@ export function RunSplitLayout({
           selectedFile={selectedFile}
         />
       </Flex>
-      <div className="min-w-0 flex-1 overflow-y-auto rounded-2xl border border-border bg-card p-5">
-        {children}
-      </div>
+      {/* A plain full-height divider, not another card: the file pane's contents are
+          already bordered cards, so wrapping them in one more reads as card-in-card. */}
+      <div aria-hidden className="w-px shrink-0 self-stretch bg-border" />
+      <div className="min-w-0 flex-1 overflow-y-auto">{children}</div>
     </Flex>
   );
 }

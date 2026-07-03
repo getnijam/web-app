@@ -6,6 +6,7 @@ import { Mail01Icon, BookOpen01Icon, PlugSocketIcon, Bug01Icon } from '@hugeicon
 import { CTA } from '@/components/home/components/CTA';
 import { Section, P, Bullets } from '@/components/legal/LegalLayout';
 import { DOCS_URL } from '@/components/home/config';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -109,11 +110,7 @@ function SupportPage() {
         <section className="mx-auto max-w-6xl px-6 pb-8">
           <Grid cols={[1, 2, 2]} gap={4}>
             {CHANNELS.map((c) => (
-              <Flex
-                key={c.title}
-                direction="col"
-                className="rounded-2xl border border-border bg-card p-6"
-              >
+              <Card key={c.title} className="flex flex-col p-6">
                 <Flex
                   inline
                   align="center"
@@ -129,7 +126,7 @@ function SupportPage() {
                 <Text as="p" className="mt-3 text-sm font-medium">
                   {c.action}
                 </Text>
-              </Flex>
+              </Card>
             ))}
           </Grid>
         </section>

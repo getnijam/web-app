@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -19,12 +20,7 @@ export function ProjectsSkeleton({ count = 6 }: { count?: number }) {
 
       <Grid cols={[1, 1, 2, 2, 3]} gap={4.5}>
         {Array.from({ length: count }).map((_, i) => (
-          <Flex
-            key={i}
-            direction="col"
-            gap={4}
-            className="rounded-2xl border border-border bg-card p-5"
-          >
+          <Card key={i} className="flex flex-col gap-4 p-5">
             <Flex align="center" gap={3}>
               <Skeleton className="size-10 rounded-xl" />
               <Flex direction="col" gap={1.5} className="min-w-0 flex-1">
@@ -38,7 +34,7 @@ export function ProjectsSkeleton({ count = 6 }: { count?: number }) {
               <Skeleton className="h-3 w-16 rounded-md" />
               <Skeleton className="ml-auto h-3 w-12 rounded-md" />
             </Flex>
-          </Flex>
+          </Card>
         ))}
       </Grid>
     </Flex>

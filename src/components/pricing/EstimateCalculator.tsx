@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -56,7 +57,7 @@ export function EstimateCalculator() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-7 md:p-9">
+    <Card className="mx-auto max-w-3xl p-7 md:p-9">
       <Grid cols={[1, 2]} gap={8} className="items-center">
         {/* Controls. */}
         <Flex direction="col" gap={6}>
@@ -168,6 +169,6 @@ export function EstimateCalculator() {
         shown doesn&rsquo;t include any tax-related information. Final charges are calculated at
         checkout by our payment provider.
       </Text>
-    </div>
+    </Card>
   );
 }

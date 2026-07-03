@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { LOGIN_ROUTE } from '@/lib/routes';
+import { Card } from '@/components/ui/card';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Alert02Icon } from '@hugeicons/core-free-icons';
@@ -156,7 +157,7 @@ function BlockingOrgRow({
   });
 
   return (
-    <Flex direction="col" gap={3} className="rounded-xl border border-border bg-card p-4">
+    <Card className="flex flex-col gap-3 rounded-xl p-4">
       <Flex align="center" justify="between" gap={3}>
         <Text as="span" truncate className="text-sm font-medium">
           {org.name}
@@ -193,7 +194,7 @@ function BlockingOrgRow({
           No other members to promote, delete this organization instead.
         </Text>
       )}
-    </Flex>
+    </Card>
   );
 }
 

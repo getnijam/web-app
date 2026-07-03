@@ -1,10 +1,11 @@
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Skeleton } from '@/components/ui/skeleton';
 
 /** N divider rows mirroring RunRow, inside the same bordered container. */
 export function RunsListSkeleton({ rows = 6 }: { rows?: number }) {
   return (
-    <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+    <Card className="flex flex-col overflow-hidden">
       {Array.from({ length: rows }).map((_, i) => (
         <Flex key={i} align="center" className="border-b border-border last:border-b-0">
           <Skeleton className="ml-3 h-9 w-1 rounded-full" />
@@ -26,7 +27,7 @@ export function RunsListSkeleton({ rows = 6 }: { rows?: number }) {
           </Flex>
         </Flex>
       ))}
-    </Flex>
+    </Card>
   );
 }
 
@@ -68,16 +69,16 @@ export function RunsPageSkeleton() {
 export function RunDetailBodySkeleton() {
   return (
     <>
-      <Flex gap={8} wrap className="rounded-2xl border border-border bg-card px-5 py-4">
+      <Card className="flex flex-wrap gap-8 px-5 py-4">
         {Array.from({ length: 5 }).map((_, i) => (
           <Flex key={i} direction="col" gap={1.5}>
             <Skeleton className="h-6 w-10 rounded-md" />
             <Skeleton className="h-3 w-14 rounded-md" />
           </Flex>
         ))}
-      </Flex>
+      </Card>
 
-      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+      <Card className="flex flex-col overflow-hidden">
         <Flex align="center" className="border-b border-border px-5 py-4">
           <Skeleton className="h-5 w-24 rounded-md" />
         </Flex>
@@ -93,7 +94,7 @@ export function RunDetailBodySkeleton() {
             <Skeleton className="ml-auto h-6 w-10 rounded-md" />
           </Flex>
         ))}
-      </Flex>
+      </Card>
     </>
   );
 }
@@ -140,16 +141,11 @@ export function RunFileSkeleton() {
 
       <Flex direction="col" gap={2}>
         {Array.from({ length: 4 }).map((_, i) => (
-          <Flex
-            key={i}
-            align="center"
-            gap={3}
-            className="rounded-xl border border-border bg-card px-4 py-3.5"
-          >
+          <Card key={i} className="flex items-center gap-3 rounded-xl px-4 py-3.5">
             <Skeleton className="size-5 rounded-full" />
             <Skeleton className="h-4 w-80 rounded-md" />
             <Skeleton className="ml-auto h-4 w-14 rounded-md" />
-          </Flex>
+          </Card>
         ))}
       </Flex>
     </Flex>

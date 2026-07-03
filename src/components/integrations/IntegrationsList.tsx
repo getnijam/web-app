@@ -14,6 +14,7 @@ import {
   getOrgGithubIntegrationOptions,
   installOrgGithubMutation,
 } from '@/client/@tanstack/react-query.gen';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
@@ -236,10 +237,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
           >
             Connected
           </Text>
-          <Flex
-            direction="col"
-            className="overflow-hidden rounded-2xl border border-border bg-card"
-          >
+          <Card className="flex flex-col overflow-hidden">
             {connected.map((e) => (
               <Flex
                 key={e.key}
@@ -287,7 +285,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
                 />
               </Flex>
             ))}
-          </Flex>
+          </Card>
         </Flex>
       )}
 
@@ -298,7 +296,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
         >
           Available
         </Text>
-        <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+        <Card className="flex flex-col overflow-hidden">
           {available.map((e) => (
             <CardRow key={e.key} icon={e.logo(22)} action={connectButton(e)}>
               <Text as="span" className="text-sm font-semibold">
@@ -343,7 +341,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
               </Text>
             </CardRow>
           ))}
-        </Flex>
+        </Card>
       </Flex>
     </Flex>
   );

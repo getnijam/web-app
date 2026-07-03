@@ -5,6 +5,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { Search01Icon } from '@hugeicons/core-free-icons';
 import type { TestCaseSummary } from '@/client';
 import { listProjectTestsOptions } from '@/client/@tanstack/react-query.gen';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Input } from '@/components/ui/input';
@@ -81,7 +82,7 @@ function ExplorerPage() {
       // `term ? 1 : 0` key remounts groups only when crossing the empty boundary, not
       // on every keystroke, so user-toggled groups aren't reset mid-search.
       return (
-        <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+        <Card className="flex flex-col overflow-hidden">
           <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
             {groupTestsByFile(filtered).map(([file, fileTests]) => (
               <FileGroup
@@ -94,17 +95,17 @@ function ExplorerPage() {
               />
             ))}
           </HoverHighlight>
-        </Flex>
+        </Card>
       );
     }
     return (
-      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+      <Card className="flex flex-col overflow-hidden">
         <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
           {filtered.map((t) => (
             <TestRow key={t.testId} test={t} orgId={orgId} projectId={projectId} />
           ))}
         </HoverHighlight>
-      </Flex>
+      </Card>
     );
   };
 
@@ -153,7 +154,7 @@ function ExplorerPage() {
 
 function ExplorerSkeleton() {
   return (
-    <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+    <Card className="flex flex-col overflow-hidden">
       {Array.from({ length: 8 }).map((_, i) => (
         <Flex
           key={i}
@@ -169,6 +170,6 @@ function ExplorerSkeleton() {
           <Skeleton className="h-3 w-10 rounded-md" />
         </Flex>
       ))}
-    </Flex>
+    </Card>
   );
 }

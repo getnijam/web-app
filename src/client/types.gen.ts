@@ -718,6 +718,39 @@ export type RunFileTestsResponse = {
     tests: Array<TestCase>;
 };
 
+export type RunTimelineBar = {
+    file: string;
+    offsetMs: number;
+    durationMs: number;
+    status: 'passed' | 'failed' | 'flaky' | 'skipped';
+    total: number;
+    passed: number;
+    failed: number;
+    flaky: number;
+    skipped: number;
+    retried: boolean;
+    startedAt: string;
+};
+
+export type RunTimelineLane = {
+    shardIndex: number | null;
+    bars: Array<RunTimelineBar>;
+};
+
+export type RunTimelineGroup = {
+    projectName: string | null;
+    machineCount: number;
+    fileCount: number;
+    lanes: Array<RunTimelineLane>;
+};
+
+export type RunTimelineResponse = {
+    startedAt: string;
+    finishedAt: string | null;
+    wallMs: number;
+    groups: Array<RunTimelineGroup>;
+};
+
 export type ArtifactUrlResponse = {
     url: string;
 };
@@ -3336,6 +3369,37 @@ export type GetRunFileTestsResponses = {
 };
 
 export type GetRunFileTestsResponse = GetRunFileTestsResponses[keyof GetRunFileTestsResponses];
+
+export type GetRunTimelineData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v1/runs/{id}/timeline';
+};
+
+export type GetRunTimelineErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Run not found
+     */
+    404: ApiError;
+};
+
+export type GetRunTimelineError = GetRunTimelineErrors[keyof GetRunTimelineErrors];
+
+export type GetRunTimelineResponses = {
+    /**
+     * OK
+     */
+    200: RunTimelineResponse;
+};
+
+export type GetRunTimelineResponse = GetRunTimelineResponses[keyof GetRunTimelineResponses];
 
 export type GetArtifactUrlData = {
     body?: never;

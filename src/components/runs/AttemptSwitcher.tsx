@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { RUN_ROUTE } from '@/lib/routes';
 import { motion, type Transition } from 'motion/react';
 import type { RunGroup } from '@/client';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
@@ -34,7 +35,7 @@ export function AttemptSwitcher({
   const { attempts, rolledUp } = group;
 
   return (
-    <Flex direction="col" gap={3} className="rounded-2xl border border-border bg-card p-4">
+    <Card className="flex flex-col gap-3 p-4">
       <Flex align="center" justify="between" gap={3} wrap>
         <Flex align="center" gap={2}>
           <Text variant="h4">Attempts</Text>
@@ -99,6 +100,6 @@ export function AttemptSwitcher({
           );
         })}
       </Flex>
-    </Flex>
+    </Card>
   );
 }

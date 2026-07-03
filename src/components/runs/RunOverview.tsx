@@ -4,14 +4,17 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import {
   ArrowLeft01Icon,
   ArrowUpRight01Icon,
+  ChartBarStackedIcon,
+  File01Icon,
   GitBranchIcon,
   RefreshIcon,
 } from '@hugeicons/core-free-icons';
 import { getRunOptions } from '@/client/@tanstack/react-query.gen';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { ErrorState } from '@/components/states/ErrorState';
@@ -20,10 +23,12 @@ import { UserAvatar } from '@/components/users/UserAvatar';
 import { RunDetailBodySkeleton, RunDetailColumnSkeleton } from './RunSkeletons';
 import { RunSummaryBar } from './RunSummaryBar';
 import { RunStatusBadge } from './RunStatusBadge';
+import { RunTimeline } from './RunTimeline';
 import { AttemptSwitcher } from './AttemptSwitcher';
 import { SpecFileRow } from './SpecFileRow';
 import { fileStatus } from './file-status';
 import { STATUS_OPTIONS, type RunStatusFilter } from './status-filter';
+import { type RunView } from '@/routes/_authed/orgs.$orgId.projects.$projectId.runs.$runId.index';
 import { runDisplayStatus } from './run-status';
 import { timeAgo, displayAuthor } from '@/lib/format';
 import { gitBranchUrl, gitProviderIcon } from '@/lib/git';
@@ -45,15 +50,22 @@ export function RunOverview({
   projectId,
   runId,
   selectedFile,
+  showTimelineTabs = false,
 }: {
   orgId: string;
   projectId: string;
   runId: string;
   selectedFile?: string;
+  /**
+   * Single-column (mobile) mode: render a Files/Timeline tab bar here. On web the
+   * timeline lives permanently in the split's detail pane, so this stays false and
+   * this column is just the spec-file list.
+   */
+  showTimelineTabs?: boolean;
 }) {
   const navigate = useNavigate();
-  // Read/write `?status=` on whatever route hosts this component (run or file).
-  const search = useSearch({ strict: false }) as { status?: RunStatusFilter };
+  // Read/write `?status=`/`?view=` on whatever route hosts this component (run or file).
+  const search = useSearch({ strict: false }) as { status?: RunStatusFilter; view?: RunView };
   const status: RunStatusFilter =
     search.status && STATUSES.includes(search.status) ? search.status : 'all';
   const setStatus = (next: string) =>
@@ -61,6 +73,17 @@ export function RunOverview({
       search: ((prev: Record<string, unknown>) => ({
         ...prev,
         status: next === 'all' ? undefined : next,
+      })) as never,
+      replace: true,
+    });
+  // The timeline is a run-page-only view; when this column sits beside an open file
+  // (`selectedFile`), we always show the spec-file list.
+  const view: RunView = search.view === 'timeline' && !selectedFile ? 'timeline' : 'files';
+  const setView = (next: RunView) =>
+    navigate({
+      search: ((prev: Record<string, unknown>) => ({
+        ...prev,
+        view: next === 'timeline' ? 'timeline' : undefined,
       })) as never,
       replace: true,
     });
@@ -116,7 +139,7 @@ export function RunOverview({
 
   function renderSpecFilesPanel() {
     return (
-      <Flex direction="col" className="overflow-hidden rounded-2xl border border-border bg-card">
+      <Card className="flex flex-col overflow-hidden">
         <Flex
           align="center"
           justify="between"
@@ -167,7 +190,33 @@ export function RunOverview({
         <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
           {renderFiles()}
         </HoverHighlight>
-      </Flex>
+      </Card>
+    );
+  }
+
+  // Mobile only: a Files/Timeline tab bar (line variant, like the keys page) that
+  // swaps this single column's body. On web the timeline is always in the detail
+  // pane, so this isn't rendered there.
+  function renderTabbed() {
+    return (
+      <Tabs value={view} onValueChange={(v) => setView(v as RunView)}>
+        <TabsList variant="line" className="justify-start gap-5">
+          <TabsTrigger value="files" className="flex-none px-1 after:bg-primary">
+            <HugeiconsIcon icon={File01Icon} size={16} />
+            Files
+          </TabsTrigger>
+          <TabsTrigger value="timeline" className="flex-none px-1 after:bg-primary">
+            <HugeiconsIcon icon={ChartBarStackedIcon} size={16} />
+            Timeline
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="files" className="mt-4">
+          {renderSpecFilesPanel()}
+        </TabsContent>
+        <TabsContent value="timeline" className="mt-4">
+          <RunTimeline runId={runId} />
+        </TabsContent>
+      </Tabs>
     );
   }
 
@@ -186,14 +235,20 @@ export function RunOverview({
             Runs
           </Link>
         </Button>
-        {run.ciRunUrl && (
-          <Button asChild variant="outline" size="sm">
-            <a href={run.ciRunUrl} target="_blank" rel="noreferrer">
-              View run on {run.ciProvider ?? 'CI'}
-              <HugeiconsIcon icon={ArrowUpRight01Icon} size={15} />
-            </a>
+        <Flex align="center" gap={2}>
+          <Button variant="outline" size="sm" loading={q.isRefetching} onClick={() => q.refetch()}>
+            {!q.isRefetching && <HugeiconsIcon icon={RefreshIcon} size={15} />}
+            Refresh
           </Button>
-        )}
+          {run.ciRunUrl && (
+            <Button asChild variant="outline" size="sm">
+              <a href={run.ciRunUrl} target="_blank" rel="noreferrer">
+                View run on {run.ciProvider ?? 'CI'}
+                <HugeiconsIcon icon={ArrowUpRight01Icon} size={15} />
+              </a>
+            </Button>
+          )}
+        </Flex>
       </Flex>
 
       {/* header */}
@@ -270,10 +325,6 @@ export function RunOverview({
             )}
           </Flex>
         </Flex>
-        <Button variant="outline" size="sm" loading={q.isRefetching} onClick={() => q.refetch()}>
-          {!q.isRefetching && <HugeiconsIcon icon={RefreshIcon} size={15} />}
-          Refresh
-        </Button>
       </Flex>
 
       {group && (
@@ -285,7 +336,7 @@ export function RunOverview({
       ) : (
         <>
           <RunSummaryBar summary={summary} />
-          {renderSpecFilesPanel()}
+          {showTimelineTabs ? renderTabbed() : renderSpecFilesPanel()}
         </>
       )}
     </>

@@ -9,6 +9,7 @@ import {
   getProjectOptions,
   getProjectRunFiltersOptions,
 } from '@/client/@tanstack/react-query.gen';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
@@ -157,16 +158,13 @@ function RunsPage() {
     if (runs.data && runs.data.runs.length > 0)
       return (
         <>
-          <Flex
-            direction="col"
-            className="overflow-hidden rounded-2xl border border-border bg-card"
-          >
+          <Card className="flex flex-col overflow-hidden">
             <HoverHighlight inset={4} highlightClassName="rounded-lg bg-accent">
               {runs.data.runs.map((run) => (
                 <RunRow key={run.id} run={run} orgId={orgId} projectId={projectId} />
               ))}
             </HoverHighlight>
-          </Flex>
+          </Card>
           <RunsPager page={runs.data.page} totalPages={runs.data.totalPages} onPage={onPage} />
         </>
       );

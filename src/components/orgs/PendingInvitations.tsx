@@ -11,6 +11,7 @@ import {
   acceptMyInvitationMutation,
   rejectMyInvitationMutation,
 } from '@/client/@tanstack/react-query.gen';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
@@ -49,13 +50,11 @@ export function PendingInvitations({ onAccepted }: { onAccepted?: (orgId: string
   if (invitations.length === 0) return null;
 
   return (
-    <Flex
+    <Card
       id="invitations"
-      direction="col"
-      gap={4}
       className={cn(
-        'scroll-mt-6 rounded-2xl border bg-card p-5 transition-shadow duration-500',
-        highlight ? 'border-primary ring-2 ring-primary/40' : 'border-border',
+        'flex scroll-mt-6 flex-col gap-4 p-5 transition-shadow duration-500',
+        highlight && 'border-primary ring-2 ring-primary/40',
       )}
     >
       <Flex direction="col" gap={0.5}>
@@ -67,7 +66,7 @@ export function PendingInvitations({ onAccepted }: { onAccepted?: (orgId: string
       {invitations.map((inv) => (
         <InvitationRow key={inv.id} invitation={inv} onAccepted={onAccepted} />
       ))}
-    </Flex>
+    </Card>
   );
 }
 

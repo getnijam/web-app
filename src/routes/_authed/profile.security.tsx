@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { getMeOptions } from '@/client/@tanstack/react-query.gen';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -48,7 +49,7 @@ function SecurityPage() {
   if (!user) return <LoadingState />;
 
   return (
-    <Flex direction="col" gap={6} className="rounded-2xl border border-border bg-card p-6">
+    <Card className="flex flex-col gap-6 p-6">
       <AccountSection
         title="Username"
         description="The email you use to sign in. It can't be changed."
@@ -64,6 +65,6 @@ function SecurityPage() {
       <TwoFactorSection user={user} />
       <Divider />
       <ConnectedAccounts user={user} />
-    </Flex>
+    </Card>
   );
 }

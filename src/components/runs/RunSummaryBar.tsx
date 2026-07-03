@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { RunAggregate } from '@/client';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
@@ -21,12 +22,7 @@ function Metric({ label, value, color }: { label: string; value: ReactNode; colo
 /** Run-level aggregate counts + duration, shown above the spec-files list. */
 export function RunSummaryBar({ summary }: { summary: RunAggregate }) {
   return (
-    <Flex
-      align="center"
-      gap={8}
-      wrap
-      className="rounded-2xl border border-border bg-card px-5 py-4"
-    >
+    <Card className="flex flex-wrap items-center gap-8 px-5 py-4">
       <Metric label="Total tests" value={summary.total} />
       <Metric label="Passed" value={summary.passed} color="text-success" />
       <Metric label="Failed" value={summary.failed} color="text-destructive" />
@@ -36,6 +32,6 @@ export function RunSummaryBar({ summary }: { summary: RunAggregate }) {
         label="Duration"
         value={summary.durationSec === null ? '-' : formatDuration(summary.durationSec)}
       />
-    </Flex>
+    </Card>
   );
 }

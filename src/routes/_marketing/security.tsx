@@ -12,6 +12,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { CTA } from '@/components/home/components/CTA';
 import { Section, P, Bullets } from '@/components/legal/LegalLayout';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -97,11 +98,7 @@ function SecurityPage() {
         <section className="mx-auto max-w-6xl px-6 pb-8">
           <Grid cols={[1, 2, 3]} gap={4}>
             {PILLARS.map((p) => (
-              <Flex
-                key={p.title}
-                direction="col"
-                className="rounded-2xl border border-border bg-card p-6"
-              >
+              <Card key={p.title} className="flex flex-col p-6">
                 <Flex
                   inline
                   align="center"
@@ -114,7 +111,7 @@ function SecurityPage() {
                   {p.title}
                 </Text>
                 <Text className="mt-2 text-sm leading-relaxed text-muted-foreground">{p.body}</Text>
-              </Flex>
+              </Card>
             ))}
           </Grid>
         </section>

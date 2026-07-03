@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Bar, BarChart, XAxis } from 'recharts';
 import type { FlakyTrendPoint } from '@/client';
 import { ChartContainer, ChartTooltip, type ChartConfig } from '@/components/ui/chart';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -83,11 +84,7 @@ export function FlakyTrendChart({
 }
 
 function Panel({ children }: { children: ReactNode }) {
-  return (
-    <Flex direction="col" gap={4} className="rounded-2xl border border-border bg-card p-4.5">
-      {children}
-    </Flex>
-  );
+  return <Card className="flex flex-col gap-4 p-4.5">{children}</Card>;
 }
 
 function NotEnough() {

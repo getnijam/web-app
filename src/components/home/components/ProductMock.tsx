@@ -5,6 +5,7 @@ import {
   CheckmarkCircle02Icon,
   AnalyticsUpIcon,
 } from '@hugeicons/core-free-icons';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -64,7 +65,7 @@ export function ProductMock() {
       <Flex direction="col">
         <Grid cols={2} className="gap-3">
           {/* Top-left, the headline metric Nijam reports back. */}
-          <div className="rounded-2xl border border-border bg-card p-4">
+          <Card className="p-4">
             <Flex align="center" justify="between">
               <Flex
                 inline
@@ -100,10 +101,10 @@ export function ProductMock() {
             >
               Last 7 days
             </Flex>
-          </div>
+          </Card>
 
           {/* Top-right, the test results streaming in from CI. */}
-          <div className="rounded-2xl border border-border bg-card p-4">
+          <Card className="p-4">
             <Flex align="center" gap={1.5} className="text-xs font-semibold text-muted-foreground">
               <HugeiconsIcon icon={CloudUploadIcon} size={15} />
               From CI
@@ -117,7 +118,7 @@ export function ProductMock() {
                 </Flex>
               ))}
             </Flex>
-          </div>
+          </Card>
         </Grid>
 
         {/* Connector over a faint static track: two separate pipes so the flow
@@ -175,7 +176,7 @@ export function ProductMock() {
         </div>
 
         {/* Bottom, Nijam's analysis: success / flaky / failed + run history. */}
-        <div className="rounded-2xl border border-border bg-card p-4 ring-1 ring-foreground/5">
+        <Card className="p-4 ring-1 ring-foreground/5">
           <Flex align="center" justify="between" className="mb-3">
             <Flex align="center" gap={2.5}>
               <Flex
@@ -237,7 +238,7 @@ export function ProductMock() {
               <span key={t}>{t}</span>
             ))}
           </Flex>
-        </div>
+        </Card>
       </Flex>
     </div>
   );

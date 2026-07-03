@@ -20,7 +20,7 @@ export function StatCard({
   caption: string;
 }) {
   return (
-    <Card className="gap-3 px-5">
+    <Card className="flex flex-col gap-3 p-5">
       <Flex align="center" gap={3}>
         <Flex align="center" justify="center" className={cn('size-10 shrink-0 rounded-lg', tint)}>
           <HugeiconsIcon icon={icon} size={20} strokeWidth={1.9} />

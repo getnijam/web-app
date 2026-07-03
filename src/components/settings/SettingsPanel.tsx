@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
@@ -20,13 +21,7 @@ export function SettingsPanel({
   children: ReactNode;
 }) {
   return (
-    <Flex
-      direction="col"
-      className={cn(
-        'overflow-hidden rounded-2xl border bg-card',
-        danger ? 'border-destructive/40' : 'border-border',
-      )}
-    >
+    <Card className={cn('flex flex-col overflow-hidden', danger && 'border-destructive/40')}>
       <Flex
         align="center"
         justify="between"
@@ -52,6 +47,6 @@ export function SettingsPanel({
           {footer}
         </Flex>
       )}
-    </Flex>
+    </Card>
   );
 }

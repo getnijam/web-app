@@ -11,6 +11,7 @@ import {
   BotIcon,
   ArrowRight01Icon,
 } from '@hugeicons/core-free-icons';
+import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -211,7 +212,7 @@ const SECONDARY: Feature[] = [
 
 function FeatureTile({ f, tall }: { f: Feature; tall?: boolean }) {
   return (
-    <Flex direction="col" className="h-full rounded-2xl border border-border bg-card p-5 shadow-sm">
+    <Card className="flex h-full flex-col p-5 shadow-sm">
       <Flex
         aria-hidden
         align="center"
@@ -238,7 +239,7 @@ function FeatureTile({ f, tall }: { f: Feature; tall?: boolean }) {
       <Text className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
         {f.body}
       </Text>
-    </Flex>
+    </Card>
   );
 }
 
