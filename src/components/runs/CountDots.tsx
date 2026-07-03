@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { RUN_ROUTE } from '@/lib/routes';
 import { Flex } from '@/components/ui/flex';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -43,7 +44,7 @@ function CountPill({ value, kind, link }: { value: number; kind: CountKind; link
   const trigger =
     link && status ? (
       <Link
-        to="/orgs/$orgId/projects/$projectId/runs/$runId"
+        to={RUN_ROUTE}
         params={{ orgId: link.orgId, projectId: link.projectId, runId: link.runId }}
         search={{ status }}
         aria-label={`Open run showing only ${status} tests`}

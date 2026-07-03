@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { EXPLORER_TEST_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import type { TestCaseSummary } from '@/client';
@@ -68,17 +69,15 @@ export function TestRow({
   return (
     <Flex
       as={Link}
-      to="/orgs/$orgId/projects/$projectId/explorer/$testId"
+      to={EXPLORER_TEST_ROUTE}
       params={{ orgId, projectId, testId: test.testId } as never}
       search={{ from } as never}
       align="center"
       gap={3}
       data-hover-item
-      className={cn(
-        'border-b border-border px-4 py-3',
-        'transition-colors last:border-b-0',
-        { 'pl-12': isGroupEnabled },
-      )}
+      className={cn('border-b border-border px-4 py-3', 'transition-colors last:border-b-0', {
+        'pl-12': isGroupEnabled,
+      })}
     >
       <HugeiconsIcon icon={meta.icon} size={18} className={cn('shrink-0', meta.color)} />
       <Flex direction="col" gap={0.5} className="min-w-0 flex-1 leading-tight">

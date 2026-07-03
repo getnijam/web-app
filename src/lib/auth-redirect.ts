@@ -1,4 +1,5 @@
 import { redirect } from '@tanstack/react-router';
+import { ORGS_ROUTE, ORG_PROJECTS_ROUTE } from '@/lib/routes';
 import type { QueryClient } from '@tanstack/react-query';
 import { meQueryOptions } from '@/lib/me-query';
 
@@ -36,7 +37,7 @@ export async function redirectAuthedToDashboard(
   // Land returning users straight on the org they last opened; first-timers (or anyone
   // whose last org is gone) get the picker, the org layout also bounces back to it.
   if (me.user.lastOrgId) {
-    throw redirect({ to: '/orgs/$orgId/projects', params: { orgId: me.user.lastOrgId } });
+    throw redirect({ to: ORG_PROJECTS_ROUTE, params: { orgId: me.user.lastOrgId } });
   }
-  throw redirect({ to: '/orgs' });
+  throw redirect({ to: ORGS_ROUTE });
 }

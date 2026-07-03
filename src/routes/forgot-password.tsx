@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { LOGIN_ROUTE } from '@/lib/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -70,7 +71,7 @@ function ForgotPasswordPage() {
             }
           />
           <Button asChild variant="outline" size="lg" className="w-full">
-            <Link to="/login">Back to sign in</Link>
+            <Link to={LOGIN_ROUTE}>Back to sign in</Link>
           </Button>
         </Flex>
       </AuthLayout>
@@ -109,7 +110,7 @@ function ForgotPasswordPage() {
         <Text color="muted" align="center">
           Remembered it?{' '}
           <Link
-            to="/login"
+            to={LOGIN_ROUTE}
             className="font-medium text-foreground underline-offset-4 hover:underline"
           >
             Sign in

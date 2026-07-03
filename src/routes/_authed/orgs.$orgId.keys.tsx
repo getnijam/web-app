@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState } from '@tanstack/react-router';
+import { ORG_KEYS_INGESTION_ROUTE, ORG_KEYS_MCP_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CloudUploadIcon, AiChat02Icon } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
@@ -39,13 +40,13 @@ function SecretKeysLayout() {
       <Tabs value={active}>
         <TabsList variant="line" className="justify-start gap-5">
           <TabsTrigger value="ingestion" asChild className="flex-none px-1 after:bg-primary">
-            <Link to="/orgs/$orgId/keys/ingestion" params={{ orgId }}>
+            <Link to={ORG_KEYS_INGESTION_ROUTE} params={{ orgId }}>
               <HugeiconsIcon icon={CloudUploadIcon} size={16} />
               Ingestion keys
             </Link>
           </TabsTrigger>
           <TabsTrigger value="mcp" asChild className="flex-none px-1 after:bg-primary">
-            <Link to="/orgs/$orgId/keys/mcp" params={{ orgId }}>
+            <Link to={ORG_KEYS_MCP_ROUTE} params={{ orgId }}>
               <HugeiconsIcon icon={AiChat02Icon} size={16} />
               Read keys (MCP)
             </Link>

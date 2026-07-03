@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
+import { SIGNUP_ROUTE } from '@/lib/routes';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CopyField } from '@/components/ui/copy-field';
 import { CopyButton } from '@/components/ui/copy-button';
@@ -116,7 +117,7 @@ function CredentialsHelp() {
   if (!user) {
     return (
       <Text as="p" variant="caption" color="muted" className="mt-2.5">
-        <Link to="/signup" className={HELP_LINK}>
+        <Link to={SIGNUP_ROUTE} className={HELP_LINK}>
           Sign up
         </Link>{' '}
         to get your project ID and an ingestion key.

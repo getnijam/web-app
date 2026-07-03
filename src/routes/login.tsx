@@ -1,5 +1,12 @@
 import { useState } from 'react';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import {
+  FORGOT_PASSWORD_ROUTE,
+  INVITE_ROUTE,
+  ORGS_ROUTE,
+  ORG_PROJECTS_ROUTE,
+  SIGNUP_ROUTE,
+} from '@/lib/routes';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { login, verifyLogin2Fa, ssoDiscovery } from '@/client';
 import { getMeQueryKey } from '@/client/@tanstack/react-query.gen';
@@ -88,7 +95,7 @@ function LoginPage() {
   const finishLogin = async () => {
     await queryClient.resetQueries({ queryKey: getMeQueryKey() });
     if (invite) {
-      navigate({ to: '/invite', search: { token: invite } });
+      navigate({ to: INVITE_ROUTE, search: { token: invite } });
       return;
     }
     if (nextUrl) {
@@ -98,9 +105,9 @@ function LoginPage() {
     // Land returning users on the org they last opened; first-timers get the picker.
     const me = await queryClient.ensureQueryData(meQueryOptions());
     if (me?.user?.lastOrgId) {
-      navigate({ to: '/orgs/$orgId/projects', params: { orgId: me.user.lastOrgId } });
+      navigate({ to: ORG_PROJECTS_ROUTE, params: { orgId: me.user.lastOrgId } });
     } else {
-      navigate({ to: '/orgs' });
+      navigate({ to: ORGS_ROUTE });
     }
   };
 
@@ -205,7 +212,7 @@ function LoginPage() {
         <Text color="muted" align="center">
           New to Nijam?{' '}
           <Link
-            to="/signup"
+            to={SIGNUP_ROUTE}
             className="font-medium text-foreground underline-offset-4 hover:underline"
           >
             Create an account
@@ -340,7 +347,7 @@ function PasswordStep({
         <Flex align="center" justify="between">
           <Label htmlFor="password">Password</Label>
           <Link
-            to="/forgot-password"
+            to={FORGOT_PASSWORD_ROUTE}
             className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
           >
             Forgot password?

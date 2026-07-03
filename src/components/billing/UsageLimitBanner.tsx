@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { ORG_BILLING_ROUTE } from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Alert02Icon } from '@hugeicons/core-free-icons';
@@ -50,7 +51,7 @@ export function UsageLimitBanner() {
         </Text>
       </Flex>
       <Button asChild size="sm">
-        <Link to="/orgs/$orgId/billing" params={{ orgId }}>
+        <Link to={ORG_BILLING_ROUTE} params={{ orgId }}>
           Upgrade
         </Link>
       </Button>

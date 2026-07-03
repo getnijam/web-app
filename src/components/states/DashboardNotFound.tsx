@@ -1,4 +1,5 @@
 import { Link, useRouter } from '@tanstack/react-router';
+import { ORGS_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft01Icon, BrokenBoneIcon } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
@@ -39,7 +40,7 @@ export function DashboardNotFound() {
           Go back
         </Button>
         <Button asChild>
-          <Link to="/orgs">Go to dashboard</Link>
+          <Link to={ORGS_ROUTE}>Go to dashboard</Link>
         </Button>
       </Flex>
     </Flex>

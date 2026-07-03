@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
+import { SIGNUP_ROUTE } from '@/lib/routes';
 import { Button } from '@/components/ui/button';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -34,7 +35,7 @@ export function CTA({
             {user ? (
               <DashboardLink>Go to dashboard</DashboardLink>
             ) : (
-              <Link to="/signup">Start free</Link>
+              <Link to={SIGNUP_ROUTE}>Start free</Link>
             )}
           </Button>
           <Button

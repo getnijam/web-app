@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { ORGS_ROUTE } from '@/lib/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -137,7 +138,7 @@ function OrgSettingsForm({ orgId, org }: { orgId: string; org: OrgResponse }) {
       notify.success('Organization deleted', {
         description: `${org.name} and all of its data have been permanently removed.`,
       });
-      navigate({ to: '/orgs' });
+      navigate({ to: ORGS_ROUTE });
     },
     onError: (err) => {
       setDeleteOpen(false);

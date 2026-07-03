@@ -1,5 +1,18 @@
 import type { MouseEvent } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
+import {
+  EXPLORER_ROUTE,
+  FAILING_ROUTE,
+  FLAKY_ROUTE,
+  LOGIN_ROUTE,
+  ORG_BILLING_ROUTE,
+  ORG_INTEGRATIONS_ROUTE,
+  ORG_KEYS_ROUTE,
+  ORG_PROJECTS_ROUTE,
+  ORG_SETTINGS_ROUTE,
+  PROJECT_SETTINGS_ROUTE,
+  RUNS_ROUTE,
+} from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import {
@@ -72,7 +85,7 @@ function HomeNav({ orgId, active }: { orgId: string; active: SubRoute }) {
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton asChild isActive={active === 'home'} className={NAV_ACTIVE}>
-          <Link to="/orgs/$orgId/projects" params={{ orgId }}>
+          <Link to={ORG_PROJECTS_ROUTE} params={{ orgId }}>
             <NavGlyph icon={Home01Icon} active={active === 'home'} />
             <span>Projects</span>
           </Link>
@@ -80,7 +93,7 @@ function HomeNav({ orgId, active }: { orgId: string; active: SubRoute }) {
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild isActive={active === 'keys'} className={NAV_ACTIVE}>
-          <Link to="/orgs/$orgId/keys" params={{ orgId }}>
+          <Link to={ORG_KEYS_ROUTE} params={{ orgId }}>
             <NavGlyph icon={SquareLock02Icon} active={active === 'keys'} />
             <span>Secret keys</span>
           </Link>
@@ -88,7 +101,7 @@ function HomeNav({ orgId, active }: { orgId: string; active: SubRoute }) {
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild isActive={active === 'integrations'} className={NAV_ACTIVE}>
-          <Link to="/orgs/$orgId/integrations" params={{ orgId }}>
+          <Link to={ORG_INTEGRATIONS_ROUTE} params={{ orgId }}>
             <NavGlyph icon={PlugSocketIcon} active={active === 'integrations'} />
             <span>Integrations</span>
           </Link>
@@ -167,11 +180,7 @@ function ProjectNav({
           <SidebarMenuButton asChild>
             {/* Stop the delegated close-on-nav: this switches the sidebar to the
                 org-level nav, so the mobile sheet should stay open to show it. */}
-            <Link
-              to="/orgs/$orgId/projects"
-              params={{ orgId }}
-              onClick={(e) => e.stopPropagation()}
-            >
+            <Link to={ORG_PROJECTS_ROUTE} params={{ orgId }} onClick={(e) => e.stopPropagation()}>
               <NavGlyph icon={ArrowLeft01Icon} active={false} />
               <span>Back to projects</span>
             </Link>
@@ -184,7 +193,7 @@ function ProjectNav({
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild isActive={active === 'runs'} className={NAV_ACTIVE}>
-            <Link to="/orgs/$orgId/projects/$projectId/runs" params={{ orgId, projectId }}>
+            <Link to={RUNS_ROUTE} params={{ orgId, projectId }}>
               <NavGlyph icon={Task01Icon} active={active === 'runs'} />
               <span>Runs</span>
             </Link>
@@ -197,7 +206,7 @@ function ProjectNav({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={active === 'explorer'} className={NAV_ACTIVE}>
-              <Link to="/orgs/$orgId/projects/$projectId/explorer" params={{ orgId, projectId }}>
+              <Link to={EXPLORER_ROUTE} params={{ orgId, projectId }}>
                 <NavGlyph icon={TestTubesIcon} active={active === 'explorer'} />
                 <span>Test explorer</span>
               </Link>
@@ -205,7 +214,7 @@ function ProjectNav({
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={active === 'flaky'} className={NAV_ACTIVE}>
-              <Link to="/orgs/$orgId/projects/$projectId/flaky" params={{ orgId, projectId }}>
+              <Link to={FLAKY_ROUTE} params={{ orgId, projectId }}>
                 <NavGlyph icon={AlertSquareIcon} active={active === 'flaky'} />
                 <span>Flaky tests</span>
               </Link>
@@ -213,7 +222,7 @@ function ProjectNav({
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={active === 'failing'} className={NAV_ACTIVE}>
-              <Link to="/orgs/$orgId/projects/$projectId/failing" params={{ orgId, projectId }}>
+              <Link to={FAILING_ROUTE} params={{ orgId, projectId }}>
                 <NavGlyph icon={CancelSquareIcon} active={active === 'failing'} />
                 <span>Failing tests</span>
               </Link>
@@ -246,11 +255,7 @@ function SettingsNavItem({
     return (
       <SidebarMenuItem>
         <SidebarMenuButton asChild isActive={active === 'psettings'} className={NAV_ACTIVE}>
-          <Link
-            to="/orgs/$orgId/projects/$projectId/settings"
-            params={{ orgId, projectId }}
-            onClick={onNavigate}
-          >
+          <Link to={PROJECT_SETTINGS_ROUTE} params={{ orgId, projectId }} onClick={onNavigate}>
             <NavGlyph icon={Settings01Icon} active={active === 'psettings'} />
             <span>Project settings</span>
           </Link>
@@ -261,7 +266,7 @@ function SettingsNavItem({
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={active === 'org'} className={NAV_ACTIVE}>
-        <Link to="/orgs/$orgId/settings" params={{ orgId }} onClick={onNavigate}>
+        <Link to={ORG_SETTINGS_ROUTE} params={{ orgId }} onClick={onNavigate}>
           <NavGlyph icon={Building03Icon} active={active === 'org'} />
           <span>Org settings</span>
         </Link>
@@ -320,7 +325,7 @@ export function AppSidebar() {
           {!inProject && (
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={active === 'billing'} className={NAV_ACTIVE}>
-                <Link to="/orgs/$orgId/billing" params={{ orgId }} onClick={closeMobile}>
+                <Link to={ORG_BILLING_ROUTE} params={{ orgId }} onClick={closeMobile}>
                   <NavGlyph icon={CreditCardIcon} active={active === 'billing'} />
                   <span>Billing &amp; usage</span>
                 </Link>
@@ -347,7 +352,7 @@ export function AppSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        <AccountMenu variant="sidebar" onSignedOut={() => navigate({ to: '/login' })} />
+        <AccountMenu variant="sidebar" onSignedOut={() => navigate({ to: LOGIN_ROUTE })} />
       </SidebarFooter>
 
       <SidebarRail />

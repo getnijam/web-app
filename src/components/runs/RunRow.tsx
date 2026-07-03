@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
+import { RUN_ROUTE } from '@/lib/routes';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
@@ -125,7 +126,7 @@ export function RunRow({
       className="group relative border-b border-border transition-colors last:border-b-0"
     >
       <Link
-        to="/orgs/$orgId/projects/$projectId/runs/$runId"
+        to={RUN_ROUTE}
         params={{ orgId, projectId, runId: run.id }}
         aria-label={`Run ${run.commitSha ? run.commitSha.slice(0, 7) : run.id}`}
         className="absolute inset-0 z-0"
@@ -269,7 +270,7 @@ export function RunRow({
           <ContextMenuContent>
             <ContextMenuItem asChild>
               <Link
-                to="/orgs/$orgId/projects/$projectId/runs/$runId"
+                to={RUN_ROUTE}
                 params={{ orgId, projectId, runId: run.id }}
                 target="_blank"
                 rel="noopener noreferrer"

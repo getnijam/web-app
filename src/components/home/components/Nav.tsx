@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
+import { FEATURES_ROUTE, HOME_ROUTE, LOGIN_ROUTE, PRICING_ROUTE, SIGNUP_ROUTE } from '@/lib/routes';
 import { motion, type Transition } from 'motion/react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowUpRight01Icon, Cancel01Icon, Menu01Icon } from '@hugeicons/core-free-icons';
@@ -42,13 +43,13 @@ function NavLinks({ onNavigate, withPill }: { onNavigate?: () => void; withPill?
   return (
     <>
       {/* `/` is a prefix of every route, so match it exactly or it's always active. */}
-      <Link to="/" activeOptions={{ exact: true }} onClick={onNavigate} {...linkProps}>
+      <Link to={HOME_ROUTE} activeOptions={{ exact: true }} onClick={onNavigate} {...linkProps}>
         Home
       </Link>
-      <Link to="/features" onClick={onNavigate} {...linkProps}>
+      <Link to={FEATURES_ROUTE} onClick={onNavigate} {...linkProps}>
         Features
       </Link>
-      <Link to="/pricing" onClick={onNavigate} {...linkProps}>
+      <Link to={PRICING_ROUTE} onClick={onNavigate} {...linkProps}>
         Pricing
       </Link>
       {/* External: no active state; the new-tab arrow appears on hover. */}
@@ -177,15 +178,15 @@ export function Nav() {
     actions = (
       <>
         <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-          <Link to="/login">Log in</Link>
+          <Link to={LOGIN_ROUTE}>Log in</Link>
         </Button>
         <Button asChild size="sm" className="rounded-full px-4">
-          <Link to="/signup">Start free</Link>
+          <Link to={SIGNUP_ROUTE}>Start free</Link>
         </Button>
       </>
     );
     menuExtras = (
-      <Link to="/login" className={cn(LINK, 'sm:hidden')} onClick={closeMenu}>
+      <Link to={LOGIN_ROUTE} className={cn(LINK, 'sm:hidden')} onClick={closeMenu}>
         Log in
       </Link>
     );
@@ -205,7 +206,11 @@ export function Nav() {
           <Flex align="center" gap={3} className="w-full">
             {/* `flex` (not the default inline anchor) so no line-box strut adds
                 space under the lockup and the logo centers exactly in the card. */}
-            <Link to="/" aria-label="Nijam.dev home" className="flex shrink-0 items-center pl-1.5">
+            <Link
+              to={HOME_ROUTE}
+              aria-label="Nijam.dev home"
+              className="flex shrink-0 items-center pl-1.5"
+            >
               <Logo />
             </Link>
             <DesktopNavLinks />

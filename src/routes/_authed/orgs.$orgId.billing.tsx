@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { ORG_BILLING_ROUTE } from '@/lib/routes';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import {
@@ -54,7 +55,7 @@ function BillingPage() {
   useEffect(() => {
     if (upgraded && data?.plan === 'pro') {
       notify.success('Welcome to Pro! 🎉', { description: 'Your plan is now active.' });
-      navigate({ to: '/orgs/$orgId/billing', params: { orgId }, search: {}, replace: true });
+      navigate({ to: ORG_BILLING_ROUTE, params: { orgId }, search: {}, replace: true });
     }
   }, [upgraded, data?.plan, navigate, orgId]);
 

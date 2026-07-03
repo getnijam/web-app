@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { LOGIN_ROUTE, PRIVACY_ROUTE, TERMS_ROUTE } from '@/lib/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -98,7 +99,7 @@ function SignupPage() {
           <Text color="muted">
             Didn’t get it? Check spam, or{' '}
             <Link
-              to="/login"
+              to={LOGIN_ROUTE}
               className="font-medium text-foreground underline-offset-4 hover:underline"
             >
               sign in
@@ -160,11 +161,11 @@ function SignupPage() {
 
           <Text color="muted" align="center" className="text-xs">
             By creating an account, you agree to our{' '}
-            <Link to="/terms" className="text-foreground underline-offset-4 hover:underline">
+            <Link to={TERMS_ROUTE} className="text-foreground underline-offset-4 hover:underline">
               Terms
             </Link>{' '}
             and{' '}
-            <Link to="/privacy" className="text-foreground underline-offset-4 hover:underline">
+            <Link to={PRIVACY_ROUTE} className="text-foreground underline-offset-4 hover:underline">
               Privacy Policy
             </Link>
             .
@@ -174,7 +175,7 @@ function SignupPage() {
         <Text color="muted" align="center">
           Already have an account?{' '}
           <Link
-            to="/login"
+            to={LOGIN_ROUTE}
             className="font-medium text-foreground underline-offset-4 hover:underline"
           >
             Sign in

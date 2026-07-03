@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
+import { FEATURES_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   Activity03Icon,
@@ -93,7 +94,11 @@ function TrendPreview() {
       {bars.map((h, i) => (
         <span
           key={i}
-          className={cn('flex-1 rounded-sm', h, i === bars.length - 1 ? 'bg-primary' : 'bg-primary/25')}
+          className={cn(
+            'flex-1 rounded-sm',
+            h,
+            i === bars.length - 1 ? 'bg-primary' : 'bg-primary/25',
+          )}
         />
       ))}
     </Flex>
@@ -269,7 +274,7 @@ export function HomeFeatures() {
       <Reveal className="mt-12">
         <Flex justify="center">
           <Link
-            to="/features"
+            to={FEATURES_ROUTE}
             className="group inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
           >
             View all features

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
+import { ORG_BILLING_ROUTE } from '@/lib/routes';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
@@ -351,7 +352,7 @@ function UpgradePanel({ orgId }: { orgId: string }) {
         </Text>
         <Flex>
           <Button asChild>
-            <Link to="/orgs/$orgId/billing" params={{ orgId }}>
+            <Link to={ORG_BILLING_ROUTE} params={{ orgId }}>
               Upgrade to Pro
             </Link>
           </Button>

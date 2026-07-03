@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { ORG_INTEGRATIONS_ROUTE, ORG_INTEGRATIONS_SLACK_ROUTE } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
@@ -49,7 +50,7 @@ function SlackPage() {
       });
     }
     navigate({
-      to: '/orgs/$orgId/integrations/slack',
+      to: ORG_INTEGRATIONS_SLACK_ROUTE,
       params: { orgId },
       search: {},
       replace: true,
@@ -59,7 +60,7 @@ function SlackPage() {
   return (
     <Flex direction="col" gap={5} className="mx-auto w-full max-w-5xl">
       <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
-        <Link to="/orgs/$orgId/integrations" params={{ orgId }}>
+        <Link to={ORG_INTEGRATIONS_ROUTE} params={{ orgId }}>
           <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
           Integrations
         </Link>

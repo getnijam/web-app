@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { FORGOT_PASSWORD_ROUTE, LOGIN_ROUTE } from '@/lib/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -85,7 +86,7 @@ function ResetPasswordPage() {
             }
           />
           <Button asChild variant="outline" size="lg" className="w-full">
-            <Link to="/forgot-password">Request a new link</Link>
+            <Link to={FORGOT_PASSWORD_ROUTE}>Request a new link</Link>
           </Button>
         </Flex>
       </AuthLayout>
@@ -108,7 +109,7 @@ function ResetPasswordPage() {
             description="Your password has been reset. You can sign in with your new password now."
           />
           <Button asChild size="lg" className="w-full">
-            <Link to="/login">Continue to sign in</Link>
+            <Link to={LOGIN_ROUTE}>Continue to sign in</Link>
           </Button>
         </Flex>
       </AuthLayout>

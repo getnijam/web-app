@@ -1,4 +1,5 @@
 import { Link, useParams, useRouterState, useSearch } from '@tanstack/react-router';
+import { ORG_PROJECTS_ROUTE, RUNS_ROUTE, RUN_ROUTE } from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Home01Icon } from '@hugeicons/core-free-icons';
@@ -80,7 +81,7 @@ function Breadcrumbs() {
           {/* No "Runs" crumb, the project link above already points to the runs list. */}
           <Sep />
           <Link
-            to="/orgs/$orgId/projects/$projectId/runs/$runId"
+            to={RUN_ROUTE}
             params={{ orgId, projectId: projectId!, runId: runId! }}
             className="shrink-0 font-mono text-muted-foreground hover:text-foreground"
           >
@@ -112,7 +113,7 @@ function Breadcrumbs() {
     <Flex align="center" gap={2} className="min-w-0 text-sm">
       <Flex
         as={Link}
-        to="/orgs/$orgId/projects"
+        to={ORG_PROJECTS_ROUTE}
         params={{ orgId } as never}
         align="center"
         aria-label="Projects"
@@ -126,7 +127,7 @@ function Breadcrumbs() {
         <Skeleton className="h-4 w-24 shrink-0 rounded-md" />
       ) : (
         <Link
-          to="/orgs/$orgId/projects/$projectId/runs"
+          to={RUNS_ROUTE}
           params={{ orgId, projectId: projectId! }}
           className={cn(
             'min-w-0 shrink truncate',

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { LOGIN_ROUTE, ORGS_ROUTE, ORG_PROJECTS_ROUTE, SIGNUP_ROUTE } from '@/lib/routes';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { UserGroupIcon } from '@hugeicons/core-free-icons';
@@ -65,11 +66,13 @@ function InvitePage() {
       notify.success(`Joined ${res.orgName}`, {
         description: 'You now have access to the organization’s projects and runs.',
       });
-      navigate({ to: '/orgs/$orgId/projects', params: { orgId: res.orgId } });
+      navigate({ to: ORG_PROJECTS_ROUTE, params: { orgId: res.orgId } });
     },
     onError: (err) =>
       notify.error("Couldn't accept invitation", {
-        description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
       }),
   });
 
@@ -83,7 +86,10 @@ function InvitePage() {
           title="Invitation not found"
           description="This invitation link is invalid or has been revoked. Ask an organization member to send a new one."
         />
-        <Link to="/orgs" className="font-medium text-foreground underline-offset-4 hover:underline">
+        <Link
+          to={ORGS_ROUTE}
+          className="font-medium text-foreground underline-offset-4 hover:underline"
+        >
           Go to your organizations
         </Link>
       </InviteShell>
@@ -107,7 +113,10 @@ function InvitePage() {
           title="Already accepted"
           description={`This invitation to ${orgName} has already been accepted.`}
         />
-        <Link to="/orgs" className="font-medium text-foreground underline-offset-4 hover:underline">
+        <Link
+          to={ORGS_ROUTE}
+          className="font-medium text-foreground underline-offset-4 hover:underline"
+        >
           Go to your organizations
         </Link>
       </InviteShell>
@@ -121,7 +130,10 @@ function InvitePage() {
           title="Invitation expired"
           description={`This invitation to ${orgName} has expired. Ask an organization member to send a new one.`}
         />
-        <Link to="/orgs" className="font-medium text-foreground underline-offset-4 hover:underline">
+        <Link
+          to={ORGS_ROUTE}
+          className="font-medium text-foreground underline-offset-4 hover:underline"
+        >
           Go to your organizations
         </Link>
       </InviteShell>
@@ -152,12 +164,12 @@ function InvitePage() {
         />
         <Flex direction="col" gap={3}>
           <Button asChild size="lg" className="w-full">
-            <Link to="/login" search={{ invite: token }}>
+            <Link to={LOGIN_ROUTE} search={{ invite: token }}>
               Sign in to accept
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="w-full">
-            <Link to="/signup" search={{ email }}>
+            <Link to={SIGNUP_ROUTE} search={{ email }}>
               Create an account
             </Link>
           </Button>

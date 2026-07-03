@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState } from '@tanstack/react-router';
+import { ORG_SETTINGS_ROUTE, ORG_SETTINGS_SSO_ROUTE, ORG_SETTINGS_USERS_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Building03Icon, UserMultiple02Icon, ShieldKeyIcon } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
@@ -42,19 +43,19 @@ function OrgSettingsLayout() {
       <Tabs value={active}>
         <TabsList variant="line" className="justify-start gap-5">
           <TabsTrigger value="general" asChild className="flex-none px-1 after:bg-primary">
-            <Link to="/orgs/$orgId/settings" params={{ orgId }}>
+            <Link to={ORG_SETTINGS_ROUTE} params={{ orgId }}>
               <HugeiconsIcon icon={Building03Icon} size={16} />
               General
             </Link>
           </TabsTrigger>
           <TabsTrigger value="users" asChild className="flex-none px-1 after:bg-primary">
-            <Link to="/orgs/$orgId/settings/users" params={{ orgId }}>
+            <Link to={ORG_SETTINGS_USERS_ROUTE} params={{ orgId }}>
               <HugeiconsIcon icon={UserMultiple02Icon} size={16} />
               Users
             </Link>
           </TabsTrigger>
           <TabsTrigger value="sso" asChild className="flex-none px-1 after:bg-primary">
-            <Link to="/orgs/$orgId/settings/sso" params={{ orgId }}>
+            <Link to={ORG_SETTINGS_SSO_ROUTE} params={{ orgId }}>
               <HugeiconsIcon icon={ShieldKeyIcon} size={16} />
               Single sign-on
             </Link>

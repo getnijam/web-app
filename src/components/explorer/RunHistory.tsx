@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { RUN_FILE_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { GitBranchIcon } from '@hugeicons/core-free-icons';
 import type { TestHistoryEntry } from '@/client';
@@ -89,7 +90,7 @@ export function RunHistory({
             <Flex
               as={Link}
               key={h.runId}
-              to="/orgs/$orgId/projects/$projectId/runs/$runId/file"
+              to={RUN_FILE_ROUTE}
               params={{ orgId, projectId, runId: h.runId } as never}
               search={{ path: file } as never}
               onClick={onNavigate}

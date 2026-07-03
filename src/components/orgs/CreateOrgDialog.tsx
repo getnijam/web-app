@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { ORG_PROJECTS_ROUTE } from '@/lib/routes';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -55,7 +56,7 @@ export function CreateOrgDialog({
       notify.success('Organization created', {
         description: `${org.name} is ready, create a project to start tracking runs.`,
       });
-      navigate({ to: '/orgs/$orgId/projects', params: { orgId: org.id } });
+      navigate({ to: ORG_PROJECTS_ROUTE, params: { orgId: org.id } });
     },
     onError: (err) => {
       if (isApiError(err) && err.error.field) {

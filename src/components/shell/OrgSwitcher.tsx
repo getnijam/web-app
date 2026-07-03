@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Link, useNavigate } from '@tanstack/react-router';
+import { ORGS_ROUTE, ORG_PROJECTS_ROUTE } from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { UnfoldMoreIcon, PlusSignIcon, Building03Icon } from '@hugeicons/core-free-icons';
@@ -46,7 +47,7 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
         data-hover-item
         onClick={() => {
           setOpen(false);
-          navigate({ to: '/orgs/$orgId/projects', params: { orgId: o.id } });
+          navigate({ to: ORG_PROJECTS_ROUTE, params: { orgId: o.id } });
         }}
         className={cn('h-auto justify-start gap-2.5', menuItem, o.id === orgId && 'bg-accent')}
       >
@@ -73,40 +74,44 @@ export function OrgSwitcher({ orgId }: { orgId: string }) {
               className="absolute top-full right-0 left-0 z-50 mt-1.5 origin-top rounded-lg border border-border bg-popover p-1.5 shadow-xl"
             >
               <HoverHighlight>
-              <Text as="div" className="px-2 py-1 text-xs font-medium text-muted-foreground">
-                Organizations
-              </Text>
-            <Flex direction="col" gap={0.5} className="max-h-64 overflow-y-auto">
-              {renderOrgRows()}
-            </Flex>
-            <div className="my-1 h-px bg-border" />
-            <Button
-              variant="ghost"
-              type="button"
-              data-hover-item
-              onClick={() => {
-                setOpen(false);
-                setCreateOpen(true);
-              }}
-              className={cn('h-auto justify-start gap-2.5', menuItem)}
-              data-testid="create-org-trigger"
-            >
-              <HugeiconsIcon icon={PlusSignIcon} size={16} className="text-muted-foreground" />
-              New organization
-            </Button>
-            <Flex
-              as={Link}
-              to="/orgs"
-              data-hover-item
-              onClick={() => setOpen(false)}
-              align="center"
-              gap={2.5}
-              className={menuItem}
-            >
-              <HugeiconsIcon icon={Building03Icon} size={16} className="text-muted-foreground" />
-              All organizations
-            </Flex>
-            </HoverHighlight>
+                <Text as="div" className="px-2 py-1 text-xs font-medium text-muted-foreground">
+                  Organizations
+                </Text>
+                <Flex direction="col" gap={0.5} className="max-h-64 overflow-y-auto">
+                  {renderOrgRows()}
+                </Flex>
+                <div className="my-1 h-px bg-border" />
+                <Button
+                  variant="ghost"
+                  type="button"
+                  data-hover-item
+                  onClick={() => {
+                    setOpen(false);
+                    setCreateOpen(true);
+                  }}
+                  className={cn('h-auto justify-start gap-2.5', menuItem)}
+                  data-testid="create-org-trigger"
+                >
+                  <HugeiconsIcon icon={PlusSignIcon} size={16} className="text-muted-foreground" />
+                  New organization
+                </Button>
+                <Flex
+                  as={Link}
+                  to={ORGS_ROUTE}
+                  data-hover-item
+                  onClick={() => setOpen(false)}
+                  align="center"
+                  gap={2.5}
+                  className={menuItem}
+                >
+                  <HugeiconsIcon
+                    icon={Building03Icon}
+                    size={16}
+                    className="text-muted-foreground"
+                  />
+                  All organizations
+                </Flex>
+              </HoverHighlight>
             </motion.div>
           </>
         )}

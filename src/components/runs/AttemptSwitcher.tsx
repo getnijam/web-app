@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { RUN_ROUTE } from '@/lib/routes';
 import { motion, type Transition } from 'motion/react';
 import type { RunGroup } from '@/client';
 import { Flex } from '@/components/ui/flex';
@@ -55,7 +56,7 @@ export function AttemptSwitcher({
           return (
             <Link
               key={a.runId}
-              to="/orgs/$orgId/projects/$projectId/runs/$runId"
+              to={RUN_ROUTE}
               params={{ orgId, projectId, runId: a.runId }}
               aria-current={isCurrent ? 'page' : undefined}
               className={cn(

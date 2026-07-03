@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { ORGS_ROUTE } from '@/lib/routes';
 import { setMyLastOrg } from '@/client';
 import type { UserPublic } from '@/client';
 import { getOrgOptions, getMeQueryKey } from '@/client/@tanstack/react-query.gen';
@@ -15,7 +16,7 @@ export const Route = createFileRoute('/_authed/orgs/$orgId')({
     try {
       await queryClient.ensureQueryData(getOrgOptions({ path: { orgId: params.orgId } }));
     } catch {
-      throw redirect({ to: '/orgs' });
+      throw redirect({ to: ORGS_ROUTE });
     }
 
     // Remember this as the user's last-opened org so the next sign-in lands here.

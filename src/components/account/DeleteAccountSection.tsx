@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { LOGIN_ROUTE } from '@/lib/routes';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Alert02Icon } from '@hugeicons/core-free-icons';
@@ -220,7 +221,7 @@ function DeleteAccountDialog({
       notify.success('Account deleted', {
         description: 'Your account has been permanently removed.',
       });
-      navigate({ to: '/login' });
+      navigate({ to: LOGIN_ROUTE });
     },
   });
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
+import { ORG_INTEGRATIONS_GITHUB_ROUTE } from '@/lib/routes';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ProjectGitHubResponse } from '@/client';
 import {
@@ -117,7 +118,7 @@ function ProjectGitHubInner({
           {isAdmin ? (
             <Flex>
               <Button asChild variant="outline" size="sm">
-                <Link to="/orgs/$orgId/integrations/github" params={{ orgId }}>
+                <Link to={ORG_INTEGRATIONS_GITHUB_ROUTE} params={{ orgId }}>
                   Set up GitHub
                 </Link>
               </Button>

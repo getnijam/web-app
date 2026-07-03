@@ -98,10 +98,14 @@ export function RunDetailBodySkeleton() {
   );
 }
 
-/** Run detail: back bar + header + summary bar + spec-files panel. */
-export function RunDetailSkeleton() {
+/**
+ * The run-detail column, back bar + header + summary + spec-files panel, without a
+ * page container. Rendered by RunOverview so it works both standalone (run page)
+ * and as the left half of the file page's side-by-side split.
+ */
+export function RunDetailColumnSkeleton() {
   return (
-    <Flex direction="col" gap={6} className="mx-auto w-full max-w-5xl">
+    <>
       <Flex align="center" justify="between">
         <Skeleton className="h-8 w-20 rounded-md" />
         <Skeleton className="h-8 w-40 rounded-md" />
@@ -116,7 +120,7 @@ export function RunDetailSkeleton() {
       </Flex>
 
       <RunDetailBodySkeleton />
-    </Flex>
+    </>
   );
 }
 

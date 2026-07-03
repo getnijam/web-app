@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { ORG_PROJECTS_ROUTE } from '@/lib/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -124,7 +125,7 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
       notify.success('Project removed', {
         description: `${project.name} and all of its runs have been permanently deleted.`,
       });
-      navigate({ to: '/orgs/$orgId/projects', params: { orgId } });
+      navigate({ to: ORG_PROJECTS_ROUTE, params: { orgId } });
     },
     onError: () => {
       setConfirmOpen(false);

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { RUNS_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { GitBranchIcon, Layers01Icon, Clock01Icon } from '@hugeicons/core-free-icons';
 import type { ProjectSummary } from '@/client';
@@ -21,7 +22,7 @@ export function ProjectCard({ project, orgId }: { project: ProjectSummary; orgId
   return (
     <Flex
       as={Link}
-      to="/orgs/$orgId/projects/$projectId/runs"
+      to={RUNS_ROUTE}
       params={{ orgId, projectId: project.id } as never}
       direction="col"
       gap={3.5}

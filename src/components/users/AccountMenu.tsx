@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Link } from '@tanstack/react-router';
+import { PROFILE_ROUTE } from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
@@ -86,7 +87,7 @@ export function AccountMenu({
           data-hover-item
           className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-transparent"
         >
-          <Link to="/profile" hash="invitations" onClick={() => setOpen(false)}>
+          <Link to={PROFILE_ROUTE} hash="invitations" onClick={() => setOpen(false)}>
             <HugeiconsIcon icon={Mail01Icon} size={16} strokeWidth={1.8} className="text-primary" />
             <span className="flex-1">Pending invitations</span>
             <span className="rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground tabular-nums">
@@ -101,7 +102,7 @@ export function AccountMenu({
         data-hover-item
         className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-transparent"
       >
-        <Link to="/profile" onClick={() => setOpen(false)}>
+        <Link to={PROFILE_ROUTE} onClick={() => setOpen(false)}>
           <HugeiconsIcon icon={Settings01Icon} size={16} strokeWidth={1.8} />
           Account settings
         </Link>

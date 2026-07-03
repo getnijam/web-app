@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { TERMS_ROUTE } from '@/lib/routes';
 import { LegalLayout, Section, P, Bullets } from '@/components/legal/LegalLayout';
 import { seo } from '@/lib/seo';
 
@@ -201,7 +202,7 @@ function PrivacyPage() {
             {CONTACT}
           </a>
           . See also our{' '}
-          <Link to="/terms" className="text-primary underline-offset-4 hover:underline">
+          <Link to={TERMS_ROUTE} className="text-primary underline-offset-4 hover:underline">
             Terms of Service
           </Link>
           .

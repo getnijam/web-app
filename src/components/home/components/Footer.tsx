@@ -1,4 +1,15 @@
 import { Link } from '@tanstack/react-router';
+import {
+  FEATURES_ROUTE,
+  HOME_ROUTE,
+  LOGIN_ROUTE,
+  PRICING_ROUTE,
+  PRIVACY_ROUTE,
+  SECURITY_ROUTE,
+  SIGNUP_ROUTE,
+  SUPPORT_ROUTE,
+  TERMS_ROUTE,
+} from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowUpRight01Icon } from '@hugeicons/core-free-icons';
 import { Logo } from '@/components/auth/Logo';
@@ -25,9 +36,7 @@ const REPORTERS = [
 
 /** New-tab indicator for the footer's external links. */
 function ExtIcon() {
-  return (
-    <HugeiconsIcon icon={ArrowUpRight01Icon} size={12} strokeWidth={2} className="shrink-0" />
-  );
+  return <HugeiconsIcon icon={ArrowUpRight01Icon} size={12} strokeWidth={2} className="shrink-0" />;
 }
 
 export function Footer() {
@@ -40,7 +49,7 @@ export function Footer() {
           <div className="shrink-0">
             <Flex
               as={Link}
-              to="/"
+              to={HOME_ROUTE}
               aria-label="Nijam.dev home"
               inline
               className="text-background"
@@ -60,16 +69,16 @@ export function Footer() {
               <Text as="p" className={H5}>
                 Product
               </Text>
-              <Link to="/features" className={COL}>
+              <Link to={FEATURES_ROUTE} className={COL}>
                 Features
               </Link>
-              <Link to="/pricing" className={COL}>
+              <Link to={PRICING_ROUTE} className={COL}>
                 Pricing
               </Link>
-              <Link to="/login" className={COL}>
+              <Link to={LOGIN_ROUTE} className={COL}>
                 Log in
               </Link>
-              <Link to="/signup" className={COL}>
+              <Link to={SIGNUP_ROUTE} className={COL}>
                 Sign up
               </Link>
             </div>
@@ -94,16 +103,16 @@ export function Footer() {
                 Docs
                 <ExtIcon />
               </a>
-              <Link to="/support" className={COL}>
+              <Link to={SUPPORT_ROUTE} className={COL}>
                 Support
               </Link>
-              <Link to="/terms" className={COL}>
+              <Link to={TERMS_ROUTE} className={COL}>
                 Terms of Service
               </Link>
-              <Link to="/privacy" className={COL}>
+              <Link to={PRIVACY_ROUTE} className={COL}>
                 Privacy Policy
               </Link>
-              <Link to="/security" className={COL}>
+              <Link to={SECURITY_ROUTE} className={COL}>
                 Security
               </Link>
             </div>

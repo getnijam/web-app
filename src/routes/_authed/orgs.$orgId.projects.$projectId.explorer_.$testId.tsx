@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { EXPLORER_ROUTE, EXPLORER_TEST_ROUTE, FAILING_ROUTE, FLAKY_ROUTE } from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
@@ -35,9 +36,9 @@ interface TestDetailSearch {
 
 /** Back-link target per origin list. */
 const BACK_TARGETS = {
-  explorer: { to: '/orgs/$orgId/projects/$projectId/explorer', label: 'Test explorer' },
-  flaky: { to: '/orgs/$orgId/projects/$projectId/flaky', label: 'Flaky tests' },
-  failing: { to: '/orgs/$orgId/projects/$projectId/failing', label: 'Failing tests' },
+  explorer: { to: EXPLORER_ROUTE, label: 'Test explorer' },
+  flaky: { to: FLAKY_ROUTE, label: 'Flaky tests' },
+  failing: { to: FAILING_ROUTE, label: 'Failing tests' },
 } as const;
 
 const ORIGINS: TestDetailOrigin[] = ['explorer', 'flaky', 'failing'];
@@ -146,7 +147,7 @@ function TestDetailPage() {
       <Grid
         cols={[1, 1, 3]}
         gap={4}
-        className="items-stretch md:min-h-112 md:max-h-detail md:flex-1 md:auto-rows-fr"
+        className="items-stretch md:max-h-detail md:min-h-112 md:flex-1 md:auto-rows-fr"
       >
         <div className="min-w-0 md:col-span-2">
           <SourcePanel source={source} test={test} />
@@ -187,11 +188,7 @@ function StepButton({
   }
   return (
     <Button asChild variant="outline" size="icon-lg" className="rounded-xl" aria-label={label}>
-      <Link
-        to="/orgs/$orgId/projects/$projectId/explorer/$testId"
-        params={{ orgId, projectId, testId }}
-        search={{ from }}
-      >
+      <Link to={EXPLORER_TEST_ROUTE} params={{ orgId, projectId, testId }} search={{ from }}>
         <HugeiconsIcon icon={icon} size={16} />
       </Link>
     </Button>

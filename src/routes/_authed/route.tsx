@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { LOGIN_ROUTE } from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import * as Sentry from '@sentry/react';
 import { meQueryOptions } from '@/lib/me-query';
@@ -25,10 +26,10 @@ export const Route = createFileRoute('/_authed')({
     try {
       me = await context.queryClient.ensureQueryData(meQueryOptions());
     } catch {
-      throw redirect({ to: '/login', search: { nextUrl: location.href } });
+      throw redirect({ to: LOGIN_ROUTE, search: { nextUrl: location.href } });
     }
     // A 401 resolves to null (guest), not a throw, so gate on the user's presence.
-    if (!me?.user) throw redirect({ to: '/login', search: { nextUrl: location.href } });
+    if (!me?.user) throw redirect({ to: LOGIN_ROUTE, search: { nextUrl: location.href } });
   },
   // Dashboard-scoped 404: unmatched authed routes render the in-app 404 instead of
   // bubbling to the public marketing 404 (Nav + Footer). Org-scoped 404s use the org

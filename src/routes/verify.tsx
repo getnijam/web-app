@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { LOGIN_ROUTE, SIGNUP_ROUTE } from '@/lib/routes';
 import { CheckCircle2, Clock, Loader2, XCircle } from 'lucide-react';
 import { z } from 'zod';
 import { verifyEmail, resendVerification } from '@/client';
@@ -87,7 +88,7 @@ function VerifyPage() {
               description="Your account is ready. You can sign in now."
             />
             <Button asChild size="lg" className="w-full">
-              <Link to="/login">Continue to sign in</Link>
+              <Link to={LOGIN_ROUTE}>Continue to sign in</Link>
             </Button>
           </>
         )}
@@ -147,7 +148,7 @@ function VerifyPage() {
               description="This verification link is invalid. Please sign up again to get a fresh one."
             />
             <Button asChild variant="outline" size="lg" className="w-full">
-              <Link to="/signup">Back to sign up</Link>
+              <Link to={SIGNUP_ROUTE}>Back to sign up</Link>
             </Button>
           </>
         )}

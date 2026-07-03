@@ -1,5 +1,13 @@
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
+import {
+  LOGIN_ROUTE,
+  ORGS_ROUTE,
+  ORG_PROJECTS_ROUTE,
+  PROFILE_DANGER_ROUTE,
+  PROFILE_ROUTE,
+  PROFILE_SECURITY_ROUTE,
+} from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft01Icon, UserIcon, SecurityIcon, Delete02Icon } from '@hugeicons/core-free-icons';
@@ -13,9 +21,9 @@ import { AccountMenu } from '@/components/users/AccountMenu';
 import { HoverHighlight } from '@/components/ui/hover-highlight';
 
 const SECTIONS = [
-  { to: '/profile', label: 'Profile', icon: UserIcon, exact: true },
-  { to: '/profile/security', label: 'Security', icon: SecurityIcon, exact: false },
-  { to: '/profile/danger', label: 'Danger zone', icon: Delete02Icon, exact: false },
+  { to: PROFILE_ROUTE, label: 'Profile', icon: UserIcon, exact: true },
+  { to: PROFILE_SECURITY_ROUTE, label: 'Security', icon: SecurityIcon, exact: false },
+  { to: PROFILE_DANGER_ROUTE, label: 'Danger zone', icon: Delete02Icon, exact: false },
 ] as const;
 
 /**
@@ -47,7 +55,7 @@ export function SettingsLayout({ children }: { children: ReactNode }) {
         <Logo />
         <Flex align="center" gap={2}>
           <ThemeSegmentedControl />
-          <AccountMenu variant="topnav" onSignedOut={() => navigate({ to: '/login' })} />
+          <AccountMenu variant="topnav" onSignedOut={() => navigate({ to: LOGIN_ROUTE })} />
         </Flex>
       </Flex>
 
@@ -59,11 +67,11 @@ export function SettingsLayout({ children }: { children: ReactNode }) {
           className="mb-4 -ml-2 w-fit text-muted-foreground"
         >
           {lastOrgId ? (
-            <Link to="/orgs/$orgId/projects" params={{ orgId: lastOrgId }}>
+            <Link to={ORG_PROJECTS_ROUTE} params={{ orgId: lastOrgId }}>
               {backLabel}
             </Link>
           ) : (
-            <Link to="/orgs">{backLabel}</Link>
+            <Link to={ORGS_ROUTE}>{backLabel}</Link>
           )}
         </Button>
 

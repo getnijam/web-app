@@ -1,5 +1,10 @@
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
+import {
+  ORG_INTEGRATIONS_GITHUB_ROUTE,
+  ORG_INTEGRATIONS_SLACK_ROUTE,
+  ORG_KEYS_MCP_ROUTE,
+} from '@/lib/routes';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { AiChat02Icon, ArrowRight01Icon, WebhookIcon } from '@hugeicons/core-free-icons';
@@ -162,7 +167,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
     {
       key: 'slack',
       name: 'Slack',
-      to: '/orgs/$orgId/integrations/slack',
+      to: ORG_INTEGRATIONS_SLACK_ROUTE,
       desc: 'Post run summaries into your Slack channels.',
       connectedBlurb: `Posting ${slackSummary} to ${slackChannel} · ${slackData.teamName ?? ''}`,
       logo: (s) => <SlackLogo size={s} />,
@@ -176,7 +181,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
     {
       key: 'github',
       name: 'GitHub',
-      to: '/orgs/$orgId/integrations/github',
+      to: ORG_INTEGRATIONS_GITHUB_ROUTE,
       desc: 'Post a PR check and results comment when tests run on a pull request.',
       connectedBlurb: githubData.accountLogin
         ? `Posting PR checks & comments · ${githubData.accountLogin}`
@@ -310,7 +315,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
             icon={<HugeiconsIcon icon={AiChat02Icon} size={20} className="text-muted-foreground" />}
             action={
               <Button asChild variant="outline">
-                <Link to="/orgs/$orgId/keys/mcp" params={{ orgId } as never}>
+                <Link to={ORG_KEYS_MCP_ROUTE} params={{ orgId } as never}>
                   Set up
                 </Link>
               </Button>
@@ -325,7 +330,11 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
             </Text>
           </CardRow>
           {COMING_SOON.map((c) => (
-            <CardRow key={c.key} icon={c.logo} action={<Badge variant="outline">Coming soon</Badge>}>
+            <CardRow
+              key={c.key}
+              icon={c.logo}
+              action={<Badge variant="outline">Coming soon</Badge>}
+            >
               <Text as="span" className="text-sm font-semibold">
                 {c.name}
               </Text>

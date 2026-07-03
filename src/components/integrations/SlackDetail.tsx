@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
+import { ORG_INTEGRATIONS_ROUTE } from '@/lib/routes';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { InformationCircleIcon } from '@hugeicons/core-free-icons';
@@ -268,7 +269,7 @@ function SlackDetailInner({
           >
             <Flex>
               <Button asChild variant="outline">
-                <Link to="/orgs/$orgId/integrations" params={{ orgId }}>
+                <Link to={ORG_INTEGRATIONS_ROUTE} params={{ orgId }}>
                   Back to integrations
                 </Link>
               </Button>

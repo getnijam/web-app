@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { ORG_KEYS_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { SquareLock02Icon } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
@@ -167,7 +168,7 @@ export function ReporterSnippet({
       <Flex align="center" justify="between" gap={3} wrap>
         <ProjectIdChip value={projectId} className="min-w-0" />
         <Button asChild className="shrink-0">
-          <Link to="/orgs/$orgId/keys" params={{ orgId }}>
+          <Link to={ORG_KEYS_ROUTE} params={{ orgId }}>
             <HugeiconsIcon icon={SquareLock02Icon} size={16} />
             Secret keys
           </Link>

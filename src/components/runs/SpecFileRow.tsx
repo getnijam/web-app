@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { RUN_FILE_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { File01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import type { RunFileSummary } from '@/client';
@@ -15,29 +16,41 @@ const ICON_TINT: Record<FileStatus, string> = {
   flaky: 'bg-warning/10 text-warning',
 };
 
-/** One spec file in the run detail, links to the file detail (8b). */
+/**
+ * One spec file in the run detail. Always links to the file route (`?path=`); on
+ * web that route renders it beside the run detail (with `selected` highlighting the
+ * open row), on mobile it opens on its own.
+ */
 export function SpecFileRow({
   file,
   orgId,
   projectId,
   runId,
+  selected,
 }: {
   file: RunFileSummary;
   orgId: string;
   projectId: string;
   runId: string;
+  selected?: boolean;
 }) {
   const st = fileStatus(file);
   return (
     <Flex
       as={Link}
-      to="/orgs/$orgId/projects/$projectId/runs/$runId/file"
+      to={RUN_FILE_ROUTE}
       params={{ orgId, projectId, runId } as never}
       search={{ path: file.file } as never}
+      // Rows share the file route's pathname (only `?path=` differs), so match on
+      // search too, else the router marks every row active / aria-current="page".
+      activeOptions={{ exact: true, includeSearch: true } as never}
       align="center"
       gap={3}
       data-hover-item
-      className="border-b border-border px-4 py-3 transition-colors last:border-b-0"
+      className={cn(
+        'border-b border-border px-4 py-3 transition-colors last:border-b-0',
+        selected && 'bg-accent',
+      )}
     >
       <Flex
         align="center"
@@ -46,7 +59,14 @@ export function SpecFileRow({
       >
         <HugeiconsIcon icon={File01Icon} size={18} strokeWidth={1.9} />
       </Flex>
-      <Text as="span" truncate className="min-w-0 flex-1 font-mono text-sm">
+      <Text
+        as="span"
+        truncate
+        className={cn(
+          'min-w-0 flex-1 font-mono text-sm',
+          selected && 'font-medium text-foreground',
+        )}
+      >
         {displayFile(file.file)}
       </Text>
       <CountDots

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { PRICING_ROUTE, PRIVACY_ROUTE, SECURITY_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Mail01Icon, BookOpen01Icon, PlugSocketIcon, Bug01Icon } from '@hugeicons/core-free-icons';
 import { CTA } from '@/components/home/components/CTA';
@@ -78,7 +79,7 @@ const CHANNELS: Channel[] = [
     title: 'Report a security issue',
     body: 'Found a vulnerability? Email us with the details and steps to reproduce. Please give us a chance to fix it before disclosing publicly.',
     action: (
-      <Link to="/security" className="text-primary underline-offset-4 hover:underline">
+      <Link to={SECURITY_ROUTE} className="text-primary underline-offset-4 hover:underline">
         See our security practices
       </Link>
     ),
@@ -202,7 +203,10 @@ function SupportPage() {
                   {CONTACT}
                 </a>{' '}
                 and we’ll sort it out. Billing is handled by Polar, see the{' '}
-                <Link to="/pricing" className="text-primary underline-offset-4 hover:underline">
+                <Link
+                  to={PRICING_ROUTE}
+                  className="text-primary underline-offset-4 hover:underline"
+                >
                   pricing page
                 </Link>{' '}
                 for current plans.
@@ -220,11 +224,17 @@ function SupportPage() {
                 </a>{' '}
                 with steps to reproduce and give us a reasonable window to fix it before public
                 disclosure. For how we handle and protect your data, see our{' '}
-                <Link to="/security" className="text-primary underline-offset-4 hover:underline">
+                <Link
+                  to={SECURITY_ROUTE}
+                  className="text-primary underline-offset-4 hover:underline"
+                >
                   Security
                 </Link>{' '}
                 and{' '}
-                <Link to="/privacy" className="text-primary underline-offset-4 hover:underline">
+                <Link
+                  to={PRIVACY_ROUTE}
+                  className="text-primary underline-offset-4 hover:underline"
+                >
                   Privacy Policy
                 </Link>{' '}
                 pages.

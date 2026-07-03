@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
+import { SIGNUP_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Tick02Icon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
@@ -92,7 +93,7 @@ export function Hero() {
                 {user ? (
                   <DashboardLink>Go to dashboard</DashboardLink>
                 ) : (
-                  <Link to="/signup">Start free</Link>
+                  <Link to={SIGNUP_ROUTE}>Start free</Link>
                 )}
               </Button>
               <Button asChild variant="outline" size="lg">

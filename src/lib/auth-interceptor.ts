@@ -1,4 +1,5 @@
 import type { AnyRouter } from '@tanstack/react-router';
+import { LOGIN_ROUTE } from '@/lib/routes';
 import { client } from '@/client/client.gen';
 
 // The `_authed` route roots. A runtime 401 only bounces to login when the user is
@@ -34,7 +35,7 @@ export function registerAuthInterceptor(router: AnyRouter): void {
     // `href` is a same-origin relative path (pathname + search), so it's a safe
     // `nextUrl` to return the user to once they sign back in.
     redirecting = true;
-    void router.navigate({ to: '/login', search: { nextUrl: href } }).finally(() => {
+    void router.navigate({ to: LOGIN_ROUTE, search: { nextUrl: href } }).finally(() => {
       redirecting = false;
     });
     return response;

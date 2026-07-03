@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
+import { SIGNUP_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Tick02Icon, DiscountTag01Icon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
@@ -128,7 +129,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         variant={plan.featured ? 'default' : 'outline'}
         className="mt-6 w-full"
       >
-        <Link to="/signup">{plan.cta}</Link>
+        <Link to={SIGNUP_ROUTE}>{plan.cta}</Link>
       </Button>
 
       <Flex direction="col" gap={3} as="ul" className="mt-7">

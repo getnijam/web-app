@@ -1,5 +1,6 @@
 import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
+import { LOGIN_ROUTE, ORGS_ROUTE, ORG_PROJECTS_ROUTE } from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import { meQueryOptions } from '@/lib/me-query';
 
@@ -22,12 +23,12 @@ export const DashboardLink = forwardRef<HTMLAnchorElement, Props>(
 
     if (user?.lastOrgId) {
       return (
-        <Link ref={ref} to="/orgs/$orgId/projects" params={{ orgId: user.lastOrgId }} {...props} />
+        <Link ref={ref} to={ORG_PROJECTS_ROUTE} params={{ orgId: user.lastOrgId }} {...props} />
       );
     }
     if (user) {
-      return <Link ref={ref} to="/orgs" {...props} />;
+      return <Link ref={ref} to={ORGS_ROUTE} {...props} />;
     }
-    return <Link ref={ref} to="/login" {...props} />;
+    return <Link ref={ref} to={LOGIN_ROUTE} {...props} />;
   },
 );

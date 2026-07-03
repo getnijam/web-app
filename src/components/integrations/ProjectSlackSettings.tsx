@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
+import { ORG_INTEGRATIONS_ROUTE } from '@/lib/routes';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ProjectSlackResponse } from '@/client';
 import {
@@ -161,7 +162,7 @@ function ProjectSlackInner({
           {isAdmin ? (
             <Flex>
               <Button asChild variant="outline" size="sm">
-                <Link to="/orgs/$orgId/integrations" params={{ orgId }}>
+                <Link to={ORG_INTEGRATIONS_ROUTE} params={{ orgId }}>
                   Set up Slack
                 </Link>
               </Button>

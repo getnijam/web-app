@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { LOGIN_ROUTE, ORG_PROJECTS_ROUTE } from '@/lib/routes';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { PlusSignIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
@@ -60,7 +61,7 @@ function OrgsPicker() {
           <Flex
             as={Link}
             key={org.id}
-            to="/orgs/$orgId/projects"
+            to={ORG_PROJECTS_ROUTE}
             params={{ orgId: org.id } as never}
             align="center"
             gap={3}
@@ -100,7 +101,9 @@ function OrgsPicker() {
         <Logo />
         <Flex align="center" gap={2}>
           <ThemeSegmentedControl />
-          {user && <AccountMenu variant="topnav" onSignedOut={() => navigate({ to: '/login' })} />}
+          {user && (
+            <AccountMenu variant="topnav" onSignedOut={() => navigate({ to: LOGIN_ROUTE })} />
+          )}
         </Flex>
       </Flex>
 
@@ -112,7 +115,7 @@ function OrgsPicker() {
           </Flex>
 
           <PendingInvitations
-            onAccepted={(orgId) => navigate({ to: '/orgs/$orgId/projects', params: { orgId } })}
+            onAccepted={(orgId) => navigate({ to: ORG_PROJECTS_ROUTE, params: { orgId } })}
           />
 
           {renderOrgs()}

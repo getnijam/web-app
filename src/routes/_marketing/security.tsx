@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { PRIVACY_ROUTE } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   SquareLock02Icon,
@@ -290,7 +291,10 @@ function SecurityPage() {
                 outcomes, timings, and artifacts your CI sends us, it never executes or re-runs your
                 tests. Deleting a project removes its runs, results, and artifacts. For details on
                 what we collect and why, see our{' '}
-                <Link to="/privacy" className="text-primary underline-offset-4 hover:underline">
+                <Link
+                  to={PRIVACY_ROUTE}
+                  className="text-primary underline-offset-4 hover:underline"
+                >
                   Privacy Policy
                 </Link>
                 .

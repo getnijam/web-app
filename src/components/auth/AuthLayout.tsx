@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
+import { HOME_ROUTE } from '@/lib/routes';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
@@ -15,7 +16,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
         <Flex align="center" justify="between" gap={4}>
           <Flex
             as={Link}
-            to="/"
+            to={HOME_ROUTE}
             aria-label="Nijam.dev home"
             inline
             className="w-fit rounded-md transition-opacity hover:opacity-80"

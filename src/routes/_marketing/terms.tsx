@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { PRIVACY_ROUTE } from '@/lib/routes';
 import { LegalLayout, Section, P, Bullets } from '@/components/legal/LegalLayout';
 import { seo } from '@/lib/seo';
 
@@ -140,7 +141,7 @@ function TermsPage() {
         <P>
           Run history and artifacts are retained for the window included in your plan (7 days on
           Free, 90 days on Pro) and are then deleted automatically. See our{' '}
-          <Link to="/privacy" className="text-primary underline-offset-4 hover:underline">
+          <Link to={PRIVACY_ROUTE} className="text-primary underline-offset-4 hover:underline">
             Privacy Policy
           </Link>{' '}
           for how we handle your data.
