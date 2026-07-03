@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { Bar, BarChart, Cell, XAxis, YAxis } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 import type { RunTimelineBar, RunTimelineGroup } from '@/client';
@@ -47,44 +46,57 @@ function formatMs(ms: number): string {
   return ms < 1000 ? `${ms}ms` : formatDuration(ms / 1000);
 }
 
-function laneLabel(lane: RunTimelineGroup['lanes'][number], index: number, total: number): string {
-  if (lane.shardIndex != null) return `Shard ${lane.shardIndex}`;
-  return total > 1 ? `Lane ${index + 1}` : 'Tests';
-}
-
 function groupLabel(group: RunTimelineGroup): string {
-  const machines = `${group.machineCount} ${group.machineCount === 1 ? 'machine' : 'machines'}`;
   const files = `${group.fileCount} ${group.fileCount === 1 ? 'file' : 'files'}`;
-  return `${group.projectName ?? 'Tests'} · ${machines} · ${files}`;
+  return `${group.projectName ?? 'Tests'} · ${files}`;
 }
 
-/** One lane row: category label + the per-slot [gap, seg] stack values + the raw bars. */
-type LaneRow = {
-  lane: string;
-  bars: RunTimelineBar[];
-} & Record<string, number | string | RunTimelineBar[] | undefined>;
+/** One spec file as a single Gantt row: a transparent offset, then its span. */
+type FileRow = {
+  file: string; // full path: unique within a group, used as the y-axis category key
+  offset: number;
+  duration: number;
+  status: BarStatus;
+  passed: number;
+  failed: number;
+  flaky: number;
+  skipped: number;
+  startedAt: string;
+};
 
-function buildGroupRows(group: RunTimelineGroup): { rows: LaneRow[]; maxSlots: number } {
-  let maxSlots = 0;
-  const rows = group.lanes.map((lane, i) => {
-    maxSlots = Math.max(maxSlots, lane.bars.length);
-    const row: LaneRow = { lane: laneLabel(lane, i, group.lanes.length), bars: lane.bars };
-    // Lay files end to end: a transparent gap up to each file's start, then the file.
-    let cursor = 0;
-    lane.bars.forEach((bar, k) => {
-      row[`gap${k}`] = Math.max(0, bar.offsetMs - cursor);
-      row[`seg${k}`] = bar.durationMs;
-      cursor = bar.offsetMs + bar.durationMs;
-    });
-    return row;
-  });
-  return { rows, maxSlots };
+/** Flatten a project's lanes into one row per file, ordered by start time. */
+function buildGroupRows(group: RunTimelineGroup): FileRow[] {
+  return group.lanes
+    .flatMap((lane) => lane.bars)
+    .map((bar) => ({
+      file: bar.file,
+      offset: bar.offsetMs,
+      duration: bar.durationMs,
+      status: bar.status,
+      passed: bar.passed,
+      failed: bar.failed,
+      flaky: bar.flaky,
+      skipped: bar.skipped,
+      startedAt: bar.startedAt,
+    }))
+    .sort((a, b) => a.offset - b.offset || a.file.localeCompare(b.file));
 }
 
-/** A group = one browser project, its shard lanes drawn as a horizontal Gantt. */
+/** Y-axis label: the file's basename, trimmed so long paths don't blow out the axis. */
+function fileTick(file: string): string {
+  const base = file.split('/').pop() ?? file;
+  return base.length > 28 ? `…${base.slice(-27)}` : base;
+}
+
+/**
+ * A group = one browser project. Every spec file is its own row, positioned by its
+ * real start offset and span, so files that run in parallel overlap on the clock.
+ * We deliberately don't split into shard/worker lanes: the data has no per-worker
+ * id, so faking sequential "machines" would misrepresent parallel runs.
+ */
 function GroupChart({ group, wallMs }: { group: RunTimelineGroup; wallMs: number }) {
-  const { rows, maxSlots } = buildGroupRows(group);
-  const height = group.lanes.length * ROW_HEIGHT + AXIS_HEIGHT;
+  const rows = buildGroupRows(group);
+  const height = rows.length * ROW_HEIGHT + AXIS_HEIGHT;
 
   return (
     <ChartContainer config={chartConfig} className="aspect-auto w-full" style={{ height }}>
@@ -92,7 +104,7 @@ function GroupChart({ group, wallMs }: { group: RunTimelineGroup; wallMs: number
         layout="vertical"
         data={rows}
         margin={{ top: 4, right: 16, bottom: 0, left: 0 }}
-        barCategoryGap="22%"
+        barCategoryGap="28%"
       >
         <XAxis
           type="number"
@@ -106,64 +118,52 @@ function GroupChart({ group, wallMs }: { group: RunTimelineGroup; wallMs: number
         />
         <YAxis
           type="category"
-          dataKey="lane"
-          width={72}
+          dataKey="file"
+          width={170}
           tickLine={false}
           axisLine={false}
-          tickMargin={6}
+          tickMargin={8}
+          tickFormatter={fileTick}
         />
-        {Array.from({ length: maxSlots }).map((_, k) => (
-          <Fragment key={k}>
-            <Bar dataKey={`gap${k}`} stackId="lane" fill="transparent" isAnimationActive={false} />
-            <Bar
-              dataKey={`seg${k}`}
-              stackId="lane"
-              radius={2}
-              minPointSize={(value) => ((value ?? 0) > 0 ? 2 : 0)}
-              isAnimationActive={false}
-            >
-              {rows.map((row, i) => {
-                const bar = row.bars[k];
-                return <Cell key={i} fill={bar ? STATUS_FILL[bar.status] : 'transparent'} />;
-              })}
-            </Bar>
-          </Fragment>
-        ))}
-        <ChartTooltip
-          shared={false}
-          cursor={{ fill: 'var(--muted)', opacity: 0.35 }}
-          content={<TimelineTooltip />}
-        />
+        {/* Transparent offset pushes the visible span to the file's start time. */}
+        <Bar dataKey="offset" stackId="a" fill="transparent" isAnimationActive={false} />
+        <Bar
+          dataKey="duration"
+          stackId="a"
+          radius={2}
+          minPointSize={(value) => ((value ?? 0) > 0 ? 2 : 0)}
+          isAnimationActive={false}
+        >
+          {rows.map((row, i) => (
+            <Cell key={i} fill={STATUS_FILL[row.status]} />
+          ))}
+        </Bar>
+        <ChartTooltip cursor={{ fill: 'var(--muted)', opacity: 0.35 }} content={<TimelineTooltip />} />
       </BarChart>
     </ChartContainer>
   );
 }
 
-type TooltipItem = { dataKey?: string | number; payload?: LaneRow };
+type TooltipItem = { payload?: FileRow };
 
 function TimelineTooltip({ active, payload }: { active?: boolean; payload?: TooltipItem[] }) {
   if (!active || !payload?.length) return null;
-  const item = payload[0];
-  const key = String(item?.dataKey ?? '');
-  // Only the visible file segments carry a tooltip; gaps (and empty slots) don't.
-  if (!key.startsWith('seg') || !item?.payload) return null;
-  const slot = Number(key.slice(3));
-  const bar = item.payload.bars?.[slot];
-  if (!bar) return null;
+  const row = payload[0]?.payload;
+  if (!row) return null;
 
   const counts: Array<{ label: string; value: number; status: BarStatus }> = [
-    { label: 'Passed', value: bar.passed, status: 'passed' },
-    { label: 'Failed', value: bar.failed, status: 'failed' },
-    { label: 'Flaky', value: bar.flaky, status: 'flaky' },
-    { label: 'Skipped', value: bar.skipped, status: 'skipped' },
+    { label: 'Passed', value: row.passed, status: 'passed' },
+    { label: 'Failed', value: row.failed, status: 'failed' },
+    { label: 'Flaky', value: row.flaky, status: 'flaky' },
+    { label: 'Skipped', value: row.skipped, status: 'skipped' },
   ];
 
   return (
     <div className="min-w-56 rounded-xl bg-popover px-3 py-2.5 text-xs text-popover-foreground shadow-lg ring-1 ring-foreground/5 dark:ring-foreground/10">
       <Flex align="center" gap={2} className="mb-2">
-        <span className={cn('size-2 shrink-0 rounded-full', STATUS_DOT[bar.status])} />
+        <span className={cn('size-2 shrink-0 rounded-full', STATUS_DOT[row.status])} />
         <Text as="span" variant="code" className="truncate text-xs font-medium text-foreground">
-          {displayFile(bar.file)}
+          {displayFile(row.file)}
         </Text>
       </Flex>
       <Flex direction="col" gap={1}>
@@ -185,7 +185,7 @@ function TimelineTooltip({ active, payload }: { active?: boolean; payload?: Tool
             Started
           </Text>
           <b className="ml-auto font-mono font-medium tabular-nums text-foreground">
-            {timeOfDay.format(new Date(bar.startedAt))}
+            {timeOfDay.format(new Date(row.startedAt))}
           </b>
         </Flex>
         <Flex align="center" gap={1.5}>
@@ -193,7 +193,7 @@ function TimelineTooltip({ active, payload }: { active?: boolean; payload?: Tool
             Duration
           </Text>
           <b className="ml-auto font-mono font-medium tabular-nums text-foreground">
-            {formatMs(bar.durationMs)}
+            {formatMs(row.duration)}
           </b>
         </Flex>
       </Flex>
@@ -213,9 +213,9 @@ function LegendDot({ status, label }: { status: BarStatus; label: string }) {
 }
 
 /**
- * Run timeline: every spec file drawn as a Gantt bar on the run's wall clock,
- * grouped by browser project and laid out per shard (machine). Built on Recharts
- * via the shadcn chart wrapper. Owns its own query + loading/error/empty states.
+ * Run timeline: every spec file drawn as its own Gantt row on the run's wall clock,
+ * grouped by browser project. Built on Recharts via the shadcn chart wrapper. Owns
+ * its own query + loading/error/empty states.
  */
 export function RunTimeline({ runId }: { runId: string }) {
   const q = useQuery(getRunTimelineOptions({ path: { id: runId } }));
