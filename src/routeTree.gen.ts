@@ -27,6 +27,8 @@ import { Route as MarketingFeaturesRouteImport } from './routes/_marketing/featu
 import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
 import { Route as AuthedProfileIndexRouteImport } from './routes/_authed/profile.index'
 import { Route as AuthedOrgsIndexRouteImport } from './routes/_authed/orgs.index'
+import { Route as MarketingCompareTestrailRouteImport } from './routes/_marketing/compare.testrail'
+import { Route as MarketingCompareReportportalRouteImport } from './routes/_marketing/compare.reportportal'
 import { Route as MarketingCompareDatadogRouteImport } from './routes/_marketing/compare.datadog'
 import { Route as MarketingCompareAllureRouteImport } from './routes/_marketing/compare.allure'
 import { Route as AuthedProfileSecurityRouteImport } from './routes/_authed/profile.security'
@@ -145,6 +147,18 @@ const AuthedOrgsIndexRoute = AuthedOrgsIndexRouteImport.update({
   path: '/orgs/',
   getParentRoute: () => AuthedRouteRoute,
 } as any)
+const MarketingCompareTestrailRoute =
+  MarketingCompareTestrailRouteImport.update({
+    id: '/compare/testrail',
+    path: '/compare/testrail',
+    getParentRoute: () => MarketingRouteRoute,
+  } as any)
+const MarketingCompareReportportalRoute =
+  MarketingCompareReportportalRouteImport.update({
+    id: '/compare/reportportal',
+    path: '/compare/reportportal',
+    getParentRoute: () => MarketingRouteRoute,
+  } as any)
 const MarketingCompareDatadogRoute = MarketingCompareDatadogRouteImport.update({
   id: '/compare/datadog',
   path: '/compare/datadog',
@@ -330,6 +344,8 @@ export interface FileRoutesByFullPath {
   '/profile/security': typeof AuthedProfileSecurityRoute
   '/compare/allure': typeof MarketingCompareAllureRoute
   '/compare/datadog': typeof MarketingCompareDatadogRoute
+  '/compare/reportportal': typeof MarketingCompareReportportalRoute
+  '/compare/testrail': typeof MarketingCompareTestrailRoute
   '/orgs/': typeof AuthedOrgsIndexRoute
   '/profile/': typeof AuthedProfileIndexRoute
   '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
@@ -375,6 +391,8 @@ export interface FileRoutesByTo {
   '/profile/security': typeof AuthedProfileSecurityRoute
   '/compare/allure': typeof MarketingCompareAllureRoute
   '/compare/datadog': typeof MarketingCompareDatadogRoute
+  '/compare/reportportal': typeof MarketingCompareReportportalRoute
+  '/compare/testrail': typeof MarketingCompareTestrailRoute
   '/orgs': typeof AuthedOrgsIndexRoute
   '/profile': typeof AuthedProfileIndexRoute
   '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
@@ -422,6 +440,8 @@ export interface FileRoutesById {
   '/_authed/profile/security': typeof AuthedProfileSecurityRoute
   '/_marketing/compare/allure': typeof MarketingCompareAllureRoute
   '/_marketing/compare/datadog': typeof MarketingCompareDatadogRoute
+  '/_marketing/compare/reportportal': typeof MarketingCompareReportportalRoute
+  '/_marketing/compare/testrail': typeof MarketingCompareTestrailRoute
   '/_authed/orgs/': typeof AuthedOrgsIndexRoute
   '/_authed/profile/': typeof AuthedProfileIndexRoute
   '/_authed/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
@@ -471,6 +491,8 @@ export interface FileRouteTypes {
     | '/profile/security'
     | '/compare/allure'
     | '/compare/datadog'
+    | '/compare/reportportal'
+    | '/compare/testrail'
     | '/orgs/'
     | '/profile/'
     | '/orgs/$orgId/billing'
@@ -516,6 +538,8 @@ export interface FileRouteTypes {
     | '/profile/security'
     | '/compare/allure'
     | '/compare/datadog'
+    | '/compare/reportportal'
+    | '/compare/testrail'
     | '/orgs'
     | '/profile'
     | '/orgs/$orgId/billing'
@@ -562,6 +586,8 @@ export interface FileRouteTypes {
     | '/_authed/profile/security'
     | '/_marketing/compare/allure'
     | '/_marketing/compare/datadog'
+    | '/_marketing/compare/reportportal'
+    | '/_marketing/compare/testrail'
     | '/_authed/orgs/'
     | '/_authed/profile/'
     | '/_authed/orgs/$orgId/billing'
@@ -728,6 +754,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/orgs/'
       preLoaderRoute: typeof AuthedOrgsIndexRouteImport
       parentRoute: typeof AuthedRouteRoute
+    }
+    '/_marketing/compare/testrail': {
+      id: '/_marketing/compare/testrail'
+      path: '/compare/testrail'
+      fullPath: '/compare/testrail'
+      preLoaderRoute: typeof MarketingCompareTestrailRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/compare/reportportal': {
+      id: '/_marketing/compare/reportportal'
+      path: '/compare/reportportal'
+      fullPath: '/compare/reportportal'
+      preLoaderRoute: typeof MarketingCompareReportportalRouteImport
+      parentRoute: typeof MarketingRouteRoute
     }
     '/_marketing/compare/datadog': {
       id: '/_marketing/compare/datadog'
@@ -1079,6 +1119,8 @@ interface MarketingRouteRouteChildren {
   MarketingIndexRoute: typeof MarketingIndexRoute
   MarketingCompareAllureRoute: typeof MarketingCompareAllureRoute
   MarketingCompareDatadogRoute: typeof MarketingCompareDatadogRoute
+  MarketingCompareReportportalRoute: typeof MarketingCompareReportportalRoute
+  MarketingCompareTestrailRoute: typeof MarketingCompareTestrailRoute
 }
 
 const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
@@ -1091,6 +1133,8 @@ const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
   MarketingIndexRoute: MarketingIndexRoute,
   MarketingCompareAllureRoute: MarketingCompareAllureRoute,
   MarketingCompareDatadogRoute: MarketingCompareDatadogRoute,
+  MarketingCompareReportportalRoute: MarketingCompareReportportalRoute,
+  MarketingCompareTestrailRoute: MarketingCompareTestrailRoute,
 }
 
 const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(

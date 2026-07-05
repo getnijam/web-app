@@ -54,7 +54,8 @@ export function CompareTable({
   competitorGlyph,
   groups,
 }: {
-  competitorName: string;
+  /** Omitted when the glyph is a full wordmark that already reads as the name. */
+  competitorName?: string;
   competitorGlyph: ReactNode;
   groups: CompareGroup[];
 }) {
@@ -70,9 +71,11 @@ export function CompareTable({
           </Flex>
           <Flex align="center" gap={2} className="flex-1 px-3 py-3">
             {competitorGlyph}
-            <Text as="span" className="text-sm font-semibold text-foreground">
-              {competitorName}
-            </Text>
+            {competitorName && (
+              <Text as="span" className="text-sm font-semibold text-foreground">
+                {competitorName}
+              </Text>
+            )}
           </Flex>
           <Flex align="center" gap={2} className="flex-1 bg-primary/5 px-3 py-3">
             <LogoMark className="size-5" />

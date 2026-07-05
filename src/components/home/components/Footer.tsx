@@ -2,6 +2,8 @@ import { Link } from '@tanstack/react-router';
 import {
   COMPARE_ALLURE_ROUTE,
   COMPARE_DATADOG_ROUTE,
+  COMPARE_REPORTPORTAL_ROUTE,
+  COMPARE_TESTRAIL_ROUTE,
   FEATURES_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
@@ -106,6 +108,12 @@ export function Footer() {
               </Link>
               <Link to={COMPARE_ALLURE_ROUTE} className={COL}>
                 Nijam vs Allure Report
+              </Link>
+              <Link to={COMPARE_REPORTPORTAL_ROUTE} className={COL}>
+                Nijam vs ReportPortal
+              </Link>
+              <Link to={COMPARE_TESTRAIL_ROUTE} className={COL}>
+                Nijam vs TestRail
               </Link>
             </div>
 

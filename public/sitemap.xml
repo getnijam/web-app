@@ -37,6 +37,18 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.nijam.dev/compare/reportportal</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.nijam.dev/compare/testrail</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.nijam.dev/terms</loc>
     <lastmod>2026-06-04</lastmod>
     <changefreq>yearly</changefreq>
