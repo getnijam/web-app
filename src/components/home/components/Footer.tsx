@@ -1,5 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import {
+  COMPARE_ALLURE_ROUTE,
+  COMPARE_DATADOG_ROUTE,
   FEATURES_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
@@ -64,7 +66,7 @@ export function Footer() {
             </Text>
           </div>
 
-          <Grid cols={[2, 3]} gap={8}>
+          <Grid cols={[2, 4]} gap={8}>
             <div>
               <Text as="p" className={H5}>
                 Product
@@ -93,6 +95,18 @@ export function Footer() {
                   <ExtIcon />
                 </a>
               ))}
+            </div>
+
+            <div>
+              <Text as="p" className={H5}>
+                Comparison
+              </Text>
+              <Link to={COMPARE_DATADOG_ROUTE} className={COL}>
+                Nijam vs Datadog
+              </Link>
+              <Link to={COMPARE_ALLURE_ROUTE} className={COL}>
+                Nijam vs Allure Report
+              </Link>
             </div>
 
             <div>

@@ -43,6 +43,11 @@
   --success: oklch(0.566 0.146 152);
   --warning: oklch(0.62 0.145 62);
   --info: oklch(0.558 0.205 258);
+  /* Competitor-illustration accent (Datadog-style purple). Used ONLY in the
+     /comparison Datadog mock so the side-by-side reads as "Datadog". This is not a
+     Nijam brand color and must never appear on a real product surface. */
+  --datadog: oklch(0.5 0.19 300);
+  --datadog-foreground: oklch(0.985 0 0);
   --border: oklch(0.925 0.005 214.3);
   --input: oklch(0.925 0.005 214.3);
   --ring: oklch(0.723 0.014 214.4);
@@ -102,6 +107,9 @@
   --success: oklch(0.76 0.16 152);
   --warning: oklch(0.82 0.155 78);
   --info: oklch(0.72 0.16 258);
+  /* Competitor-illustration accent, lightened for dark surfaces (see :root note). */
+  --datadog: oklch(0.62 0.19 300);
+  --datadog-foreground: oklch(0.985 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.56 0.021 213.5);
@@ -145,6 +153,8 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-info: var(--info);
+  --color-datadog: var(--datadog);
+  --color-datadog-foreground: var(--datadog-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

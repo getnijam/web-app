@@ -27,6 +27,8 @@ import { Route as MarketingFeaturesRouteImport } from './routes/_marketing/featu
 import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
 import { Route as AuthedProfileIndexRouteImport } from './routes/_authed/profile.index'
 import { Route as AuthedOrgsIndexRouteImport } from './routes/_authed/orgs.index'
+import { Route as MarketingCompareDatadogRouteImport } from './routes/_marketing/compare.datadog'
+import { Route as MarketingCompareAllureRouteImport } from './routes/_marketing/compare.allure'
 import { Route as AuthedProfileSecurityRouteImport } from './routes/_authed/profile.security'
 import { Route as AuthedProfileDangerRouteImport } from './routes/_authed/profile.danger'
 import { Route as AuthedOrgsOrgIdRouteImport } from './routes/_authed/orgs.$orgId'
@@ -142,6 +144,16 @@ const AuthedOrgsIndexRoute = AuthedOrgsIndexRouteImport.update({
   id: '/orgs/',
   path: '/orgs/',
   getParentRoute: () => AuthedRouteRoute,
+} as any)
+const MarketingCompareDatadogRoute = MarketingCompareDatadogRouteImport.update({
+  id: '/compare/datadog',
+  path: '/compare/datadog',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingCompareAllureRoute = MarketingCompareAllureRouteImport.update({
+  id: '/compare/allure',
+  path: '/compare/allure',
+  getParentRoute: () => MarketingRouteRoute,
 } as any)
 const AuthedProfileSecurityRoute = AuthedProfileSecurityRouteImport.update({
   id: '/security',
@@ -316,6 +328,8 @@ export interface FileRoutesByFullPath {
   '/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/profile/danger': typeof AuthedProfileDangerRoute
   '/profile/security': typeof AuthedProfileSecurityRoute
+  '/compare/allure': typeof MarketingCompareAllureRoute
+  '/compare/datadog': typeof MarketingCompareDatadogRoute
   '/orgs/': typeof AuthedOrgsIndexRoute
   '/profile/': typeof AuthedProfileIndexRoute
   '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
@@ -359,6 +373,8 @@ export interface FileRoutesByTo {
   '/terms': typeof MarketingTermsRoute
   '/profile/danger': typeof AuthedProfileDangerRoute
   '/profile/security': typeof AuthedProfileSecurityRoute
+  '/compare/allure': typeof MarketingCompareAllureRoute
+  '/compare/datadog': typeof MarketingCompareDatadogRoute
   '/orgs': typeof AuthedOrgsIndexRoute
   '/profile': typeof AuthedProfileIndexRoute
   '/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
@@ -404,6 +420,8 @@ export interface FileRoutesById {
   '/_authed/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/_authed/profile/danger': typeof AuthedProfileDangerRoute
   '/_authed/profile/security': typeof AuthedProfileSecurityRoute
+  '/_marketing/compare/allure': typeof MarketingCompareAllureRoute
+  '/_marketing/compare/datadog': typeof MarketingCompareDatadogRoute
   '/_authed/orgs/': typeof AuthedOrgsIndexRoute
   '/_authed/profile/': typeof AuthedProfileIndexRoute
   '/_authed/orgs/$orgId/billing': typeof AuthedOrgsOrgIdBillingRoute
@@ -451,6 +469,8 @@ export interface FileRouteTypes {
     | '/orgs/$orgId'
     | '/profile/danger'
     | '/profile/security'
+    | '/compare/allure'
+    | '/compare/datadog'
     | '/orgs/'
     | '/profile/'
     | '/orgs/$orgId/billing'
@@ -494,6 +514,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/profile/danger'
     | '/profile/security'
+    | '/compare/allure'
+    | '/compare/datadog'
     | '/orgs'
     | '/profile'
     | '/orgs/$orgId/billing'
@@ -538,6 +560,8 @@ export interface FileRouteTypes {
     | '/_authed/orgs/$orgId'
     | '/_authed/profile/danger'
     | '/_authed/profile/security'
+    | '/_marketing/compare/allure'
+    | '/_marketing/compare/datadog'
     | '/_authed/orgs/'
     | '/_authed/profile/'
     | '/_authed/orgs/$orgId/billing'
@@ -704,6 +728,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/orgs/'
       preLoaderRoute: typeof AuthedOrgsIndexRouteImport
       parentRoute: typeof AuthedRouteRoute
+    }
+    '/_marketing/compare/datadog': {
+      id: '/_marketing/compare/datadog'
+      path: '/compare/datadog'
+      fullPath: '/compare/datadog'
+      preLoaderRoute: typeof MarketingCompareDatadogRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/compare/allure': {
+      id: '/_marketing/compare/allure'
+      path: '/compare/allure'
+      fullPath: '/compare/allure'
+      preLoaderRoute: typeof MarketingCompareAllureRouteImport
+      parentRoute: typeof MarketingRouteRoute
     }
     '/_authed/profile/security': {
       id: '/_authed/profile/security'
@@ -1039,6 +1077,8 @@ interface MarketingRouteRouteChildren {
   MarketingSupportRoute: typeof MarketingSupportRoute
   MarketingTermsRoute: typeof MarketingTermsRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
+  MarketingCompareAllureRoute: typeof MarketingCompareAllureRoute
+  MarketingCompareDatadogRoute: typeof MarketingCompareDatadogRoute
 }
 
 const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
@@ -1049,6 +1089,8 @@ const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
   MarketingSupportRoute: MarketingSupportRoute,
   MarketingTermsRoute: MarketingTermsRoute,
   MarketingIndexRoute: MarketingIndexRoute,
+  MarketingCompareAllureRoute: MarketingCompareAllureRoute,
+  MarketingCompareDatadogRoute: MarketingCompareDatadogRoute,
 }
 
 const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
