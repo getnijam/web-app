@@ -89,12 +89,35 @@ function fileTick(file: string): string {
 }
 
 /**
+ * Size the label column to the longest filename rather than a fixed width, so short
+ * names don't leave a big empty gutter (and long ones still fit). ~6.6px/char at
+ * text-xs, plus the tick gap, clamped to a sane range.
+ */
+function labelColumnWidth(groups: RunTimelineGroup[]): number {
+  let maxLen = 0;
+  for (const g of groups) {
+    for (const lane of g.lanes) {
+      for (const bar of lane.bars) maxLen = Math.max(maxLen, fileTick(bar.file).length);
+    }
+  }
+  return Math.round(Math.min(196, Math.max(64, maxLen * 6.6 + 14)));
+}
+
+/**
  * A group = one browser project. Every spec file is its own row, positioned by its
  * real start offset and span, so files that run in parallel overlap on the clock.
  * We deliberately don't split into shard/worker lanes: the data has no per-worker
  * id, so faking sequential "machines" would misrepresent parallel runs.
  */
-function GroupChart({ group, wallMs }: { group: RunTimelineGroup; wallMs: number }) {
+function GroupChart({
+  group,
+  wallMs,
+  labelWidth,
+}: {
+  group: RunTimelineGroup;
+  wallMs: number;
+  labelWidth: number;
+}) {
   const rows = buildGroupRows(group);
   const height = rows.length * ROW_HEIGHT + AXIS_HEIGHT;
 
@@ -119,7 +142,7 @@ function GroupChart({ group, wallMs }: { group: RunTimelineGroup; wallMs: number
         <YAxis
           type="category"
           dataKey="file"
-          width={170}
+          width={labelWidth}
           tickLine={false}
           axisLine={false}
           tickMargin={8}
@@ -138,7 +161,11 @@ function GroupChart({ group, wallMs }: { group: RunTimelineGroup; wallMs: number
             <Cell key={i} fill={STATUS_FILL[row.status]} />
           ))}
         </Bar>
-        <ChartTooltip cursor={{ fill: 'var(--muted)', opacity: 0.35 }} content={<TimelineTooltip />} />
+        <ChartTooltip
+          allowEscapeViewBox={{ x: false, y: true }}
+          cursor={{ fill: 'var(--muted)', opacity: 0.35 }}
+          content={<TimelineTooltip />}
+        />
       </BarChart>
     </ChartContainer>
   );
@@ -159,8 +186,8 @@ function TimelineTooltip({ active, payload }: { active?: boolean; payload?: Tool
   ];
 
   return (
-    <div className="min-w-56 rounded-xl bg-popover px-3 py-2.5 text-xs text-popover-foreground shadow-lg ring-1 ring-foreground/5 dark:ring-foreground/10">
-      <Flex align="center" gap={2} className="mb-2">
+    <div className="w-max max-w-64 rounded-xl bg-popover px-3 py-2.5 text-xs text-popover-foreground shadow-lg ring-1 ring-foreground/5 dark:ring-foreground/10">
+      <Flex align="center" gap={2} className="mb-2 min-w-0">
         <span className={cn('size-2 shrink-0 rounded-full', STATUS_DOT[row.status])} />
         <Text as="span" variant="code" className="truncate text-xs font-medium text-foreground">
           {displayFile(row.file)}
@@ -234,6 +261,7 @@ export function RunTimeline({ runId }: { runId: string }) {
       );
 
     const wallMs = Math.max(q.data.wallMs, 1000);
+    const labelWidth = labelColumnWidth(groups);
     return (
       <Flex direction="col" gap={6}>
         {groups.map((group) => (
@@ -241,7 +269,7 @@ export function RunTimeline({ runId }: { runId: string }) {
             <Text as="span" className="text-sm font-medium text-foreground">
               {groupLabel(group)}
             </Text>
-            <GroupChart group={group} wallMs={wallMs} />
+            <GroupChart group={group} wallMs={wallMs} labelWidth={labelWidth} />
           </Flex>
         ))}
       </Flex>
