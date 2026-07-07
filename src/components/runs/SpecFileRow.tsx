@@ -14,6 +14,7 @@ const ICON_TINT: Record<FileStatus, string> = {
   passed: 'bg-success/10 text-success',
   failed: 'bg-destructive/10 text-destructive',
   flaky: 'bg-warning/10 text-warning',
+  pending: 'bg-muted text-muted-foreground',
 };
 
 /**
@@ -69,12 +70,21 @@ export function SpecFileRow({
       >
         {displayFile(file.file)}
       </Text>
-      <CountDots
-        passed={file.passed}
-        failed={file.failed}
-        flaky={file.flaky}
-        skipped={file.skipped}
-      />
+      {file.pending ? (
+        <Text
+          as="span"
+          className="shrink-0 rounded-md border border-border px-1.5 py-0.5 text-xs font-medium text-muted-foreground"
+        >
+          Pending
+        </Text>
+      ) : (
+        <CountDots
+          passed={file.passed}
+          failed={file.failed}
+          flaky={file.flaky}
+          skipped={file.skipped}
+        />
+      )}
       <HugeiconsIcon icon={ArrowRight01Icon} size={18} className="shrink-0 text-muted-foreground" />
     </Flex>
   );

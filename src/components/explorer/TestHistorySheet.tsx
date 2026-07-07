@@ -9,8 +9,10 @@ import {
 } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/states/ErrorState';
+import { EmptyState } from '@/components/states/EmptyState';
 import { RunHistory } from '@/components/explorer/RunHistory';
 import { displayFile } from '@/lib/format';
+import { isApiError } from '@/lib/api-error';
 
 /**
  * A right-side sheet showing a single test's cross-run history (the same card as the
@@ -39,6 +41,17 @@ export function TestHistorySheet({
   const renderBody = () => {
     if (!open || !test) return null;
     if (q.isLoading) return <Skeleton className="size-full rounded-2xl" />;
+    // A test running for the first time has no completed run yet, so the API 404s
+    // with TEST_NOT_FOUND. That's not an error: there's just no history to show yet
+    // (the current attempt is already visible in the run's file view).
+    if (isApiError(q.error) && q.error.error.code === 'TEST_NOT_FOUND') {
+      return (
+        <EmptyState
+          title="No history yet"
+          description="This test hasn't finished a run yet. Its history appears once the first run completes."
+        />
+      );
+    }
     if (q.error || !q.data) return <ErrorState error={q.error} onRetry={() => q.refetch()} />;
     return (
       <RunHistory

@@ -31,6 +31,7 @@ import { Route as MarketingCompareTestrailRouteImport } from './routes/_marketin
 import { Route as MarketingCompareReportportalRouteImport } from './routes/_marketing/compare.reportportal'
 import { Route as MarketingCompareDatadogRouteImport } from './routes/_marketing/compare.datadog'
 import { Route as MarketingCompareAllureRouteImport } from './routes/_marketing/compare.allure'
+import { Route as AuthedRRunIdRouteImport } from './routes/_authed/r.$runId'
 import { Route as AuthedProfileSecurityRouteImport } from './routes/_authed/profile.security'
 import { Route as AuthedProfileDangerRouteImport } from './routes/_authed/profile.danger'
 import { Route as AuthedOrgsOrgIdRouteImport } from './routes/_authed/orgs.$orgId'
@@ -168,6 +169,11 @@ const MarketingCompareAllureRoute = MarketingCompareAllureRouteImport.update({
   id: '/compare/allure',
   path: '/compare/allure',
   getParentRoute: () => MarketingRouteRoute,
+} as any)
+const AuthedRRunIdRoute = AuthedRRunIdRouteImport.update({
+  id: '/r/$runId',
+  path: '/r/$runId',
+  getParentRoute: () => AuthedRouteRoute,
 } as any)
 const AuthedProfileSecurityRoute = AuthedProfileSecurityRouteImport.update({
   id: '/security',
@@ -342,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/profile/danger': typeof AuthedProfileDangerRoute
   '/profile/security': typeof AuthedProfileSecurityRoute
+  '/r/$runId': typeof AuthedRRunIdRoute
   '/compare/allure': typeof MarketingCompareAllureRoute
   '/compare/datadog': typeof MarketingCompareDatadogRoute
   '/compare/reportportal': typeof MarketingCompareReportportalRoute
@@ -389,6 +396,7 @@ export interface FileRoutesByTo {
   '/terms': typeof MarketingTermsRoute
   '/profile/danger': typeof AuthedProfileDangerRoute
   '/profile/security': typeof AuthedProfileSecurityRoute
+  '/r/$runId': typeof AuthedRRunIdRoute
   '/compare/allure': typeof MarketingCompareAllureRoute
   '/compare/datadog': typeof MarketingCompareDatadogRoute
   '/compare/reportportal': typeof MarketingCompareReportportalRoute
@@ -438,6 +446,7 @@ export interface FileRoutesById {
   '/_authed/orgs/$orgId': typeof AuthedOrgsOrgIdRouteWithChildren
   '/_authed/profile/danger': typeof AuthedProfileDangerRoute
   '/_authed/profile/security': typeof AuthedProfileSecurityRoute
+  '/_authed/r/$runId': typeof AuthedRRunIdRoute
   '/_marketing/compare/allure': typeof MarketingCompareAllureRoute
   '/_marketing/compare/datadog': typeof MarketingCompareDatadogRoute
   '/_marketing/compare/reportportal': typeof MarketingCompareReportportalRoute
@@ -489,6 +498,7 @@ export interface FileRouteTypes {
     | '/orgs/$orgId'
     | '/profile/danger'
     | '/profile/security'
+    | '/r/$runId'
     | '/compare/allure'
     | '/compare/datadog'
     | '/compare/reportportal'
@@ -536,6 +546,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/profile/danger'
     | '/profile/security'
+    | '/r/$runId'
     | '/compare/allure'
     | '/compare/datadog'
     | '/compare/reportportal'
@@ -584,6 +595,7 @@ export interface FileRouteTypes {
     | '/_authed/orgs/$orgId'
     | '/_authed/profile/danger'
     | '/_authed/profile/security'
+    | '/_authed/r/$runId'
     | '/_marketing/compare/allure'
     | '/_marketing/compare/datadog'
     | '/_marketing/compare/reportportal'
@@ -782,6 +794,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/compare/allure'
       preLoaderRoute: typeof MarketingCompareAllureRouteImport
       parentRoute: typeof MarketingRouteRoute
+    }
+    '/_authed/r/$runId': {
+      id: '/_authed/r/$runId'
+      path: '/r/$runId'
+      fullPath: '/r/$runId'
+      preLoaderRoute: typeof AuthedRRunIdRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
     '/_authed/profile/security': {
       id: '/_authed/profile/security'
@@ -1096,12 +1115,14 @@ const AuthedOrgsOrgIdRouteWithChildren = AuthedOrgsOrgIdRoute._addFileChildren(
 interface AuthedRouteRouteChildren {
   AuthedProfileRoute: typeof AuthedProfileRouteWithChildren
   AuthedOrgsOrgIdRoute: typeof AuthedOrgsOrgIdRouteWithChildren
+  AuthedRRunIdRoute: typeof AuthedRRunIdRoute
   AuthedOrgsIndexRoute: typeof AuthedOrgsIndexRoute
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
   AuthedProfileRoute: AuthedProfileRouteWithChildren,
   AuthedOrgsOrgIdRoute: AuthedOrgsOrgIdRouteWithChildren,
+  AuthedRRunIdRoute: AuthedRRunIdRoute,
   AuthedOrgsIndexRoute: AuthedOrgsIndexRoute,
 }
 

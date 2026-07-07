@@ -545,6 +545,11 @@ export type CreateExecutionsBody = {
     shardIndex?: number;
 };
 
+export type PlanRunBody = {
+    plannedTotal: number;
+    plannedFiles: Array<string>;
+};
+
 export type ArtifactUploadedResponse = {
     id: string;
     kind: 'trace' | 'screenshot' | 'video';
@@ -640,6 +645,7 @@ export type RunFileSummary = {
     failed: number;
     flaky: number;
     skipped: number;
+    pending: boolean;
 };
 
 export type RunAttemptSummary = {
@@ -679,6 +685,12 @@ export type RunDetailResponse = {
     summary: RunAggregate;
     files: Array<RunFileSummary>;
     group: RunGroup;
+};
+
+export type RunLocationResponse = {
+    orgId: string;
+    projectId: string;
+    runId: string;
 };
 
 export type RunDeletedResponse = {
@@ -3154,6 +3166,39 @@ export type CreateExecutionsResponses = {
 
 export type CreateExecutionsResponse = CreateExecutionsResponses[keyof CreateExecutionsResponses];
 
+export type PlanRunData = {
+    body?: PlanRunBody;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v1/runs/{id}/plan';
+};
+
+export type PlanRunErrors = {
+    /**
+     * Invalid or missing API key
+     */
+    401: ApiError;
+    /**
+     * Run not found
+     */
+    404: ApiError;
+};
+
+export type PlanRunError = PlanRunErrors[keyof PlanRunErrors];
+
+export type PlanRunResponses = {
+    /**
+     * OK
+     */
+    200: OkResponse & {
+        ok?: true;
+    };
+};
+
+export type PlanRunResponse = PlanRunResponses[keyof PlanRunResponses];
+
 export type UploadArtifactData = {
     body?: never;
     path: {
@@ -3336,6 +3381,37 @@ export type ListProjectRunsResponses = {
 };
 
 export type ListProjectRunsResponse = ListProjectRunsResponses[keyof ListProjectRunsResponses];
+
+export type GetRunLocationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v1/runs/{id}/location';
+};
+
+export type GetRunLocationErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Run not found
+     */
+    404: ApiError;
+};
+
+export type GetRunLocationError = GetRunLocationErrors[keyof GetRunLocationErrors];
+
+export type GetRunLocationResponses = {
+    /**
+     * OK
+     */
+    200: RunLocationResponse;
+};
+
+export type GetRunLocationResponse = GetRunLocationResponses[keyof GetRunLocationResponses];
 
 export type GetRunFileTestsData = {
     body?: never;
