@@ -87,6 +87,10 @@ function RunsPage() {
   const navigate = useNavigate({ from: Route.fullPath });
 
   const status = search.status ?? 'all';
+  // A flaky-recovered run is shown as Passed, so the Passed tab must include it: send
+  // both statuses (the API ORs an array). Other tabs pass through as a single value.
+  const statusQuery: RunStatusFilter | RunStatusFilter[] =
+    status === 'passed' ? ['passed', 'flaky'] : status;
   const page = search.page ?? 1;
 
   const project = useQuery(getProjectOptions({ path: { id: projectId } }));
@@ -95,7 +99,7 @@ function RunsPage() {
     listProjectRunsOptions({
       path: { projectId },
       query: {
-        status,
+        status: statusQuery,
         branch: search.branch,
         user: search.user,
         environment: search.environment,

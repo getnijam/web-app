@@ -3348,7 +3348,7 @@ export type ListProjectRunsData = {
         projectId: string;
     };
     query?: {
-        status?: 'all' | 'passed' | 'failed' | 'flaky';
+        status?: 'all' | 'passed' | 'failed' | 'flaky' | Array<'all' | 'passed' | 'failed' | 'flaky'>;
         branch?: string;
         user?: string;
         environment?: string;
