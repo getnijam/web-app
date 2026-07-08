@@ -323,6 +323,19 @@ export function RunOverview({
                 <span>via {run.ciProvider}</span>
               </Flex>
             )}
+            {/* No shard/machine breakdown reported (pytest, or an un-sharded run):
+                surface that execution was still distributed rather than one lane. */}
+            {(run.shardTotal == null || run.shardTotal <= 1) && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="cursor-help">Ran across multiple machines</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  No shard breakdown was reported, so tests may have run in parallel across workers
+                  or machines.
+                </TooltipContent>
+              </Tooltip>
+            )}
           </Flex>
         </Flex>
       </Flex>
