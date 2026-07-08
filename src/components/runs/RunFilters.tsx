@@ -5,7 +5,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { DateRangeFilter } from '@/components/explorer/DateRangeFilter';
 import type { RunFiltersResponse } from '@/client';
-import { STATUS_OPTIONS, type RunStatusFilter } from './status-filter';
+import { RUN_LIST_STATUS_OPTIONS, type RunStatusFilter } from './status-filter';
 
 export type { RunStatusFilter } from './status-filter';
 
@@ -60,7 +60,7 @@ export function RunFilters({
         onValueChange={(v) => onChange({ status: (v || 'all') as RunStatusFilter })}
       >
         <TabsList>
-          {STATUS_OPTIONS.map((o) => (
+          {RUN_LIST_STATUS_OPTIONS.map((o) => (
             <TabsTrigger key={o.value} value={o.value}>
               {o.label}
             </TabsTrigger>

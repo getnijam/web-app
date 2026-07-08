@@ -10,3 +10,8 @@ export const STATUS_OPTIONS: { value: RunStatusFilter; label: string }[] = [
   { value: 'failed', label: 'Failed' },
   { value: 'flaky', label: 'Flaky' },
 ];
+
+// The runs list doesn't offer a Flaky verdict filter: a run that recovered from
+// flakiness is a Passed run there. Flakiness is filtered per-test *inside* a run
+// (the spec-file filter still uses the full STATUS_OPTIONS above).
+export const RUN_LIST_STATUS_OPTIONS = STATUS_OPTIONS.filter((o) => o.value !== 'flaky');

@@ -53,7 +53,9 @@ interface RunsSearch {
   page?: number;
 }
 
-const STATUSES: RunStatusFilter[] = ['all', 'passed', 'failed', 'flaky'];
+// No 'flaky' verdict filter on the runs list (a flaky-recovered run is Passed here);
+// a stale ?status=flaky URL falls back to 'all'. Flakiness is filtered inside a run.
+const STATUSES: RunStatusFilter[] = ['all', 'passed', 'failed'];
 const PAGE_SIZE = 20;
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/runs/')({
