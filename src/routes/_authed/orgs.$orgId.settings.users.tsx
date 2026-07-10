@@ -54,7 +54,6 @@ import { RowsSkeleton } from '@/components/states/RowsSkeleton';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
-import { OrgAutoJoin } from '@/components/orgs/OrgAutoJoin';
 import { FieldError } from '@/components/auth/AuthLayout';
 import { UserAvatar } from '@/components/users/UserAvatar';
 import { isApiError } from '@/lib/api-error';
@@ -177,8 +176,6 @@ function UsersPage() {
       <SettingsPanel title="Members">{renderMembers()}</SettingsPanel>
 
       {isAdmin && <SettingsPanel title="Pending invitations">{renderInvites()}</SettingsPanel>}
-
-      {isAdmin && <OrgAutoJoin orgId={orgId} />}
 
       {isAdmin && <InviteDialog orgId={orgId} open={inviteOpen} onOpenChange={setInviteOpen} />}
     </Flex>

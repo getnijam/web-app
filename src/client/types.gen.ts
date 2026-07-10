@@ -308,9 +308,7 @@ export type SsoConnection = {
     issuerUrl: string;
     clientId: string;
     secretSet: boolean;
-    jitProvisioning: boolean;
     enforced: boolean;
-    defaultRole: 'admin' | 'member';
     status: 'active' | 'disabled';
 } | null;
 
@@ -323,9 +321,7 @@ export type UpsertSsoConnectionBody = {
     issuerUrl: string;
     clientId: string;
     clientSecret?: string;
-    jitProvisioning?: boolean;
     enforced?: boolean;
-    defaultRole?: 'admin' | 'member';
     status?: 'active' | 'disabled';
 };
 

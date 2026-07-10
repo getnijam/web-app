@@ -8,6 +8,7 @@ import {
   getOrgBillingOptions,
   addOrgDomainMutation,
   verifyOrgDomainMutation,
+  updateOrgDomainMutation,
   removeOrgDomainMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
@@ -15,6 +16,7 @@ import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -96,6 +98,12 @@ function DomainsPanel({ orgId, domains }: { orgId: string; domains: OrgDomainIte
     onError: onErr("Couldn't verify domain"),
   });
 
+  const update = useMutation({
+    ...updateOrgDomainMutation(),
+    onSuccess: writeCache,
+    onError: onErr("Couldn't update auto-join"),
+  });
+
   const remove = useMutation({
     ...removeOrgDomainMutation(),
     onSuccess: writeCache,
@@ -119,6 +127,10 @@ function DomainsPanel({ orgId, domains }: { orgId: string; domains: OrgDomainIte
           domain={d}
           onVerify={() => verify.mutate({ path: { orgId, domainId: d.id } })}
           verifying={verify.isPending && verify.variables?.path.domainId === d.id}
+          onToggleAutoJoin={(autoJoin) =>
+            update.mutate({ path: { orgId, domainId: d.id }, body: { autoJoin } })
+          }
+          toggling={update.isPending && update.variables?.path.domainId === d.id}
           onRemove={() => remove.mutate({ path: { orgId, domainId: d.id } })}
           removing={remove.isPending && remove.variables?.path.domainId === d.id}
         />
@@ -151,17 +163,21 @@ function DomainsPanel({ orgId, domains }: { orgId: string; domains: OrgDomainIte
   );
 }
 
-/** One domain: status, verify/remove, and the DNS record while unverified. */
+/** One domain: status, verify/remove, the DNS record while unverified, auto-join once verified. */
 function DomainRow({
   domain,
   onVerify,
   verifying,
+  onToggleAutoJoin,
+  toggling,
   onRemove,
   removing,
 }: {
   domain: OrgDomainItem;
   onVerify: () => void;
   verifying: boolean;
+  onToggleAutoJoin: (autoJoin: boolean) => void;
+  toggling: boolean;
   onRemove: () => void;
   removing: boolean;
 }) {
@@ -239,6 +255,30 @@ function DomainRow({
             </Text>
             <CopyField value={domain.txtValue} />
           </Flex>
+        </Flex>
+      )}
+
+      {domain.verified && (
+        <Flex
+          align="center"
+          justify="between"
+          gap={3}
+          className="rounded-lg bg-muted/40 px-3.5 py-3"
+        >
+          <Flex direction="col" gap={0.5} className="min-w-0">
+            <Text as="span" className="text-sm font-medium">
+              Auto-join
+            </Text>
+            <Text as="span" className="text-xs text-muted-foreground">
+              Let anyone with a verified @{domain.domain} email join this organization as a member.
+            </Text>
+          </Flex>
+          <Switch
+            checked={domain.autoJoin}
+            disabled={toggling}
+            onCheckedChange={onToggleAutoJoin}
+            aria-label={`Auto-join for ${domain.domain}`}
+          />
         </Flex>
       )}
     </Flex>

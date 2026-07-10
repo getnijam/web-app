@@ -7,8 +7,6 @@ import {
   CheckmarkCircle02Icon,
   AlertCircleIcon,
   CancelCircleIcon,
-  ToggleOnIcon,
-  ToggleOffIcon,
   SquareLock02Icon,
   SquareUnlock02Icon,
   ZapIcon,
@@ -38,7 +36,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { FilterCombobox, type ComboboxOption } from '@/components/ui/combobox';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -64,10 +61,6 @@ import { cn } from '@/lib/utils';
 const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
 const REDIRECT_URI = `${API_BASE}/v1/auth/sso/callback`;
 
-const ROLE_OPTIONS: ComboboxOption[] = [
-  { value: 'member', label: 'Member' },
-  { value: 'admin', label: 'Admin' },
-];
 
 export function SsoSettings({ orgId }: { orgId: string }) {
   const isAdmin = useIsOrgAdmin(orgId);
@@ -182,8 +175,8 @@ const SSO_FEATURES: { icon: typeof CloudSavingDone02Icon; title: string; body: s
   },
   {
     icon: UserAdd01Icon,
-    title: 'Just-in-time provisioning',
-    body: 'Teammates get a Nijam account and join your org automatically on their first SSO sign-in.',
+    title: 'Automatic accounts',
+    body: 'Teammates get a Nijam account on their first SSO sign-in, then join your org via verified-domain auto-join.',
   },
   {
     icon: LockKeyIcon,
@@ -377,9 +370,7 @@ interface ConnDraft {
   issuerUrl: string;
   clientId: string;
   clientSecret: string;
-  jitProvisioning: boolean;
   enforced: boolean;
-  defaultRole: 'admin' | 'member';
   status: 'active' | 'disabled';
 }
 
@@ -399,9 +390,7 @@ function ConnectionPanel({
     issuerUrl: connection?.issuerUrl ?? '',
     clientId: connection?.clientId ?? '',
     clientSecret: '',
-    jitProvisioning: connection?.jitProvisioning ?? true,
     enforced: connection?.enforced ?? false,
-    defaultRole: connection?.defaultRole ?? 'member',
     status: connection?.status ?? 'active',
   }));
 
@@ -409,9 +398,7 @@ function ConnectionPanel({
     issuerUrl: connection?.issuerUrl ?? '',
     clientId: connection?.clientId ?? '',
     clientSecret: '',
-    jitProvisioning: connection?.jitProvisioning ?? true,
     enforced: connection?.enforced ?? false,
-    defaultRole: connection?.defaultRole ?? 'member',
     status: connection?.status ?? 'active',
   });
 
@@ -453,9 +440,7 @@ function ConnectionPanel({
         issuerUrl: draft.issuerUrl.trim(),
         clientId: draft.clientId.trim(),
         ...(draft.clientSecret.trim() ? { clientSecret: draft.clientSecret.trim() } : {}),
-        jitProvisioning: draft.jitProvisioning,
         enforced: draft.enforced,
-        defaultRole: draft.defaultRole,
         status: draft.status,
       },
     });
@@ -521,16 +506,6 @@ function ConnectionView({ connection }: { connection: Conn }) {
         </Text>
       </SettingsRow>
       <SettingsRow
-        label="Just-in-time provisioning"
-        hint="Auto-creates accounts and adds them to this org on first SSO sign-in."
-      >
-        {connection.jitProvisioning ? (
-          <StatusBadge icon={ToggleOnIcon} label="On" tone="success" />
-        ) : (
-          <StatusBadge icon={ToggleOffIcon} label="Off" variant="outline" />
-        )}
-      </SettingsRow>
-      <SettingsRow
         label="Require SSO"
         hint="When on, members on your verified domains must sign in via SSO."
       >
@@ -539,11 +514,6 @@ function ConnectionView({ connection }: { connection: Conn }) {
         ) : (
           <StatusBadge icon={SquareUnlock02Icon} label="Optional" variant="outline" />
         )}
-      </SettingsRow>
-      <SettingsRow label="Default role" hint="The role new members get when provisioned.">
-        <Text as="span" className="text-sm capitalize">
-          {connection.defaultRole}
-        </Text>
       </SettingsRow>
       <SettingsRow label="Enabled" hint="When off, the config is kept but SSO logins are blocked.">
         {connection.status === 'active' ? (
@@ -608,16 +578,6 @@ function ConnectionEdit({
       </SettingsRow>
 
       <SettingsRow
-        label="Just-in-time provisioning"
-        hint="Auto-create accounts and add them to this org on first SSO sign-in."
-      >
-        <Switch
-          checked={draft.jitProvisioning}
-          onCheckedChange={(v) => set({ jitProvisioning: v })}
-        />
-      </SettingsRow>
-
-      <SettingsRow
         label="Require SSO"
         hint="Force everyone on your verified domains to sign in via SSO, this blocks password and social login for those emails across all of Nijam. Test SSO before enabling: enforced users can't fall back, and a broken IdP can lock them out."
       >
@@ -634,18 +594,6 @@ function ConnectionEdit({
         </div>
       )}
 
-      <SettingsRow label="Default role" hint="The role new members get when provisioned.">
-        <FilterCombobox
-          ariaLabel="Default role"
-          value={draft.defaultRole}
-          onChange={(v) => v && set({ defaultRole: v as 'admin' | 'member' })}
-          options={ROLE_OPTIONS}
-          placeholder="Role"
-          clearable={false}
-          searchable={false}
-          width="w-full max-w-xs"
-        />
-      </SettingsRow>
 
       {connection && (
         <SettingsRow label="Enabled" hint="Turn off to keep the config but block SSO logins.">
