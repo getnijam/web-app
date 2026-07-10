@@ -7,6 +7,7 @@ import { LoadingState } from '@/components/states/LoadingState';
 import { ProfileSection } from '@/components/account/ProfileSection';
 import { OrganizationsSection } from '@/components/account/OrganizationsSection';
 import { PendingInvitations } from '@/components/orgs/PendingInvitations';
+import { JoinableOrgs } from '@/components/orgs/JoinableOrgs';
 
 export const Route = createFileRoute('/_authed/profile/')({
   component: ProfilePage,
@@ -22,6 +23,7 @@ function ProfilePage() {
       <Card className="p-6">
         <ProfileSection user={user} />
       </Card>
+      <JoinableOrgs />
       <PendingInvitations />
       <Card className="p-6">
         <OrganizationsSection />

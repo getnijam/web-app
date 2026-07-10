@@ -17,7 +17,7 @@ import {
   LockKeyIcon,
   CloudSavingDone02Icon,
 } from '@hugeicons/core-free-icons';
-import type { SsoConnection, SsoDomainItem } from '@/client';
+import type { SsoConnection } from '@/client';
 
 // The generated `SsoConnection` includes `| null` (the response field is nullable);
 // `Conn` is the present-connection shape for panels that only render when it exists.
@@ -26,11 +26,9 @@ import {
   getOrgSsoOptions,
   getOrgSsoQueryKey,
   getOrgBillingOptions,
+  listOrgDomainsOptions,
   upsertOrgSsoMutation,
   deleteOrgSsoMutation,
-  addOrgSsoDomainMutation,
-  verifyOrgSsoDomainMutation,
-  removeOrgSsoDomainMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
@@ -39,7 +37,6 @@ import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { FilterCombobox, type ComboboxOption } from '@/components/ui/combobox';
 import {
@@ -56,6 +53,7 @@ import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { CopyField } from '@/components/ui/copy-field';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { VerifyDomainCallout } from '@/components/orgs/VerifyDomainCallout';
 import { LoadingState } from '@/components/states/LoadingState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
@@ -78,6 +76,13 @@ export function SsoSettings({ orgId }: { orgId: string }) {
     ...getOrgSsoOptions({ path: { orgId } }),
     enabled: isAdmin && billing.data?.plan === 'pro',
   });
+  // Domains are managed in the shared Domains tab now; SSO just needs to know whether the
+  // org has a verified domain (its trust anchor) to route logins.
+  const domains = useQuery({
+    ...listOrgDomainsOptions({ path: { orgId } }),
+    enabled: isAdmin && billing.data?.plan === 'pro',
+  });
+  const hasVerifiedDomain = (domains.data?.domains ?? []).some((d) => d.verified);
   // When there's no connection yet, show the empty state first; the config form
   // only appears once the admin opts in via "Configure SSO".
   const [configuring, setConfiguring] = useState(false);
@@ -135,8 +140,7 @@ export function SsoSettings({ orgId }: { orgId: string }) {
   const connection = sso.data.connection;
   // The launch link only works once SSO is actually live (active + a verified domain),
   // so only surface it then, sitting right under the "active" banner.
-  const live =
-    !!connection && connection.status === 'active' && connection.domains.some((d) => d.verified);
+  const live = !!connection && connection.status === 'active' && hasVerifiedDomain;
 
   // No connection and not yet configuring → an empty state that sells the feature
   // and offers the CTA, instead of dropping the admin straight into a blank form.
@@ -150,14 +154,21 @@ export function SsoSettings({ orgId }: { orgId: string }) {
 
   return (
     <Page header={header}>
-      {connection && <ConnectionStatus connection={connection} />}
+      {connection && (
+        <ConnectionStatus connection={connection} hasVerifiedDomain={hasVerifiedDomain} />
+      )}
       {connection && live && <LaunchLinkCard connection={connection} />}
+      {connection && !hasVerifiedDomain && (
+        <VerifyDomainCallout
+          orgId={orgId}
+          message="Verify a domain to turn on single sign-on for your team."
+        />
+      )}
       <ConnectionPanel
         orgId={orgId}
         connection={connection}
         onClose={() => setConfiguring(false)}
       />
-      {connection && <DomainsPanel orgId={orgId} connection={connection} />}
       {connection && <DangerPanel orgId={orgId} />}
     </Page>
   );
@@ -298,9 +309,13 @@ function Notice({
  * Readiness banner, makes it obvious that a fully-filled-in connection still does
  * nothing until a domain is verified (and the connection is enabled).
  */
-function ConnectionStatus({ connection }: { connection: Conn }) {
-  const hasVerifiedDomain = connection.domains.some((d) => d.verified);
-
+function ConnectionStatus({
+  connection,
+  hasVerifiedDomain,
+}: {
+  connection: Conn;
+  hasVerifiedDomain: boolean;
+}) {
   if (connection.status !== 'active') {
     return (
       <Notice tone="warning" icon={AlertCircleIcon}>
@@ -312,8 +327,8 @@ function ConnectionStatus({ connection }: { connection: Conn }) {
   if (!hasVerifiedDomain) {
     return (
       <Notice tone="warning" icon={AlertCircleIcon}>
-        Single sign-on isn&rsquo;t live yet, add and <b>verify an email domain</b> below. Until a
-        domain is verified, no one can sign in with SSO.
+        Single sign-on isn&rsquo;t live yet, <b>verify an email domain</b> in the Domains tab. Until
+        a domain is verified, no one can sign in with SSO.
       </Notice>
     );
   }
@@ -644,193 +659,6 @@ function ConnectionEdit({
   );
 }
 
-function DomainsPanel({ orgId, connection }: { orgId: string; connection: Conn }) {
-  const queryClient = useQueryClient();
-  const queryKey = getOrgSsoQueryKey({ path: { orgId } });
-  const [newDomain, setNewDomain] = useState('');
-
-  const writeCache = (data: unknown) => queryClient.setQueryData(queryKey, data);
-  const onErr = (title: string) => (err: unknown) =>
-    notify.error(title, {
-      description: isApiError(err) ? err.error.message : 'Something went wrong. Please try again.',
-    });
-
-  const add = useMutation({
-    ...addOrgSsoDomainMutation(),
-    onSuccess: (data) => {
-      writeCache(data);
-      setNewDomain('');
-      notify.success('Domain added', { description: 'Publish the TXT record, then verify it.' });
-    },
-    onError: onErr("Couldn't add domain"),
-  });
-
-  const verify = useMutation({
-    ...verifyOrgSsoDomainMutation(),
-    onSuccess: (data) => {
-      writeCache(data);
-      notify.success('Domain verified', {
-        description: 'Logins from this domain can now use SSO.',
-      });
-    },
-    onError: onErr("Couldn't verify domain"),
-  });
-
-  const remove = useMutation({
-    ...removeOrgSsoDomainMutation(),
-    onSuccess: writeCache,
-    onError: onErr("Couldn't remove domain"),
-  });
-
-  return (
-    <SettingsPanel title="Email domains">
-      {connection.domains.length === 0 && (
-        <Flex className="px-5 py-5">
-          <Text color="muted" className="text-sm">
-            Add the email domains your team signs in with (e.g. company.com). A login routes to SSO
-            only after its domain is verified.
-          </Text>
-        </Flex>
-      )}
-
-      {connection.domains.map((d) => (
-        <DomainRow
-          key={d.id}
-          domain={d}
-          onVerify={() => verify.mutate({ path: { orgId, domainId: d.id } })}
-          verifying={verify.isPending && verify.variables?.path.domainId === d.id}
-          onRemove={() => remove.mutate({ path: { orgId, domainId: d.id } })}
-          removing={remove.isPending && remove.variables?.path.domainId === d.id}
-        />
-      ))}
-
-      <Flex
-        as="form"
-        gap={2}
-        className="px-5 py-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (newDomain.trim()) add.mutate({ path: { orgId }, body: { domain: newDomain.trim() } });
-        }}
-      >
-        <Label htmlFor="new-domain" className="sr-only">
-          Add domain
-        </Label>
-        <Input
-          id="new-domain"
-          placeholder="company.com"
-          value={newDomain}
-          onChange={(e) => setNewDomain(e.target.value)}
-          className="max-w-xs"
-          data-testid="sso-new-domain"
-        />
-        <Button
-          type="submit"
-          variant="outline"
-          loading={add.isPending}
-          disabled={!newDomain.trim()}
-        >
-          Add domain
-        </Button>
-      </Flex>
-    </SettingsPanel>
-  );
-}
-
-/** One email domain: status, verify, the (copyable) DNS record, and a confirmed remove. */
-function DomainRow({
-  domain,
-  onVerify,
-  verifying,
-  onRemove,
-  removing,
-}: {
-  domain: SsoDomainItem;
-  onVerify: () => void;
-  verifying: boolean;
-  onRemove: () => void;
-  removing: boolean;
-}) {
-  const [confirmOpen, setConfirmOpen] = useState(false);
-
-  return (
-    <Flex direction="col" gap={3} className="border-b border-border px-5 py-4 last:border-b-0">
-      <Flex align="center" justify="between" gap={3} className="flex-wrap">
-        <Flex align="center" gap={2.5}>
-          <Text as="span" className="font-mono text-sm font-semibold">
-            {domain.domain}
-          </Text>
-          {domain.verified ? (
-            <StatusBadge icon={CheckmarkCircle02Icon} label="Verified" tone="success" />
-          ) : (
-            <StatusBadge icon={AlertCircleIcon} label="Pending" tone="warning" variant="outline" />
-          )}
-        </Flex>
-        <Flex align="center" gap={2}>
-          {!domain.verified && (
-            <Button size="sm" variant="outline" loading={verifying} onClick={onVerify}>
-              Verify
-            </Button>
-          )}
-          <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-destructive"
-              onClick={() => setConfirmOpen(true)}
-            >
-              Remove
-            </Button>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Remove {domain.domain}?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Users with an{' '}
-                  <span className="font-medium text-foreground">@{domain.domain}</span> email will
-                  no longer be routed to single sign-on. You can add and re-verify it later.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  variant="destructive"
-                  loading={removing}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onRemove();
-                  }}
-                >
-                  Remove domain
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </Flex>
-      </Flex>
-
-      {!domain.verified && (
-        <Flex direction="col" gap={2.5} className="rounded-lg bg-muted/40 px-3.5 py-3">
-          <Text as="span" className="text-xs text-muted-foreground">
-            Add this DNS TXT record, then click Verify:
-          </Text>
-          <Flex direction="col" gap={1}>
-            <Text as="span" className="text-xs font-medium text-muted-foreground">
-              Name
-            </Text>
-            <CopyField value={domain.txtName} />
-          </Flex>
-          <Flex direction="col" gap={1}>
-            <Text as="span" className="text-xs font-medium text-muted-foreground">
-              Value
-            </Text>
-            <CopyField value={domain.txtValue} />
-          </Flex>
-        </Flex>
-      )}
-    </Flex>
-  );
-}
-
 function DangerPanel({ orgId }: { orgId: string }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -841,7 +669,7 @@ function DangerPanel({ orgId }: { orgId: string }) {
       setOpen(false);
       queryClient.setQueryData(getOrgSsoQueryKey({ path: { orgId } }), { connection: null });
       notify.success('Single sign-on removed', {
-        description: 'The connection and its domains were deleted. Members keep their accounts.',
+        description: 'The connection was deleted. Members and your verified domains are kept.',
       });
     },
     onError: (err) => {
@@ -859,7 +687,7 @@ function DangerPanel({ orgId }: { orgId: string }) {
       <SettingsPanel title="Remove single sign-on" danger>
         <SettingsRow
           label="Delete connection"
-          hint="Removes the provider config and all domains. Existing members keep their accounts."
+          hint="Removes the provider config. Members keep their accounts, and your verified domains stay."
         >
           <Flex>
             <Button variant="outline" className="text-destructive" onClick={() => setOpen(true)}>
@@ -874,8 +702,8 @@ function DangerPanel({ orgId }: { orgId: string }) {
           <AlertDialogHeader>
             <AlertDialogTitle>Remove single sign-on?</AlertDialogTitle>
             <AlertDialogDescription>
-              This deletes the identity-provider connection and all verified domains. Members who
-              signed in via SSO keep their accounts and can use email/password or social login.
+              This deletes the identity-provider connection. Your verified domains and members'
+              accounts are kept; SSO users can sign in with email/password or social login.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

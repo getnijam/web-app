@@ -45,6 +45,7 @@ import { Route as AuthedOrgsOrgIdKeysIndexRouteImport } from './routes/_authed/o
 import { Route as AuthedOrgsOrgIdIntegrationsIndexRouteImport } from './routes/_authed/orgs.$orgId.integrations.index'
 import { Route as AuthedOrgsOrgIdSettingsUsersRouteImport } from './routes/_authed/orgs.$orgId.settings.users'
 import { Route as AuthedOrgsOrgIdSettingsSsoRouteImport } from './routes/_authed/orgs.$orgId.settings.sso'
+import { Route as AuthedOrgsOrgIdSettingsDomainsRouteImport } from './routes/_authed/orgs.$orgId.settings.domains'
 import { Route as AuthedOrgsOrgIdProjectsProjectIdRouteImport } from './routes/_authed/orgs.$orgId.projects.$projectId'
 import { Route as AuthedOrgsOrgIdKeysMcpRouteImport } from './routes/_authed/orgs.$orgId.keys.mcp'
 import { Route as AuthedOrgsOrgIdKeysIngestionRouteImport } from './routes/_authed/orgs.$orgId.keys.ingestion'
@@ -246,6 +247,12 @@ const AuthedOrgsOrgIdSettingsSsoRoute =
     path: '/sso',
     getParentRoute: () => AuthedOrgsOrgIdSettingsRoute,
   } as any)
+const AuthedOrgsOrgIdSettingsDomainsRoute =
+  AuthedOrgsOrgIdSettingsDomainsRouteImport.update({
+    id: '/domains',
+    path: '/domains',
+    getParentRoute: () => AuthedOrgsOrgIdSettingsRoute,
+  } as any)
 const AuthedOrgsOrgIdProjectsProjectIdRoute =
   AuthedOrgsOrgIdProjectsProjectIdRouteImport.update({
     id: '/projects/$projectId',
@@ -364,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/orgs/$orgId/keys/ingestion': typeof AuthedOrgsOrgIdKeysIngestionRoute
   '/orgs/$orgId/keys/mcp': typeof AuthedOrgsOrgIdKeysMcpRoute
   '/orgs/$orgId/projects/$projectId': typeof AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren
+  '/orgs/$orgId/settings/domains': typeof AuthedOrgsOrgIdSettingsDomainsRoute
   '/orgs/$orgId/settings/sso': typeof AuthedOrgsOrgIdSettingsSsoRoute
   '/orgs/$orgId/settings/users': typeof AuthedOrgsOrgIdSettingsUsersRoute
   '/orgs/$orgId/integrations/': typeof AuthedOrgsOrgIdIntegrationsIndexRoute
@@ -409,6 +417,7 @@ export interface FileRoutesByTo {
   '/orgs/$orgId/integrations/slack': typeof AuthedOrgsOrgIdIntegrationsSlackRoute
   '/orgs/$orgId/keys/ingestion': typeof AuthedOrgsOrgIdKeysIngestionRoute
   '/orgs/$orgId/keys/mcp': typeof AuthedOrgsOrgIdKeysMcpRoute
+  '/orgs/$orgId/settings/domains': typeof AuthedOrgsOrgIdSettingsDomainsRoute
   '/orgs/$orgId/settings/sso': typeof AuthedOrgsOrgIdSettingsSsoRoute
   '/orgs/$orgId/settings/users': typeof AuthedOrgsOrgIdSettingsUsersRoute
   '/orgs/$orgId/integrations': typeof AuthedOrgsOrgIdIntegrationsIndexRoute
@@ -462,6 +471,7 @@ export interface FileRoutesById {
   '/_authed/orgs/$orgId/keys/ingestion': typeof AuthedOrgsOrgIdKeysIngestionRoute
   '/_authed/orgs/$orgId/keys/mcp': typeof AuthedOrgsOrgIdKeysMcpRoute
   '/_authed/orgs/$orgId/projects/$projectId': typeof AuthedOrgsOrgIdProjectsProjectIdRouteWithChildren
+  '/_authed/orgs/$orgId/settings/domains': typeof AuthedOrgsOrgIdSettingsDomainsRoute
   '/_authed/orgs/$orgId/settings/sso': typeof AuthedOrgsOrgIdSettingsSsoRoute
   '/_authed/orgs/$orgId/settings/users': typeof AuthedOrgsOrgIdSettingsUsersRoute
   '/_authed/orgs/$orgId/integrations/': typeof AuthedOrgsOrgIdIntegrationsIndexRoute
@@ -514,6 +524,7 @@ export interface FileRouteTypes {
     | '/orgs/$orgId/keys/ingestion'
     | '/orgs/$orgId/keys/mcp'
     | '/orgs/$orgId/projects/$projectId'
+    | '/orgs/$orgId/settings/domains'
     | '/orgs/$orgId/settings/sso'
     | '/orgs/$orgId/settings/users'
     | '/orgs/$orgId/integrations/'
@@ -559,6 +570,7 @@ export interface FileRouteTypes {
     | '/orgs/$orgId/integrations/slack'
     | '/orgs/$orgId/keys/ingestion'
     | '/orgs/$orgId/keys/mcp'
+    | '/orgs/$orgId/settings/domains'
     | '/orgs/$orgId/settings/sso'
     | '/orgs/$orgId/settings/users'
     | '/orgs/$orgId/integrations'
@@ -611,6 +623,7 @@ export interface FileRouteTypes {
     | '/_authed/orgs/$orgId/keys/ingestion'
     | '/_authed/orgs/$orgId/keys/mcp'
     | '/_authed/orgs/$orgId/projects/$projectId'
+    | '/_authed/orgs/$orgId/settings/domains'
     | '/_authed/orgs/$orgId/settings/sso'
     | '/_authed/orgs/$orgId/settings/users'
     | '/_authed/orgs/$orgId/integrations/'
@@ -893,6 +906,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedOrgsOrgIdSettingsSsoRouteImport
       parentRoute: typeof AuthedOrgsOrgIdSettingsRoute
     }
+    '/_authed/orgs/$orgId/settings/domains': {
+      id: '/_authed/orgs/$orgId/settings/domains'
+      path: '/domains'
+      fullPath: '/orgs/$orgId/settings/domains'
+      preLoaderRoute: typeof AuthedOrgsOrgIdSettingsDomainsRouteImport
+      parentRoute: typeof AuthedOrgsOrgIdSettingsRoute
+    }
     '/_authed/orgs/$orgId/projects/$projectId': {
       id: '/_authed/orgs/$orgId/projects/$projectId'
       path: '/projects/$projectId'
@@ -1026,6 +1046,7 @@ const AuthedOrgsOrgIdKeysRouteWithChildren =
   AuthedOrgsOrgIdKeysRoute._addFileChildren(AuthedOrgsOrgIdKeysRouteChildren)
 
 interface AuthedOrgsOrgIdSettingsRouteChildren {
+  AuthedOrgsOrgIdSettingsDomainsRoute: typeof AuthedOrgsOrgIdSettingsDomainsRoute
   AuthedOrgsOrgIdSettingsSsoRoute: typeof AuthedOrgsOrgIdSettingsSsoRoute
   AuthedOrgsOrgIdSettingsUsersRoute: typeof AuthedOrgsOrgIdSettingsUsersRoute
   AuthedOrgsOrgIdSettingsIndexRoute: typeof AuthedOrgsOrgIdSettingsIndexRoute
@@ -1033,6 +1054,7 @@ interface AuthedOrgsOrgIdSettingsRouteChildren {
 
 const AuthedOrgsOrgIdSettingsRouteChildren: AuthedOrgsOrgIdSettingsRouteChildren =
   {
+    AuthedOrgsOrgIdSettingsDomainsRoute: AuthedOrgsOrgIdSettingsDomainsRoute,
     AuthedOrgsOrgIdSettingsSsoRoute: AuthedOrgsOrgIdSettingsSsoRoute,
     AuthedOrgsOrgIdSettingsUsersRoute: AuthedOrgsOrgIdSettingsUsersRoute,
     AuthedOrgsOrgIdSettingsIndexRoute: AuthedOrgsOrgIdSettingsIndexRoute,
