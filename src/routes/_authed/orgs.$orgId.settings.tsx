@@ -1,7 +1,17 @@
 import { createFileRoute, Outlet, Link, useRouterState } from '@tanstack/react-router';
-import { ORG_SETTINGS_ROUTE, ORG_SETTINGS_SSO_ROUTE, ORG_SETTINGS_USERS_ROUTE } from '@/lib/routes';
+import {
+  ORG_SETTINGS_ROUTE,
+  ORG_SETTINGS_SSO_ROUTE,
+  ORG_SETTINGS_USERS_ROUTE,
+  ORG_SETTINGS_DOMAINS_ROUTE,
+} from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Building03Icon, UserMultiple02Icon, ShieldKeyIcon } from '@hugeicons/core-free-icons';
+import {
+  Building03Icon,
+  UserMultiple02Icon,
+  ShieldKeyIcon,
+  Globe02Icon,
+} from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -28,6 +38,7 @@ function OrgSettingsLayout() {
     select: (s) => {
       const p = s.location.pathname;
       if (p.endsWith('/users')) return 'users';
+      if (p.endsWith('/domains')) return 'domains';
       if (p.endsWith('/sso')) return 'sso';
       return 'general';
     },
@@ -52,6 +63,12 @@ function OrgSettingsLayout() {
             <Link to={ORG_SETTINGS_USERS_ROUTE} params={{ orgId }}>
               <HugeiconsIcon icon={UserMultiple02Icon} size={16} />
               Users
+            </Link>
+          </TabsTrigger>
+          <TabsTrigger value="domains" asChild className="flex-none px-1 after:bg-primary">
+            <Link to={ORG_SETTINGS_DOMAINS_ROUTE} params={{ orgId }}>
+              <HugeiconsIcon icon={Globe02Icon} size={16} />
+              Domains
             </Link>
           </TabsTrigger>
           <TabsTrigger value="sso" asChild className="flex-none px-1 after:bg-primary">

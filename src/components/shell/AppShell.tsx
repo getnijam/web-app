@@ -58,7 +58,10 @@ export function AppShell() {
       <AppSidebar />
       <SidebarInset className="min-w-0">
         <TopBar />
-        <div className="scroll-area min-h-0 flex-1 overflow-y-auto p-7">
+        {/* flex-col so a route can opt into filling the viewport height via `flex-1`
+            (e.g. the run split's full-height divider); normal pages just sit at their
+            natural height at the top, unchanged. */}
+        <div className="scroll-area flex min-h-0 flex-1 flex-col overflow-y-auto p-7">
           <Outlet />
         </div>
         <UsageLimitBanner />

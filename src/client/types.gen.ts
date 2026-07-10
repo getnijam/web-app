@@ -182,6 +182,14 @@ export type AcceptMyInvitationResponse = {
     orgName: string;
 };
 
+export type JoinableOrgsResponse = {
+    organizations: Array<{
+        orgId: string;
+        orgName: string;
+        domain: string;
+    }>;
+};
+
 export type OrgSummary = {
     id: string;
     name: string;
@@ -294,14 +302,6 @@ export type BillingRedirectResponse = {
     url: string;
 };
 
-export type SsoDomainItem = {
-    id: string;
-    domain: string;
-    verified: boolean;
-    txtName: string;
-    txtValue: string;
-};
-
 export type SsoConnection = {
     id: string;
     provider: string;
@@ -312,7 +312,6 @@ export type SsoConnection = {
     enforced: boolean;
     defaultRole: 'admin' | 'member';
     status: 'active' | 'disabled';
-    domains: Array<SsoDomainItem>;
 } | null;
 
 export type SsoSettingsResponse = {
@@ -330,8 +329,25 @@ export type UpsertSsoConnectionBody = {
     status?: 'active' | 'disabled';
 };
 
-export type AddSsoDomainBody = {
+export type OrgDomainItem = {
+    id: string;
     domain: string;
+    verified: boolean;
+    autoJoin: boolean;
+    txtName: string;
+    txtValue: string;
+};
+
+export type OrgDomainsResponse = {
+    domains: Array<OrgDomainItem>;
+};
+
+export type AddOrgDomainBody = {
+    domain: string;
+};
+
+export type UpdateOrgDomainBody = {
+    autoJoin: boolean;
 };
 
 export type ProjectStats = {
@@ -1692,6 +1708,66 @@ export type RejectMyInvitationResponses = {
 
 export type RejectMyInvitationResponse = RejectMyInvitationResponses[keyof RejectMyInvitationResponses];
 
+export type ListJoinableOrgsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/auth/me/joinable-orgs';
+};
+
+export type ListJoinableOrgsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+};
+
+export type ListJoinableOrgsError = ListJoinableOrgsErrors[keyof ListJoinableOrgsErrors];
+
+export type ListJoinableOrgsResponses = {
+    /**
+     * OK
+     */
+    200: JoinableOrgsResponse;
+};
+
+export type ListJoinableOrgsResponse = ListJoinableOrgsResponses[keyof ListJoinableOrgsResponses];
+
+export type JoinOrgByDomainData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/auth/me/joinable-orgs/{orgId}/join';
+};
+
+export type JoinOrgByDomainErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not eligible to join
+     */
+    403: ApiError;
+    /**
+     * Org not found
+     */
+    404: ApiError;
+};
+
+export type JoinOrgByDomainError = JoinOrgByDomainErrors[keyof JoinOrgByDomainErrors];
+
+export type JoinOrgByDomainResponses = {
+    /**
+     * Joined
+     */
+    200: AcceptMyInvitationResponse;
+};
+
+export type JoinOrgByDomainResponse = JoinOrgByDomainResponses[keyof JoinOrgByDomainResponses];
+
 export type ListOrgsData = {
     body?: never;
     path?: never;
@@ -2499,16 +2575,16 @@ export type UpsertOrgSsoResponses = {
 
 export type UpsertOrgSsoResponse = UpsertOrgSsoResponses[keyof UpsertOrgSsoResponses];
 
-export type AddOrgSsoDomainData = {
-    body?: AddSsoDomainBody;
+export type ListOrgDomainsData = {
+    body?: never;
     path: {
         orgId: string;
     };
     query?: never;
-    url: '/v1/orgs/{orgId}/sso/domains';
+    url: '/v1/orgs/{orgId}/domains';
 };
 
-export type AddOrgSsoDomainErrors = {
+export type ListOrgDomainsErrors = {
     /**
      * Not authenticated
      */
@@ -2525,30 +2601,77 @@ export type AddOrgSsoDomainErrors = {
      * Not found
      */
     404: ApiError;
+    /**
+     * Domain already claimed
+     */
+    409: ApiError;
 };
 
-export type AddOrgSsoDomainError = AddOrgSsoDomainErrors[keyof AddOrgSsoDomainErrors];
+export type ListOrgDomainsError = ListOrgDomainsErrors[keyof ListOrgDomainsErrors];
 
-export type AddOrgSsoDomainResponses = {
+export type ListOrgDomainsResponses = {
     /**
      * OK
      */
-    200: SsoSettingsResponse;
+    200: OrgDomainsResponse;
 };
 
-export type AddOrgSsoDomainResponse = AddOrgSsoDomainResponses[keyof AddOrgSsoDomainResponses];
+export type ListOrgDomainsResponse = ListOrgDomainsResponses[keyof ListOrgDomainsResponses];
 
-export type VerifyOrgSsoDomainData = {
+export type AddOrgDomainData = {
+    body?: AddOrgDomainBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/domains';
+};
+
+export type AddOrgDomainErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+    /**
+     * Domain already claimed
+     */
+    409: ApiError;
+};
+
+export type AddOrgDomainError = AddOrgDomainErrors[keyof AddOrgDomainErrors];
+
+export type AddOrgDomainResponses = {
+    /**
+     * OK
+     */
+    200: OrgDomainsResponse;
+};
+
+export type AddOrgDomainResponse = AddOrgDomainResponses[keyof AddOrgDomainResponses];
+
+export type VerifyOrgDomainData = {
     body?: never;
     path: {
         orgId: string;
         domainId: string;
     };
     query?: never;
-    url: '/v1/orgs/{orgId}/sso/domains/{domainId}/verify';
+    url: '/v1/orgs/{orgId}/domains/{domainId}/verify';
 };
 
-export type VerifyOrgSsoDomainErrors = {
+export type VerifyOrgDomainErrors = {
     /**
      * Not authenticated
      */
@@ -2565,30 +2688,34 @@ export type VerifyOrgSsoDomainErrors = {
      * Not found
      */
     404: ApiError;
+    /**
+     * Domain already claimed
+     */
+    409: ApiError;
 };
 
-export type VerifyOrgSsoDomainError = VerifyOrgSsoDomainErrors[keyof VerifyOrgSsoDomainErrors];
+export type VerifyOrgDomainError = VerifyOrgDomainErrors[keyof VerifyOrgDomainErrors];
 
-export type VerifyOrgSsoDomainResponses = {
+export type VerifyOrgDomainResponses = {
     /**
      * OK
      */
-    200: SsoSettingsResponse;
+    200: OrgDomainsResponse;
 };
 
-export type VerifyOrgSsoDomainResponse = VerifyOrgSsoDomainResponses[keyof VerifyOrgSsoDomainResponses];
+export type VerifyOrgDomainResponse = VerifyOrgDomainResponses[keyof VerifyOrgDomainResponses];
 
-export type RemoveOrgSsoDomainData = {
+export type RemoveOrgDomainData = {
     body?: never;
     path: {
         orgId: string;
         domainId: string;
     };
     query?: never;
-    url: '/v1/orgs/{orgId}/sso/domains/{domainId}';
+    url: '/v1/orgs/{orgId}/domains/{domainId}';
 };
 
-export type RemoveOrgSsoDomainErrors = {
+export type RemoveOrgDomainErrors = {
     /**
      * Not authenticated
      */
@@ -2605,18 +2732,66 @@ export type RemoveOrgSsoDomainErrors = {
      * Not found
      */
     404: ApiError;
+    /**
+     * Domain already claimed
+     */
+    409: ApiError;
 };
 
-export type RemoveOrgSsoDomainError = RemoveOrgSsoDomainErrors[keyof RemoveOrgSsoDomainErrors];
+export type RemoveOrgDomainError = RemoveOrgDomainErrors[keyof RemoveOrgDomainErrors];
 
-export type RemoveOrgSsoDomainResponses = {
+export type RemoveOrgDomainResponses = {
     /**
      * OK
      */
-    200: SsoSettingsResponse;
+    200: OrgDomainsResponse;
 };
 
-export type RemoveOrgSsoDomainResponse = RemoveOrgSsoDomainResponses[keyof RemoveOrgSsoDomainResponses];
+export type RemoveOrgDomainResponse = RemoveOrgDomainResponses[keyof RemoveOrgDomainResponses];
+
+export type UpdateOrgDomainData = {
+    body?: UpdateOrgDomainBody;
+    path: {
+        orgId: string;
+        domainId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/domains/{domainId}';
+};
+
+export type UpdateOrgDomainErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+    /**
+     * Domain already claimed
+     */
+    409: ApiError;
+};
+
+export type UpdateOrgDomainError = UpdateOrgDomainErrors[keyof UpdateOrgDomainErrors];
+
+export type UpdateOrgDomainResponses = {
+    /**
+     * OK
+     */
+    200: OrgDomainsResponse;
+};
+
+export type UpdateOrgDomainResponse = UpdateOrgDomainResponses[keyof UpdateOrgDomainResponses];
 
 export type ListOrgProjectsData = {
     body?: never;

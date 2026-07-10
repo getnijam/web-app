@@ -23,7 +23,10 @@ export function RunSplitLayout({
   children: ReactNode;
 }) {
   return (
-    <Flex gap={6} className="h-full min-h-0 w-full">
+    // flex-1 (not h-full): the shell's content area is a flex column, so growing to
+    // fill it is reliable where a percentage height wouldn't resolve. This keeps the
+    // divider + both panes full-height even when the run is short.
+    <Flex gap={6} className="min-h-0 w-full flex-1">
       {/* The scroll container is a plain block, not the flex column: a flex parent
           would give the spec-files Card (overflow-hidden) an auto min-height of 0 and
           shrink+clip it to fit instead of letting this column overflow and scroll.

@@ -16,6 +16,7 @@ import { AccountMenu } from '@/components/users/AccountMenu';
 import { OrgAvatar } from '@/components/orgs/OrgAvatar';
 import { CreateOrgDialog } from '@/components/orgs/CreateOrgDialog';
 import { PendingInvitations } from '@/components/orgs/PendingInvitations';
+import { JoinableOrgs } from '@/components/orgs/JoinableOrgs';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/')({
@@ -113,6 +114,10 @@ function OrgsPicker() {
             <Text variant="h1">Your organizations</Text>
             <Text color="muted">Select an organization to continue, or create a new one.</Text>
           </Flex>
+
+          <JoinableOrgs
+            onJoined={(orgId) => navigate({ to: ORG_PROJECTS_ROUTE, params: { orgId } })}
+          />
 
           <PendingInvitations
             onAccepted={(orgId) => navigate({ to: ORG_PROJECTS_ROUTE, params: { orgId } })}
