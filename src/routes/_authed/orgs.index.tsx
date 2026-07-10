@@ -21,12 +21,19 @@ import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed/orgs/')({
   head: () => privateSeo('Organizations'),
+  // `ssoOrg` (the org name) is set by the SSO callback when someone authenticates via SSO
+  // but isn't a member of that org yet, so we can point them at an invite instead of the
+  // "create your first org" empty state.
+  validateSearch: (s: Record<string, unknown>): { ssoOrg?: string } => ({
+    ssoOrg: typeof s.ssoOrg === 'string' && s.ssoOrg ? s.ssoOrg : undefined,
+  }),
   component: OrgsPicker,
 });
 
 function OrgsPicker() {
   const { data, isLoading, error, refetch } = useQuery(listOrgsOptions());
   const navigate = useNavigate();
+  const { ssoOrg } = Route.useSearch();
   const user = useQuery({ ...getMeOptions(), retry: false }).data?.user;
   const [dialogOpen, setDialogOpen] = useState(false);
   const orgs = data?.orgs ?? [];
@@ -114,6 +121,22 @@ function OrgsPicker() {
             <Text variant="h1">Your organizations</Text>
             <Text color="muted">Select an organization to continue, or create a new one.</Text>
           </Flex>
+
+          {ssoOrg && orgs.length === 0 && (
+            <Flex
+              direction="col"
+              gap={1}
+              className="rounded-lg border border-info/40 bg-info/5 px-4 py-3"
+            >
+              <Text as="span" className="text-sm font-medium">
+                You're signed in, but not a member of {ssoOrg} yet
+              </Text>
+              <Text as="span" className="text-sm text-muted-foreground">
+                Single sign-on verifies who you are; joining an organization is separate. Ask an
+                admin of {ssoOrg} to invite you, or to turn on auto-join for your email domain.
+              </Text>
+            </Flex>
+          )}
 
           <JoinableOrgs
             onJoined={(orgId) => navigate({ to: ORG_PROJECTS_ROUTE, params: { orgId } })}

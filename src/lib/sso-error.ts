@@ -6,7 +6,6 @@ const SSO_ERROR_MESSAGES: Record<string, string> = {
   sso_unavailable: 'Single sign-on isn’t available for your organization right now. Please contact your admin.',
   unavailable: 'Single sign-on isn’t available right now. Please try again later.',
   denied: 'Sign-in was cancelled.',
-  not_provisioned: "Your account hasn't been set up for this organization yet. Ask your admin for an invite.",
   domain_not_allowed: 'Your email domain isn’t allowed for this organization’s single sign-on.',
   no_email: 'Your identity provider didn’t share an email address, so we couldn’t sign you in.',
   invalid: 'That sign-in link expired or was invalid. Please try again.',
