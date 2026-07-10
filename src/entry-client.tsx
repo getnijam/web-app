@@ -11,10 +11,21 @@ initSentry();
 initBetterStackAnalytics();
 
 // With code-split routes, an open tab may try to load a lazy chunk that a newer deploy
-// has already removed. Vite fires `vite:preloadError` when that import 404s; reload to
-// fetch the fresh build. `preventDefault()` stops Vite from also throwing.
+// has already removed. Vite fires `vite:preloadError` when that import 404s; reload once
+// to fetch the fresh build. `preventDefault()` stops Vite from also throwing.
+//
+// Loop guard: if a chunk STILL 404s right after we reloaded, the deploy is serving broken
+// assets (not a stale open tab), so reloading again would loop forever and take the page
+// down. We can't use sessionStorage in this environment, so we read the navigation type:
+// suppress the reload only when THIS document already came from a reload moments ago. A
+// failure long after load is a fresh transient (e.g. a mid-session deploy), so we still
+// reload once then.
+const RELOAD_LOOP_WINDOW_MS = 10_000;
 window.addEventListener('vite:preloadError', (event) => {
   event.preventDefault();
+  const [nav] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+  const justReloaded = nav?.type === 'reload' && performance.now() < RELOAD_LOOP_WINDOW_MS;
+  if (justReloaded) return; // already reloaded and it failed again → stop, don't loop
   window.location.reload();
 });
 
