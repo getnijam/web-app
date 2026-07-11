@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   GitBranchIcon,
+  UserIcon,
   ArrowUpRight01Icon,
   MoreVerticalIcon,
   Delete02Icon,
@@ -32,7 +33,6 @@ import {
 } from '@/components/ui/context-menu';
 import { ConfirmDeleteDialog } from '@/components/settings/ConfirmDeleteDialog';
 import { cn } from '@/lib/utils';
-import { UserAvatar } from '@/components/users/UserAvatar';
 import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { useIsMobile } from '@/hooks/use-is-mobile';
 import { isApiError } from '@/lib/api-error';
@@ -187,25 +187,21 @@ export function RunRow({
               <HugeiconsIcon icon={GitBranchIcon} size={13} className="shrink-0" />
               <span className="truncate font-mono">{run.branch ?? 'no branch'}</span>
             </Flex>
-            {run.triggeredBy && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Flex align="center" gap={1.5} className="relative z-10 min-w-0 cursor-help">
-                    <UserAvatar name={run.triggeredBy} email="" size="sm" />
-                    <span className="truncate">{run.triggeredBy}</span>
-                  </Flex>
-                </TooltipTrigger>
-                <TooltipContent>Triggered by {run.triggeredBy}</TooltipContent>
-              </Tooltip>
-            )}
+            {/* Who triggered the run + who authored the commit, clubbed into one muted
+                item (leads with the triggerer) so it doesn't pull the eye; hover for both. */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Flex align="center" gap={1.5} className="relative z-10 min-w-0 cursor-help">
-                  <UserAvatar name={run.authorName} email={author} size="sm" />
-                  <span className="truncate">{author}</span>
+                  <HugeiconsIcon icon={UserIcon} size={13} className="shrink-0" />
+                  <span className="truncate">{run.triggeredBy ?? author}</span>
                 </Flex>
               </TooltipTrigger>
-              <TooltipContent>Last commit by {author}</TooltipContent>
+              <TooltipContent>
+                <Flex direction="col" gap={0.5}>
+                  {run.triggeredBy && <span>Triggered by {run.triggeredBy}</span>}
+                  <span>Last commit by {author}</span>
+                </Flex>
+              </TooltipContent>
             </Tooltip>
           </Flex>
         </Flex>
