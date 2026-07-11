@@ -7,6 +7,7 @@ import {
   ChartBarStackedIcon,
   File01Icon,
   GitBranchIcon,
+  UserIcon,
   RefreshIcon,
 } from '@hugeicons/core-free-icons';
 import { getRunOptions } from '@/client/@tanstack/react-query.gen';
@@ -19,7 +20,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
-import { UserAvatar } from '@/components/users/UserAvatar';
 import { RunDetailBodySkeleton, RunDetailColumnSkeleton } from './RunSkeletons';
 import { RunSummaryBar } from './RunSummaryBar';
 import { RunStatusBadge } from './RunStatusBadge';
@@ -293,25 +293,21 @@ export function RunOverview({
                 <span className="font-mono">{run.branch ?? 'no branch'}</span>
               )}
             </Flex>
-            {run.triggeredBy && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Flex align="center" gap={1.5} className="cursor-help">
-                    <UserAvatar name={run.triggeredBy} email="" size="sm" />
-                    <span>{run.triggeredBy}</span>
-                  </Flex>
-                </TooltipTrigger>
-                <TooltipContent>Triggered by {run.triggeredBy}</TooltipContent>
-              </Tooltip>
-            )}
+            {/* Who triggered the run + who authored the commit, clubbed into one muted
+                item (leads with the triggerer) so it doesn't pull the eye; hover for both. */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Flex align="center" gap={1.5} className="cursor-help">
-                  <UserAvatar name={run.authorName} email={author} size="sm" />
-                  <span>{author}</span>
+                  <HugeiconsIcon icon={UserIcon} size={14} className="shrink-0" />
+                  <span>{run.triggeredBy ?? author}</span>
                 </Flex>
               </TooltipTrigger>
-              <TooltipContent>Last commit by {author}</TooltipContent>
+              <TooltipContent>
+                <Flex direction="col" gap={0.5}>
+                  {run.triggeredBy && <span>Triggered by {run.triggeredBy}</span>}
+                  <span>Last commit by {author}</span>
+                </Flex>
+              </TooltipContent>
             </Tooltip>
             {run.ciProvider && (
               <Flex align="center" gap={1}>
