@@ -44,6 +44,7 @@ export const ORG_SETTINGS_ROUTE = '/orgs/$orgId/settings';
 export const ORG_SETTINGS_SSO_ROUTE = '/orgs/$orgId/settings/sso';
 export const ORG_SETTINGS_USERS_ROUTE = '/orgs/$orgId/settings/users';
 export const ORG_SETTINGS_DOMAINS_ROUTE = '/orgs/$orgId/settings/domains';
+export const ORG_SETTINGS_BYOC_ROUTE = '/orgs/$orgId/settings/byoc';
 
 // Project
 export const RUNS_ROUTE = '/orgs/$orgId/projects/$projectId/runs';

@@ -4,6 +4,7 @@ import {
   ORG_SETTINGS_SSO_ROUTE,
   ORG_SETTINGS_USERS_ROUTE,
   ORG_SETTINGS_DOMAINS_ROUTE,
+  ORG_SETTINGS_BYOC_ROUTE,
 } from '@/lib/routes';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
@@ -11,6 +12,7 @@ import {
   UserMultiple02Icon,
   ShieldKeyIcon,
   Globe02Icon,
+  CloudIcon,
 } from '@hugeicons/core-free-icons';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -40,6 +42,7 @@ function OrgSettingsLayout() {
       if (p.endsWith('/users')) return 'users';
       if (p.endsWith('/domains')) return 'domains';
       if (p.endsWith('/sso')) return 'sso';
+      if (p.endsWith('/byoc')) return 'byoc';
       return 'general';
     },
   });
@@ -75,6 +78,12 @@ function OrgSettingsLayout() {
             <Link to={ORG_SETTINGS_SSO_ROUTE} params={{ orgId }}>
               <HugeiconsIcon icon={ShieldKeyIcon} size={16} />
               Single sign-on
+            </Link>
+          </TabsTrigger>
+          <TabsTrigger value="byoc" asChild className="flex-none px-1 after:bg-primary">
+            <Link to={ORG_SETTINGS_BYOC_ROUTE} params={{ orgId }}>
+              <HugeiconsIcon icon={CloudIcon} size={16} />
+              Bring your own cloud
             </Link>
           </TabsTrigger>
         </TabsList>

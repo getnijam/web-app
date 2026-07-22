@@ -111,6 +111,18 @@ function TermsPage() {
           password.
         </P>
         <P>
+          If your organization enables{' '}
+          <strong className="font-semibold text-foreground">bring your own cloud (BYOC)</strong>,
+          you provide your own Postgres database and object storage, and your projects, runs, and
+          artifacts are stored there instead of on our managed infrastructure. You’re responsible
+          for provisioning, securing, backing up, and paying for those resources and for keeping
+          them reachable; Nijam isn’t responsible for outages, data loss, or costs in your own
+          cloud. You authorize Nijam to connect to the database and storage you configure, solely to
+          store and serve your data. We store the connection string and credentials you provide
+          encrypted and access them with least privilege; disabling BYOC leaves the data already in
+          your cloud untouched.
+        </P>
+        <P>
           The reporter, <code className="font-mono">@nijam/pw-reporter</code>, is open source under
           the MIT license; your use of it is governed by that license.
         </P>
@@ -121,6 +133,7 @@ function TermsPage() {
           items={[
             'Free includes up to 1,000 credits per month, 3 members, and 7-day history retention. 1 credit = 1 Playwright test = 100 pytest/Vitest tests.',
             'Pro is $20/month and includes 10,000 credits per month, unlimited members, single sign-on (OIDC), and 90-day retention. Usage beyond the included amount is billed at $0.001 per additional credit (an early-bird rate, half the standard $0.002), calculated and invoiced in arrears at the end of each billing period.',
+            'Bring your own cloud is a Pro feature: when enabled, metered usage is waived and you pay the flat Pro base, since your test data is stored in your own cloud. It can be set up on a new organization that has no projects yet.',
             'Payments are processed by Polar, our Merchant of Record. Polar handles checkout, billing, applicable taxes, and invoices; your card details are handled by Polar, not stored by Nijam.',
             'Paid subscriptions renew automatically each period until cancelled. You can cancel anytime from the billing portal; cancellation takes effect at the end of the current period and your plan reverts to Free.',
             'Except where required by law or stated otherwise, payments are non-refundable. We may change prices or plan limits with reasonable notice; changes apply to the following billing period.',

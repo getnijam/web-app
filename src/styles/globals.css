@@ -258,6 +258,15 @@
   background-clip: padding-box;
 }
 
+/* Hide the scrollbar while keeping the region scrollable (e.g. an overflowing tab bar
+   that scrolls horizontally but shouldn't show a bar under the tabs). */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Token-driven brand gradients - used for the logo mark and avatar tiles.
    Defined as utilities so call sites avoid one-off `bg-[linear-gradient(...)]`. */
 @utility bg-brand {

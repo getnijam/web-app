@@ -1,7 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ORG_BILLING_ROUTE } from '@/lib/routes';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import {
   CrownIcon,
@@ -14,17 +17,24 @@ import {
 import type { BillingResponse } from '@/client';
 import {
   getOrgBillingOptions,
+  getOrgBillingQueryKey,
   createBillingCheckoutMutation,
   createBillingPortalMutation,
+  updateBillingEmailMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { LoadingState } from '@/components/states/LoadingState';
-import { ErrorState } from '@/components/states/ErrorState';
+import { ErrorState, ErrorBanner } from '@/components/states/ErrorState';
+import { FieldError } from '@/components/auth/AuthLayout';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { SettingsRow } from '@/components/settings/SettingsRow';
+import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
+import { useEditMode } from '@/hooks/use-edit-mode';
 import { UsageMeter, type MeterTone } from '@/components/billing/UsageMeter';
 import { formatCents, formatCount, formatResetDate, isPro, usagePercent } from '@/lib/billing';
 import { isApiError } from '@/lib/api-error';
@@ -76,13 +86,14 @@ const CREDIT_NOTE = '1 credit = 1 Playwright test = 100 pytest/Vitest tests.';
 function BillingView({ orgId, billing }: { orgId: string; billing: BillingResponse }) {
   const isAdmin = useIsOrgAdmin(orgId);
   const pro = isPro(billing);
+  // A Pro org with bring-your-own-cloud active is not metered (it pays the flat base), so
+  // the credit meter / included allotment doesn't apply.
+  const byoc = billing.byoc;
   const { usage, limits } = billing;
 
   const checkout = useMutation({
     ...createBillingCheckoutMutation(),
-    onSuccess: (data) => {
-      openExternal(data.url); // leave the SPA for Polar's hosted checkout
-    },
+    onSuccess: (data) => openExternal(data.url), // leave the SPA for Polar's hosted checkout
     onError: (err) =>
       notify.error("Couldn't start checkout", {
         description: isApiError(err)
@@ -106,10 +117,17 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
 
   // Pro is uncapped, once usage passes the included allotment, overage billing
   // ($0.001/credit early-bird rate) kicks in. Surface that instead of a silent full bar.
+  // `credits` (and `retentionDays`) are null on the BYOC plan = unlimited. Coerce to a
+  // number for the Pro/Free meter math; the over/metered branches never apply to BYOC.
   const included = limits.credits;
-  const overCredits = pro ? Math.max(0, usage.credits - included) : 0;
+  const includedNum = included ?? Number.POSITIVE_INFINITY;
+  const overCredits = pro ? Math.max(0, usage.credits - includedNum) : 0;
   const overActive = overCredits > 0;
-  const creditPercent = usagePercent(usage.credits, included);
+  const creditPercent = usagePercent(usage.credits, includedNum);
+  const retentionLabel =
+    billing.retentionDays === null
+      ? 'Unlimited history retention'
+      : `${billing.retentionDays}-day history retention`;
   let creditTone: MeterTone = 'default';
   if (pro) creditTone = overActive ? 'warning' : 'default';
   else if (billing.over) creditTone = 'danger';
@@ -125,8 +143,8 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   if (isAdmin) {
     if (pro)
       creditHint = overActive
-        ? `Included ${formatCount(included)} credits used up, overage now $0.001/credit (${formatCount(overCredits)} over this cycle), added to your next invoice. Resets ${resets}.`
-        : `${formatCount(usage.credits)} of ${formatCount(included)} credits used. Beyond that, $0.001 per credit, billed at cycle end. Resets ${resets}.`;
+        ? `Included ${formatCount(includedNum)} credits used up, overage now $0.001/credit (${formatCount(overCredits)} over this cycle), added to your next invoice. Resets ${resets}.`
+        : `${formatCount(usage.credits)} of ${formatCount(includedNum)} credits used. Beyond that, $0.001 per credit, billed at cycle end. Resets ${resets}.`;
     else if (billing.over)
       creditHint = billing.enforced
         ? `Monthly credit limit reached, new reports are paused until ${resets}. Upgrade to keep reporting.`
@@ -135,7 +153,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
   } else if (pro)
     creditHint = overActive
       ? `Metered usage is in effect, credits beyond the included amount are now billed. Contact an admin for details. Resets ${resets}.`
-      : `${formatCount(usage.credits)} of ${formatCount(included)} credits used. Resets ${resets}.`;
+      : `${formatCount(usage.credits)} of ${formatCount(includedNum)} credits used. Resets ${resets}.`;
   else if (billing.over)
     creditHint = `Monthly credit limit reached, contact an admin to upgrade. Resets ${resets}.`;
   else creditHint = `${used} this cycle. Resets ${resets}.`;
@@ -171,6 +189,7 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
               <Text as="span" className="text-base font-semibold">
                 {pro ? 'Pro' : 'Free'}
               </Text>
+              {byoc && <Badge variant="secondary">Bring your own cloud</Badge>}
               {pro && billing.status && (
                 <Badge
                   variant={billing.status === 'active' ? 'default' : 'destructive'}
@@ -182,8 +201,8 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
             </Flex>
             <Text as="span" className="text-sm text-muted-foreground">
               {pro
-                ? `Unlimited members · ${billing.retentionDays}-day history retention`
-                : `Up to ${formatCount(limits.seats ?? 3)} members · ${billing.retentionDays}-day history retention`}
+                ? `Unlimited members · ${retentionLabel}`
+                : `Up to ${formatCount(limits.seats ?? 3)} members · ${retentionLabel}`}
             </Text>
           </Flex>
           {isAdmin && (
@@ -200,14 +219,17 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
       </SettingsPanel>
 
       <SettingsPanel title="Usage this month">
-        <UsageMeter
-          icon={TestTube01Icon}
-          label="Credits"
-          value={`${formatCount(usage.credits)} / ${formatCount(included)}${pro ? ' included' : ''}`}
-          percent={creditPercent}
-          tone={creditTone}
-          hint={creditMeterHint}
-        />
+        {/* BYOC waives metering, so there's nothing to meter, show only Members. */}
+        {!byoc && (
+          <UsageMeter
+            icon={TestTube01Icon}
+            label="Credits"
+            value={`${formatCount(usage.credits)} / ${included === null ? 'Unlimited' : formatCount(included)}${pro ? ' included' : ''}`}
+            percent={creditPercent}
+            tone={creditTone}
+            hint={creditMeterHint}
+          />
+        )}
         <UsageMeter
           icon={UserMultiple02Icon}
           label="Members"
@@ -221,6 +243,8 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
           hint={seatHint}
         />
       </SettingsPanel>
+
+      {isAdmin && <BillingEmailPanel orgId={orgId} billingEmail={billing.billingEmail} />}
 
       {isAdmin && pro && (
         <SettingsPanel
@@ -328,5 +352,97 @@ function BillingView({ orgId, billing }: { orgId: string; billing: BillingRespon
         </Text>
       )}
     </Flex>
+  );
+}
+
+const EmailSchema = z.object({
+  // Empty clears it (checkout then defaults to the admin's own email).
+  billingEmail: z.union([z.string().email('Enter a valid email address.').max(320), z.literal('')]),
+});
+type EmailValues = z.infer<typeof EmailSchema>;
+
+/**
+ * Where this org's Pro invoices and receipts go. Polar allows one customer per email, so a
+ * user who runs several orgs must give each a distinct address; the API sub-addresses
+ * automatically on a clash, but an admin can set an explicit one here.
+ */
+function BillingEmailPanel({
+  orgId,
+  billingEmail,
+}: {
+  orgId: string;
+  billingEmail: string | null;
+}) {
+  const queryClient = useQueryClient();
+  const { editing, startEditing, stopEditing } = useEditMode();
+  const [formError, setFormError] = useState<string | null>(null);
+  const form = useForm<EmailValues>({
+    resolver: zodResolver(EmailSchema),
+    defaultValues: { billingEmail: billingEmail ?? '' },
+  });
+
+  const save = useMutation({
+    ...updateBillingEmailMutation(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: getOrgBillingQueryKey({ path: { orgId } }) });
+      notify.success('Billing email saved', {
+        description: 'Invoices and receipts for this organization will go here.',
+      });
+      form.reset(form.getValues()); // saved values become the new clean baseline
+      stopEditing();
+    },
+    onError: (err) => {
+      if (isApiError(err) && err.error.field) {
+        form.setError(err.error.field as keyof EmailValues, { message: err.error.message });
+      } else if (isApiError(err)) {
+        setFormError(err.error.message);
+      } else {
+        setFormError('Something went wrong. Please try again.');
+      }
+    },
+  });
+
+  const submit = form.handleSubmit((data) => {
+    setFormError(null);
+    save.mutate({ path: { orgId }, body: { billingEmail: data.billingEmail } });
+  });
+
+  const cancel = () => {
+    form.reset();
+    setFormError(null);
+    stopEditing();
+  };
+
+  return (
+    <form onSubmit={submit}>
+      <SettingsPanel
+        title="Billing email"
+        action={
+          <EditActions
+            editing={editing}
+            dirty={form.formState.isDirty}
+            saving={save.isPending}
+            onEdit={startEditing}
+            onCancel={cancel}
+            onSave={submit}
+          />
+        }
+      >
+        {formError && (
+          <div className="px-5 pt-4">
+            <ErrorBanner>{formError}</ErrorBanner>
+          </div>
+        )}
+        <LockedFields locked={!editing}>
+          <SettingsRow
+            label="Invoice recipient"
+            hint="Where Pro invoices and receipts for this organization are sent. Leave blank to use your account email."
+          >
+            <Input placeholder="billing@company.com" {...form.register('billingEmail')} />
+            <FieldError message={form.formState.errors.billingEmail?.message} />
+          </SettingsRow>
+        </LockedFields>
+      </SettingsPanel>
+    </form>
   );
 }

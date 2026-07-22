@@ -9,6 +9,7 @@ import {
   BellIcon,
   AiChat02Icon,
   ShieldKeyIcon,
+  CloudServerIcon,
   RefreshIcon,
 } from '@hugeicons/core-free-icons';
 import { CTA } from '@/components/home/components/CTA';
@@ -35,11 +36,7 @@ const DIAGNOSE: Feature[] = [
   {
     icon: Alert02Icon,
     tint: 'bg-destructive/15 text-destructive',
-    title: (
-      <>
-        Why it failed
-      </>
-    ),
+    title: <>Why it failed</>,
     body: 'The error, the stack trace, the failing line. For Playwright, the full trace, screenshots, and video for every attempt, opened straight from the run.',
   },
   {
@@ -95,6 +92,12 @@ const WORKFLOW: Feature[] = [
     title: 'Single sign-on',
     body: 'Sign in with your own identity provider (Okta, Entra ID, Auth0, any OIDC) with just-in-time provisioning and optional enforcement. A Pro feature.',
   },
+  {
+    icon: CloudServerIcon,
+    tint: 'bg-primary/15 text-primary',
+    title: 'Bring your own cloud',
+    body: 'Store your runs and artifacts in your own Postgres and your own S3, Google Cloud Storage, or Azure bucket. Your test data never leaves your infrastructure, and enabling it waives metered usage. A Pro feature.',
+  },
 ];
 
 type Group = {
@@ -146,10 +149,7 @@ export function FeaturesPage() {
     <>
       <main className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
         <Reveal className="mx-auto mb-20 max-w-2xl text-center">
-          <Text
-            as="h1"
-            className="text-4xl font-bold tracking-tight text-balance sm:text-5xl"
-          >
+          <Text as="h1" className="text-4xl font-bold tracking-tight text-balance sm:text-5xl">
             Every answer your CI never gives you.
           </Text>
           <Text className="mt-5 text-lg text-pretty text-muted-foreground">
@@ -162,15 +162,10 @@ export function FeaturesPage() {
           {GROUPS.map((group) => (
             <section key={group.id} id={group.id} className="scroll-mt-24">
               <Reveal className="max-w-2xl">
-                <Text
-                  as="h2"
-                  className="text-2xl font-bold tracking-tight sm:text-3xl"
-                >
+                <Text as="h2" className="text-2xl font-bold tracking-tight sm:text-3xl">
                   {group.heading}
                 </Text>
-                <Text className="mt-2.5 text-base text-muted-foreground">
-                  {group.blurb}
-                </Text>
+                <Text className="mt-2.5 text-base text-muted-foreground">{group.blurb}</Text>
               </Reveal>
               <Reveal className="mt-8">
                 <Grid cols={[1, 2, 3]} gap={5}>
