@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { acceptInvitation, acceptMyInvitation, addOrgDomain, completeRun, createBillingCheckout, createBillingPortal, createExecutions, createOrg, createOrgInvitation, createProject, createRun, createSecretKey, deleteMe, deleteMyAvatar, deleteOrg, deleteOrgLogo, deleteOrgSso, deleteProject, deleteRun, deleteSecretKey, disableMyTotp, disconnectOrgGithub, disconnectOrgSlack, enableMyTotp, finalizeRun, forgotPassword, getArtifactUrl, getFailedTests, getMe, getMyDeletability, getOrg, getOrgBilling, getOrgGithubIntegration, getOrgSlackIntegration, getOrgSso, getProject, getProjectFlakyTrend, getProjectGithubSettings, getProjectRunFilters, getProjectSlackSettings, getProjectTest, getRun, getRunFileTests, getRunLocation, getRunSource, getRunTimeline, installOrgGithub, installOrgSlack, joinOrgByDomain, leaveOrg, listAccessibleProjects, listJoinableOrgs, listMyInvitations, listMyOAuthAccounts, listMyOrganizations, listOrgDomains, listOrgGithubRepos, listOrgInvitations, listOrgMembers, listOrgProjects, listOrgs, listOrgSlackChannels, listProjectFailingTests, listProjectFlakyTests, listProjectRuns, listProjectTests, listSecretKeys, login, logout, type Options, planRun, previewInvitation, regenerateMyBackupCodes, rejectMyInvitation, removeOrgDomain, removeOrgMember, resendVerification, resetPassword, revokeOrgInvitation, setMyLastOrg, setupMyTotp, signup, ssoDiscovery, testOrgSlack, unlinkMyOAuthAccount, updateMe, updateMyPassword, updateOrg, updateOrgDomain, updateOrgGithubIntegration, updateOrgMemberRole, updateOrgSlackIntegration, updateProject, updateProjectGithubSettings, updateProjectSlackSettings, uploadArtifact, uploadMyAvatar, uploadOrgLogo, uploadRunSource, upsertOrgSso, verifyEmail, verifyLogin2Fa, verifyOrgDomain } from '../sdk.gen';
-import type { AcceptInvitationData, AcceptInvitationError, AcceptInvitationResponse, AcceptMyInvitationData, AcceptMyInvitationError, AcceptMyInvitationResponse2, AddOrgDomainData, AddOrgDomainError, AddOrgDomainResponse, CompleteRunData, CompleteRunError, CompleteRunResponse2, CreateBillingCheckoutData, CreateBillingCheckoutError, CreateBillingCheckoutResponse, CreateBillingPortalData, CreateBillingPortalError, CreateBillingPortalResponse, CreateExecutionsData, CreateExecutionsError, CreateExecutionsResponse, CreateOrgData, CreateOrgError, CreateOrgInvitationData, CreateOrgInvitationError, CreateOrgInvitationResponse, CreateOrgResponse, CreateProjectData, CreateProjectError, CreateProjectResponse, CreateRunData, CreateRunError, CreateRunResponse, CreateSecretKeyData, CreateSecretKeyError, CreateSecretKeyResponse, DeleteMeData, DeleteMeError, DeleteMeResponse, DeleteMyAvatarData, DeleteMyAvatarError, DeleteMyAvatarResponse, DeleteOrgData, DeleteOrgError, DeleteOrgLogoData, DeleteOrgLogoError, DeleteOrgLogoResponse, DeleteOrgResponse, DeleteOrgSsoData, DeleteOrgSsoError, DeleteOrgSsoResponse, DeleteProjectData, DeleteProjectError, DeleteProjectResponse, DeleteRunData, DeleteRunError, DeleteRunResponse, DeleteSecretKeyData, DeleteSecretKeyError, DeleteSecretKeyResponse, DisableMyTotpData, DisableMyTotpError, DisableMyTotpResponse, DisconnectOrgGithubData, DisconnectOrgGithubError, DisconnectOrgGithubResponse, DisconnectOrgSlackData, DisconnectOrgSlackError, DisconnectOrgSlackResponse, EnableMyTotpData, EnableMyTotpError, EnableMyTotpResponse, FinalizeRunData, FinalizeRunError, FinalizeRunResponse, ForgotPasswordData, ForgotPasswordResponse, GetArtifactUrlData, GetArtifactUrlError, GetArtifactUrlResponse, GetFailedTestsData, GetFailedTestsError, GetFailedTestsResponse, GetMeData, GetMeError, GetMeResponse, GetMyDeletabilityData, GetMyDeletabilityError, GetMyDeletabilityResponse, GetOrgBillingData, GetOrgBillingError, GetOrgBillingResponse, GetOrgData, GetOrgError, GetOrgGithubIntegrationData, GetOrgGithubIntegrationError, GetOrgGithubIntegrationResponse, GetOrgResponse, GetOrgSlackIntegrationData, GetOrgSlackIntegrationError, GetOrgSlackIntegrationResponse, GetOrgSsoData, GetOrgSsoError, GetOrgSsoResponse, GetProjectData, GetProjectError, GetProjectFlakyTrendData, GetProjectFlakyTrendError, GetProjectFlakyTrendResponse, GetProjectGithubSettingsData, GetProjectGithubSettingsError, GetProjectGithubSettingsResponse, GetProjectResponse, GetProjectRunFiltersData, GetProjectRunFiltersError, GetProjectRunFiltersResponse, GetProjectSlackSettingsData, GetProjectSlackSettingsError, GetProjectSlackSettingsResponse, GetProjectTestData, GetProjectTestError, GetProjectTestResponse, GetRunData, GetRunError, GetRunFileTestsData, GetRunFileTestsError, GetRunFileTestsResponse, GetRunLocationData, GetRunLocationError, GetRunLocationResponse, GetRunResponse, GetRunSourceData, GetRunSourceError, GetRunSourceResponse, GetRunTimelineData, GetRunTimelineError, GetRunTimelineResponse, InstallOrgGithubData, InstallOrgGithubError, InstallOrgGithubResponse, InstallOrgSlackData, InstallOrgSlackError, InstallOrgSlackResponse, JoinOrgByDomainData, JoinOrgByDomainError, JoinOrgByDomainResponse, LeaveOrgData, LeaveOrgError, LeaveOrgResponse, ListAccessibleProjectsData, ListAccessibleProjectsError, ListAccessibleProjectsResponse, ListJoinableOrgsData, ListJoinableOrgsError, ListJoinableOrgsResponse, ListMyInvitationsData, ListMyInvitationsError, ListMyInvitationsResponse, ListMyOAuthAccountsData, ListMyOAuthAccountsError, ListMyOAuthAccountsResponse, ListMyOrganizationsData, ListMyOrganizationsError, ListMyOrganizationsResponse, ListOrgDomainsData, ListOrgDomainsError, ListOrgDomainsResponse, ListOrgGithubReposData, ListOrgGithubReposError, ListOrgGithubReposResponse, ListOrgInvitationsData, ListOrgInvitationsError, ListOrgInvitationsResponse, ListOrgMembersData, ListOrgMembersError, ListOrgMembersResponse, ListOrgProjectsData, ListOrgProjectsError, ListOrgProjectsResponse, ListOrgsData, ListOrgsError, ListOrgSlackChannelsData, ListOrgSlackChannelsError, ListOrgSlackChannelsResponse, ListOrgsResponse, ListProjectFailingTestsData, ListProjectFailingTestsError, ListProjectFailingTestsResponse, ListProjectFlakyTestsData, ListProjectFlakyTestsError, ListProjectFlakyTestsResponse, ListProjectRunsData, ListProjectRunsError, ListProjectRunsResponse, ListProjectTestsData, ListProjectTestsError, ListProjectTestsResponse, ListSecretKeysData, ListSecretKeysError, ListSecretKeysResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, LogoutResponse, PlanRunData, PlanRunError, PlanRunResponse, PreviewInvitationData, PreviewInvitationError, PreviewInvitationResponse, RegenerateMyBackupCodesData, RegenerateMyBackupCodesError, RegenerateMyBackupCodesResponse, RejectMyInvitationData, RejectMyInvitationError, RejectMyInvitationResponse, RemoveOrgDomainData, RemoveOrgDomainError, RemoveOrgDomainResponse, RemoveOrgMemberData, RemoveOrgMemberError, RemoveOrgMemberResponse, ResendVerificationData, ResendVerificationResponse, ResetPasswordData, ResetPasswordError, ResetPasswordResponse, RevokeOrgInvitationData, RevokeOrgInvitationError, RevokeOrgInvitationResponse, SetMyLastOrgData, SetMyLastOrgError, SetMyLastOrgResponse, SetupMyTotpData, SetupMyTotpError, SetupMyTotpResponse, SignupData, SignupError, SignupResponse2, SsoDiscoveryData, SsoDiscoveryResponse2, TestOrgSlackData, TestOrgSlackError, TestOrgSlackResponse, UnlinkMyOAuthAccountData, UnlinkMyOAuthAccountError, UnlinkMyOAuthAccountResponse, UpdateMeData, UpdateMeError, UpdateMeResponse, UpdateMyPasswordData, UpdateMyPasswordError, UpdateMyPasswordResponse, UpdateOrgData, UpdateOrgDomainData, UpdateOrgDomainError, UpdateOrgDomainResponse, UpdateOrgError, UpdateOrgGithubIntegrationData, UpdateOrgGithubIntegrationError, UpdateOrgGithubIntegrationResponse, UpdateOrgMemberRoleData, UpdateOrgMemberRoleError, UpdateOrgMemberRoleResponse, UpdateOrgResponse, UpdateOrgSlackIntegrationData, UpdateOrgSlackIntegrationError, UpdateOrgSlackIntegrationResponse, UpdateProjectData, UpdateProjectError, UpdateProjectGithubSettingsData, UpdateProjectGithubSettingsError, UpdateProjectGithubSettingsResponse, UpdateProjectResponse, UpdateProjectSlackSettingsData, UpdateProjectSlackSettingsError, UpdateProjectSlackSettingsResponse, UploadArtifactData, UploadArtifactError, UploadArtifactResponse, UploadMyAvatarData, UploadMyAvatarError, UploadMyAvatarResponse, UploadOrgLogoData, UploadOrgLogoError, UploadOrgLogoResponse, UploadRunSourceData, UploadRunSourceError, UploadRunSourceResponse, UpsertOrgSsoData, UpsertOrgSsoError, UpsertOrgSsoResponse, VerifyEmailData, VerifyEmailError, VerifyEmailResponse, VerifyLogin2FaData, VerifyLogin2FaError, VerifyLogin2FaResponse, VerifyOrgDomainData, VerifyOrgDomainError, VerifyOrgDomainResponse } from '../types.gen';
+import { acceptInvitation, acceptMyInvitation, addOrgDomain, completeRun, createBillingCheckout, createBillingPortal, createExecutions, createOrg, createOrgInvitation, createProject, createRun, createSecretKey, deleteMe, deleteMyAvatar, deleteOrg, deleteOrgByoc, deleteOrgLogo, deleteOrgSso, deleteProject, deleteRun, deleteSecretKey, disableMyTotp, disconnectOrgGithub, disconnectOrgSlack, enableMyTotp, finalizeRun, forgotPassword, getArtifactUrl, getFailedTests, getMe, getMyDeletability, getOrg, getOrgBilling, getOrgByoc, getOrgGithubIntegration, getOrgSlackIntegration, getOrgSso, getProject, getProjectFlakyTrend, getProjectGithubSettings, getProjectRunFilters, getProjectSlackSettings, getProjectTest, getRun, getRunFileTests, getRunLocation, getRunSource, getRunTimeline, installOrgGithub, installOrgSlack, joinOrgByDomain, leaveOrg, listAccessibleProjects, listJoinableOrgs, listMyInvitations, listMyOAuthAccounts, listMyOrganizations, listOrgDomains, listOrgGithubRepos, listOrgInvitations, listOrgMembers, listOrgProjects, listOrgs, listOrgSlackChannels, listProjectFailingTests, listProjectFlakyTests, listProjectRuns, listProjectTests, listSecretKeys, login, logout, type Options, planRun, previewInvitation, regenerateMyBackupCodes, rejectMyInvitation, removeOrgDomain, removeOrgMember, resendVerification, resetPassword, revokeOrgInvitation, setMyLastOrg, setupMyTotp, signup, ssoDiscovery, testOrgByoc, testOrgSlack, unlinkMyOAuthAccount, updateBillingEmail, updateMe, updateMyPassword, updateOrg, updateOrgByoc, updateOrgDomain, updateOrgGithubIntegration, updateOrgMemberRole, updateOrgSlackIntegration, updateProject, updateProjectGithubSettings, updateProjectSlackSettings, uploadArtifact, uploadMyAvatar, uploadOrgLogo, uploadRunSource, upsertOrgSso, verifyEmail, verifyLogin2Fa, verifyOrgDomain } from '../sdk.gen';
+import type { AcceptInvitationData, AcceptInvitationError, AcceptInvitationResponse, AcceptMyInvitationData, AcceptMyInvitationError, AcceptMyInvitationResponse2, AddOrgDomainData, AddOrgDomainError, AddOrgDomainResponse, CompleteRunData, CompleteRunError, CompleteRunResponse2, CreateBillingCheckoutData, CreateBillingCheckoutError, CreateBillingCheckoutResponse, CreateBillingPortalData, CreateBillingPortalError, CreateBillingPortalResponse, CreateExecutionsData, CreateExecutionsError, CreateExecutionsResponse, CreateOrgData, CreateOrgError, CreateOrgInvitationData, CreateOrgInvitationError, CreateOrgInvitationResponse, CreateOrgResponse, CreateProjectData, CreateProjectError, CreateProjectResponse, CreateRunData, CreateRunError, CreateRunResponse, CreateSecretKeyData, CreateSecretKeyError, CreateSecretKeyResponse, DeleteMeData, DeleteMeError, DeleteMeResponse, DeleteMyAvatarData, DeleteMyAvatarError, DeleteMyAvatarResponse, DeleteOrgByocData, DeleteOrgByocError, DeleteOrgByocResponse, DeleteOrgData, DeleteOrgError, DeleteOrgLogoData, DeleteOrgLogoError, DeleteOrgLogoResponse, DeleteOrgResponse, DeleteOrgSsoData, DeleteOrgSsoError, DeleteOrgSsoResponse, DeleteProjectData, DeleteProjectError, DeleteProjectResponse, DeleteRunData, DeleteRunError, DeleteRunResponse, DeleteSecretKeyData, DeleteSecretKeyError, DeleteSecretKeyResponse, DisableMyTotpData, DisableMyTotpError, DisableMyTotpResponse, DisconnectOrgGithubData, DisconnectOrgGithubError, DisconnectOrgGithubResponse, DisconnectOrgSlackData, DisconnectOrgSlackError, DisconnectOrgSlackResponse, EnableMyTotpData, EnableMyTotpError, EnableMyTotpResponse, FinalizeRunData, FinalizeRunError, FinalizeRunResponse, ForgotPasswordData, ForgotPasswordResponse, GetArtifactUrlData, GetArtifactUrlError, GetArtifactUrlResponse, GetFailedTestsData, GetFailedTestsError, GetFailedTestsResponse, GetMeData, GetMeError, GetMeResponse, GetMyDeletabilityData, GetMyDeletabilityError, GetMyDeletabilityResponse, GetOrgBillingData, GetOrgBillingError, GetOrgBillingResponse, GetOrgByocData, GetOrgByocError, GetOrgByocResponse, GetOrgData, GetOrgError, GetOrgGithubIntegrationData, GetOrgGithubIntegrationError, GetOrgGithubIntegrationResponse, GetOrgResponse, GetOrgSlackIntegrationData, GetOrgSlackIntegrationError, GetOrgSlackIntegrationResponse, GetOrgSsoData, GetOrgSsoError, GetOrgSsoResponse, GetProjectData, GetProjectError, GetProjectFlakyTrendData, GetProjectFlakyTrendError, GetProjectFlakyTrendResponse, GetProjectGithubSettingsData, GetProjectGithubSettingsError, GetProjectGithubSettingsResponse, GetProjectResponse, GetProjectRunFiltersData, GetProjectRunFiltersError, GetProjectRunFiltersResponse, GetProjectSlackSettingsData, GetProjectSlackSettingsError, GetProjectSlackSettingsResponse, GetProjectTestData, GetProjectTestError, GetProjectTestResponse, GetRunData, GetRunError, GetRunFileTestsData, GetRunFileTestsError, GetRunFileTestsResponse, GetRunLocationData, GetRunLocationError, GetRunLocationResponse, GetRunResponse, GetRunSourceData, GetRunSourceError, GetRunSourceResponse, GetRunTimelineData, GetRunTimelineError, GetRunTimelineResponse, InstallOrgGithubData, InstallOrgGithubError, InstallOrgGithubResponse, InstallOrgSlackData, InstallOrgSlackError, InstallOrgSlackResponse, JoinOrgByDomainData, JoinOrgByDomainError, JoinOrgByDomainResponse, LeaveOrgData, LeaveOrgError, LeaveOrgResponse, ListAccessibleProjectsData, ListAccessibleProjectsError, ListAccessibleProjectsResponse, ListJoinableOrgsData, ListJoinableOrgsError, ListJoinableOrgsResponse, ListMyInvitationsData, ListMyInvitationsError, ListMyInvitationsResponse, ListMyOAuthAccountsData, ListMyOAuthAccountsError, ListMyOAuthAccountsResponse, ListMyOrganizationsData, ListMyOrganizationsError, ListMyOrganizationsResponse, ListOrgDomainsData, ListOrgDomainsError, ListOrgDomainsResponse, ListOrgGithubReposData, ListOrgGithubReposError, ListOrgGithubReposResponse, ListOrgInvitationsData, ListOrgInvitationsError, ListOrgInvitationsResponse, ListOrgMembersData, ListOrgMembersError, ListOrgMembersResponse, ListOrgProjectsData, ListOrgProjectsError, ListOrgProjectsResponse, ListOrgsData, ListOrgsError, ListOrgSlackChannelsData, ListOrgSlackChannelsError, ListOrgSlackChannelsResponse, ListOrgsResponse, ListProjectFailingTestsData, ListProjectFailingTestsError, ListProjectFailingTestsResponse, ListProjectFlakyTestsData, ListProjectFlakyTestsError, ListProjectFlakyTestsResponse, ListProjectRunsData, ListProjectRunsError, ListProjectRunsResponse, ListProjectTestsData, ListProjectTestsError, ListProjectTestsResponse, ListSecretKeysData, ListSecretKeysError, ListSecretKeysResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, LogoutResponse, PlanRunData, PlanRunError, PlanRunResponse, PreviewInvitationData, PreviewInvitationError, PreviewInvitationResponse, RegenerateMyBackupCodesData, RegenerateMyBackupCodesError, RegenerateMyBackupCodesResponse, RejectMyInvitationData, RejectMyInvitationError, RejectMyInvitationResponse, RemoveOrgDomainData, RemoveOrgDomainError, RemoveOrgDomainResponse, RemoveOrgMemberData, RemoveOrgMemberError, RemoveOrgMemberResponse, ResendVerificationData, ResendVerificationResponse, ResetPasswordData, ResetPasswordError, ResetPasswordResponse, RevokeOrgInvitationData, RevokeOrgInvitationError, RevokeOrgInvitationResponse, SetMyLastOrgData, SetMyLastOrgError, SetMyLastOrgResponse, SetupMyTotpData, SetupMyTotpError, SetupMyTotpResponse, SignupData, SignupError, SignupResponse2, SsoDiscoveryData, SsoDiscoveryResponse2, TestOrgByocData, TestOrgByocError, TestOrgByocResponse, TestOrgSlackData, TestOrgSlackError, TestOrgSlackResponse, UnlinkMyOAuthAccountData, UnlinkMyOAuthAccountError, UnlinkMyOAuthAccountResponse, UpdateBillingEmailData, UpdateBillingEmailError, UpdateBillingEmailResponse, UpdateMeData, UpdateMeError, UpdateMeResponse, UpdateMyPasswordData, UpdateMyPasswordError, UpdateMyPasswordResponse, UpdateOrgByocData, UpdateOrgByocError, UpdateOrgByocResponse, UpdateOrgData, UpdateOrgDomainData, UpdateOrgDomainError, UpdateOrgDomainResponse, UpdateOrgError, UpdateOrgGithubIntegrationData, UpdateOrgGithubIntegrationError, UpdateOrgGithubIntegrationResponse, UpdateOrgMemberRoleData, UpdateOrgMemberRoleError, UpdateOrgMemberRoleResponse, UpdateOrgResponse, UpdateOrgSlackIntegrationData, UpdateOrgSlackIntegrationError, UpdateOrgSlackIntegrationResponse, UpdateProjectData, UpdateProjectError, UpdateProjectGithubSettingsData, UpdateProjectGithubSettingsError, UpdateProjectGithubSettingsResponse, UpdateProjectResponse, UpdateProjectSlackSettingsData, UpdateProjectSlackSettingsError, UpdateProjectSlackSettingsResponse, UploadArtifactData, UploadArtifactError, UploadArtifactResponse, UploadMyAvatarData, UploadMyAvatarError, UploadMyAvatarResponse, UploadOrgLogoData, UploadOrgLogoError, UploadOrgLogoResponse, UploadRunSourceData, UploadRunSourceError, UploadRunSourceResponse, UpsertOrgSsoData, UpsertOrgSsoError, UpsertOrgSsoResponse, VerifyEmailData, VerifyEmailError, VerifyEmailResponse, VerifyLogin2FaData, VerifyLogin2FaError, VerifyLogin2FaResponse, VerifyOrgDomainData, VerifyOrgDomainError, VerifyOrgDomainResponse } from '../types.gen';
 
 /**
  * Create an account and send a verification email
@@ -869,6 +869,23 @@ export const createBillingPortalMutation = (options?: Partial<Options<CreateBill
 };
 
 /**
+ * Set the organization's Pro billing contact email
+ */
+export const updateBillingEmailMutation = (options?: Partial<Options<UpdateBillingEmailData>>): UseMutationOptions<UpdateBillingEmailResponse, UpdateBillingEmailError, Options<UpdateBillingEmailData>> => {
+    const mutationOptions: UseMutationOptions<UpdateBillingEmailResponse, UpdateBillingEmailError, Options<UpdateBillingEmailData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateBillingEmail({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
  * Delete the org SSO connection
  */
 export const deleteOrgSsoMutation = (options?: Partial<Options<DeleteOrgSsoData>>): UseMutationOptions<DeleteOrgSsoResponse, DeleteOrgSsoError, Options<DeleteOrgSsoData>> => {
@@ -996,6 +1013,75 @@ export const updateOrgDomainMutation = (options?: Partial<Options<UpdateOrgDomai
     const mutationOptions: UseMutationOptions<UpdateOrgDomainResponse, UpdateOrgDomainError, Options<UpdateOrgDomainData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await updateOrgDomain({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Disable bring-your-own-cloud and revert the org to managed storage/DB
+ */
+export const deleteOrgByocMutation = (options?: Partial<Options<DeleteOrgByocData>>): UseMutationOptions<DeleteOrgByocResponse, DeleteOrgByocError, Options<DeleteOrgByocData>> => {
+    const mutationOptions: UseMutationOptions<DeleteOrgByocResponse, DeleteOrgByocError, Options<DeleteOrgByocData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteOrgByoc({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const getOrgByocQueryKey = (options: Options<GetOrgByocData>) => createQueryKey('getOrgByoc', options);
+
+/**
+ * Get the org bring-your-own-cloud config (secrets omitted)
+ */
+export const getOrgByocOptions = (options: Options<GetOrgByocData>) => queryOptions<GetOrgByocResponse, GetOrgByocError, GetOrgByocResponse, ReturnType<typeof getOrgByocQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getOrgByoc({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getOrgByocQueryKey(options)
+});
+
+/**
+ * Configure bring-your-own-cloud database and/or storage for the org
+ */
+export const updateOrgByocMutation = (options?: Partial<Options<UpdateOrgByocData>>): UseMutationOptions<UpdateOrgByocResponse, UpdateOrgByocError, Options<UpdateOrgByocData>> => {
+    const mutationOptions: UseMutationOptions<UpdateOrgByocResponse, UpdateOrgByocError, Options<UpdateOrgByocData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateOrgByoc({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Test the provided BYOC database and/or storage connection
+ */
+export const testOrgByocMutation = (options?: Partial<Options<TestOrgByocData>>): UseMutationOptions<TestOrgByocResponse, TestOrgByocError, Options<TestOrgByocData>> => {
+    const mutationOptions: UseMutationOptions<TestOrgByocResponse, TestOrgByocError, Options<TestOrgByocData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await testOrgByoc({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

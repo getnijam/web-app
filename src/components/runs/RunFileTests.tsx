@@ -137,6 +137,7 @@ export function RunFileTests({
                   {t.attempts.map((a) => (
                     <AttemptBlock
                       key={a.id}
+                      runId={runId}
                       attempt={a}
                       shardTotal={shardTotal}
                       onPreview={setPreview}

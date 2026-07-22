@@ -22,9 +22,11 @@ function formatBytes(n: number): string {
 
 /** Trace (→ Playwright trace viewer) + screenshot/video thumbnails for one attempt. */
 export function ArtifactsRow({
+  runId,
   artifacts,
   onPreview,
 }: {
+  runId: string;
   artifacts: ArtifactSummary[];
   onPreview: (artifact: ArtifactSummary) => void;
 }) {
@@ -43,7 +45,7 @@ export function ArtifactsRow({
     setLoadingId(attachmentId);
     try {
       const { url } = await queryClient.fetchQuery(
-        getArtifactUrlOptions({ path: { attachmentId } }),
+        getArtifactUrlOptions({ path: { runId, attachmentId } }),
       );
       const viewer = `${TRACE_VIEWER}?trace=${encodeURIComponent(url)}`;
       if (win) win.location.href = viewer;

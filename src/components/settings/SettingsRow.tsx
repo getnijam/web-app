@@ -10,12 +10,11 @@ export function SettingsRow({
   children,
 }: {
   label: string;
-  hint?: string;
+  hint?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <Grid cols={[1, 1, 2]} gap={4} className="items-start px-5 py-4">
-
       <Flex direction="col" gap={1}>
         <Text as="span" className="text-sm font-semibold">
           {label}

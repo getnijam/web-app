@@ -57,7 +57,9 @@ function Tabs({
 }
 
 const tabsListVariants = cva(
-  "group/tabs-list relative inline-flex w-fit items-center justify-center rounded-4xl p-[3px] text-muted-foreground group-data-horizontal/tabs:h-9 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col group-data-vertical/tabs:rounded-2xl data-[variant=line]:rounded-none",
+  // `max-w-full` + `overflow-x-auto` (with a hidden bar) let a horizontal tab bar scroll
+  // when it has more tabs than fit, instead of overflowing the page.
+  'group/tabs-list relative scrollbar-none inline-flex w-fit max-w-full items-center justify-center overflow-x-auto rounded-4xl p-[3px] text-muted-foreground group-data-horizontal/tabs:h-9 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col group-data-vertical/tabs:overflow-x-visible group-data-vertical/tabs:rounded-2xl data-[variant=line]:rounded-none',
   {
     variants: {
       variant: {
@@ -73,7 +75,8 @@ const tabsListVariants = cva(
 
 // Visual look of the sliding indicator (geometry comes from indicatorRect).
 const INDICATOR_CLASS: Record<Variant, string> = {
-  default: 'rounded-xl border border-transparent bg-background shadow-sm dark:border-input dark:bg-input/30',
+  default:
+    'rounded-xl border border-transparent bg-background shadow-sm dark:border-input dark:bg-input/30',
   line: 'rounded-full bg-primary',
 };
 
@@ -111,7 +114,15 @@ function TabsList({
     }
     const lr = list.getBoundingClientRect();
     const ar = active.getBoundingClientRect();
-    setRect({ left: ar.left - lr.left, top: ar.top - lr.top, width: ar.width, height: ar.height });
+    // Offset from the list's CONTENT origin (add scrollLeft/Top): the indicator is an
+    // absolute child that scrolls with the content, so it must be placed in content
+    // coordinates to stay over the active trigger when the list is scrolled.
+    setRect({
+      left: ar.left - lr.left + list.scrollLeft,
+      top: ar.top - lr.top + list.scrollTop,
+      width: ar.width,
+      height: ar.height,
+    });
   }, []);
 
   // Re-measure after paint and on resize. Scheduled (rAF / observer callbacks) so

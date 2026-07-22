@@ -208,6 +208,7 @@ export type OrgResponse = {
     description: string | null;
     website: string | null;
     contactEmail: string | null;
+    billingEmail: string | null;
     role: 'admin' | 'member';
     hasLogo: boolean;
     logoUpdatedAt: string | null;
@@ -281,15 +282,17 @@ export type AcceptInviteResponse = {
 
 export type BillingResponse = {
     plan: string;
+    byoc: boolean;
     status: string | null;
-    retentionDays: number;
+    billingEmail: string | null;
+    retentionDays: number | null;
     usage: {
         credits: number;
         tests: number;
         seats: number;
     };
     limits: {
-        credits: number;
+        credits: number | null;
         seats: number | null;
     };
     estimateCents: number | null;
@@ -300,6 +303,14 @@ export type BillingResponse = {
 
 export type BillingRedirectResponse = {
     url: string;
+};
+
+export type BillingEmailResponse = {
+    billingEmail: string | null;
+};
+
+export type UpdateBillingEmailBody = {
+    billingEmail: string;
 };
 
 export type SsoConnection = {
@@ -344,6 +355,66 @@ export type AddOrgDomainBody = {
 
 export type UpdateOrgDomainBody = {
     autoJoin: boolean;
+};
+
+export type ByocConfigResponse = {
+    db: {
+        enabled: boolean;
+        status: 'pending' | 'active' | 'error';
+        schemaVersion: string | null;
+        lastCheckedAt: string | null;
+        lastError: string | null;
+        dsnSet: boolean;
+        dsnSummary: string | null;
+    };
+    storage: {
+        enabled: boolean;
+        status: 'pending' | 'active' | 'error';
+        provider: 's3' | 'gcs' | 'azure';
+        bucket: string | null;
+        region: string | null;
+        endpoint: string | null;
+        prefix: string | null;
+        lastError: string | null;
+        credentialsSet: boolean;
+    };
+    eligible: boolean;
+};
+
+export type ByocTestResponse = {
+    db?: {
+        ok: boolean;
+        error?: string;
+    };
+    storage?: {
+        ok: boolean;
+        error?: string;
+    };
+};
+
+export type ByocStorageCredentials = {
+    accessKeyId?: string;
+    secretAccessKey?: string;
+    clientEmail?: string;
+    privateKey?: string;
+    projectId?: string;
+    accountName?: string;
+    accountKey?: string;
+};
+
+export type ByocStorageInput = {
+    provider?: 's3' | 'gcs' | 'azure';
+    bucket?: string;
+    region?: string;
+    endpoint?: string;
+    prefix?: string;
+    credentials?: ByocStorageCredentials;
+};
+
+export type ByocUpdateBody = {
+    enabled: boolean;
+    dsn?: string;
+    storage?: ByocStorageInput;
 };
 
 export type ProjectStats = {
@@ -2395,6 +2466,10 @@ export type CreateBillingCheckoutErrors = {
      */
     404: ApiError;
     /**
+     * Billing email already in use
+     */
+    409: ApiError;
+    /**
      * Billing not configured
      */
     503: ApiError;
@@ -2449,6 +2524,41 @@ export type CreateBillingPortalResponses = {
 };
 
 export type CreateBillingPortalResponse = CreateBillingPortalResponses[keyof CreateBillingPortalResponses];
+
+export type UpdateBillingEmailData = {
+    body?: UpdateBillingEmailBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/billing/email';
+};
+
+export type UpdateBillingEmailErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Organization not found
+     */
+    404: ApiError;
+};
+
+export type UpdateBillingEmailError = UpdateBillingEmailErrors[keyof UpdateBillingEmailErrors];
+
+export type UpdateBillingEmailResponses = {
+    /**
+     * OK
+     */
+    200: BillingEmailResponse;
+};
+
+export type UpdateBillingEmailResponse = UpdateBillingEmailResponses[keyof UpdateBillingEmailResponses];
 
 export type DeleteOrgSsoData = {
     body?: never;
@@ -2788,6 +2898,202 @@ export type UpdateOrgDomainResponses = {
 };
 
 export type UpdateOrgDomainResponse = UpdateOrgDomainResponses[keyof UpdateOrgDomainResponses];
+
+export type DeleteOrgByocData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/byoc';
+};
+
+export type DeleteOrgByocErrors = {
+    /**
+     * Invalid config / bundle required
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Org not found
+     */
+    404: ApiError;
+    /**
+     * Org not empty
+     */
+    409: ApiError;
+    /**
+     * DB/storage connection failed
+     */
+    502: ApiError;
+};
+
+export type DeleteOrgByocError = DeleteOrgByocErrors[keyof DeleteOrgByocErrors];
+
+export type DeleteOrgByocResponses = {
+    /**
+     * OK
+     */
+    200: ByocConfigResponse;
+    /**
+     * Disabled
+     */
+    204: void;
+};
+
+export type DeleteOrgByocResponse = DeleteOrgByocResponses[keyof DeleteOrgByocResponses];
+
+export type GetOrgByocData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/byoc';
+};
+
+export type GetOrgByocErrors = {
+    /**
+     * Invalid config / bundle required
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Org not found
+     */
+    404: ApiError;
+    /**
+     * Org not empty
+     */
+    409: ApiError;
+    /**
+     * DB/storage connection failed
+     */
+    502: ApiError;
+};
+
+export type GetOrgByocError = GetOrgByocErrors[keyof GetOrgByocErrors];
+
+export type GetOrgByocResponses = {
+    /**
+     * OK
+     */
+    200: ByocConfigResponse;
+};
+
+export type GetOrgByocResponse = GetOrgByocResponses[keyof GetOrgByocResponses];
+
+export type UpdateOrgByocData = {
+    body?: ByocUpdateBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/byoc';
+};
+
+export type UpdateOrgByocErrors = {
+    /**
+     * Invalid config / bundle required
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Org not found
+     */
+    404: ApiError;
+    /**
+     * Org not empty
+     */
+    409: ApiError;
+    /**
+     * DB/storage connection failed
+     */
+    502: ApiError;
+};
+
+export type UpdateOrgByocError = UpdateOrgByocErrors[keyof UpdateOrgByocErrors];
+
+export type UpdateOrgByocResponses = {
+    /**
+     * OK
+     */
+    200: ByocConfigResponse;
+};
+
+export type UpdateOrgByocResponse = UpdateOrgByocResponses[keyof UpdateOrgByocResponses];
+
+export type TestOrgByocData = {
+    body?: ByocUpdateBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/byoc/test';
+};
+
+export type TestOrgByocErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Pro plan required
+     */
+    402: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Org not found
+     */
+    404: ApiError;
+};
+
+export type TestOrgByocError = TestOrgByocErrors[keyof TestOrgByocErrors];
+
+export type TestOrgByocResponses = {
+    /**
+     * Test result
+     */
+    200: ByocTestResponse;
+};
+
+export type TestOrgByocResponse = TestOrgByocResponses[keyof TestOrgByocResponses];
 
 export type ListOrgProjectsData = {
     body?: never;
@@ -3651,10 +3957,11 @@ export type GetRunTimelineResponse = GetRunTimelineResponses[keyof GetRunTimelin
 export type GetArtifactUrlData = {
     body?: never;
     path: {
+        runId: string;
         attachmentId: string;
     };
     query?: never;
-    url: '/v1/attachments/{attachmentId}/url';
+    url: '/v1/runs/{runId}/attachments/{attachmentId}/url';
 };
 
 export type GetArtifactUrlErrors = {

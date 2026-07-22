@@ -13,10 +13,12 @@ function formatMs(ms: number): string {
 
 /** One attempt: status + duration, error trace (if failed), and artifacts. */
 export function AttemptBlock({
+  runId,
   attempt,
   shardTotal,
   onPreview,
 }: {
+  runId: string;
   attempt: AttemptSummary;
   shardTotal?: number | null;
   onPreview: (artifact: ArtifactSummary) => void;
@@ -43,7 +45,7 @@ export function AttemptBlock({
             {shardTotal ? `/${shardTotal}` : ''}
           </Text>
         )}
-        <Text as="span" className="ml-auto font-mono text-xs tabular-nums text-muted-foreground">
+        <Text as="span" className="ml-auto font-mono text-xs text-muted-foreground tabular-nums">
           {formatMs(attempt.durationMs)}
         </Text>
       </Flex>
@@ -54,7 +56,7 @@ export function AttemptBlock({
         </pre>
       )}
 
-      <ArtifactsRow artifacts={attempt.artifacts} onPreview={onPreview} />
+      <ArtifactsRow runId={runId} artifacts={attempt.artifacts} onPreview={onPreview} />
     </Flex>
   );
 }

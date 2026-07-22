@@ -42,6 +42,8 @@ if (process.env.NIJAM_API_KEY && process.env.NIJAM_PROJECT_ID) {
     {
       apiKey: process.env.NIJAM_API_KEY,
       projectId: process.env.NIJAM_PROJECT_ID,
+      // Honor NIJAM_API_URL (e.g. http://localhost:8787); blank/unset falls back to prod.
+      apiUrl: process.env.NIJAM_API_URL,
     },
   ]);
 }

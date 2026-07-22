@@ -9,6 +9,7 @@ import {
   Shield01Icon,
   EyeOffIcon,
   ServerStack01Icon,
+  CloudServerIcon,
 } from '@hugeicons/core-free-icons';
 import { CTA } from '@/components/home/components/CTA';
 import { Section, P, Bullets } from '@/components/legal/LegalLayout';
@@ -71,6 +72,12 @@ const PILLARS: Pillar[] = [
     tint: 'bg-primary/15 text-primary',
     title: 'Trusted infrastructure',
     body: 'Data lives on managed providers (Neon Postgres, Cloudflare R2) that encrypt at rest, and trace artifacts are served through short-lived, 15-minute signed URLs.',
+  },
+  {
+    icon: <HugeiconsIcon icon={CloudServerIcon} size={22} />,
+    tint: 'bg-info/15 text-info',
+    title: 'Bring your own cloud',
+    body: 'Pro organizations can store their runs and artifacts in their own Postgres and their own S3, Google Cloud Storage, or Azure bucket. Your test data stays in your infrastructure; we keep only your account, organization, and billing.',
   },
 ];
 
@@ -137,8 +144,10 @@ function SecurityPage() {
                     or the one-time key you copy.
                   </>,
                   <>
-                    <b>Slack bot tokens</b> and <b>SSO client secrets</b> are encrypted at rest with{' '}
-                    <b>AES-256-GCM</b> and are never returned to clients or written to logs.
+                    <b>Slack bot tokens</b>, <b>SSO client secrets</b>, and{' '}
+                    <b>bring-your-own-cloud connection strings and credentials</b> are encrypted at
+                    rest with <b>AES-256-GCM</b> and are never returned to clients or written to
+                    logs.
                   </>,
                   <>
                     Our managed database (Neon Postgres) and object storage (Cloudflare R2) encrypt
@@ -248,6 +257,32 @@ function SecurityPage() {
                 <b>all</b> text and inputs. The browser never stores your test data, only a session
                 cookie (set by the API) and your theme preference.
               </P>
+            </Section>
+
+            <Section title="Bring your own cloud (Pro)">
+              <P>
+                Pro organizations can keep their test data entirely in their own infrastructure.
+                With bring your own cloud enabled, your projects, runs, and artifacts are stored in{' '}
+                <b>your</b> Postgres database and <b>your</b> object storage (AWS S3 or any
+                S3-compatible store, Google Cloud Storage, or Azure Blob Storage). We keep only your
+                account, organization, membership, and billing.
+              </P>
+              <Bullets
+                items={[
+                  <>
+                    The connection string and cloud credentials you provide are{' '}
+                    <b>encrypted at rest with AES-256-GCM</b> and are never returned to clients or
+                    written to logs.
+                  </>,
+                  <>
+                    We only accept a database or storage endpoint reachable at a <b>public</b>{' '}
+                    address, requests to private, loopback, and link-local targets (including cloud
+                    metadata endpoints) are rejected.
+                  </>,
+                  'You grant the least privilege that works: a database role scoped to its own schema, and storage credentials scoped to a single bucket.',
+                  'Disabling it reverts new data to our managed cloud and leaves the data already in your cloud untouched, it is yours.',
+                ]}
+              />
             </Section>
 
             <Section title="Infrastructure & sub-processors">

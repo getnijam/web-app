@@ -136,6 +136,14 @@ function PrivacyPage() {
           delete your account, we delete or anonymize your data, except where we must retain limited
           records (for example, billing records) to meet legal obligations.
         </P>
+        <P>
+          <b>Bring your own cloud (Pro).</b> If your organization enables bring your own cloud, your
+          projects, runs, and artifacts are stored in your own Postgres database and object storage,
+          not on our managed infrastructure. That test data lives in your cloud, under your control
+          and retention policies; we keep only your account, organization, and billing. We store the
+          connection string and cloud credentials you provide, encrypted, solely to route your data
+          to your cloud. Turning it off leaves the data already in your cloud untouched.
+        </P>
       </Section>
 
       <Section title="5. Security">
