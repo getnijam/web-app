@@ -30,6 +30,7 @@ import { Route as AuthedOrgsIndexRouteImport } from './routes/_authed/orgs.index
 import { Route as MarketingCompareTestrailRouteImport } from './routes/_marketing/compare.testrail'
 import { Route as MarketingCompareReportportalRouteImport } from './routes/_marketing/compare.reportportal'
 import { Route as MarketingCompareDatadogRouteImport } from './routes/_marketing/compare.datadog'
+import { Route as MarketingCompareCurrentsRouteImport } from './routes/_marketing/compare.currents'
 import { Route as MarketingCompareAllureRouteImport } from './routes/_marketing/compare.allure'
 import { Route as AuthedRRunIdRouteImport } from './routes/_authed/r.$runId'
 import { Route as AuthedProfileSecurityRouteImport } from './routes/_authed/profile.security'
@@ -167,6 +168,12 @@ const MarketingCompareDatadogRoute = MarketingCompareDatadogRouteImport.update({
   path: '/compare/datadog',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
+const MarketingCompareCurrentsRoute =
+  MarketingCompareCurrentsRouteImport.update({
+    id: '/compare/currents',
+    path: '/compare/currents',
+    getParentRoute: () => MarketingRouteRoute,
+  } as any)
 const MarketingCompareAllureRoute = MarketingCompareAllureRouteImport.update({
   id: '/compare/allure',
   path: '/compare/allure',
@@ -364,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/profile/security': typeof AuthedProfileSecurityRoute
   '/r/$runId': typeof AuthedRRunIdRoute
   '/compare/allure': typeof MarketingCompareAllureRoute
+  '/compare/currents': typeof MarketingCompareCurrentsRoute
   '/compare/datadog': typeof MarketingCompareDatadogRoute
   '/compare/reportportal': typeof MarketingCompareReportportalRoute
   '/compare/testrail': typeof MarketingCompareTestrailRoute
@@ -414,6 +422,7 @@ export interface FileRoutesByTo {
   '/profile/security': typeof AuthedProfileSecurityRoute
   '/r/$runId': typeof AuthedRRunIdRoute
   '/compare/allure': typeof MarketingCompareAllureRoute
+  '/compare/currents': typeof MarketingCompareCurrentsRoute
   '/compare/datadog': typeof MarketingCompareDatadogRoute
   '/compare/reportportal': typeof MarketingCompareReportportalRoute
   '/compare/testrail': typeof MarketingCompareTestrailRoute
@@ -466,6 +475,7 @@ export interface FileRoutesById {
   '/_authed/profile/security': typeof AuthedProfileSecurityRoute
   '/_authed/r/$runId': typeof AuthedRRunIdRoute
   '/_marketing/compare/allure': typeof MarketingCompareAllureRoute
+  '/_marketing/compare/currents': typeof MarketingCompareCurrentsRoute
   '/_marketing/compare/datadog': typeof MarketingCompareDatadogRoute
   '/_marketing/compare/reportportal': typeof MarketingCompareReportportalRoute
   '/_marketing/compare/testrail': typeof MarketingCompareTestrailRoute
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/profile/security'
     | '/r/$runId'
     | '/compare/allure'
+    | '/compare/currents'
     | '/compare/datadog'
     | '/compare/reportportal'
     | '/compare/testrail'
@@ -570,6 +581,7 @@ export interface FileRouteTypes {
     | '/profile/security'
     | '/r/$runId'
     | '/compare/allure'
+    | '/compare/currents'
     | '/compare/datadog'
     | '/compare/reportportal'
     | '/compare/testrail'
@@ -621,6 +633,7 @@ export interface FileRouteTypes {
     | '/_authed/profile/security'
     | '/_authed/r/$runId'
     | '/_marketing/compare/allure'
+    | '/_marketing/compare/currents'
     | '/_marketing/compare/datadog'
     | '/_marketing/compare/reportportal'
     | '/_marketing/compare/testrail'
@@ -812,6 +825,13 @@ declare module '@tanstack/react-router' {
       path: '/compare/datadog'
       fullPath: '/compare/datadog'
       preLoaderRoute: typeof MarketingCompareDatadogRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/compare/currents': {
+      id: '/_marketing/compare/currents'
+      path: '/compare/currents'
+      fullPath: '/compare/currents'
+      preLoaderRoute: typeof MarketingCompareCurrentsRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
     '/_marketing/compare/allure': {
@@ -1183,6 +1203,7 @@ interface MarketingRouteRouteChildren {
   MarketingTermsRoute: typeof MarketingTermsRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
   MarketingCompareAllureRoute: typeof MarketingCompareAllureRoute
+  MarketingCompareCurrentsRoute: typeof MarketingCompareCurrentsRoute
   MarketingCompareDatadogRoute: typeof MarketingCompareDatadogRoute
   MarketingCompareReportportalRoute: typeof MarketingCompareReportportalRoute
   MarketingCompareTestrailRoute: typeof MarketingCompareTestrailRoute
@@ -1197,6 +1218,7 @@ const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
   MarketingTermsRoute: MarketingTermsRoute,
   MarketingIndexRoute: MarketingIndexRoute,
   MarketingCompareAllureRoute: MarketingCompareAllureRoute,
+  MarketingCompareCurrentsRoute: MarketingCompareCurrentsRoute,
   MarketingCompareDatadogRoute: MarketingCompareDatadogRoute,
   MarketingCompareReportportalRoute: MarketingCompareReportportalRoute,
   MarketingCompareTestrailRoute: MarketingCompareTestrailRoute,

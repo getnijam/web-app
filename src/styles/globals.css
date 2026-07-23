@@ -51,6 +51,9 @@
   /* Competitor-illustration accent (TestRail), used only in the /compare/* mocks + logo. */
   --testrail: oklch(0.6 0.13 155);
   --testrail-foreground: oklch(0.985 0 0);
+  /* Competitor-illustration accent (Currents teal-green), used only in the /compare/* mocks + logo. */
+  --currents: oklch(0.57 0.09 180);
+  --currents-foreground: oklch(0.985 0 0);
   --border: oklch(0.925 0.005 214.3);
   --input: oklch(0.925 0.005 214.3);
   --ring: oklch(0.723 0.014 214.4);
@@ -115,6 +118,8 @@
   --datadog-foreground: oklch(0.985 0 0);
   --testrail: oklch(0.66 0.14 155);
   --testrail-foreground: oklch(0.985 0 0);
+  --currents: oklch(0.7 0.12 174);
+  --currents-foreground: oklch(0.985 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.56 0.021 213.5);
@@ -162,6 +167,8 @@
   --color-datadog-foreground: var(--datadog-foreground);
   --color-testrail: var(--testrail);
   --color-testrail-foreground: var(--testrail-foreground);
+  --color-currents: var(--currents);
+  --color-currents-foreground: var(--currents-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
