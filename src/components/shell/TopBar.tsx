@@ -9,6 +9,7 @@ import { Text } from '@/components/ui/text';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl';
+import { ByocIndicator } from './ByocIndicator';
 import { cn } from '@/lib/utils';
 import { useShellNav, ROUTE_TITLES } from './use-shell-nav';
 
@@ -158,6 +159,7 @@ export function TopBar() {
       <Breadcrumbs />
 
       <Flex align="center" gap={2.5} className="ml-auto">
+        <ByocIndicator />
         {/* Mobile: the cycling icon-only button (same as the home nav); ≥md: the full track. */}
         <ThemeSegmentedControl minified className="md:hidden" />
         <ThemeSegmentedControl className="hidden md:inline-flex" />
