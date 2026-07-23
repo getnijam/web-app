@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import {
   COMPARE_ALLURE_ROUTE,
+  COMPARE_CURRENTS_ROUTE,
   COMPARE_DATADOG_ROUTE,
   COMPARE_REPORTPORTAL_ROUTE,
   COMPARE_TESTRAIL_ROUTE,
@@ -103,6 +104,9 @@ export function Footer() {
               <Text as="p" className={H5}>
                 Comparison
               </Text>
+              <Link to={COMPARE_CURRENTS_ROUTE} className={COL}>
+                Nijam vs Currents
+              </Link>
               <Link to={COMPARE_DATADOG_ROUTE} className={COL}>
                 Nijam vs Datadog
               </Link>

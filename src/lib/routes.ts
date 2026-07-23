@@ -14,6 +14,7 @@ export const COMPARE_DATADOG_ROUTE = '/compare/datadog';
 export const COMPARE_ALLURE_ROUTE = '/compare/allure';
 export const COMPARE_REPORTPORTAL_ROUTE = '/compare/reportportal';
 export const COMPARE_TESTRAIL_ROUTE = '/compare/testrail';
+export const COMPARE_CURRENTS_ROUTE = '/compare/currents';
 export const SECURITY_ROUTE = '/security';
 export const SUPPORT_ROUTE = '/support';
 export const PRIVACY_ROUTE = '/privacy';
