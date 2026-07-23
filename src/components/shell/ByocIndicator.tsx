@@ -26,7 +26,7 @@ export function ByocIndicator() {
         <span
           tabIndex={0}
           aria-label="Bring your own cloud"
-          className="inline-flex shrink-0 cursor-default text-success transition-colors hover:text-success/80"
+          className="inline-flex shrink-0 cursor-default text-success/70 transition-colors hover:text-success"
         >
           <HugeiconsIcon icon={CloudServerIcon} size={18} strokeWidth={1.9} />
         </span>
