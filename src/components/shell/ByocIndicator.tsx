@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CloudServerIcon } from '@hugeicons/core-free-icons';
 import { getOrgBillingOptions } from '@/client/@tanstack/react-query.gen';
-import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useShellNav } from './use-shell-nav';
 
@@ -23,26 +22,23 @@ export function ByocIndicator() {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        {/* span wrapper: a non-interactive chip still needs to emit the hover/focus events. */}
+        {/* icon-only, non-interactive; the span still emits the hover/focus events. */}
         <span
           tabIndex={0}
           aria-label="Bring your own cloud"
-          className="inline-flex shrink-0 cursor-default"
+          className="inline-flex shrink-0 cursor-default text-muted-foreground transition-colors hover:text-foreground"
         >
-          <Badge variant="secondary" className="gap-1.5">
-            <HugeiconsIcon
-              icon={CloudServerIcon}
-              size={13}
-              strokeWidth={1.9}
-              className="shrink-0"
-            />
-            <span className="hidden sm:inline">Bring your own cloud</span>
-          </Badge>
+          <HugeiconsIcon icon={CloudServerIcon} size={18} strokeWidth={1.9} />
         </span>
       </TooltipTrigger>
-      <TooltipContent className="max-w-xs text-center">
-        This organization stores its runs and artifacts in your own database and storage. Metered
-        usage is waived.
+      <TooltipContent className="max-w-xs">
+        <span className="flex flex-col gap-0.5 text-left">
+          <span className="font-semibold">BYOC</span>
+          <span className="text-background/80">
+            This organization stores its runs and artifacts in your own database and storage.
+            Metered usage is waived.
+          </span>
+        </span>
       </TooltipContent>
     </Tooltip>
   );
