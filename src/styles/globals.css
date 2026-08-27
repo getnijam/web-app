@@ -306,6 +306,32 @@
   max-height: calc(100svh - 14rem);
 }
 
+/* The internal impersonation dock (components/internal/ImpersonationBar). It sits
+   top-centre over the app top bar, so it would otherwise cover the breadcrumb. It
+   behaves like the macOS Dock instead: parked just off the top edge with a sliver
+   showing, and sliding fully into view on hover or keyboard focus.
+
+   `dock-parked` hides 90% of the element; `dock-open` drops it to where a `top-3`
+   element would sit, its natural resting position. Both set `transform` (rather
+   than composing Tailwind's translate utilities) so the two states can't end up
+   fighting over the same property. */
+@utility dock-parked {
+  transform: translateY(-90%);
+  /* Extends the hover target a little below the visible sliver without taking up
+     any layout space, so the dock is reachable without pixel-hunting the top edge.
+     Only as wide as the element itself, so it stays clear of the breadcrumb. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    height: 0.75rem;
+  }
+}
+@utility dock-open {
+  transform: translateY(0.75rem);
+}
+
 /* Interactive grid overlay for the hero. A full-bleed CSS grid whose cells are
    aligned to the same 3.5rem rhythm as hero-grid; each cell tints toward the
    brand color on hover and fades back out (the fade lives on the cell in
