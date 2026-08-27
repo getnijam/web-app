@@ -38,6 +38,7 @@ export type UserPublic = {
     hasPassword: boolean;
     twoFactorEnabled: boolean;
     lastOrgId: string | null;
+    isInternal: boolean;
     createdAt: string;
 };
 
@@ -104,6 +105,14 @@ export type AuthOkResponse = {
 export type UpdatePasswordBody = {
     currentPassword?: string;
     newPassword: string;
+};
+
+export type MeResponse = {
+    user: UserPublic;
+    impersonation: {
+        actorId: string;
+        actorEmail: string;
+    } | null;
 };
 
 export type UpdateMeBody = {
@@ -1013,6 +1022,11 @@ export type UpdateProjectGitHubBody = {
     branches?: Array<string>;
 };
 
+export type StartImpersonationBody = {
+    userId: string;
+    reason?: string;
+};
+
 export type SignupData = {
     body?: SignupBody;
     path?: never;
@@ -1338,7 +1352,7 @@ export type GetMeResponses = {
     /**
      * OK
      */
-    200: UserResponse;
+    200: MeResponse;
 };
 
 export type GetMeResponse = GetMeResponses[keyof GetMeResponses];
@@ -4641,3 +4655,73 @@ export type UpdateProjectGithubSettingsResponses = {
 };
 
 export type UpdateProjectGithubSettingsResponse = UpdateProjectGithubSettingsResponses[keyof UpdateProjectGithubSettingsResponses];
+
+export type StartImpersonationData = {
+    body?: StartImpersonationBody;
+    path?: never;
+    query?: never;
+    url: '/v1/internal/impersonate';
+};
+
+export type StartImpersonationErrors = {
+    /**
+     * That user is you
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * That user is also an internal user
+     */
+    403: ApiError;
+    /**
+     * Not an internal user, or no such user
+     */
+    404: ApiError;
+    /**
+     * Already impersonating someone
+     */
+    409: ApiError;
+};
+
+export type StartImpersonationError = StartImpersonationErrors[keyof StartImpersonationErrors];
+
+export type StartImpersonationResponses = {
+    /**
+     * Now signed in as the target user
+     */
+    200: UserResponse;
+};
+
+export type StartImpersonationResponse = StartImpersonationResponses[keyof StartImpersonationResponses];
+
+export type StopImpersonationData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/internal/impersonate/stop';
+};
+
+export type StopImpersonationErrors = {
+    /**
+     * Not an impersonation session
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+};
+
+export type StopImpersonationError = StopImpersonationErrors[keyof StopImpersonationErrors];
+
+export type StopImpersonationResponses = {
+    /**
+     * Signed back in as yourself
+     */
+    200: UserResponse;
+};
+
+export type StopImpersonationResponse = StopImpersonationResponses[keyof StopImpersonationResponses];
