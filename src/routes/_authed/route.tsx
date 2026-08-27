@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/react';
 import { meQueryOptions } from '@/lib/me-query';
 import { identify } from '@/lib/betterstack';
 import { DashboardNotFound } from '@/components/states/DashboardNotFound';
+import { ImpersonationBar } from '@/components/internal/ImpersonationBar';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed')({
@@ -46,5 +47,14 @@ function AuthedLayout() {
     Sentry.setUser(user ? { id: user.id, email: user.email } : null);
     if (user) identify({ id: user.id, email: user.email });
   }, [user]);
-  return <Outlet />;
+  return (
+    <>
+      {/* Internal impersonation control. Renders nothing for ordinary users, and is
+          fixed-position so it overlays every dashboard page without shifting layout.
+          Mounted here rather than in AppShell so it also covers /orgs and /profile,
+          which render outside the org shell. */}
+      <ImpersonationBar />
+      <Outlet />
+    </>
+  );
 }
