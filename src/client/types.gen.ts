@@ -112,6 +112,7 @@ export type MeResponse = {
     impersonation: {
         actorId: string;
         actorEmail: string;
+        expiresInSeconds: number;
     } | null;
 };
 
