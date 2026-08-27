@@ -9,6 +9,7 @@ import {
   Settings01Icon,
   ArrowDown01Icon,
   Mail01Icon,
+  UserSwitchIcon,
 } from '@hugeicons/core-free-icons';
 import { Loader2 } from 'lucide-react';
 import { listMyInvitationsOptions } from '@/client/@tanstack/react-query.gen';
@@ -20,6 +21,7 @@ import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { useClickAway } from '@/hooks/use-click-away';
 import { useLogout } from '@/hooks/use-logout';
 import { meQueryOptions } from '@/lib/me-query';
+import { ImpersonateDialog } from '@/components/internal/ImpersonateDialog';
 import { cn } from '@/lib/utils';
 
 export type AccountMenuVariant = 'sidebar' | 'topnav';
@@ -51,6 +53,9 @@ export function AccountMenu({
   const inviteCount = invites.data?.invitations.length ?? 0;
 
   const [open, setOpen] = useState(false);
+  // Internal staff only. Lives here rather than floating over the dashboard: it is a
+  // rare debugging action, not something that should sit on screen looking official.
+  const [impersonateOpen, setImpersonateOpen] = useState(false);
   const ref = useClickAway<HTMLDivElement>(() => setOpen(false));
   const logout = useLogout({
     onSuccess: () => {
@@ -107,6 +112,22 @@ export function AccountMenu({
           Account settings
         </Link>
       </Button>
+      {user?.isInternal && (
+        <Button
+          variant="ghost"
+          type="button"
+          data-hover-item
+          data-testid="impersonate-trigger"
+          onClick={() => {
+            setOpen(false);
+            setImpersonateOpen(true);
+          }}
+          className="h-auto w-full justify-start gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-foreground hover:bg-transparent"
+        >
+          <HugeiconsIcon icon={UserSwitchIcon} size={16} strokeWidth={1.8} />
+          Impersonate user
+        </Button>
+      )}
       <Button
         variant="ghost"
         type="button"
@@ -222,6 +243,12 @@ export function AccountMenu({
           />
           {notifDot}
         </Button>
+      )}
+
+      {/* Outside the menu's AnimatePresence: the menu closes on click, and the dialog
+          has to outlive it. Radix portals it to the body, so nesting here is cosmetic. */}
+      {user?.isInternal && (
+        <ImpersonateDialog open={impersonateOpen} onOpenChange={setImpersonateOpen} />
       )}
     </div>
   );

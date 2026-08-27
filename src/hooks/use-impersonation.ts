@@ -24,7 +24,16 @@ function useIdentitySwap(label: (user: UserPublic) => string) {
   const navigate = useNavigate();
 
   return async function swap(user: UserPublic) {
-    queryClient.clear();
+    // Cancel first: an in-flight request issued under the OLD cookie would otherwise
+    // resolve after the swap and repopulate the cache with the previous identity.
+    await queryClient.cancelQueries();
+    // `reset`, NOT `clear`. Both drop the cached data, but `clear` (like `remove`)
+    // does not notify **mounted** observers, so every component holding a query stays
+    // frozen on the old identity: the session was the impersonated user server-side
+    // while `ImpersonationBar` still saw `impersonation: null` and rendered nothing.
+    // `reset` clears AND refetches active observers, so the whole tree re-renders
+    // against the new identity. Same reasoning as `useLogout`.
+    await queryClient.resetQueries();
     Sentry.setUser({ id: user.id, email: user.email });
     identify({ id: user.id, email: user.email });
     await navigate({ to: ORGS_ROUTE, replace: true });
