@@ -4,6 +4,7 @@ import {
   COMPARE_CURRENTS_ROUTE,
   COMPARE_DATADOG_ROUTE,
   COMPARE_REPORTPORTAL_ROUTE,
+  COMPARE_TESTDINO_ROUTE,
   COMPARE_TESTRAIL_ROUTE,
   FEATURES_ROUTE,
   HOME_ROUTE,
@@ -106,6 +107,9 @@ export function Footer() {
               </Text>
               <Link to={COMPARE_CURRENTS_ROUTE} className={COL}>
                 Nijam vs Currents
+              </Link>
+              <Link to={COMPARE_TESTDINO_ROUTE} className={COL}>
+                Nijam vs TestDino
               </Link>
               <Link to={COMPARE_DATADOG_ROUTE} className={COL}>
                 Nijam vs Datadog

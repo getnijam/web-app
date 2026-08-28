@@ -28,6 +28,7 @@ import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
 import { Route as AuthedProfileIndexRouteImport } from './routes/_authed/profile.index'
 import { Route as AuthedOrgsIndexRouteImport } from './routes/_authed/orgs.index'
 import { Route as MarketingCompareTestrailRouteImport } from './routes/_marketing/compare.testrail'
+import { Route as MarketingCompareTestdinoRouteImport } from './routes/_marketing/compare.testdino'
 import { Route as MarketingCompareReportportalRouteImport } from './routes/_marketing/compare.reportportal'
 import { Route as MarketingCompareDatadogRouteImport } from './routes/_marketing/compare.datadog'
 import { Route as MarketingCompareCurrentsRouteImport } from './routes/_marketing/compare.currents'
@@ -155,6 +156,12 @@ const MarketingCompareTestrailRoute =
   MarketingCompareTestrailRouteImport.update({
     id: '/compare/testrail',
     path: '/compare/testrail',
+    getParentRoute: () => MarketingRouteRoute,
+  } as any)
+const MarketingCompareTestdinoRoute =
+  MarketingCompareTestdinoRouteImport.update({
+    id: '/compare/testdino',
+    path: '/compare/testdino',
     getParentRoute: () => MarketingRouteRoute,
   } as any)
 const MarketingCompareReportportalRoute =
@@ -374,6 +381,7 @@ export interface FileRoutesByFullPath {
   '/compare/currents': typeof MarketingCompareCurrentsRoute
   '/compare/datadog': typeof MarketingCompareDatadogRoute
   '/compare/reportportal': typeof MarketingCompareReportportalRoute
+  '/compare/testdino': typeof MarketingCompareTestdinoRoute
   '/compare/testrail': typeof MarketingCompareTestrailRoute
   '/orgs/': typeof AuthedOrgsIndexRoute
   '/profile/': typeof AuthedProfileIndexRoute
@@ -425,6 +433,7 @@ export interface FileRoutesByTo {
   '/compare/currents': typeof MarketingCompareCurrentsRoute
   '/compare/datadog': typeof MarketingCompareDatadogRoute
   '/compare/reportportal': typeof MarketingCompareReportportalRoute
+  '/compare/testdino': typeof MarketingCompareTestdinoRoute
   '/compare/testrail': typeof MarketingCompareTestrailRoute
   '/orgs': typeof AuthedOrgsIndexRoute
   '/profile': typeof AuthedProfileIndexRoute
@@ -478,6 +487,7 @@ export interface FileRoutesById {
   '/_marketing/compare/currents': typeof MarketingCompareCurrentsRoute
   '/_marketing/compare/datadog': typeof MarketingCompareDatadogRoute
   '/_marketing/compare/reportportal': typeof MarketingCompareReportportalRoute
+  '/_marketing/compare/testdino': typeof MarketingCompareTestdinoRoute
   '/_marketing/compare/testrail': typeof MarketingCompareTestrailRoute
   '/_authed/orgs/': typeof AuthedOrgsIndexRoute
   '/_authed/profile/': typeof AuthedProfileIndexRoute
@@ -533,6 +543,7 @@ export interface FileRouteTypes {
     | '/compare/currents'
     | '/compare/datadog'
     | '/compare/reportportal'
+    | '/compare/testdino'
     | '/compare/testrail'
     | '/orgs/'
     | '/profile/'
@@ -584,6 +595,7 @@ export interface FileRouteTypes {
     | '/compare/currents'
     | '/compare/datadog'
     | '/compare/reportportal'
+    | '/compare/testdino'
     | '/compare/testrail'
     | '/orgs'
     | '/profile'
@@ -636,6 +648,7 @@ export interface FileRouteTypes {
     | '/_marketing/compare/currents'
     | '/_marketing/compare/datadog'
     | '/_marketing/compare/reportportal'
+    | '/_marketing/compare/testdino'
     | '/_marketing/compare/testrail'
     | '/_authed/orgs/'
     | '/_authed/profile/'
@@ -811,6 +824,13 @@ declare module '@tanstack/react-router' {
       path: '/compare/testrail'
       fullPath: '/compare/testrail'
       preLoaderRoute: typeof MarketingCompareTestrailRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/compare/testdino': {
+      id: '/_marketing/compare/testdino'
+      path: '/compare/testdino'
+      fullPath: '/compare/testdino'
+      preLoaderRoute: typeof MarketingCompareTestdinoRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
     '/_marketing/compare/reportportal': {
@@ -1206,6 +1226,7 @@ interface MarketingRouteRouteChildren {
   MarketingCompareCurrentsRoute: typeof MarketingCompareCurrentsRoute
   MarketingCompareDatadogRoute: typeof MarketingCompareDatadogRoute
   MarketingCompareReportportalRoute: typeof MarketingCompareReportportalRoute
+  MarketingCompareTestdinoRoute: typeof MarketingCompareTestdinoRoute
   MarketingCompareTestrailRoute: typeof MarketingCompareTestrailRoute
 }
 
@@ -1221,6 +1242,7 @@ const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
   MarketingCompareCurrentsRoute: MarketingCompareCurrentsRoute,
   MarketingCompareDatadogRoute: MarketingCompareDatadogRoute,
   MarketingCompareReportportalRoute: MarketingCompareReportportalRoute,
+  MarketingCompareTestdinoRoute: MarketingCompareTestdinoRoute,
   MarketingCompareTestrailRoute: MarketingCompareTestrailRoute,
 }
 
