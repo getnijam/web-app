@@ -30,8 +30,11 @@ export function RunSplitLayout({
       {/* The scroll container is a plain block, not the flex column: a flex parent
           would give the spec-files Card (overflow-hidden) an auto min-height of 0 and
           shrink+clip it to fit instead of letting this column overflow and scroll.
-          The inner flex only owns the gap; it grows to its natural content height. */}
-      <div className="scroll-area min-w-0 flex-1 overflow-y-auto">
+          The inner flex only owns the gap; it grows to its natural content height.
+          -ml-2/pl-2: overflow-y-auto promotes overflow-x to auto, which would clip the
+          back button's -ml-2 hover pill at the left edge; the padding gives it room
+          while the matching negative margin keeps the content in the same place. */}
+      <div className="scroll-area -ml-2 min-w-0 flex-1 overflow-y-auto pl-2">
         <Flex direction="col" gap={6}>
           <RunOverview
             orgId={orgId}
