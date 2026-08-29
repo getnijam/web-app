@@ -198,7 +198,7 @@ const SECONDARY: Feature[] = [
     icon: GitPullRequestIcon,
     tint: 'bg-success/15 text-success',
     title: 'Verdicts where you work',
-    body: 'A status check and a results comment on every pull request, and green / yellow / red runs auto-posted to Slack.',
+    body: 'A status check and a results comment on every GitHub pull request, a commit status and a note on every GitLab merge request, and green / yellow / red runs auto-posted to Slack.',
     preview: <VerdictPreview />,
   },
   {

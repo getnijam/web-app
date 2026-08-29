@@ -133,9 +133,9 @@ const GROUPS: CompareGroup[] = [
         nijam: { state: 'yes', text: 'Orgs, members, roles' },
       },
       {
-        feature: 'Slack / GitHub',
+        feature: 'Slack / GitHub / GitLab',
         competitor: { state: 'partial', text: 'Via plugins / config' },
-        nijam: { state: 'yes', text: 'PR checks and Slack alerts built in' },
+        nijam: { state: 'yes', text: 'PR/MR verdicts and Slack alerts built in' },
       },
       {
         feature: 'AI / MCP access',
@@ -282,9 +282,9 @@ function CompareReportPortalPage() {
             Nijam vs ReportPortal
           </Text>
           <Text className="mx-auto mt-4 max-w-2xl text-lg text-pretty text-muted-foreground">
-            ReportPortal is a powerful open-source test analytics platform you run yourself. Nijam is
-            the hosted, zero-ops dashboard focused on Playwright, pytest, and Vitest, useful from the
-            very first run, with no cluster to operate.
+            ReportPortal is a powerful open-source test analytics platform you run yourself. Nijam
+            is the hosted, zero-ops dashboard focused on Playwright, pytest, and Vitest, useful from
+            the very first run, with no cluster to operate.
           </Text>
           <Flex justify="center" gap={3} wrap className="mt-7">
             <Button asChild size="lg">
@@ -297,7 +297,10 @@ function CompareReportPortalPage() {
         </Reveal>
 
         <section className="mt-16 md:mt-24">
-          <SectionHead eyebrow="Platform vs product" title="A hosted dashboard, not a platform to run">
+          <SectionHead
+            eyebrow="Platform vs product"
+            title="A hosted dashboard, not a platform to run"
+          >
             The same test results. One is an analytics platform you stand up and operate; the other
             is a hosted dashboard that works the moment you push a run.
           </SectionHead>
@@ -342,8 +345,8 @@ function CompareReportPortalPage() {
             eyebrow="Playwright · pytest · Vitest"
             title="First-class for the frameworks you report"
           >
-            Deep, hosted support for the three we focus on, ready to use without agents or a platform
-            to configure.
+            Deep, hosted support for the three we focus on, ready to use without agents or a
+            platform to configure.
           </SectionHead>
           <Reveal>
             <Grid cols={[1, 1, 3]} gap={5}>

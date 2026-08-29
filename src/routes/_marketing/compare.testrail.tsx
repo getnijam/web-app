@@ -138,9 +138,9 @@ const GROUPS: CompareGroup[] = [
         nijam: { state: 'yes', text: 'Orgs, members, and roles' },
       },
       {
-        feature: 'Slack / GitHub',
+        feature: 'Slack / GitHub / GitLab',
         competitor: { state: 'partial', text: 'Via integrations' },
-        nijam: { state: 'yes', text: 'PR checks and Slack alerts built in' },
+        nijam: { state: 'yes', text: 'PR/MR verdicts and Slack alerts built in' },
       },
       {
         feature: 'AI / MCP access',
@@ -282,9 +282,9 @@ function CompareTestRailPage() {
             Nijam vs TestRail
           </Text>
           <Text className="mx-auto mt-4 max-w-2xl text-lg text-pretty text-muted-foreground">
-            TestRail is a test case management tool for planning and manual QA. Nijam is purpose-built
-            for reporting automated Playwright, pytest, and Vitest runs straight from CI, with the
-            flakiness, retries, and traces TestRail was never meant to track.
+            TestRail is a test case management tool for planning and manual QA. Nijam is
+            purpose-built for reporting automated Playwright, pytest, and Vitest runs straight from
+            CI, with the flakiness, retries, and traces TestRail was never meant to track.
           </Text>
           <Flex justify="center" gap={3} wrap className="mt-7">
             <Button asChild size="lg">
@@ -297,10 +297,7 @@ function CompareTestRailPage() {
         </Reveal>
 
         <section className="mt-16 md:mt-24">
-          <SectionHead
-            eyebrow="Different jobs"
-            title="Test case management vs automated reporting"
-          >
+          <SectionHead eyebrow="Different jobs" title="Test case management vs automated reporting">
             TestRail organizes what to test and records manual results. Nijam reads what your CI
             actually ran and makes the automated results obvious.
           </SectionHead>
@@ -328,8 +325,8 @@ function CompareTestRailPage() {
 
         <section className="mt-20 md:mt-28">
           <SectionHead eyebrow="Feature by feature" title="How they compare for test reporting">
-            TestRail is genuinely good at case authoring and planning, which is why those rows go its
-            way. For reporting automated runs, the story flips.
+            TestRail is genuinely good at case authoring and planning, which is why those rows go
+            its way. For reporting automated runs, the story flips.
           </SectionHead>
           <Reveal>
             <CompareTable
@@ -360,8 +357,8 @@ function CompareTestRailPage() {
 
         <section className="mt-20 md:mt-28">
           <SectionHead eyebrow="Pricing" title="Per user, or per report">
-            TestRail charges for every seat that needs access. Nijam charges for the reports you send
-            and lets the whole team watch.
+            TestRail charges for every seat that needs access. Nijam charges for the reports you
+            send and lets the whole team watch.
           </SectionHead>
           <Reveal>
             <Grid cols={[1, 2]} gap={5} className="mx-auto max-w-4xl items-start">

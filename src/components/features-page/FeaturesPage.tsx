@@ -83,8 +83,8 @@ const WORKFLOW: Feature[] = [
   {
     icon: BellIcon,
     tint: 'bg-success/15 text-success',
-    title: 'Slack and PR comments',
-    body: 'Get every verdict where your team already works: passing, flaky, and failing runs auto-posted to Slack in green / yellow / red, plus a status check and a results comment on every pull request that updates in place on each run.',
+    title: 'Slack, PR and MR comments',
+    body: 'Get every verdict where your team already works: passing, flaky, and failing runs auto-posted to Slack in green / yellow / red, plus a status check and a results comment on every GitHub pull request, or a commit status and a note on every GitLab merge request, updated in place on each run.',
   },
   {
     icon: ShieldKeyIcon,

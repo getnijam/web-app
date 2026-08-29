@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_marketing/features')({
     seo({
       title: 'Features',
       description:
-        'Every answer your CI never gives you. Flakiness ranking, failure analysis, traces and artifacts, Slack and GitHub integrations, and platform features for Playwright, pytest, and Vitest.',
+        'Every answer your CI never gives you. Flakiness ranking, failure analysis, traces and artifacts, Slack, GitHub, and GitLab integrations, and platform features for Playwright, pytest, and Vitest.',
       path: '/features',
     }),
   component: FeaturesPage,

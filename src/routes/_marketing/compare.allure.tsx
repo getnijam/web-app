@@ -143,7 +143,7 @@ const GROUPS: CompareGroup[] = [
         nijam: { state: 'yes', text: 'A link per run, access-controlled' },
       },
       {
-        feature: 'Slack / GitHub',
+        feature: 'Slack / GitHub / GitLab',
         competitor: { state: 'no', text: 'Not built in' },
         nijam: { state: 'yes', text: 'PR checks and Slack alerts' },
       },
@@ -320,8 +320,8 @@ function CompareAllurePage() {
         {/* why Nijam */}
         <section className="mt-20 md:mt-28">
           <SectionHead eyebrow="Why Nijam" title="Why teams pick Nijam over Allure Report">
-            Everything Allure gives you per run, plus hosting, history, and flakiness, without owning
-            the pipeline.
+            Everything Allure gives you per run, plus hosting, history, and flakiness, without
+            owning the pipeline.
           </SectionHead>
           <Reveal>
             <Grid cols={[1, 2, 3]} gap={5}>
@@ -335,7 +335,8 @@ function CompareAllurePage() {
         {/* feature matrix */}
         <section className="mt-20 md:mt-28">
           <SectionHead eyebrow="Feature by feature" title="How they compare for test reporting">
-            Baseline is Allure Report, the open-source reporter, not the paid Allure TestOps product.
+            Baseline is Allure Report, the open-source reporter, not the paid Allure TestOps
+            product.
           </SectionHead>
           <Reveal>
             <CompareTable
