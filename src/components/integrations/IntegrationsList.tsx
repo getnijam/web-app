@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import {
   ORG_INTEGRATIONS_GITHUB_ROUTE,
+  ORG_INTEGRATIONS_GITLAB_ROUTE,
   ORG_INTEGRATIONS_SLACK_ROUTE,
   ORG_KEYS_MCP_ROUTE,
 } from '@/lib/routes';
@@ -12,7 +13,9 @@ import {
   getOrgSlackIntegrationOptions,
   installOrgSlackMutation,
   getOrgGithubIntegrationOptions,
+  getOrgGitlabIntegrationOptions,
   installOrgGithubMutation,
+  installOrgGitlabMutation,
 } from '@/client/@tanstack/react-query.gen';
 import { Card } from '@/components/ui/card';
 import { Flex } from '@/components/ui/flex';
@@ -27,6 +30,7 @@ import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 import { SlackLogo } from './SlackLogo';
 import { GitHubLogo } from './GitHubLogo';
+import { GitLabLogo } from './GitLabLogo';
 import { TeamsLogo } from './TeamsLogo';
 import { DiscordLogo } from './DiscordLogo';
 import { openExternal } from '@/lib/navigation';
@@ -120,6 +124,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
   const isAdmin = useIsOrgAdmin(orgId);
   const slack = useQuery(getOrgSlackIntegrationOptions({ path: { orgId } }));
   const github = useQuery(getOrgGithubIntegrationOptions({ path: { orgId } }));
+  const gitlab = useQuery(getOrgGitlabIntegrationOptions({ path: { orgId } }));
 
   const slackInstall = useMutation({
     ...installOrgSlackMutation(),
@@ -146,14 +151,28 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
       }),
   });
 
-  if (slack.isLoading || github.isLoading) return <LoadingState />;
-  if (slack.error || !slack.data || github.error || !github.data) {
+  const gitlabInstall = useMutation({
+    ...installOrgGitlabMutation(),
+    onSuccess: (res) => {
+      openExternal(res.url);
+    },
+    onError: (err) =>
+      notify.error("Couldn't connect GitLab", {
+        description: isApiError(err)
+          ? err.error.message
+          : 'Something went wrong. Please try again.',
+      }),
+  });
+
+  if (slack.isLoading || github.isLoading || gitlab.isLoading) return <LoadingState />;
+  if (slack.error || !slack.data || github.error || !github.data || gitlab.error || !gitlab.data) {
     return (
       <ErrorState
-        error={slack.error ?? github.error}
+        error={slack.error ?? github.error ?? gitlab.error}
         onRetry={() => {
           void slack.refetch();
           void github.refetch();
+          void gitlab.refetch();
         }}
       />
     );
@@ -161,6 +180,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
 
   const slackData = slack.data;
   const githubData = github.data;
+  const gitlabData = gitlab.data;
   const slackChannel = slackData.defaultChannel ? `#${slackData.defaultChannel.name}` : 'a channel';
   const slackSummary = TRIGGER_SUMMARY[slackData.triggerMode] ?? 'failures or flaky tests';
 
@@ -195,6 +215,22 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
       connect: () => githubInstall.mutate({ path: { orgId } }),
       installing: githubInstall.isPending,
     },
+    {
+      key: 'gitlab',
+      name: 'GitLab',
+      to: ORG_INTEGRATIONS_GITLAB_ROUTE,
+      desc: 'Post a commit status and results note when tests run on a merge request.',
+      connectedBlurb: gitlabData.gitlabUsername
+        ? `Posting statuses & MR notes · @${gitlabData.gitlabUsername}`
+        : 'Posting statuses & MR notes',
+      logo: (s) => <GitLabLogo size={s} />,
+      configured: gitlabData.configured,
+      connected: gitlabData.connected,
+      status: gitlabData.status,
+      connectLabel: gitlabData.connected ? 'Reconnect' : 'Connect GitLab',
+      connect: () => gitlabInstall.mutate({ path: { orgId } }),
+      installing: gitlabInstall.isPending,
+    },
   ];
 
   const connected = entries.filter((e) => e.connected);
@@ -203,10 +239,9 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
   const connectButton = (e: Entry) => {
     if (!isAdmin)
       return <Text className="text-sm text-muted-foreground">Ask an admin to connect.</Text>;
-    if (!e.configured)
-      return (
-        <Text className="text-sm text-muted-foreground">Not available on this server yet.</Text>
-      );
+    // Same tag treatment as the not-yet-built integrations below: an unconfigured
+    // integration is a state of the product, not a sentence the reader must parse.
+    if (!e.configured) return <Badge variant="outline">Not yet available</Badge>;
     return (
       <Button
         variant={e.connected ? 'outline' : 'default'}
@@ -225,7 +260,7 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
         <Text variant="h1">Integrations</Text>
         <Text color="muted">
           Connect Nijam to the tools your team already lives in, Slack notifications, GitHub PR
-          checks &amp; comments, and AI agents via MCP.
+          checks &amp; comments, GitLab statuses &amp; MR notes, and AI agents via MCP.
         </Text>
       </Flex>
 

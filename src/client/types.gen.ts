@@ -1023,6 +1023,45 @@ export type UpdateProjectGitHubBody = {
     branches?: Array<string>;
 };
 
+export type GitLabStatusResponse = {
+    configured: boolean;
+    connected: boolean;
+    status: 'connected' | 'error';
+    gitlabUsername: string | null;
+    postStatuses: boolean;
+    postComments: boolean;
+    connectedAt: string | null;
+    lastError: string | null;
+};
+
+export type GitLabInstallUrlResponse = {
+    url: string;
+};
+
+export type UpdateGitLabBody = {
+    postStatuses?: boolean;
+    postComments?: boolean;
+};
+
+export type GitLabOkResponse = {
+    ok: true;
+};
+
+export type GitLabProjectsResponse = {
+    projects: Array<string>;
+};
+
+export type ProjectGitLabResponse = {
+    gitlabConnected: boolean;
+    enabled: boolean;
+    branches: Array<string>;
+};
+
+export type UpdateProjectGitLabBody = {
+    enabled: boolean;
+    branches?: Array<string>;
+};
+
 export type StartImpersonationBody = {
     userId: string;
     reason?: string;
@@ -4656,6 +4695,247 @@ export type UpdateProjectGithubSettingsResponses = {
 };
 
 export type UpdateProjectGithubSettingsResponse = UpdateProjectGithubSettingsResponses[keyof UpdateProjectGithubSettingsResponses];
+
+export type DisconnectOrgGitlabData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/gitlab';
+};
+
+export type DisconnectOrgGitlabErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type DisconnectOrgGitlabError = DisconnectOrgGitlabErrors[keyof DisconnectOrgGitlabErrors];
+
+export type DisconnectOrgGitlabResponses = {
+    /**
+     * OK
+     */
+    200: GitLabOkResponse;
+};
+
+export type DisconnectOrgGitlabResponse = DisconnectOrgGitlabResponses[keyof DisconnectOrgGitlabResponses];
+
+export type GetOrgGitlabIntegrationData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/gitlab';
+};
+
+export type GetOrgGitlabIntegrationErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type GetOrgGitlabIntegrationError = GetOrgGitlabIntegrationErrors[keyof GetOrgGitlabIntegrationErrors];
+
+export type GetOrgGitlabIntegrationResponses = {
+    /**
+     * OK
+     */
+    200: GitLabStatusResponse;
+};
+
+export type GetOrgGitlabIntegrationResponse = GetOrgGitlabIntegrationResponses[keyof GetOrgGitlabIntegrationResponses];
+
+export type UpdateOrgGitlabIntegrationData = {
+    body?: UpdateGitLabBody;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/gitlab';
+};
+
+export type UpdateOrgGitlabIntegrationErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not connected
+     */
+    409: ApiError;
+};
+
+export type UpdateOrgGitlabIntegrationError = UpdateOrgGitlabIntegrationErrors[keyof UpdateOrgGitlabIntegrationErrors];
+
+export type UpdateOrgGitlabIntegrationResponses = {
+    /**
+     * OK
+     */
+    200: GitLabStatusResponse;
+};
+
+export type UpdateOrgGitlabIntegrationResponse = UpdateOrgGitlabIntegrationResponses[keyof UpdateOrgGitlabIntegrationResponses];
+
+export type InstallOrgGitlabData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/gitlab/install';
+};
+
+export type InstallOrgGitlabErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+    /**
+     * GitLab not configured
+     */
+    503: ApiError;
+};
+
+export type InstallOrgGitlabError = InstallOrgGitlabErrors[keyof InstallOrgGitlabErrors];
+
+export type InstallOrgGitlabResponses = {
+    /**
+     * OK
+     */
+    200: GitLabInstallUrlResponse;
+};
+
+export type InstallOrgGitlabResponse = InstallOrgGitlabResponses[keyof InstallOrgGitlabResponses];
+
+export type ListOrgGitlabProjectsData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/v1/orgs/{orgId}/integrations/gitlab/projects';
+};
+
+export type ListOrgGitlabProjectsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not connected
+     */
+    409: ApiError;
+};
+
+export type ListOrgGitlabProjectsError = ListOrgGitlabProjectsErrors[keyof ListOrgGitlabProjectsErrors];
+
+export type ListOrgGitlabProjectsResponses = {
+    /**
+     * OK
+     */
+    200: GitLabProjectsResponse;
+};
+
+export type ListOrgGitlabProjectsResponse = ListOrgGitlabProjectsResponses[keyof ListOrgGitlabProjectsResponses];
+
+export type GetProjectGitlabSettingsData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/integrations/gitlab';
+};
+
+export type GetProjectGitlabSettingsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type GetProjectGitlabSettingsError = GetProjectGitlabSettingsErrors[keyof GetProjectGitlabSettingsErrors];
+
+export type GetProjectGitlabSettingsResponses = {
+    /**
+     * OK
+     */
+    200: ProjectGitLabResponse;
+};
+
+export type GetProjectGitlabSettingsResponse = GetProjectGitlabSettingsResponses[keyof GetProjectGitlabSettingsResponses];
+
+export type UpdateProjectGitlabSettingsData = {
+    body?: UpdateProjectGitLabBody;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/integrations/gitlab';
+};
+
+export type UpdateProjectGitlabSettingsErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Not found
+     */
+    404: ApiError;
+};
+
+export type UpdateProjectGitlabSettingsError = UpdateProjectGitlabSettingsErrors[keyof UpdateProjectGitlabSettingsErrors];
+
+export type UpdateProjectGitlabSettingsResponses = {
+    /**
+     * OK
+     */
+    200: ProjectGitLabResponse;
+};
+
+export type UpdateProjectGitlabSettingsResponse = UpdateProjectGitlabSettingsResponses[keyof UpdateProjectGitlabSettingsResponses];
 
 export type StartImpersonationData = {
     body?: StartImpersonationBody;

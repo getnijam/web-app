@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { GitHubStatusResponse } from '@/client';
+import type { GitLabStatusResponse } from '@/client';
 import {
-  getOrgGithubIntegrationOptions,
-  getOrgGithubIntegrationQueryKey,
-  installOrgGithubMutation,
-  updateOrgGithubIntegrationMutation,
-  disconnectOrgGithubMutation,
-  listOrgGithubReposOptions,
+  getOrgGitlabIntegrationOptions,
+  getOrgGitlabIntegrationQueryKey,
+  installOrgGitlabMutation,
+  updateOrgGitlabIntegrationMutation,
+  disconnectOrgGitlabMutation,
+  listOrgGitlabProjectsOptions,
 } from '@/client/@tanstack/react-query.gen';
 import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
@@ -34,21 +34,21 @@ import { useIsOrgAdmin } from '@/hooks/use-org-role';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
-import { GitHubLogo } from './GitHubLogo';
+import { GitLabLogo } from './GitLabLogo';
 import { openExternal } from '@/lib/navigation';
 
 const errMsg = (err: unknown, fallback = 'Something went wrong. Please try again.') =>
   isApiError(err) ? err.error.message : fallback;
 
-export function GitHubDetail({ orgId }: { orgId: string }) {
-  const status = useQuery(getOrgGithubIntegrationOptions({ path: { orgId } }));
+export function GitLabDetail({ orgId }: { orgId: string }) {
+  const status = useQuery(getOrgGitlabIntegrationOptions({ path: { orgId } }));
   if (status.isLoading) return <LoadingState />;
   if (status.error || !status.data) {
     return <ErrorState error={status.error} onRetry={() => status.refetch()} />;
   }
   // Remount on (re)connect so the draft re-seeds from the fresh server config.
   return (
-    <GitHubDetailInner
+    <GitLabDetailInner
       key={`${status.data.connected}:${status.data.connectedAt ?? ''}`}
       orgId={orgId}
       data={status.data}
@@ -56,61 +56,63 @@ export function GitHubDetail({ orgId }: { orgId: string }) {
   );
 }
 
-function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusResponse }) {
+function GitLabDetailInner({ orgId, data }: { orgId: string; data: GitLabStatusResponse }) {
   const isAdmin = useIsOrgAdmin(orgId);
   const queryClient = useQueryClient();
-  const queryKey = getOrgGithubIntegrationQueryKey({ path: { orgId } });
+  const queryKey = getOrgGitlabIntegrationQueryKey({ path: { orgId } });
   const { editing, startEditing, stopEditing } = useEditMode();
   const [draft, setDraft] = useState({
-    postChecks: data.postChecks,
+    postStatuses: data.postStatuses,
     postComments: data.postComments,
   });
   const resetDraft = () =>
-    setDraft({ postChecks: data.postChecks, postComments: data.postComments });
+    setDraft({ postStatuses: data.postStatuses, postComments: data.postComments });
   const [disconnectOpen, setDisconnectOpen] = useState(false);
-  const dirty = draft.postChecks !== data.postChecks || draft.postComments !== data.postComments;
+  const dirty =
+    draft.postStatuses !== data.postStatuses || draft.postComments !== data.postComments;
 
-  const repos = useQuery({
-    ...listOrgGithubReposOptions({ path: { orgId } }),
+  const projects = useQuery({
+    ...listOrgGitlabProjectsOptions({ path: { orgId } }),
     enabled: data.connected && isAdmin,
   });
 
   const save = useMutation({
-    ...updateOrgGithubIntegrationMutation(),
+    ...updateOrgGitlabIntegrationMutation(),
     onSuccess: (updated) => {
       queryClient.setQueryData(queryKey, updated);
-      notify.success('GitHub settings saved');
+      notify.success('GitLab settings saved');
       stopEditing();
     },
-    onError: (err) => notify.error("Couldn't save GitHub settings", { description: errMsg(err) }),
+    onError: (err) => notify.error("Couldn't save GitLab settings", { description: errMsg(err) }),
   });
 
   const install = useMutation({
-    ...installOrgGithubMutation(),
+    ...installOrgGitlabMutation(),
     onSuccess: (res) => {
-      openExternal(res.url); // full redirect to GitHub's install page
+      openExternal(res.url); // full redirect to GitLab's consent page
     },
-    onError: (err) => notify.error("Couldn't start GitHub install", { description: errMsg(err) }),
+    onError: (err) =>
+      notify.error("Couldn't start the GitLab connect", { description: errMsg(err) }),
   });
 
   const disconnect = useMutation({
-    ...disconnectOrgGithubMutation(),
+    ...disconnectOrgGitlabMutation(),
     onSuccess: () => {
       setDisconnectOpen(false);
       void queryClient.invalidateQueries({ queryKey });
-      notify.success('GitHub disconnected', {
-        description: 'Remove the app in your GitHub settings to fully revoke access.',
+      notify.success('GitLab disconnected', {
+        description: 'Revoke Nijam in your GitLab applications to fully withdraw access.',
       });
     },
-    onError: (err) => notify.error("Couldn't disconnect GitHub", { description: errMsg(err) }),
+    onError: (err) => notify.error("Couldn't disconnect GitLab", { description: errMsg(err) }),
   });
 
   const header = (
     <Flex align="center" justify="between" gap={4} className="flex-wrap">
       <Flex direction="col" gap={1}>
-        <Text variant="h1">GitHub</Text>
+        <Text variant="h1">GitLab</Text>
         <Text color="muted">
-          Post a PR check and a results comment when tests run on a pull request.
+          Post a commit status and a results note when tests run on a merge request.
         </Text>
       </Flex>
     </Flex>
@@ -120,13 +122,13 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
     return (
       <Flex direction="col" gap={6}>
         {header}
-        <SettingsPanel title="GitHub App">
+        <SettingsPanel title="GitLab">
           <SettingsRow
             label="Not connected"
             hint={
               data.configured
-                ? 'Install the Nijam GitHub App on the repositories you want checks and PR comments for.'
-                : "GitHub isn't available yet."
+                ? 'Sign in with GitLab to let Nijam post on the merge requests your pipelines run for.'
+                : "GitLab isn't available yet."
             }
           >
             {isAdmin ? (
@@ -136,15 +138,25 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
                   disabled={!data.configured}
                   onClick={() => install.mutate({ path: { orgId } })}
                 >
-                  <GitHubLogo size={16} />
-                  Install GitHub App
+                  <GitLabLogo size={16} />
+                  Connect GitLab
                 </Button>
               </Flex>
             ) : (
               <Text className="text-sm text-muted-foreground">
-                Ask an organization admin to install the GitHub App.
+                Ask an organization admin to connect GitLab.
               </Text>
             )}
+          </SettingsRow>
+          {/* GitLab has no narrow write scope, so the grant is broader than the
+              GitHub App's. Say it here rather than only in the docs. */}
+          <SettingsRow
+            label="What you'll grant"
+            hint="GitLab has no scope for statuses and notes alone, so it asks for api access, which covers everything your GitLab account can reach. Nijam only ever writes commit statuses and merge-request notes. Connecting as a service account keeps that grant narrow."
+          >
+            <Badge variant="outline" className="font-mono">
+              scope: api
+            </Badge>
           </SettingsRow>
         </SettingsPanel>
       </Flex>
@@ -162,11 +174,12 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
           className="rounded-xl border border-destructive/40 bg-destructive/5 px-5 py-4"
         >
           <Text color="danger" className="text-sm font-semibold">
-            GitHub is having trouble
+            GitLab is having trouble
           </Text>
           <Text className="text-sm text-muted-foreground">
-            The last GitHub call failed{data.lastError ? `: ${data.lastError}` : '.'} Reinstall or
-            check the app&rsquo;s repository access.
+            The last GitLab call failed{data.lastError ? `: ${data.lastError}` : '.'} Reconnect, or
+            check that {data.gitlabUsername ? `@${data.gitlabUsername}` : 'the connected user'} can
+            still reach the project.
           </Text>
           {isAdmin && (
             <Flex>
@@ -183,17 +196,17 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
         </Flex>
       )}
 
-      <SettingsPanel title="GitHub App">
+      <SettingsPanel title="GitLab">
         <SettingsRow
-          label="Installed on"
-          hint="Nijam acts as this GitHub App on your repositories."
+          label="Connected as"
+          hint="Nijam posts as this GitLab user, so it needs access to the projects your pipelines run for."
         >
           <Flex align="center" justify="between" gap={3} className="w-full flex-wrap">
             <Flex align="center" gap={2.5}>
-              <GitHubLogo size={22} />
+              <GitLabLogo size={22} />
               <Flex direction="col">
                 <Text as="span" className="text-sm font-semibold">
-                  {data.accountLogin}
+                  @{data.gitlabUsername}
                 </Text>
                 <Badge
                   variant={data.status === 'error' ? 'destructive' : 'secondary'}
@@ -242,23 +255,23 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
       >
         <LockedFields locked={!editing}>
           <SettingsRow
-            label="PR status check"
-            hint="Show an in-progress check while tests run, then green (pass/flaky) or red (fail)."
+            label="Commit status"
+            hint="Show a running status while tests run, then success (pass/flaky) or failed."
           >
             <Flex align="center" gap={2}>
               <Switch
-                checked={draft.postChecks}
+                checked={draft.postStatuses}
                 disabled={!isAdmin}
-                onCheckedChange={(postChecks) => setDraft((d) => ({ ...d, postChecks }))}
+                onCheckedChange={(postStatuses) => setDraft((d) => ({ ...d, postStatuses }))}
               />
               <Text as="span" className="text-sm text-muted-foreground">
-                {draft.postChecks ? 'On' : 'Off'}
+                {draft.postStatuses ? 'On' : 'Off'}
               </Text>
             </Flex>
           </SettingsRow>
           <SettingsRow
-            label="PR comment"
-            hint="Post a results summary as a comment on the PR, updated in place each run."
+            label="Merge request note"
+            hint="Post a results summary as a note on the merge request, updated in place each run."
           >
             <Flex align="center" gap={2}>
               <Switch
@@ -275,21 +288,26 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
       </SettingsPanel>
 
       {isAdmin && (
-        <SettingsPanel title="Repositories">
+        <SettingsPanel title="Projects">
           <div className="px-5 py-4">
-            {repos.isLoading && (
-              <Text className="text-sm text-muted-foreground">Loading repositories…</Text>
+            {projects.isLoading && (
+              <Text className="text-sm text-muted-foreground">Loading projects…</Text>
             )}
-            {repos.data && repos.data.repositories.length === 0 && (
+            {projects.error && (
               <Text className="text-sm text-muted-foreground">
-                No repositories yet, grant the app access to repos in your GitHub settings.
+                {errMsg(projects.error, "Couldn't load projects from GitLab.")}
               </Text>
             )}
-            {repos.data && repos.data.repositories.length > 0 && (
+            {projects.data && projects.data.projects.length === 0 && (
+              <Text className="text-sm text-muted-foreground">
+                No projects yet, this GitLab user isn&rsquo;t a member of any.
+              </Text>
+            )}
+            {projects.data && projects.data.projects.length > 0 && (
               <Flex wrap gap={2}>
-                {repos.data.repositories.map((r) => (
-                  <Badge key={r} variant="outline" className="font-mono">
-                    {r}
+                {projects.data.projects.map((p) => (
+                  <Badge key={p} variant="outline" className="font-mono">
+                    {p}
                   </Badge>
                 ))}
               </Flex>
@@ -301,10 +319,11 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
       <AlertDialog open={disconnectOpen} onOpenChange={setDisconnectOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Disconnect GitHub?</AlertDialogTitle>
+            <AlertDialogTitle>Disconnect GitLab?</AlertDialogTitle>
             <AlertDialogDescription>
-              Nijam will stop posting PR checks and comments for this organization. The GitHub App
-              stays installed until you remove it in your GitHub settings.
+              Nijam will delete its copy of your GitLab tokens and stop posting statuses and notes
+              for this organization. The authorization stays listed under your GitLab applications
+              until you revoke it there.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
