@@ -173,7 +173,7 @@ const GROUPS: CompareGroup[] = [
       {
         feature: 'GitLab merge requests',
         competitor: { state: 'yes', text: 'GitLab CI integration' },
-        nijam: { state: 'partial', text: 'Runs report from GitLab CI, no MR comments' },
+        nijam: { state: 'yes', text: 'Commit status plus a sticky MR note' },
       },
       {
         feature: 'Chat alerts',
@@ -183,7 +183,7 @@ const GROUPS: CompareGroup[] = [
       {
         feature: 'Issue trackers',
         competitor: { state: 'yes', text: 'Jira, Linear, Azure DevOps, Asana, monday' },
-        nijam: { state: 'no', text: 'Slack and GitHub today' },
+        nijam: { state: 'no', text: 'Slack, GitHub, and GitLab today' },
       },
     ],
   },
@@ -277,7 +277,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: 'What does TestDino do that Nijam does not?',
-    a: 'Several things worth naming: live monitoring of a suite while it is still running across shards, flake classification into root-cause buckets, ticket creation in Jira, Linear, Azure DevOps, Asana, and monday, and formal ISO 27001 and SOC 2 Type II certification. Nijam reports when the run finishes, integrates with Slack and GitHub today, and has no certification yet.',
+    a: 'Several things worth naming: live monitoring of a suite while it is still running across shards, flake classification into root-cause buckets, ticket creation in Jira, Linear, Azure DevOps, Asana, and monday, and formal ISO 27001 and SOC 2 Type II certification. Nijam reports when the run finishes, integrates with Slack, GitHub, and GitLab today, and has no certification yet.',
   },
   {
     q: 'Can I try Nijam without leaving TestDino?',
