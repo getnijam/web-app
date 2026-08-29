@@ -164,17 +164,22 @@ export function SlackPreview({
   const m = meta(state);
   const channel = '#qa-alerts';
 
+  // One surface: the channel. The message sits flat on it the way it does in
+  // Slack rather than in a card of its own, so the preview reads as a message
+  // instead of stacking a third border inside the Preview panel inside the page.
   return (
-    <Flex direction="col" gap={2} className="rounded-xl border border-border bg-muted/30 p-4">
-      <Text as="span" className="text-xs font-medium text-muted-foreground">
-        <span className="font-mono">{channel}</span> · posted by Nijam
-      </Text>
+    <div className="overflow-hidden rounded-xl border border-border bg-background">
+      <Flex align="center" className="border-b border-border bg-muted/30 px-4 py-2.5">
+        <Text as="span" className="text-xs font-medium text-muted-foreground">
+          <span className="font-mono">{channel}</span> · posted by Nijam
+        </Text>
+      </Flex>
 
-      <Flex gap={2.5} className="rounded-lg border border-border bg-background p-3">
+      <Flex gap={2.5} className="p-4">
         <Flex
           align="center"
           justify="center"
-          className="size-9 shrink-0 self-start rounded-md bg-primary/10"
+          className="size-9 shrink-0 self-start rounded-md bg-muted"
         >
           <SlackLogo size={18} />
         </Flex>
@@ -192,7 +197,7 @@ export function SlackPreview({
           </Flex>
 
           {layout === 'classic' ? (
-            <div className={cn('rounded-r-md border-l-4 bg-muted/40 py-2.5 pr-3 pl-3', m.bar)}>
+            <div className={cn('border-l-4 pl-3', m.bar)}>
               <MessageBody state={state} detail={detail} />
             </div>
           ) : (
@@ -200,6 +205,6 @@ export function SlackPreview({
           )}
         </Flex>
       </Flex>
-    </Flex>
+    </div>
   );
 }

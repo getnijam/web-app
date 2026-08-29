@@ -35,6 +35,7 @@ import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 import { GitLabLogo } from './GitLabLogo';
+import { IntegrationHeader } from './IntegrationHeader';
 import { openExternal } from '@/lib/navigation';
 
 const errMsg = (err: unknown, fallback = 'Something went wrong. Please try again.') =>
@@ -108,14 +109,11 @@ function GitLabDetailInner({ orgId, data }: { orgId: string; data: GitLabStatusR
   });
 
   const header = (
-    <Flex align="center" justify="between" gap={4} className="flex-wrap">
-      <Flex direction="col" gap={1}>
-        <Text variant="h1">GitLab</Text>
-        <Text color="muted">
-          Post a commit status and a results note when tests run on a merge request.
-        </Text>
-      </Flex>
-    </Flex>
+    <IntegrationHeader
+      logo={<GitLabLogo size={24} />}
+      title="GitLab"
+      description="Post a commit status and a results note when tests run on a merge request."
+    />
   );
 
   if (!data.connected) {

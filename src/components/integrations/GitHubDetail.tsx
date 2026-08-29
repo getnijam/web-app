@@ -35,6 +35,7 @@ import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 import { GitHubLogo } from './GitHubLogo';
+import { IntegrationHeader } from './IntegrationHeader';
 import { openExternal } from '@/lib/navigation';
 
 const errMsg = (err: unknown, fallback = 'Something went wrong. Please try again.') =>
@@ -106,14 +107,11 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
   });
 
   const header = (
-    <Flex align="center" justify="between" gap={4} className="flex-wrap">
-      <Flex direction="col" gap={1}>
-        <Text variant="h1">GitHub</Text>
-        <Text color="muted">
-          Post a PR check and a results comment when tests run on a pull request.
-        </Text>
-      </Flex>
-    </Flex>
+    <IntegrationHeader
+      logo={<GitHubLogo size={24} />}
+      title="GitHub"
+      description="Post a PR check and a results comment when tests run on a pull request."
+    />
   );
 
   if (!data.connected) {
