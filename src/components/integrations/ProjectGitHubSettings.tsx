@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { TagCombobox } from '@/components/ui/combobox';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { GitHubLogo } from './GitHubLogo';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
 import { useEditMode } from '@/hooks/use-edit-mode';
@@ -110,7 +111,7 @@ function ProjectGitHubInner({
 
   if (!data.githubConnected) {
     return (
-      <SettingsPanel title="GitHub checks & comments">
+      <SettingsPanel title="GitHub checks & comments" icon={<GitHubLogo size={18} />}>
         <SettingsRow
           label="Not connected"
           hint="Install the GitHub App for this organization to post PR checks and comments."
@@ -136,6 +137,7 @@ function ProjectGitHubInner({
   return (
     <SettingsPanel
       title="GitHub checks & comments"
+      icon={<GitHubLogo size={18} />}
       action={
         isAdmin ? (
           <EditActions
