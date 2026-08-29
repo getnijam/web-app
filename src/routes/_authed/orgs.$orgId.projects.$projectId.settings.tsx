@@ -33,6 +33,7 @@ import { FRAMEWORK_LABELS, type TestFramework } from '@/lib/test-framework';
 import { FrameworkLogo } from '@/components/projects/framework-logos';
 import { ProjectSlackSettings } from '@/components/integrations/ProjectSlackSettings';
 import { ProjectGitHubSettings } from '@/components/integrations/ProjectGitHubSettings';
+import { ProjectGitLabSettings } from '@/components/integrations/ProjectGitLabSettings';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { ALL_ICON_KEYS, COLOR_KEYS, type IconKey, type ColorKey } from '@/lib/project-glyph';
@@ -237,6 +238,8 @@ function ProjectSettingsForm({ project }: { project: ProjectSummary }) {
       <ProjectSlackSettings orgId={orgId} projectId={project.id} projectName={project.name} />
 
       <ProjectGitHubSettings orgId={orgId} projectId={project.id} projectName={project.name} />
+
+      <ProjectGitLabSettings orgId={orgId} projectId={project.id} projectName={project.name} />
 
       {isAdmin && (
         <>

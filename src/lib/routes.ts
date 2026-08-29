@@ -40,6 +40,7 @@ export const ORG_KEYS_INGESTION_ROUTE = '/orgs/$orgId/keys/ingestion';
 export const ORG_KEYS_MCP_ROUTE = '/orgs/$orgId/keys/mcp';
 export const ORG_INTEGRATIONS_ROUTE = '/orgs/$orgId/integrations';
 export const ORG_INTEGRATIONS_GITHUB_ROUTE = '/orgs/$orgId/integrations/github';
+export const ORG_INTEGRATIONS_GITLAB_ROUTE = '/orgs/$orgId/integrations/gitlab';
 export const ORG_INTEGRATIONS_SLACK_ROUTE = '/orgs/$orgId/integrations/slack';
 export const ORG_SETTINGS_ROUTE = '/orgs/$orgId/settings';
 export const ORG_SETTINGS_SSO_ROUTE = '/orgs/$orgId/settings/sso';
