@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { FilterCombobox, TagCombobox, type ComboboxOption } from '@/components/ui/combobox';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { SlackLogo } from './SlackLogo';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
 import { useEditMode } from '@/hooks/use-edit-mode';
@@ -154,7 +155,7 @@ function ProjectSlackInner({
 
   if (!data.slackConnected) {
     return (
-      <SettingsPanel title="Slack notifications">
+      <SettingsPanel title="Slack notifications" icon={<SlackLogo size={18} />}>
         <SettingsRow
           label="Not connected"
           hint="Connect a Slack workspace for this organization to route this project's runs."
@@ -187,6 +188,7 @@ function ProjectSlackInner({
   return (
     <SettingsPanel
       title="Slack notifications"
+      icon={<SlackLogo size={18} />}
       action={
         isAdmin ? (
           <EditActions

@@ -4,17 +4,20 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 
-/** A titled settings card with an optional header `action` (right-aligned, e.g.
- *  a Create button) and an optional sticky-style footer (Save row).
+/** A titled settings card with an optional leading `icon` (e.g. a provider mark on
+ *  the integration panels), an optional header `action` (right-aligned, e.g. a
+ *  Create button) and an optional sticky-style footer (Save row).
  *  Set `danger` for a mild red treatment on destructive ("danger zone") panels. */
 export function SettingsPanel({
   title,
+  icon,
   action,
   footer,
   danger = false,
   children,
 }: {
   title: string;
+  icon?: ReactNode;
   action?: ReactNode;
   footer?: ReactNode;
   danger?: boolean;
@@ -31,9 +34,12 @@ export function SettingsPanel({
           danger ? 'border-destructive/20 bg-destructive/5' : 'border-border',
         )}
       >
-        <Text variant="h4" color={danger ? 'danger' : undefined}>
-          {title}
-        </Text>
+        <Flex align="center" gap={2.5} className="min-w-0">
+          {icon}
+          <Text variant="h4" color={danger ? 'danger' : undefined}>
+            {title}
+          </Text>
+        </Flex>
         {action}
       </Flex>
       <div>{children}</div>

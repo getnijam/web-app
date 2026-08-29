@@ -58,3 +58,5 @@ export const EXPLORER_TEST_ROUTE = '/orgs/$orgId/projects/$projectId/explorer/$t
 export const FAILING_ROUTE = '/orgs/$orgId/projects/$projectId/failing';
 export const FLAKY_ROUTE = '/orgs/$orgId/projects/$projectId/flaky';
 export const PROJECT_SETTINGS_ROUTE = '/orgs/$orgId/projects/$projectId/settings';
+export const PROJECT_SETTINGS_INTEGRATIONS_ROUTE =
+  '/orgs/$orgId/projects/$projectId/settings/integrations';

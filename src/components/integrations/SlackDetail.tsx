@@ -494,7 +494,7 @@ function SlackDetailInner({
                     Want a project to report somewhere else? Set a per-project channel, or mute
                     Slack, in that project&rsquo;s{' '}
                     <span className="font-medium text-foreground">
-                      Settings &rarr; Slack notifications
+                      Settings &rarr; Integrations
                     </span>
                     .
                   </Text>

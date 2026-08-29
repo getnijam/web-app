@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { TagCombobox } from '@/components/ui/combobox';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { GitLabLogo } from './GitLabLogo';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { EditActions, LockedFields } from '@/components/settings/EditableSettings';
 import { useEditMode } from '@/hooks/use-edit-mode';
@@ -110,7 +111,7 @@ function ProjectGitLabInner({
 
   if (!data.gitlabConnected) {
     return (
-      <SettingsPanel title="GitLab statuses & notes">
+      <SettingsPanel title="GitLab statuses & notes" icon={<GitLabLogo size={18} />}>
         <SettingsRow
           label="Not connected"
           hint="Connect GitLab for this organization to post commit statuses and merge-request notes."
@@ -136,6 +137,7 @@ function ProjectGitLabInner({
   return (
     <SettingsPanel
       title="GitLab statuses & notes"
+      icon={<GitLabLogo size={18} />}
       action={
         isAdmin ? (
           <EditActions
