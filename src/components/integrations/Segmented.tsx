@@ -8,8 +8,10 @@ interface SegmentedOption<T extends string> {
 
 /**
  * A segmented control matching the Runs page status filter (see
- * components/runs/RunFilters.tsx), shadcn `Tabs` used purely as a selector, with
- * the same `TabsList`/`TabsTrigger` classes so the styling stays consistent.
+ * components/runs/RunFilters.tsx), shadcn `Tabs` used purely as a selector. It
+ * keeps the stock `TabsList`/`TabsTrigger` radii on purpose: the sliding
+ * indicator's radius is fixed in `ui/tabs`, so overriding the track/trigger
+ * radius here would leave the pill rounder than the track it sits in.
  */
 export function Segmented<T extends string>({
   options,
@@ -32,13 +34,9 @@ export function Segmented<T extends string>({
       }}
       className={className}
     >
-      <TabsList className={cn('rounded-lg', disabled && 'pointer-events-none opacity-50')}>
+      <TabsList className={cn(disabled && 'pointer-events-none opacity-50')}>
         {options.map((o) => (
-          <TabsTrigger
-            key={o.value}
-            value={o.value}
-            className="rounded-md px-3 data-[state=active]:font-semibold data-[state=active]:shadow-sm"
-          >
+          <TabsTrigger key={o.value} value={o.value} className="px-3">
             {o.label}
           </TabsTrigger>
         ))}

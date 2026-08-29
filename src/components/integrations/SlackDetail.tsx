@@ -41,6 +41,7 @@ import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 import { SlackLogo } from './SlackLogo';
+import { IntegrationHeader } from './IntegrationHeader';
 import { SlackPreview, type PreviewState } from './SlackPreview';
 import { Segmented } from './Segmented';
 import { openExternal } from '@/lib/navigation';
@@ -240,26 +241,28 @@ function SlackDetailInner({
 
   return (
     <Flex direction="col" gap={6}>
-      {/* Header, title + Save */}
-      <Flex align="center" justify="between" gap={4} className="flex-wrap">
-        <Flex direction="col" gap={1}>
-          <Text variant="h1">Slack</Text>
-          <Text color="muted">Auto-post run results to your Slack workspace.</Text>
-        </Flex>
-        {data.connected && isAdmin && (
-          <EditActions
-            editing={editing}
-            dirty={dirty}
-            saving={save.isPending}
-            onEdit={startEditing}
-            onCancel={() => {
-              resetDraft();
-              stopEditing();
-            }}
-            onSave={handleSave}
-          />
-        )}
-      </Flex>
+      {/* Header, logo + title + Save */}
+      <IntegrationHeader
+        logo={<SlackLogo size={24} />}
+        title="Slack"
+        description="Auto-post run results to your Slack workspace."
+        action={
+          data.connected &&
+          isAdmin && (
+            <EditActions
+              editing={editing}
+              dirty={dirty}
+              saving={save.isPending}
+              onEdit={startEditing}
+              onCancel={() => {
+                resetDraft();
+                stopEditing();
+              }}
+              onSave={handleSave}
+            />
+          )
+        }
+      />
 
       {!data.connected ? (
         <SettingsPanel title="Slack">
@@ -311,7 +314,7 @@ function SlackDetailInner({
             </Flex>
           )}
 
-          <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             {/* Configuration, left, 1/2 */}
             <Flex direction="col" gap={6}>
               {/* Workspace */}
@@ -499,9 +502,15 @@ function SlackDetailInner({
               </SettingsPanel>
             </Flex>
 
-            {/* Preview, right, 1/2, sticky on desktop */}
+            {/* Preview, right, 1/2. The column stretches to the config column's
+                height (grid default `stretch`, no `items-start`), which is what
+                gives the sticky panel room to travel as the page scrolls. The
+                offset clears the pinned IntegrationHeader (5.6rem tall) with a
+                gap-6 of air. It reads 1.75rem short of that because the pin
+                threshold is already inset by AppShell's `p-7`, the same reason
+                the header uses `-top-7`. Retune if either changes. */}
             <div>
-              <div className="xl:sticky xl:top-6">
+              <div className="xl:sticky xl:top-22">
                 {/* Live preview reflects the unsaved draft */}
                 <SettingsPanel title="Preview">
                   <Flex direction="col" gap={4} className="px-5 py-5">
