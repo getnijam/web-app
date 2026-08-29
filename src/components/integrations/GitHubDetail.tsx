@@ -126,7 +126,7 @@ function GitHubDetailInner({ orgId, data }: { orgId: string; data: GitHubStatusR
             hint={
               data.configured
                 ? 'Install the Nijam GitHub App on the repositories you want checks and PR comments for.'
-                : "GitHub isn't available on this server yet."
+                : "GitHub isn't available yet."
             }
           >
             {isAdmin ? (

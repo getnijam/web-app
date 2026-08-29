@@ -239,10 +239,9 @@ export function IntegrationsList({ orgId }: { orgId: string }) {
   const connectButton = (e: Entry) => {
     if (!isAdmin)
       return <Text className="text-sm text-muted-foreground">Ask an admin to connect.</Text>;
-    if (!e.configured)
-      return (
-        <Text className="text-sm text-muted-foreground">Not available on this server yet.</Text>
-      );
+    // Same tag treatment as the not-yet-built integrations below: an unconfigured
+    // integration is a state of the product, not a sentence the reader must parse.
+    if (!e.configured) return <Badge variant="outline">Not yet available</Badge>;
     return (
       <Button
         variant={e.connected ? 'outline' : 'default'}

@@ -128,7 +128,7 @@ function GitLabDetailInner({ orgId, data }: { orgId: string; data: GitLabStatusR
             hint={
               data.configured
                 ? 'Sign in with GitLab to let Nijam post on the merge requests your pipelines run for.'
-                : "GitLab isn't available on this server yet."
+                : "GitLab isn't available yet."
             }
           >
             {isAdmin ? (
