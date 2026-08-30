@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
-import { FEATURES_ROUTE, HOME_ROUTE, LOGIN_ROUTE, PRICING_ROUTE, SIGNUP_ROUTE } from '@/lib/routes';
+import {
+  FEATURES_ROUTE,
+  HOME_ROUTE,
+  INTEGRATIONS_ROUTE,
+  LOGIN_ROUTE,
+  SIGNUP_ROUTE,
+} from '@/lib/routes';
 import { motion, type Transition } from 'motion/react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowUpRight01Icon, Cancel01Icon, Menu01Icon } from '@hugeicons/core-free-icons';
@@ -49,8 +55,8 @@ function NavLinks({ onNavigate, withPill }: { onNavigate?: () => void; withPill?
       <Link to={FEATURES_ROUTE} onClick={onNavigate} {...linkProps}>
         Features
       </Link>
-      <Link to={PRICING_ROUTE} onClick={onNavigate} {...linkProps}>
-        Pricing
+      <Link to={INTEGRATIONS_ROUTE} onClick={onNavigate} {...linkProps}>
+        Integrations
       </Link>
       {/* External: no active state; the new-tab arrow appears on hover. */}
       <a

@@ -8,6 +8,7 @@ import {
   COMPARE_TESTRAIL_ROUTE,
   FEATURES_ROUTE,
   HOME_ROUTE,
+  INTEGRATIONS_ROUTE,
   LOGIN_ROUTE,
   PRICING_ROUTE,
   PRIVACY_ROUTE,
@@ -77,6 +78,9 @@ export function Footer() {
               </Text>
               <Link to={FEATURES_ROUTE} className={COL}>
                 Features
+              </Link>
+              <Link to={INTEGRATIONS_ROUTE} className={COL}>
+                Integrations
               </Link>
               <Link to={PRICING_ROUTE} className={COL}>
                 Pricing
