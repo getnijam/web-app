@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useParams, useRouterState } from '@tanstack/react-router';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Bug01Icon, Idea01Icon, Comment01Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
+import { Bug01Icon, Idea01Icon, Comment01Icon, Delete01Icon } from '@hugeicons/core-free-icons';
 import { createFeedbackMutation } from '@/client/@tanstack/react-query.gen';
 import type { CreateFeedbackBody } from '@/client';
 import {
@@ -25,6 +25,7 @@ import { useTheme } from '@/components/theme/ThemeProvider';
 import { FEEDBACK_UI_ATTR, type Screenshot } from '@/lib/capture-screenshot';
 import { isApiError } from '@/lib/api-error';
 import { notify } from '@/lib/notify';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 type Kind = CreateFeedbackBody['kind'];
 
@@ -75,15 +76,22 @@ function ScreenshotField({
       <Text variant="caption" color="muted" className="min-w-0 flex-1">
         Captured when you opened this.
       </Text>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        aria-label="Remove screenshot"
-        onClick={() => onToggle(false)}
-      >
-        <HugeiconsIcon icon={Cancel01Icon} size={14} strokeWidth={2} />
-      </Button>
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="shrink-0"
+            aria-label="Remove screenshot"
+            onClick={() => onToggle(false)}
+          >
+            <HugeiconsIcon icon={Delete01Icon} strokeWidth={2} />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Remove screenshot from feedback</TooltipContent>
+      </Tooltip>
     </Flex>
   );
 }

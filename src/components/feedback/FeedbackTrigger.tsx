@@ -1,5 +1,5 @@
 import { HugeiconsIcon } from '@hugeicons/react';
-import { BubbleChatIcon } from '@hugeicons/core-free-icons';
+import { MessageUpload01Icon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { FEEDBACK_UI_ATTR } from '@/lib/capture-screenshot';
@@ -22,7 +22,7 @@ export function FeedbackTrigger({ docked = false }: { docked?: boolean }) {
       <TooltipTrigger asChild>
         <Button
           variant="ghost"
-          size="icon-sm"
+          size="icon-lg"
           onClick={start}
           loading={capturing}
           aria-label="Send feedback"
@@ -31,7 +31,7 @@ export function FeedbackTrigger({ docked = false }: { docked?: boolean }) {
           // it. The layer is `fixed`, which is its own containing block.
           className={cn(docked && 'absolute top-4 right-14')}
         >
-          <HugeiconsIcon icon={BubbleChatIcon} strokeWidth={2} />
+          <HugeiconsIcon icon={MessageUpload01Icon} strokeWidth={2} />
         </Button>
       </TooltipTrigger>
       <TooltipContent {...{ [FEEDBACK_UI_ATTR]: '' }}>Send feedback</TooltipContent>

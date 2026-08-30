@@ -160,7 +160,7 @@ export function TopBar() {
       <SidebarTrigger className="-ml-1 text-muted-foreground md:hidden" />
       <Breadcrumbs />
 
-      <Flex align="center" gap={2.5} className="ml-auto">
+      <Flex align="center" gap={2} className="ml-auto">
         <ByocIndicator />
         {/* Mobile: the cycling icon-only button (same as the home nav); ≥md: the full track. */}
         <ThemeSegmentedControl minified className="md:hidden" />

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Megaphone01Icon } from '@hugeicons/core-free-icons';
+import { Megaphone02Icon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSeenUpdates } from '@/hooks/use-seen-updates';
@@ -38,14 +38,14 @@ export function WhatsNewButton() {
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon-lg"
             aria-label={hasUnseen ? "What's new, unread updates" : "What's new"}
             onClick={() => setOpen(true)}
             // Plain ghost, matching the feedback trigger beside it. `relative` is the
             // only class here, and it is functional: the unseen dot anchors to it.
             className="relative"
           >
-            <HugeiconsIcon icon={Megaphone01Icon} strokeWidth={2} />
+            <HugeiconsIcon icon={Megaphone02Icon} strokeWidth={2} />
             {hasUnseen && <UnseenDot />}
           </Button>
         </TooltipTrigger>
