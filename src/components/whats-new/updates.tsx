@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CloudServerIcon } from '@hugeicons/core-free-icons';
+import { BubbleChatIcon, CloudServerIcon } from '@hugeicons/core-free-icons';
 import { GitHubLogo } from '@/components/integrations/GitHubLogo';
 import { GitLabLogo } from '@/components/integrations/GitLabLogo';
 import {
@@ -66,6 +66,37 @@ export function isRecentUpdate(update: Update): boolean {
 }
 
 export const UPDATES: Update[] = [
+  {
+    id: 'in-product-feedback',
+    title: 'Send feedback',
+    date: '2026-08-30',
+    tag: 'Product',
+    summary: 'Report a bug or an idea from any screen, screenshot attached.',
+    icon: (size) => (
+      <HugeiconsIcon icon={BubbleChatIcon} size={size} strokeWidth={1.8} className="text-primary" />
+    ),
+    sections: [
+      {
+        body: 'There is now a feedback button in the top bar, and a second one inside any dialog or drawer you have open. It takes a screenshot of the page the moment you click, before the form appears, so you can report something without having to describe where you were standing.',
+      },
+      {
+        heading: 'What you get',
+        bullets: [
+          'A screenshot of exactly what you were looking at, captured before the form covers it.',
+          'The button follows you into dialogs and drawers, so you can report a problem with the thing actually in front of you.',
+          'Bug, idea, or anything else. The note carries the page, project, and run you were on, so there is no back and forth about which screen you meant.',
+        ],
+      },
+      {
+        heading: 'Good to know',
+        bullets: [
+          'The screenshot is optional. Remove it in the form and only your note is sent.',
+          'API keys, two-factor secrets, and recovery codes are blanked out of the screenshot before it leaves your browser.',
+          'Nothing leaves the page until you press Send.',
+        ],
+      },
+    ],
+  },
   {
     id: 'gitlab-integration',
     title: 'GitLab integration',

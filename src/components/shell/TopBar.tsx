@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeSegmentedControl } from '@/components/theme/ThemeSegmentedControl';
 import { ByocIndicator } from './ByocIndicator';
 import { WhatsNewButton } from '@/components/whats-new/WhatsNewButton';
+import { FeedbackTrigger } from '@/components/feedback/FeedbackTrigger';
 import { cn } from '@/lib/utils';
 import { useShellNav, ROUTE_TITLES } from './use-shell-nav';
 
@@ -164,6 +165,7 @@ export function TopBar() {
         {/* Mobile: the cycling icon-only button (same as the home nav); ≥md: the full track. */}
         <ThemeSegmentedControl minified className="md:hidden" />
         <ThemeSegmentedControl className="hidden md:inline-flex" />
+        <FeedbackTrigger />
         <WhatsNewButton />
       </Flex>
     </Flex>

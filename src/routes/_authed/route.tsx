@@ -7,6 +7,7 @@ import { meQueryOptions } from '@/lib/me-query';
 import { identify } from '@/lib/betterstack';
 import { DashboardNotFound } from '@/components/states/DashboardNotFound';
 import { ImpersonationBar } from '@/components/internal/ImpersonationBar';
+import { FeedbackProvider } from '@/components/feedback/FeedbackProvider';
 import { privateSeo } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authed')({
@@ -54,7 +55,12 @@ function AuthedLayout() {
           Mounted here rather than in AppShell so it also covers /orgs and /profile,
           which render outside the org shell. */}
       <ImpersonationBar />
-      <Outlet />
+      {/* Owns the feedback capture + dialog, and docks the trigger into whatever
+          dialog or sheet is open. Mounted here, like ImpersonationBar, so it also
+          covers /orgs and /profile, which render outside the org shell. */}
+      <FeedbackProvider>
+        <Outlet />
+      </FeedbackProvider>
     </>
   );
 }

@@ -317,7 +317,8 @@ export function CreateSecretKeyDialog({
               <Flex direction="col" gap={4}>
                 <Flex direction="col" gap={1.5}>
                   <Label>Your new secret key</Label>
-                  <CopyField value={created.token} />
+                  {/* The cleartext key. `sensitive` keeps it out of the feedback screenshot. */}
+                  <CopyField value={created.token} sensitive />
                 </Flex>
 
                 <Flex

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { PRIVACY_ROUTE } from '@/lib/routes';
 import { LegalLayout, Section, P, Bullets } from '@/components/legal/LegalLayout';
 import { seo } from '@/lib/seo';
+import { SUPPORT_EMAIL } from '@/lib/constants';
 
 export const Route = createFileRoute('/_marketing/terms')({
   head: () =>
@@ -12,8 +13,6 @@ export const Route = createFileRoute('/_marketing/terms')({
     }),
   component: TermsPage,
 });
-
-const CONTACT = 'support@nijam.dev';
 
 function TermsPage() {
   return (
@@ -230,8 +229,11 @@ function TermsPage() {
       <Section title="17. Contact">
         <P>
           Questions about these Terms? Email us at{' '}
-          <a href={`mailto:${CONTACT}`} className="text-primary underline-offset-4 hover:underline">
-            {CONTACT}
+          <a
+            href={`mailto:${SUPPORT_EMAIL}`}
+            className="text-primary underline-offset-4 hover:underline"
+          >
+            {SUPPORT_EMAIL}
           </a>
           .
         </P>

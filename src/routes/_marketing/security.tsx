@@ -19,6 +19,7 @@ import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { seo } from '@/lib/seo';
+import { SUPPORT_EMAIL } from '@/lib/constants';
 
 export const Route = createFileRoute('/_marketing/security')({
   head: () =>
@@ -31,7 +32,6 @@ export const Route = createFileRoute('/_marketing/security')({
   component: SecurityPage,
 });
 
-const CONTACT = 'support@nijam.dev';
 const UPDATED = 'June 22, 2026';
 
 type Pillar = { icon: ReactNode; tint: string; title: string; body: string };
@@ -348,10 +348,10 @@ function SecurityPage() {
               <P>
                 If you believe you’ve found a security issue, please email{' '}
                 <a
-                  href={`mailto:${CONTACT}`}
+                  href={`mailto:${SUPPORT_EMAIL}`}
                   className="text-primary underline-offset-4 hover:underline"
                 >
-                  {CONTACT}
+                  {SUPPORT_EMAIL}
                 </a>{' '}
                 with the details and steps to reproduce. We’ll acknowledge your report, investigate,
                 and keep you updated. Please give us a reasonable chance to fix the issue before

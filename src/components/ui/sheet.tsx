@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Cancel01Icon } from '@hugeicons/core-free-icons';
 import { getStrictContext } from '@/lib/get-strict-context';
+import { composeRefs, useFeedbackLayer } from '@/lib/feedback-layers';
 import { useControlledState } from '@/hooks/use-controlled-state';
 
 // Adapted from animate-ui's Radix sheet: the panel springs all the way in from the
@@ -116,15 +117,20 @@ function SheetContent({
   side = 'right',
   showCloseButton = true,
   transition = CONTENT_TRANSITION,
+  ref,
   ...props
 }: SheetContentProps) {
   const axis = side === 'left' || side === 'right' ? 'x' : 'y';
+  // The sliding panel, not Radix's wrapper, is the node the feedback trigger docks
+  // into: it is the visible surface (see lib/feedback-layers).
+  const layerRef = useFeedbackLayer<HTMLDivElement>();
 
   return (
     <SheetPortal>
       <SheetOverlay />
       <SheetPrimitive.Content forceMount>
         <motion.div
+          ref={composeRefs(ref, layerRef)}
           key="sheet-content"
           data-slot="sheet-content"
           data-side={side}
@@ -156,7 +162,11 @@ function SheetContent({
 
 function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <div data-slot="sheet-header" className={cn('flex flex-col gap-1.5 p-6', className)} {...props} />
+    <div
+      data-slot="sheet-header"
+      className={cn('flex flex-col gap-1.5 p-6', className)}
+      {...props}
+    />
   );
 }
 

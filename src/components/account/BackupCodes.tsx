@@ -4,6 +4,7 @@ import { Flex } from '@/components/ui/flex';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
+import { FEEDBACK_MASK_ATTR } from '@/lib/feedback-attrs';
 
 /** A read-once panel of recovery codes with copy + download actions. */
 export function BackupCodesPanel({ codes }: { codes: string[] }) {
@@ -26,7 +27,11 @@ export function BackupCodesPanel({ codes }: { codes: string[] }) {
 
   return (
     <Flex direction="col" gap={3}>
-      <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-muted/40 p-4">
+      {/* Live recovery codes: masked so a silent feedback screenshot cannot carry them. */}
+      <div
+        {...{ [FEEDBACK_MASK_ATTR]: '' }}
+        className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-muted/40 p-4"
+      >
         {codes.map((c) => (
           <Text key={c} as="span" className="text-center font-mono text-sm tracking-wide">
             {c}
