@@ -23,6 +23,7 @@ import { Route as MarketingSupportRouteImport } from './routes/_marketing/suppor
 import { Route as MarketingSecurityRouteImport } from './routes/_marketing/security'
 import { Route as MarketingPrivacyRouteImport } from './routes/_marketing/privacy'
 import { Route as MarketingPricingRouteImport } from './routes/_marketing/pricing'
+import { Route as MarketingIntegrationsRouteImport } from './routes/_marketing/integrations'
 import { Route as MarketingFeaturesRouteImport } from './routes/_marketing/features'
 import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
 import { Route as AuthedProfileIndexRouteImport } from './routes/_authed/profile.index'
@@ -133,6 +134,11 @@ const MarketingPrivacyRoute = MarketingPrivacyRouteImport.update({
 const MarketingPricingRoute = MarketingPricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingIntegrationsRoute = MarketingIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
 const MarketingFeaturesRoute = MarketingFeaturesRouteImport.update({
@@ -389,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/verify': typeof VerifyRoute
   '/profile': typeof AuthedProfileRouteWithChildren
   '/features': typeof MarketingFeaturesRoute
+  '/integrations': typeof MarketingIntegrationsRoute
   '/pricing': typeof MarketingPricingRoute
   '/privacy': typeof MarketingPrivacyRoute
   '/security': typeof MarketingSecurityRoute
@@ -445,6 +452,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/verify': typeof VerifyRoute
   '/features': typeof MarketingFeaturesRoute
+  '/integrations': typeof MarketingIntegrationsRoute
   '/pricing': typeof MarketingPricingRoute
   '/privacy': typeof MarketingPrivacyRoute
   '/security': typeof MarketingSecurityRoute
@@ -499,6 +507,7 @@ export interface FileRoutesById {
   '/verify': typeof VerifyRoute
   '/_authed/profile': typeof AuthedProfileRouteWithChildren
   '/_marketing/features': typeof MarketingFeaturesRoute
+  '/_marketing/integrations': typeof MarketingIntegrationsRoute
   '/_marketing/pricing': typeof MarketingPricingRoute
   '/_marketing/privacy': typeof MarketingPrivacyRoute
   '/_marketing/security': typeof MarketingSecurityRoute
@@ -559,6 +568,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/profile'
     | '/features'
+    | '/integrations'
     | '/pricing'
     | '/privacy'
     | '/security'
@@ -615,6 +625,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify'
     | '/features'
+    | '/integrations'
     | '/pricing'
     | '/privacy'
     | '/security'
@@ -668,6 +679,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/_authed/profile'
     | '/_marketing/features'
+    | '/_marketing/integrations'
     | '/_marketing/pricing'
     | '/_marketing/privacy'
     | '/_marketing/security'
@@ -826,6 +838,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof MarketingPricingRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/integrations': {
+      id: '/_marketing/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof MarketingIntegrationsRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
     '/_marketing/features': {
@@ -1295,6 +1314,7 @@ const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
 
 interface MarketingRouteRouteChildren {
   MarketingFeaturesRoute: typeof MarketingFeaturesRoute
+  MarketingIntegrationsRoute: typeof MarketingIntegrationsRoute
   MarketingPricingRoute: typeof MarketingPricingRoute
   MarketingPrivacyRoute: typeof MarketingPrivacyRoute
   MarketingSecurityRoute: typeof MarketingSecurityRoute
@@ -1311,6 +1331,7 @@ interface MarketingRouteRouteChildren {
 
 const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
   MarketingFeaturesRoute: MarketingFeaturesRoute,
+  MarketingIntegrationsRoute: MarketingIntegrationsRoute,
   MarketingPricingRoute: MarketingPricingRoute,
   MarketingPrivacyRoute: MarketingPrivacyRoute,
   MarketingSecurityRoute: MarketingSecurityRoute,

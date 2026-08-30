@@ -9,6 +9,7 @@
 export const HOME_ROUTE = '/';
 export const FEATURES_ROUTE = '/features';
 export const PRICING_ROUTE = '/pricing';
+export const INTEGRATIONS_ROUTE = '/integrations';
 // Competitor comparison pages live under /compare/* so more can be added later.
 export const COMPARE_DATADOG_ROUTE = '/compare/datadog';
 export const COMPARE_ALLURE_ROUTE = '/compare/allure';
