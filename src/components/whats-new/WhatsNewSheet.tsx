@@ -53,10 +53,13 @@ function UpdateRow({
   return (
     // A full-width row rather than a pill, so the Button's own layout/shape is overridden:
     // it stays the interactive element, the className makes it read as a list row.
+    // `border-0` before `border-b` is load-bearing: the button base is
+    // `border border-transparent`, and `border-border` merges over the color on ALL
+    // four sides, so without zeroing the widths first the row draws a full box.
     <Button
       variant="ghost"
       onClick={onOpen}
-      className="h-auto w-full items-start justify-start gap-3.5 rounded-none border-b border-border px-6 py-4 text-left font-normal whitespace-normal last:border-b-0"
+      className="h-auto w-full items-start justify-start gap-3.5 rounded-none border-0 border-b border-border px-6 py-4 text-left font-normal whitespace-normal last:border-b-0"
     >
       <UpdateBadge update={update} size={20} />
       <Flex direction="col" gap={1} className="min-w-0 flex-1">

@@ -12,6 +12,7 @@ import { Grid } from '@/components/ui/grid';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { seo } from '@/lib/seo';
+import { SUPPORT_EMAIL } from '@/lib/constants';
 
 export const Route = createFileRoute('/_marketing/support')({
   head: () =>
@@ -24,7 +25,6 @@ export const Route = createFileRoute('/_marketing/support')({
   component: SupportPage,
 });
 
-const CONTACT = 'support@nijam.dev';
 const UPDATED = 'June 20, 2026';
 
 type Channel = {
@@ -42,8 +42,11 @@ const CHANNELS: Channel[] = [
     title: 'Email us',
     body: 'The fastest way to reach a human. Account, billing, bugs, feature requests, anything. We usually reply within one business day.',
     action: (
-      <a href={`mailto:${CONTACT}`} className="text-primary underline-offset-4 hover:underline">
-        {CONTACT}
+      <a
+        href={`mailto:${SUPPORT_EMAIL}`}
+        className="text-primary underline-offset-4 hover:underline"
+      >
+        {SUPPORT_EMAIL}
       </a>
     ),
   },
@@ -69,7 +72,10 @@ const CHANNELS: Channel[] = [
     title: 'Integration help',
     body: 'Runs not showing up, a reporter not uploading, or Slack and GitHub checks misbehaving? Send us the project and a CI log and we’ll dig in.',
     action: (
-      <a href={`mailto:${CONTACT}`} className="text-primary underline-offset-4 hover:underline">
+      <a
+        href={`mailto:${SUPPORT_EMAIL}`}
+        className="text-primary underline-offset-4 hover:underline"
+      >
         Email integration support
       </a>
     ),
@@ -138,10 +144,10 @@ function SupportPage() {
               <P>
                 Email{' '}
                 <a
-                  href={`mailto:${CONTACT}`}
+                  href={`mailto:${SUPPORT_EMAIL}`}
                   className="text-primary underline-offset-4 hover:underline"
                 >
-                  {CONTACT}
+                  {SUPPORT_EMAIL}
                 </a>{' '}
                 from the address on your account and include as much as you can, the more context,
                 the faster we can help:
@@ -194,10 +200,10 @@ function SupportPage() {
                 accounts from your account settings. For plan changes, invoices, or anything billing
                 related, email{' '}
                 <a
-                  href={`mailto:${CONTACT}`}
+                  href={`mailto:${SUPPORT_EMAIL}`}
                   className="text-primary underline-offset-4 hover:underline"
                 >
-                  {CONTACT}
+                  {SUPPORT_EMAIL}
                 </a>{' '}
                 and we’ll sort it out. Billing is handled by Polar, see the{' '}
                 <Link
@@ -214,10 +220,10 @@ function SupportPage() {
               <P>
                 To report a vulnerability, email{' '}
                 <a
-                  href={`mailto:${CONTACT}`}
+                  href={`mailto:${SUPPORT_EMAIL}`}
                   className="text-primary underline-offset-4 hover:underline"
                 >
-                  {CONTACT}
+                  {SUPPORT_EMAIL}
                 </a>{' '}
                 with steps to reproduce and give us a reasonable window to fix it before public
                 disclosure. For how we handle and protect your data, see our{' '}

@@ -129,14 +129,16 @@ function ProgressToast({ id, variant, title, description, duration, action }: Pr
         </Flex>
       </Flex>
 
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon-sm"
         aria-label="Dismiss notification"
         onClick={() => toast.dismiss(id)}
-        className="absolute top-2 right-2 grid size-7 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-none"
+        className="absolute top-2 right-2"
       >
-        <HugeiconsIcon icon={Cancel01Icon} size={16} strokeWidth={2} />
-      </button>
+        <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2} />
+      </Button>
 
       {/* auto-close progress bar (omitted for persistent toasts) */}
       {autoCloses && (

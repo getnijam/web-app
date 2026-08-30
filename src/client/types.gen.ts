@@ -1067,6 +1067,31 @@ export type StartImpersonationBody = {
     reason?: string;
 };
 
+export type FeedbackResponse = {
+    id: string;
+    createdAt: string;
+};
+
+export type FeedbackContextBody = {
+    path?: string;
+    projectId?: string;
+    runId?: string;
+    viewport?: {
+        width: number;
+        height: number;
+    };
+    theme?: string;
+};
+
+export type CreateFeedbackBody = {
+    kind: 'bug' | 'idea' | 'other';
+    message: string;
+    orgId?: string;
+    context?: FeedbackContextBody;
+    screenshot?: string | null;
+    screenshotDeclined?: boolean;
+};
+
 export type SignupData = {
     body?: SignupBody;
     path?: never;
@@ -5006,3 +5031,36 @@ export type StopImpersonationResponses = {
 };
 
 export type StopImpersonationResponse = StopImpersonationResponses[keyof StopImpersonationResponses];
+
+export type CreateFeedbackData = {
+    body?: CreateFeedbackBody;
+    path?: never;
+    query?: never;
+    url: '/v1/feedback';
+};
+
+export type CreateFeedbackErrors = {
+    /**
+     * Invalid feedback
+     */
+    400: ApiError;
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Too many submissions
+     */
+    429: ApiError;
+};
+
+export type CreateFeedbackError = CreateFeedbackErrors[keyof CreateFeedbackErrors];
+
+export type CreateFeedbackResponses = {
+    /**
+     * Feedback recorded
+     */
+    201: FeedbackResponse;
+};
+
+export type CreateFeedbackResponse = CreateFeedbackResponses[keyof CreateFeedbackResponses];

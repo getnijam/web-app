@@ -72,6 +72,10 @@ function Button({
     );
   }
 
+  // An icon button has room for exactly one glyph, so the spinner replaces the icon
+  // rather than crowding in beside it. Text buttons keep their label next to it.
+  const iconOnly = typeof size === 'string' && size.startsWith('icon');
+
   return (
     <button
       data-slot="button"
@@ -83,7 +87,7 @@ function Button({
       {...props}
     >
       {loading && <Loader2 className="animate-spin" aria-hidden="true" />}
-      {children}
+      {!(loading && iconOnly) && children}
     </button>
   );
 }

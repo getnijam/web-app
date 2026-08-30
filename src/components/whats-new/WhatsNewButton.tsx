@@ -38,12 +38,14 @@ export function WhatsNewButton() {
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
-            size="icon"
+            size="icon-sm"
             aria-label={hasUnseen ? "What's new, unread updates" : "What's new"}
             onClick={() => setOpen(true)}
-            className="relative size-9 text-muted-foreground hover:text-foreground"
+            // Plain ghost, matching the feedback trigger beside it. `relative` is the
+            // only class here, and it is functional: the unseen dot anchors to it.
+            className="relative"
           >
-            <HugeiconsIcon icon={Megaphone01Icon} size={22} strokeWidth={1.8} />
+            <HugeiconsIcon icon={Megaphone01Icon} strokeWidth={2} />
             {hasUnseen && <UnseenDot />}
           </Button>
         </TooltipTrigger>

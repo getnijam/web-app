@@ -28,6 +28,7 @@ import { FieldError } from '@/components/auth/AuthLayout';
 import { BackupCodesPanel } from '@/components/account/BackupCodes';
 import { track } from '@/lib/betterstack';
 import { isApiError } from '@/lib/api-error';
+import { FEEDBACK_MASK_ATTR } from '@/lib/feedback-attrs';
 
 /**
  * Guided TOTP enrollment: scan the QR (or enter the secret) in an authenticator app,
@@ -112,7 +113,12 @@ export function TwoFactorSetupDialog({
             {setup.data && (
               <Flex direction="col" gap={5}>
                 <Flex justify="center">
-                  <div className="rounded-xl border border-border bg-white p-3">
+                  {/* The QR *is* the TOTP seed, so it is masked like the key beside it:
+                      the feedback capture wipes a masked node's children, drawing included. */}
+                  <div
+                    {...{ [FEEDBACK_MASK_ATTR]: '' }}
+                    className="rounded-xl border border-border bg-white p-3"
+                  >
                     <QRCodeSVG value={setup.data.otpauthUri} size={176} />
                   </div>
                 </Flex>
@@ -121,7 +127,7 @@ export function TwoFactorSetupDialog({
                   <Text variant="caption" color="muted">
                     Or enter this key manually:
                   </Text>
-                  <CopyField value={setup.data.secret} />
+                  <CopyField value={setup.data.secret} sensitive />
                 </Flex>
 
                 <Flex

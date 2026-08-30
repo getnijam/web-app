@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { TERMS_ROUTE } from '@/lib/routes';
 import { LegalLayout, Section, P, Bullets } from '@/components/legal/LegalLayout';
 import { seo } from '@/lib/seo';
+import { SUPPORT_EMAIL } from '@/lib/constants';
 
 export const Route = createFileRoute('/_marketing/privacy')({
   head: () =>
@@ -12,8 +13,6 @@ export const Route = createFileRoute('/_marketing/privacy')({
     }),
   component: PrivacyPage,
 });
-
-const CONTACT = 'support@nijam.dev';
 
 function PrivacyPage() {
   return (
@@ -206,8 +205,11 @@ function PrivacyPage() {
       <Section title="11. Contact">
         <P>
           Questions about your privacy or this policy? Email us at{' '}
-          <a href={`mailto:${CONTACT}`} className="text-primary underline-offset-4 hover:underline">
-            {CONTACT}
+          <a
+            href={`mailto:${SUPPORT_EMAIL}`}
+            className="text-primary underline-offset-4 hover:underline"
+          >
+            {SUPPORT_EMAIL}
           </a>
           . See also our{' '}
           <Link to={TERMS_ROUTE} className="text-primary underline-offset-4 hover:underline">
