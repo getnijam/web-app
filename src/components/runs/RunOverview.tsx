@@ -228,7 +228,7 @@ export function RunOverview({
           asChild
           variant="ghost"
           size="sm"
-          className="-ml-2 rounded-lg text-muted-foreground"
+          className="rounded-lg pl-1.5 text-muted-foreground"
         >
           <Link to={RUNS_ROUTE} params={{ orgId, projectId }}>
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
