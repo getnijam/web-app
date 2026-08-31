@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { login } from './utils/auth';
+import { expectLoginRejected, login } from './utils/auth';
 import { inboxConfigured, uniqueTestEmail, waitForVerificationToken } from './utils/inbox';
 
 const PASSWORD = 'e2e-Passw0rd!verify';
@@ -140,16 +140,6 @@ test.describe('Sign in', () => {
   test.skip(!FIXTURE_EMAIL, 'Set NIJAM_E2E_EMAIL to run.');
 
   test('a wrong password is refused without revealing the account exists', async ({ page }) => {
-    await page.goto('/login');
-    // Identity-first: the password field only appears once the email step resolves.
-    await page.getByTestId('login-email').fill(FIXTURE_EMAIL);
-    await page.getByTestId('login-continue').click();
-    await page.getByTestId('login-password').fill('definitely-not-the-password');
-    await page.getByTestId('login-submit').click();
-
-    await expect(page.getByText(/invalid|incorrect|check your details/i)).toBeVisible({
-      timeout: 15_000,
-    });
-    await expect(page).toHaveURL(/\/login/);
+    await expectLoginRejected(page, FIXTURE_EMAIL, 'definitely-not-the-password');
   });
 });

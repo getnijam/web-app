@@ -1,4 +1,4 @@
-import { type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 /**
  * Where login can land. A first-time account (no `lastOrgId`) gets the org picker at
@@ -18,6 +18,16 @@ const LANDING_URL = /\/orgs(\/|$|\?)/;
  * picker the app had already skipped.
  */
 export async function login(page: Page, email: string, password: string): Promise<void> {
+  await submitLogin(page, email, password);
+  await page.waitForURL(LANDING_URL);
+}
+
+/**
+ * Walk the login form and submit, without asserting what happens next. Split out of
+ * `login` so the rejected path can reuse it: the identity-first sequence is the same
+ * either way, and only the expected outcome differs.
+ */
+export async function submitLogin(page: Page, email: string, password: string): Promise<void> {
   await page.goto('/login');
   await page.getByTestId('login-email').fill(email);
   await page.getByTestId('login-continue').click();
@@ -25,5 +35,25 @@ export async function login(page: Page, email: string, password: string): Promis
   // so fill() auto-waits for it to appear.
   await page.getByTestId('login-password').fill(password);
   await page.getByTestId('login-submit').click();
-  await page.waitForURL(LANDING_URL);
+}
+
+/**
+ * Submit a login that should NOT succeed, and assert it was refused.
+ *
+ * Also asserts the message does not name the reason. The API answers an unknown email
+ * and a wrong password identically (INVALID_CREDENTIALS) so the form cannot be used to
+ * discover whether an address has an account; a copy change that started distinguishing
+ * them would quietly undo that, and this is where it gets caught.
+ */
+export async function expectLoginRejected(
+  page: Page,
+  email: string,
+  password: string,
+): Promise<void> {
+  await submitLogin(page, email, password);
+  await expect(page.getByText(/invalid|incorrect|check your details/i)).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page.getByText(/no account|not found|does not exist|unregistered/i)).toBeHidden();
+  await expect(page).toHaveURL(/\/login/);
 }
