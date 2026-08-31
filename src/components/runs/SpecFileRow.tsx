@@ -14,6 +14,9 @@ const ICON_TINT: Record<FileStatus, string> = {
   passed: 'bg-success/10 text-success',
   failed: 'bg-destructive/10 text-destructive',
   flaky: 'bg-warning/10 text-warning',
+  // Info, not warning: a quarantined failure is known and parked, so it reads as
+  // informational rather than as the "look at me" amber flaky carries.
+  quarantined: 'bg-info/10 text-info',
   pending: 'bg-muted text-muted-foreground',
 };
 
@@ -82,6 +85,7 @@ export function SpecFileRow({
           passed={file.passed}
           failed={file.failed}
           flaky={file.flaky}
+          quarantined={file.quarantined}
           skipped={file.skipped}
         />
       )}

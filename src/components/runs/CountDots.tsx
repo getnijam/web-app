@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { cn } from '@/lib/utils';
 import type { RunStatusFilter } from './status-filter';
 
-type CountKind = 'passed' | 'failed' | 'flaky' | 'skipped';
+type CountKind = 'passed' | 'failed' | 'flaky' | 'quarantined' | 'skipped';
 
 /** Where a clickable pill should jump, the run, with its status filter applied. */
 type CountLink = { orgId: string; projectId: string; runId: string };
@@ -14,6 +14,7 @@ const PILL: Record<CountKind, string> = {
   passed: 'border-success/40 bg-success/15 text-success',
   failed: 'border-destructive/40 bg-destructive/15 text-destructive',
   flaky: 'border-warning/40 bg-warning/15 text-warning',
+  quarantined: 'border-info/40 bg-info/15 text-info',
   skipped: 'border-muted-foreground/30 bg-muted-foreground/10 text-muted-foreground',
 };
 
@@ -23,6 +24,7 @@ const KIND_STATUS: Partial<Record<CountKind, RunStatusFilter>> = {
   passed: 'passed',
   failed: 'failed',
   flaky: 'flaky',
+  quarantined: 'quarantined',
 };
 
 // Tooltip copy, with singular/plural agreement (e.g. "1 test is flaky" vs
@@ -31,6 +33,7 @@ const LABEL: Record<CountKind, (n: number) => string> = {
   passed: (n) => `${n} ${n === 1 ? 'test' : 'tests'} passed`,
   failed: (n) => `${n} ${n === 1 ? 'test' : 'tests'} failed`,
   flaky: (n) => `${n} ${n === 1 ? 'test is' : 'tests are'} flaky`,
+  quarantined: (n) => `${n} quarantined ${n === 1 ? 'test' : 'tests'} failed, not blocking`,
   skipped: (n) => `${n} ${n === 1 ? 'test' : 'tests'} skipped`,
 };
 
@@ -70,27 +73,34 @@ function CountPill({ value, kind, link }: { value: number; kind: CountKind; link
 }
 
 /**
- * passed/failed/flaky/skipped counts as small tinted pills; all but passed hidden
- * when zero. Pass `link` to make passed/failed/flaky deep-link into the run with
- * that status filter applied (skipped stays a plain badge, it has no filter).
+ * passed/failed/flaky/quarantined/skipped counts as small tinted pills; all but passed
+ * hidden when zero. Pass `link` to deep-link a pill into the run with that status filter
+ * applied (skipped stays a plain badge, it has no filter).
+ *
+ * `quarantined` is a SUBSET of `failed`, so the failed pill shows the blocking remainder;
+ * otherwise a run with two quarantined failures would read "2 failed, 2 quarantined".
  */
 export function CountDots({
   passed,
   failed,
   flaky,
+  quarantined = 0,
   skipped = 0,
   link,
 }: {
   passed: number;
   failed: number;
   flaky: number;
+  quarantined?: number;
   skipped?: number;
   link?: CountLink;
 }) {
+  const blockingFailed = Math.max(0, failed - quarantined);
   return (
     <Flex align="center" gap={1.5} className="shrink-0">
       <CountPill value={passed} kind="passed" link={link} />
-      {failed > 0 && <CountPill value={failed} kind="failed" link={link} />}
+      {blockingFailed > 0 && <CountPill value={blockingFailed} kind="failed" link={link} />}
+      {quarantined > 0 && <CountPill value={quarantined} kind="quarantined" link={link} />}
       {flaky > 0 && <CountPill value={flaky} kind="flaky" link={link} />}
       {skipped > 0 && <CountPill value={skipped} kind="skipped" />}
     </Flex>

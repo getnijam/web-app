@@ -217,6 +217,7 @@ export function RunRow({
               passed={run.stats.passed}
               failed={run.stats.failed}
               flaky={run.stats.flaky}
+              quarantined={run.stats.quarantined}
               skipped={run.stats.skipped}
               link={{ orgId, projectId, runId: run.id }}
             />

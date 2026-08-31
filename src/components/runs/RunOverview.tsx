@@ -26,7 +26,7 @@ import { RunStatusBadge } from './RunStatusBadge';
 import { RunTimeline } from './RunTimeline';
 import { AttemptSwitcher } from './AttemptSwitcher';
 import { SpecFileRow } from './SpecFileRow';
-import { fileStatus } from './file-status';
+import { matchesStatusFilter } from './file-status';
 import { STATUS_OPTIONS, type RunStatusFilter } from './status-filter';
 import { type RunView } from '@/routes/_authed/orgs.$orgId.projects.$projectId.runs.$runId.index';
 import { runDisplayStatus } from './run-status';
@@ -107,7 +107,7 @@ export function RunOverview({
   const author = displayAuthor(run.authorEmail, run.authorName);
   const branchHref = gitBranchUrl(run);
 
-  const visibleFiles = status === 'all' ? files : files.filter((f) => fileStatus(f) === status);
+  const visibleFiles = files.filter((f) => matchesStatusFilter(f, status));
   const activeLabel = STATUS_OPTIONS.find((o) => o.value === status)?.label.toLowerCase() ?? status;
 
   function renderFiles() {
