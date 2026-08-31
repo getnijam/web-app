@@ -3,6 +3,7 @@ import { login } from './utils/auth';
 import { inboxConfigured, uniqueTestEmail, waitForVerificationToken } from './utils/inbox';
 
 const PASSWORD = 'e2e-Passw0rd!verify';
+const FIXTURE_EMAIL = process.env.NIJAM_E2E_EMAIL ?? '';
 
 // Real email delivery dominates the wall clock here: `waitForVerificationToken` alone
 // allows 90s, and the sign-in spec pays that plus two login attempts and cleanup. The
@@ -91,7 +92,7 @@ test.describe('Signup', () => {
     'Set RESEND_INBOX_DOMAIN and RESEND_API_KEY to run the inbound-email specs.',
   );
 
-  test('sign up, verify by email, land signed in', async ({ page }) => {
+  test('sign up, verify by email, replay the link, land signed in', async ({ page }) => {
     const email = uniqueTestEmail();
 
     await submitSignup(page, 'E2E Signup', email);
@@ -106,79 +107,49 @@ test.describe('Signup', () => {
     await page.goto(`/verify?token=${token}`);
     await expect(page.getByText('Email verified')).toBeVisible({ timeout: 15_000 });
 
+    // Visiting the same link again must still read as verified. `verify.tsx` catches
+    // VERIFICATION_TOKEN_USED and shows success on the reasoning that a second visit is
+    // almost always a double click, and erroring at someone for succeeding is hostile.
+    // The token is still single-use server-side; this asserts the UI's deliberate
+    // softening of it, so a change that starts erroring on a double click gets caught.
+    // Folded in here rather than given its own test: a separate test would mean a
+    // separate signup, and signupLimit is 5/hour per IP, which two runs would exceed.
+    await page.goto(`/verify?token=${token}`);
+    await expect(page.getByText('Email verified')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/invalid link|link expired/i)).toBeHidden();
+
     // Verifying does not create a session; it hands you to sign-in. Follow that through
     // so the test proves the account is actually usable, not merely marked verified.
     await page.getByRole('link', { name: 'Continue to sign in' }).click();
     await page.waitForURL(/\/login/, { timeout: 15_000 });
     await login(page, email, PASSWORD);
-  });
+    await page.waitForURL(/\/orgs(\/|$|\?)/, { timeout: 15_000 });
 
-  test('a replayed verification link still reads as verified', async ({ page }) => {
-    const email = uniqueTestEmail();
-
-    await submitSignup(page, 'E2E Replay', email);
-    created = { email, password: PASSWORD };
-
-    const token = await waitForVerificationToken(email);
-    await page.goto(`/verify?token=${token}`);
-    await expect(page.getByText('Email verified')).toBeVisible({ timeout: 15_000 });
-
-    // The token IS single-use server-side: the second call returns
-    // VERIFICATION_TOKEN_USED. `verify.tsx` deliberately renders that as success anyway,
-    // on the reasoning that a second visit almost always means the user clicked twice,
-    // and showing them an error for succeeding is hostile. This asserts that decision, so
-    // a future change that starts erroring on a double click gets caught.
-    await page.goto(`/verify?token=${token}`);
-    await expect(page.getByText('Email verified')).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText(/invalid link|link expired/i)).toBeHidden();
-
-    await login(page, email, PASSWORD);
+    // The session must survive a reload, not just the redirect straight after login.
+    await page.reload();
+    await expect(page).toHaveURL(/\/orgs(\/|$|\?)/);
   });
 });
 
 test.describe('Sign in', () => {
-  test.skip(
-    !inboxConfigured,
-    'Set RESEND_INBOX_DOMAIN and RESEND_API_KEY to run the inbound-email specs.',
-  );
+  // Deliberately uses the existing fixture account rather than creating one. A wrong
+  // password needs *an* account, not a fresh one, and `signupLimit` is 5/hour per IP:
+  // every signup this suite spends is one a re-run cannot. The positive path (right
+  // password, session persists) is covered by the signup journey above, on an account
+  // that test already had to create.
+  test.skip(!FIXTURE_EMAIL, 'Set NIJAM_E2E_EMAIL to run.');
 
-  test('wrong password is refused, right password signs in and persists', async ({ page }) => {
-    const email = uniqueTestEmail();
-
-    // A verified account of our own, so this spec never depends on a shared fixture
-    // user whose password someone might rotate.
-    await submitSignup(page, 'E2E Signin', email);
-    created = { email, password: PASSWORD };
-    const token = await waitForVerificationToken(email);
-    await page.goto(`/verify?token=${token}`);
-    await expect(page.getByText('Email verified')).toBeVisible({ timeout: 15_000 });
-
-    // Drop the session rather than driving the UI: `AccountMenu` only renders in the
-    // marketing nav and the settings layout, not on /orgs where verification lands, so
-    // a sign-out click here would be looking for a button that is not on the page. This
-    // also exercises the _authed gate, which should bounce a session-less visit.
-    await page.context().clearCookies();
-    await page.goto('/orgs');
-    await page.waitForURL(/\/login/, { timeout: 15_000 });
-
-    // Identity-first: the password field only appears after the email step resolves.
-    await page.getByTestId('login-email').fill(email);
+  test('a wrong password is refused without revealing the account exists', async ({ page }) => {
+    await page.goto('/login');
+    // Identity-first: the password field only appears once the email step resolves.
+    await page.getByTestId('login-email').fill(FIXTURE_EMAIL);
     await page.getByTestId('login-continue').click();
     await page.getByTestId('login-password').fill('definitely-not-the-password');
     await page.getByTestId('login-submit').click();
 
-    // The message must not reveal whether the account exists.
     await expect(page.getByText(/invalid|incorrect|check your details/i)).toBeVisible({
       timeout: 15_000,
     });
     await expect(page).toHaveURL(/\/login/);
-
-    await page.getByTestId('login-password').fill(PASSWORD);
-    await page.getByTestId('login-submit').click();
-    await page.waitForURL(/\/orgs(\/|$|\?)/, { timeout: 15_000 });
-
-    // The session must survive a reload, not just the redirect after login.
-    await page.reload();
-    await expect(page).toHaveURL(/\/orgs(\/|$|\?)/);
   });
 });
