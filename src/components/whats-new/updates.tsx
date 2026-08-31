@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { BubbleChatIcon, CloudServerIcon } from '@hugeicons/core-free-icons';
+import { BubbleChatIcon, CloudServerIcon, ShieldBanIcon } from '@hugeicons/core-free-icons';
 import { GitHubLogo } from '@/components/integrations/GitHubLogo';
 import { GitLabLogo } from '@/components/integrations/GitLabLogo';
 import {
   ORG_INTEGRATIONS_GITHUB_ROUTE,
   ORG_INTEGRATIONS_GITLAB_ROUTE,
+  ORG_PROJECTS_ROUTE,
   ORG_SETTINGS_BYOC_ROUTE,
 } from '@/lib/routes';
 
@@ -66,6 +67,43 @@ export function isRecentUpdate(update: Update): boolean {
 }
 
 export const UPDATES: Update[] = [
+  {
+    id: 'test-quarantine',
+    title: 'Quarantine a known-bad test',
+    date: '2026-08-31',
+    tag: 'Platform',
+    summary: 'Park a flaky test so its failures stop marking runs as failed.',
+    icon: (size) => (
+      <HugeiconsIcon icon={ShieldBanIcon} size={size} strokeWidth={1.8} className="text-info" />
+    ),
+    sections: [
+      {
+        body: 'Nijam already told you which tests were flaky. Acting on it meant editing a skip into the repo, which needs a pull request, stops the test running, and never gets revisited. Quarantine moves that decision into Nijam, where it stays visible and reversible.',
+      },
+      {
+        heading: 'What changes',
+        bullets: [
+          'A run is no longer marked as failed when its only failures are quarantined, and it shows as a pass across your run history.',
+          'The check we post to GitHub or GitLab stays green, which may unblock the pull request if your team has it set as required.',
+          'Slack stops paging you for it: the fail and regression triggers no longer fire when nothing blocking broke.',
+          'A run with one real failure and one quarantined failure is still a failure. Quarantine subtracts, it does not silence.',
+        ],
+      },
+      {
+        heading: 'Nothing is hidden',
+        body: 'Every surface that goes green because of a quarantine says so and names the tests: the pull request check and comment, the GitLab commit status, and the run itself, which renders as green but not clean rather than as a plain pass. Any member can see the full list, even though only admins can change it.',
+      },
+      {
+        heading: 'It keeps running, on purpose',
+        body: 'A quarantined test still runs and still records results. A test that stops running can never prove it is healthy again, so this is what lets Nijam tell you that something has passed 14 runs in a row and is ready to come out. That prompt is the difference between a ledger and a graveyard. It also means there is nothing to change in your reporter, and it works the same for Playwright, pytest, and Vitest.',
+      },
+      {
+        heading: 'Where to find it',
+        body: 'Quarantine a test from the run file view, the test explorer, the flaky list, the failing list, or the test detail page. The full list, with who quarantined each test and how it has behaved since, lives under Test explorer, Quarantined. Organization admins only, since it changes whether future runs are recorded as failures.',
+      },
+    ],
+    cta: { label: 'Open your projects', to: ORG_PROJECTS_ROUTE },
+  },
   {
     id: 'in-product-feedback',
     title: 'Send feedback',

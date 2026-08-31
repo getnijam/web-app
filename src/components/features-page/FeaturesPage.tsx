@@ -7,6 +7,7 @@ import {
   Clock01Icon,
   WorkflowSquare01Icon,
   BellIcon,
+  ShieldBanIcon,
   AiChat02Icon,
   ShieldKeyIcon,
   CloudServerIcon,
@@ -79,6 +80,12 @@ const WORKFLOW: Feature[] = [
     tint: 'bg-info/15 text-info',
     title: 'Re-run only what failed',
     body: 'Pull the exact tests that failed on the last run by ID, re-run just those in CI, and Nijam clubs the retry into the same run as another attempt, so a flake that passes second time flips the run green.',
+  },
+  {
+    icon: ShieldBanIcon,
+    tint: 'bg-info/15 text-info',
+    title: 'Quarantine a known-bad test',
+    body: 'Park a flaky test in one click and its failures stop marking runs as failed, so the suite goes back to telling you the truth about everything else. It keeps running, so Nijam can tell you when it has passed long enough to come back out. Unlike a test.skip() in your repo, nothing is hidden: every green check names what is quarantined.',
   },
   {
     icon: BellIcon,
