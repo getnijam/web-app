@@ -137,9 +137,10 @@ jobs:
           # with FULL access: a send-only key does not fail fast, it 401s on the first
           # poll after the signup has already appeared to work. Unset = those specs skip.
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          # Not a secret, just the receiving subdomain. Resend accepts any local part on
-          # it, so each run gets a fresh address.
-          RESEND_INBOX_DOMAIN: inbox.nijam.dev
+          # The Resend receiving subdomain. Resend accepts any local part on it, so each
+          # run gets a fresh address. Kept as a repo secret alongside the key rather than
+          # inlined, so changing it needs no code change.
+          RESEND_INBOX_DOMAIN: ${{ secrets.RESEND_INBOX_DOMAIN }}
           # Optional: dogfood, upload the run to Nijam (the GitHub App then posts a
           # check/comment on the PR). Inert unless both are set.
           NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}
