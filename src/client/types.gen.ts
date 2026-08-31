@@ -508,6 +508,7 @@ export type TestCaseSummary = {
     retries: number;
     line: number | null;
     lastRunAt: string;
+    quarantined: boolean;
 };
 
 export type TestExplorerResponse = {
@@ -569,6 +570,45 @@ export type TestDetailResponse = {
     history: Array<TestHistoryEntry>;
     latestRun: RunGitRef;
     source: TestSourceRef;
+};
+
+export type QuarantineActor = {
+    id: string;
+    name: string | null;
+    email: string;
+} | null;
+
+export type QuarantineHistoryEntry = {
+    runId: string;
+    status: 'passed' | 'failed' | 'flaky' | 'skipped';
+    startedAt: string;
+};
+
+export type QuarantineEntry = {
+    testId: string;
+    file: string | null;
+    title: string | null;
+    reason: string | null;
+    quarantinedByUserId: string | null;
+    quarantinedBy: QuarantineActor;
+    createdAt: string;
+    history: Array<QuarantineHistoryEntry>;
+    consecutivePasses: number;
+};
+
+export type QuarantineListResponse = {
+    entries: Array<QuarantineEntry>;
+};
+
+export type AddQuarantineBody = {
+    testId: string;
+    file?: string;
+    title?: string;
+    reason?: string;
+};
+
+export type QuarantineRemovedResponse = {
+    ok: true;
 };
 
 export type RunCreatedResponse = {
@@ -705,6 +745,7 @@ export type RunSummary = {
         failed: number;
         skipped: number;
         flaky: number;
+        quarantined: number;
     } | null;
     shardTotal: number | null;
     ciRunAttempt: number | null;
@@ -728,6 +769,7 @@ export type RunAggregate = {
     failed: number;
     flaky: number;
     skipped: number;
+    quarantined: number;
     durationSec: number | null;
 };
 
@@ -738,6 +780,7 @@ export type RunFileSummary = {
     failed: number;
     flaky: number;
     skipped: number;
+    quarantined: number;
     pending: boolean;
 };
 
@@ -754,6 +797,7 @@ export type RunAttemptSummary = {
         failed: number;
         skipped: number;
         flaky: number;
+        quarantined: number;
     } | null;
 };
 
@@ -815,6 +859,7 @@ export type TestCase = {
     title: string;
     titlePath: Array<string>;
     status: 'passed' | 'failed' | 'flaky' | 'skipped';
+    quarantined: boolean;
     attempts: Array<AttemptSummary>;
 };
 
@@ -3524,6 +3569,108 @@ export type GetProjectTestResponses = {
 
 export type GetProjectTestResponse = GetProjectTestResponses[keyof GetProjectTestResponses];
 
+export type ListProjectQuarantineData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/quarantine';
+};
+
+export type ListProjectQuarantineErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Project not found
+     */
+    404: ApiError;
+};
+
+export type ListProjectQuarantineError = ListProjectQuarantineErrors[keyof ListProjectQuarantineErrors];
+
+export type ListProjectQuarantineResponses = {
+    /**
+     * OK
+     */
+    200: QuarantineListResponse;
+};
+
+export type ListProjectQuarantineResponse = ListProjectQuarantineResponses[keyof ListProjectQuarantineResponses];
+
+export type AddProjectQuarantineData = {
+    body?: AddQuarantineBody;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/quarantine';
+};
+
+export type AddProjectQuarantineErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Project not found
+     */
+    404: ApiError;
+};
+
+export type AddProjectQuarantineError = AddProjectQuarantineErrors[keyof AddProjectQuarantineErrors];
+
+export type AddProjectQuarantineResponses = {
+    /**
+     * Quarantined
+     */
+    200: QuarantineEntry;
+};
+
+export type AddProjectQuarantineResponse = AddProjectQuarantineResponses[keyof AddProjectQuarantineResponses];
+
+export type RemoveProjectQuarantineData = {
+    body?: never;
+    path: {
+        projectId: string;
+        testId: string;
+    };
+    query?: never;
+    url: '/v1/projects/{projectId}/quarantine/{testId}';
+};
+
+export type RemoveProjectQuarantineErrors = {
+    /**
+     * Not authenticated
+     */
+    401: ApiError;
+    /**
+     * Not an admin
+     */
+    403: ApiError;
+    /**
+     * Project not found
+     */
+    404: ApiError;
+};
+
+export type RemoveProjectQuarantineError = RemoveProjectQuarantineErrors[keyof RemoveProjectQuarantineErrors];
+
+export type RemoveProjectQuarantineResponses = {
+    /**
+     * Removed
+     */
+    200: QuarantineRemovedResponse;
+};
+
+export type RemoveProjectQuarantineResponse = RemoveProjectQuarantineResponses[keyof RemoveProjectQuarantineResponses];
+
 export type CreateRunData = {
     body?: CreateRunBody;
     path?: never;
@@ -3904,7 +4051,7 @@ export type ListProjectRunsData = {
         projectId: string;
     };
     query?: {
-        status?: 'all' | 'passed' | 'failed' | 'flaky' | Array<'all' | 'passed' | 'failed' | 'flaky'>;
+        status?: 'all' | 'passed' | 'failed' | 'flaky' | 'quarantined' | Array<'all' | 'passed' | 'failed' | 'flaky' | 'quarantined'>;
         branch?: string;
         user?: string;
         environment?: string;

@@ -22,6 +22,7 @@ import {
   type RunStatusFilter,
   type RunFilterValues,
 } from '@/components/runs/RunFilters';
+import { RUN_LIST_STATUSES } from '@/components/runs/status-filter';
 import { RunsPager } from '@/components/runs/RunsPager';
 import { RunRow } from '@/components/runs/RunRow';
 import { HoverHighlight } from '@/components/ui/hover-highlight';
@@ -55,7 +56,6 @@ interface RunsSearch {
 
 // No 'flaky' verdict filter on the runs list (a flaky-recovered run is Passed here);
 // a stale ?status=flaky URL falls back to 'all'. Flakiness is filtered inside a run.
-const STATUSES: RunStatusFilter[] = ['all', 'passed', 'failed'];
 const PAGE_SIZE = 20;
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/runs/')({
@@ -65,7 +65,7 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/r
     const page = Number(search.page);
     const { from, to } = validateDateRangeSearch(search);
     return {
-      status: STATUSES.includes(search.status as RunStatusFilter)
+      status: RUN_LIST_STATUSES.includes(search.status as RunStatusFilter)
         ? (search.status as RunStatusFilter)
         : 'all',
       branch: typeof search.branch === 'string' && search.branch ? search.branch : undefined,

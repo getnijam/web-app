@@ -23,6 +23,8 @@ import { CountDots } from './CountDots';
 import { AttemptBlock } from './AttemptBlock';
 import { ArtifactPreviewModal } from './ArtifactPreviewModal';
 import { testStatusMeta } from './test-status';
+import { QuarantineBadge } from '@/components/quarantine/QuarantineBadge';
+import { QuarantineButton } from '@/components/quarantine/QuarantineButton';
 import { TestHistorySheet } from '@/components/explorer/TestHistorySheet';
 
 /**
@@ -97,20 +99,28 @@ export function RunFileTests({
                 iconPosition="start"
                 className="items-center justify-start gap-3 px-4 py-3 hover:no-underline"
                 action={
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        className="mr-2 shrink-0 text-muted-foreground"
-                        onClick={() => setHistoryTest({ testId: t.testId, title: t.title })}
-                        aria-label={`Open history for ${t.title}`}
-                      >
-                        <HugeiconsIcon icon={Clock01Icon} size={16} />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Open history</TooltipContent>
-                  </Tooltip>
+                  <Flex align="center" gap={0.5} className="mr-2 shrink-0">
+                    <QuarantineButton
+                      orgId={orgId}
+                      projectId={projectId}
+                      test={{ testId: t.testId, title: t.title, file: path }}
+                      quarantined={t.quarantined}
+                    />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          className="shrink-0 text-muted-foreground"
+                          onClick={() => setHistoryTest({ testId: t.testId, title: t.title })}
+                          aria-label={`Open history for ${t.title}`}
+                        >
+                          <HugeiconsIcon icon={Clock01Icon} size={16} />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Open history</TooltipContent>
+                    </Tooltip>
+                  </Flex>
                 }
               >
                 <Flex align="center" gap={3} className="min-w-0 flex-1">
@@ -127,6 +137,7 @@ export function RunFileTests({
                       {t.attempts.length} attempts
                     </span>
                   )}
+                  {t.quarantined && <QuarantineBadge />}
                   <span className={cn('shrink-0 text-xs font-medium', meta.color)}>
                     {meta.label}
                   </span>

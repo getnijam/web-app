@@ -26,15 +26,13 @@ import { RunStatusBadge } from './RunStatusBadge';
 import { RunTimeline } from './RunTimeline';
 import { AttemptSwitcher } from './AttemptSwitcher';
 import { SpecFileRow } from './SpecFileRow';
-import { fileStatus } from './file-status';
-import { STATUS_OPTIONS, type RunStatusFilter } from './status-filter';
+import { matchesStatusFilter } from './file-status';
+import { RUN_DETAIL_STATUSES, STATUS_OPTIONS, type RunStatusFilter } from './status-filter';
 import { type RunView } from '@/routes/_authed/orgs.$orgId.projects.$projectId.runs.$runId.index';
 import { runDisplayStatus } from './run-status';
 import { timeAgo, displayAuthor } from '@/lib/format';
 import { gitBranchUrl, gitProviderIcon } from '@/lib/git';
 import { RUNS_ROUTE } from '@/lib/routes';
-
-const STATUSES: RunStatusFilter[] = ['all', 'passed', 'failed', 'flaky'];
 
 /**
  * The run-detail column: back bar, header, attempt switcher, summary, and the
@@ -67,7 +65,7 @@ export function RunOverview({
   // Read/write `?status=`/`?view=` on whatever route hosts this component (run or file).
   const search = useSearch({ strict: false }) as { status?: RunStatusFilter; view?: RunView };
   const status: RunStatusFilter =
-    search.status && STATUSES.includes(search.status) ? search.status : 'all';
+    search.status && RUN_DETAIL_STATUSES.includes(search.status) ? search.status : 'all';
   const setStatus = (next: string) =>
     navigate({
       search: ((prev: Record<string, unknown>) => ({
@@ -107,7 +105,7 @@ export function RunOverview({
   const author = displayAuthor(run.authorEmail, run.authorName);
   const branchHref = gitBranchUrl(run);
 
-  const visibleFiles = status === 'all' ? files : files.filter((f) => fileStatus(f) === status);
+  const visibleFiles = files.filter((f) => matchesStatusFilter(f, status));
   const activeLabel = STATUS_OPTIONS.find((o) => o.value === status)?.label.toLowerCase() ?? status;
 
   function renderFiles() {

@@ -8,6 +8,8 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { displayFile, formatDuration } from '@/lib/format';
 import { testStatusMeta } from '@/components/runs/test-status';
+import { QuarantineBadge } from '@/components/quarantine/QuarantineBadge';
+import { QuarantineButton } from '@/components/quarantine/QuarantineButton';
 
 function formatMs(ms: number): string {
   return ms < 1000 ? `${ms}ms` : formatDuration(Math.round(ms / 1000));
@@ -22,6 +24,10 @@ export type TestDetailOrigin = 'explorer' | 'flaky' | 'failing';
  * count pill instead of the retry pill, otherwise the row is identical to the
  * explorer's. `from` records the originating list so the detail page's back
  * button points there (defaults to the explorer).
+ *
+ * A quarantined test shows the badge to everyone; the quarantine action itself renders
+ * only for org admins (see QuarantineButton). Both live here rather than per page, so
+ * the explorer, flaky and failing lists get them from one place.
  */
 export function TestRow({
   test,
@@ -90,10 +96,17 @@ export function TestRow({
           </Text>
         )}
       </Flex>
+      {test.quarantined && <QuarantineBadge />}
       {renderPill()}
       <Text as="span" className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
         {formatMs(test.durationMs)}
       </Text>
+      <QuarantineButton
+        orgId={orgId}
+        projectId={projectId}
+        test={{ testId: test.testId, title: test.title, file: test.file }}
+        quarantined={test.quarantined}
+      />
       <HugeiconsIcon icon={ArrowRight01Icon} size={18} className="shrink-0 text-muted-foreground" />
     </Flex>
   );

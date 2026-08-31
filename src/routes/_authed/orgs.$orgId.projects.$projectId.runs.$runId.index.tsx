@@ -8,10 +8,12 @@ import { RunSplitLayout } from '@/components/runs/RunSplitLayout';
 import { RunTimeline } from '@/components/runs/RunTimeline';
 import { EmptyState } from '@/components/states/EmptyState';
 import { useIsMobile } from '@/hooks/use-is-mobile';
-import { type RunStatusFilter } from '@/components/runs/status-filter';
+import {
+  parseStatusFilter,
+  RUN_DETAIL_STATUSES,
+  type RunStatusFilter,
+} from '@/components/runs/status-filter';
 import { privateSeo } from '@/lib/seo';
-
-const STATUSES: RunStatusFilter[] = ['all', 'passed', 'failed', 'flaky'];
 
 /** Which view of the run is shown: the spec-file list (default) or the timeline. */
 export type RunView = 'files' | 'timeline';
@@ -20,11 +22,13 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/r
   head: () => privateSeo('Run'),
   // The spec-file status filter and the view mode live in the URL so they survive
   // refresh and are shareable; the defaults ('all' / 'files') stay out of the URL.
-  validateSearch: (search: Record<string, unknown>): { status?: RunStatusFilter; view?: RunView } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { status?: RunStatusFilter; view?: RunView } => {
     const s = search.status as RunStatusFilter;
     const v = search.view as RunView;
     return {
-      status: STATUSES.includes(s) && s !== 'all' ? s : undefined,
+      status: parseStatusFilter(s, RUN_DETAIL_STATUSES),
       view: v === 'timeline' ? 'timeline' : undefined,
     };
   },
