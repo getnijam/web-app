@@ -508,6 +508,7 @@ export type TestCaseSummary = {
     retries: number;
     line: number | null;
     lastRunAt: string;
+    quarantined: boolean;
 };
 
 export type TestExplorerResponse = {
@@ -571,13 +572,28 @@ export type TestDetailResponse = {
     source: TestSourceRef;
 };
 
+export type QuarantineActor = {
+    id: string;
+    name: string | null;
+    email: string;
+} | null;
+
+export type QuarantineHistoryEntry = {
+    runId: string;
+    status: 'passed' | 'failed' | 'flaky' | 'skipped';
+    startedAt: string;
+};
+
 export type QuarantineEntry = {
     testId: string;
     file: string | null;
     title: string | null;
     reason: string | null;
     quarantinedByUserId: string | null;
+    quarantinedBy: QuarantineActor;
     createdAt: string;
+    history: Array<QuarantineHistoryEntry>;
+    consecutivePasses: number;
 };
 
 export type QuarantineListResponse = {
@@ -843,6 +859,7 @@ export type TestCase = {
     title: string;
     titlePath: Array<string>;
     status: 'passed' | 'failed' | 'flaky' | 'skipped';
+    quarantined: boolean;
     attempts: Array<AttemptSummary>;
 };
 

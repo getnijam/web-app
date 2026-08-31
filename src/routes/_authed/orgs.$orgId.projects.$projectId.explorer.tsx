@@ -16,6 +16,8 @@ import { ErrorState } from '@/components/states/ErrorState';
 import { EmptyState } from '@/components/states/EmptyState';
 import { TestRow } from '@/components/explorer/TestRow';
 import { FileGroup } from '@/components/explorer/FileGroup';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { QuarantineList } from '@/components/quarantine/QuarantineList';
 import { HoverHighlight } from '@/components/ui/hover-highlight';
 import { privateSeo } from '@/lib/seo';
 
@@ -23,11 +25,17 @@ interface ExplorerSearch {
   /** Grouping is ON by default; only `?group=false` (flat list) is persisted, so the
    *  param is optional and Links to the route don't need to pass it. */
   group?: false;
+  /** The quarantined section; absent = the default all-tests view. */
+  view?: 'quarantined';
 }
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/explorer')({
-  validateSearch: (search: Record<string, unknown>): ExplorerSearch =>
-    search.group === false || search.group === 'false' ? { group: false } : {},
+  validateSearch: (search: Record<string, unknown>): ExplorerSearch => {
+    const out: ExplorerSearch = {};
+    if (search.group === false || search.group === 'false') out.group = false;
+    if (search.view === 'quarantined') out.view = 'quarantined';
+    return out;
+  },
   head: () => privateSeo('Test explorer'),
   component: ExplorerPage,
 });
@@ -46,7 +54,9 @@ function groupTestsByFile(tests: TestCaseSummary[]): Array<[string, TestCaseSumm
 function ExplorerPage() {
   const { orgId, projectId } = Route.useParams();
   // Grouping is on unless the URL explicitly opts out (?group=false).
-  const grouped = Route.useSearch().group !== false;
+  const search = Route.useSearch();
+  const grouped = search.group !== false;
+  const view = search.view ?? 'all';
   const navigate = useNavigate({ from: Route.fullPath });
   const q = useQuery(listProjectTestsOptions({ path: { projectId } }));
   const [query, setQuery] = useState('');
@@ -119,35 +129,55 @@ function ExplorerPage() {
         </Text>
       </Flex>
 
-      <Flex direction="col" gap={4}>
-        {showSearch && (
-          <Flex align="center" gap={3} wrap>
-            <Input
-              placeholder="Find a test…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="min-w-0 flex-1"
-              startIcon={<HugeiconsIcon icon={Search01Icon} size={16} />}
-              clearable
-              onClear={() => setQuery('')}
-            />
-            <Flex align="center" gap={2} className="shrink-0">
-              <Switch
-                id="group-by-file"
-                checked={grouped}
-                onCheckedChange={(v) =>
-                  // On = default (drop the param); off = persist ?group=false.
-                  navigate({ search: (prev) => ({ ...prev, group: v ? undefined : false }) })
-                }
+      <ToggleGroup
+        type="single"
+        value={view}
+        onValueChange={(v) => {
+          if (!v) return;
+          // "all" is the default view, so it drops the param rather than persisting it.
+          navigate({
+            search: (prev) => ({ ...prev, view: v === 'quarantined' ? 'quarantined' : undefined }),
+          });
+        }}
+        className="self-start"
+      >
+        <ToggleGroupItem value="all">All tests</ToggleGroupItem>
+        <ToggleGroupItem value="quarantined">Quarantined</ToggleGroupItem>
+      </ToggleGroup>
+
+      {view === 'quarantined' ? (
+        <QuarantineList orgId={orgId} projectId={projectId} />
+      ) : (
+        <Flex direction="col" gap={4}>
+          {showSearch && (
+            <Flex align="center" gap={3} wrap>
+              <Input
+                placeholder="Find a test…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="min-w-0 flex-1"
+                startIcon={<HugeiconsIcon icon={Search01Icon} size={16} />}
+                clearable
+                onClear={() => setQuery('')}
               />
-              <Label htmlFor="group-by-file" className="text-sm text-muted-foreground">
-                Group by file
-              </Label>
+              <Flex align="center" gap={2} className="shrink-0">
+                <Switch
+                  id="group-by-file"
+                  checked={grouped}
+                  onCheckedChange={(v) =>
+                    // On = default (drop the param); off = persist ?group=false.
+                    navigate({ search: (prev) => ({ ...prev, group: v ? undefined : false }) })
+                  }
+                />
+                <Label htmlFor="group-by-file" className="text-sm text-muted-foreground">
+                  Group by file
+                </Label>
+              </Flex>
             </Flex>
-          </Flex>
-        )}
-        {renderList()}
-      </Flex>
+          )}
+          {renderList()}
+        </Flex>
+      )}
     </Flex>
   );
 }

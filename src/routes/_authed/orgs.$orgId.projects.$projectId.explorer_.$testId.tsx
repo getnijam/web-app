@@ -24,6 +24,8 @@ import { CodeBlock } from '@/components/explorer/CodeBlock';
 import { RunHistory } from '@/components/explorer/RunHistory';
 import type { TestDetailOrigin } from '@/components/explorer/TestRow';
 import { testStatusMeta } from '@/components/runs/test-status';
+import { QuarantineBadge } from '@/components/quarantine/QuarantineBadge';
+import { QuarantineButton } from '@/components/quarantine/QuarantineButton';
 import { displayFile } from '@/lib/format';
 import { gitFileUrl } from '@/lib/git';
 import { cn } from '@/lib/utils';
@@ -128,17 +130,26 @@ function TestDetailPage() {
             >
               {meta.label}
             </Flex>
+            {test.quarantined && <QuarantineBadge />}
           </Flex>
         </Flex>
-        {viewSrc && (
-          <Button asChild variant="outline" size="sm" className="shrink-0">
-            <a href={viewSrc} target="_blank" rel="noreferrer">
-              <HugeiconsIcon icon={SourceCodeIcon} size={15} />
-              View source
-              <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} />
-            </a>
-          </Button>
-        )}
+        <Flex align="center" gap={2} className="shrink-0">
+          <QuarantineButton
+            orgId={orgId}
+            projectId={projectId}
+            test={{ testId: test.testId, title: test.title, file: test.file }}
+            quarantined={test.quarantined}
+          />
+          {viewSrc && (
+            <Button asChild variant="outline" size="sm" className="shrink-0">
+              <a href={viewSrc} target="_blank" rel="noreferrer">
+                <HugeiconsIcon icon={SourceCodeIcon} size={15} />
+                View source
+                <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} />
+              </a>
+            </Button>
+          )}
+        </Flex>
       </Flex>
 
       {/* source (2/3) + history (1/3). On md the columns share one row sized by flex to
