@@ -28,7 +28,7 @@ async function deleteAccount(page: Page, email: string, password: string): Promi
 test.describe('Signup', () => {
   test.skip(
     !inboxConfigured,
-    'Set NIJAM_E2E_INBOX_DOMAIN and NIJAM_E2E_RESEND_API_KEY to run the inbound-email specs.',
+    'Set RESEND_INBOX_DOMAIN and RESEND_INBOX_API_KEY to run the inbound-email specs.',
   );
 
   test('sign up, verify by email, land signed in', async ({ page }) => {
@@ -83,7 +83,7 @@ test.describe('Signup', () => {
 test.describe('Sign in', () => {
   test.skip(
     !inboxConfigured,
-    'Set NIJAM_E2E_INBOX_DOMAIN and NIJAM_E2E_RESEND_API_KEY to run the inbound-email specs.',
+    'Set RESEND_INBOX_DOMAIN and RESEND_INBOX_API_KEY to run the inbound-email specs.',
   );
 
   test('wrong password is refused, right password signs in and persists', async ({ page }) => {

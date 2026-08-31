@@ -12,11 +12,12 @@ import { defineConfig, devices } from '@playwright/test';
  * The signup / sign-in specs verify through REAL inbound email, because
  * `issueVerificationToken` stores only the token's hash and the raw token exists
  * nowhere but the message. They skip unless both are set:
- *   NIJAM_E2E_INBOX_DOMAIN     , a Resend RECEIVING domain (e.g. inbox.nijam.dev).
- *                                Resend accepts any local part on it, so each run
- *                                uses a fresh address with no per-test setup.
- *   NIJAM_E2E_RESEND_API_KEY   , a Resend key that can READ received emails. Keep it
- *                                separate from the API's sending key.
+ *   RESEND_INBOX_DOMAIN     , a Resend RECEIVING domain (e.g. inbox.nijam.dev).
+ *                             Resend accepts any local part on it, so each run uses
+ *                             a fresh address with no per-test setup.
+ *   RESEND_INBOX_API_KEY    , a Resend key that can READ received emails. It must be
+ *                             a different key from the API's: that one is scoped to
+ *                             sending and 401s on the receiving endpoint.
  * The API those specs point at also needs RESEND_API_KEY + EMAIL_FROM, or it never
  * sends and the wait times out while signup itself still looks fine.
  *

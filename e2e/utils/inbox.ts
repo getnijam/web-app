@@ -11,13 +11,15 @@
  *      records. Keep it separate from the subdomain you send from.
  *   2. Resend accepts mail for ANY local part on that domain (catch-all), which is
  *      what lets every run use a fresh address with no per-test setup.
- *   3. Set NIJAM_E2E_INBOX_DOMAIN and NIJAM_E2E_RESEND_API_KEY.
+ *   3. Set RESEND_INBOX_DOMAIN and RESEND_INBOX_API_KEY. The key must be able to READ
+ *      received email: the API service's own key is scoped to sending only, and
+ *      returns 401 restricted_api_key against the receiving endpoint.
  */
 
 const API = 'https://api.resend.com/emails/receiving';
 
-export const inboxDomain = process.env.NIJAM_E2E_INBOX_DOMAIN ?? '';
-export const inboxKey = process.env.NIJAM_E2E_RESEND_API_KEY ?? '';
+export const inboxDomain = process.env.RESEND_INBOX_DOMAIN ?? '';
+export const inboxKey = process.env.RESEND_INBOX_API_KEY ?? '';
 
 /** Whether the inbound-email specs can run at all. */
 export const inboxConfigured = Boolean(inboxDomain && inboxKey);
