@@ -19,3 +19,21 @@ const LIST_EXCLUDED: RunStatusFilter[] = ['flaky', 'quarantined'];
 export const RUN_LIST_STATUS_OPTIONS = STATUS_OPTIONS.filter(
   (o) => !LIST_EXCLUDED.includes(o.value),
 );
+
+/**
+ * The accepted `?status=` values, derived from the option lists above rather than
+ * re-listed. They were previously hand-copied into four `validateSearch`/guard consts,
+ * which silently dropped `quarantined` when it was added: an unrecognised value falls
+ * back to "all", so the filter looked wired up but never applied. Derive, don't repeat.
+ */
+export const RUN_DETAIL_STATUSES: RunStatusFilter[] = STATUS_OPTIONS.map((o) => o.value);
+export const RUN_LIST_STATUSES: RunStatusFilter[] = RUN_LIST_STATUS_OPTIONS.map((o) => o.value);
+
+/** Narrow an unknown `?status=` to a valid filter, or undefined (= the default, "all"). */
+export function parseStatusFilter(
+  value: unknown,
+  allowed: RunStatusFilter[],
+): RunStatusFilter | undefined {
+  const v = value as RunStatusFilter;
+  return allowed.includes(v) && v !== 'all' ? v : undefined;
+}

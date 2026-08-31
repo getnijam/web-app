@@ -11,10 +11,12 @@ import { RunFileSkeleton } from '@/components/runs/RunSkeletons';
 import { RunFileTests } from '@/components/runs/RunFileTests';
 import { RunSplitLayout } from '@/components/runs/RunSplitLayout';
 import { useIsMobile } from '@/hooks/use-is-mobile';
-import { type RunStatusFilter } from '@/components/runs/status-filter';
+import {
+  parseStatusFilter,
+  RUN_DETAIL_STATUSES,
+  type RunStatusFilter,
+} from '@/components/runs/status-filter';
 import { privateSeo } from '@/lib/seo';
-
-const STATUSES: RunStatusFilter[] = ['all', 'passed', 'failed', 'flaky'];
 
 export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/runs/$runId/file')({
   head: () => privateSeo('Run file'),
@@ -25,7 +27,7 @@ export const Route = createFileRoute('/_authed/orgs/$orgId/projects/$projectId/r
     const s = search.status as RunStatusFilter;
     return {
       path: typeof search.path === 'string' ? search.path : '',
-      status: STATUSES.includes(s) && s !== 'all' ? s : undefined,
+      status: parseStatusFilter(s, RUN_DETAIL_STATUSES),
     };
   },
 });
