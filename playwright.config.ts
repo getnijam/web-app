@@ -15,9 +15,9 @@ import { defineConfig, devices } from '@playwright/test';
  *   RESEND_INBOX_DOMAIN     , a Resend RECEIVING domain (e.g. inbox.nijam.dev).
  *                             Resend accepts any local part on it, so each run uses
  *                             a fresh address with no per-test setup.
- *   RESEND_INBOX_API_KEY    , a Resend key that can READ received emails. It must be
- *                             a different key from the API's: that one is scoped to
- *                             sending and 401s on the receiving endpoint.
+ *   RESEND_API_KEY          , the Resend key, which must have FULL access rather than
+ *                             the send-only scope: a send-restricted key 401s on the
+ *                             receiving endpoint with restricted_api_key.
  * The API those specs point at also needs RESEND_API_KEY + EMAIL_FROM, or it never
  * sends and the wait times out while signup itself still looks fine.
  *
