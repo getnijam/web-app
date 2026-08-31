@@ -134,13 +134,24 @@ function SignupPage() {
 
           <Flex direction="col" gap={1.5}>
             <Label htmlFor="name">Name</Label>
-            <Input id="name" autoComplete="name" {...form.register('name')} />
+            <Input
+              id="name"
+              data-testid="signup-name"
+              autoComplete="name"
+              {...form.register('name')}
+            />
             <FieldError message={form.formState.errors.name?.message} />
           </Flex>
 
           <Flex direction="col" gap={1.5}>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" autoComplete="email" {...form.register('email')} />
+            <Input
+              id="email"
+              data-testid="signup-email"
+              type="email"
+              autoComplete="email"
+              {...form.register('email')}
+            />
             <FieldError message={form.formState.errors.email?.message} />
           </Flex>
 
@@ -148,6 +159,7 @@ function SignupPage() {
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
+              data-testid="signup-password"
               type="password"
               autoComplete="new-password"
               {...form.register('password')}
@@ -155,7 +167,13 @@ function SignupPage() {
             <FieldError message={form.formState.errors.password?.message} />
           </Flex>
 
-          <Button type="submit" size="lg" className="w-full" loading={mutation.isPending}>
+          <Button
+            type="submit"
+            size="lg"
+            data-testid="signup-submit"
+            className="w-full"
+            loading={mutation.isPending}
+          >
             {mutation.isPending ? 'Creating account…' : 'Create account'}
           </Button>
 
