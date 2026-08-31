@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -31,6 +30,10 @@ export interface QuarantineTarget {
  *
  * Quarantining asks for confirmation and names the consequence; removing does not, since
  * it only restores the default and the toast says what happened.
+ *
+ * The confirm dialog stays open for the duration of the write, with the spinner on its own
+ * confirm button, and closes only once the mutation has actually landed. Closing on click
+ * would claim success before the request had been made.
  */
 export function QuarantineButton({
   orgId,
@@ -46,7 +49,7 @@ export function QuarantineButton({
   className?: string;
 }) {
   const isAdmin = useIsOrgAdmin(orgId);
-  const { quarantine, unquarantine, isPending } = useQuarantine(projectId);
+  const { quarantine, unquarantine, isAdding, isRemoving } = useQuarantine(projectId);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   if (!isAdmin) return null;
@@ -74,7 +77,10 @@ export function QuarantineButton({
           <Button
             variant="ghost"
             size="icon-sm"
-            loading={isPending}
+            // Only the removal path spins here. Quarantining is confirmed in the dialog,
+            // so its spinner belongs on that dialog's button, not on this icon (where it
+            // would replace the glyph and leave the row looking empty).
+            loading={isRemoving}
             aria-label={label}
             onClick={onClick}
             // z-10 keeps it above any full-area overlay link a row may draw; the
@@ -114,14 +120,25 @@ export function QuarantineButton({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+            <AlertDialogCancel disabled={isAdding}>Cancel</AlertDialogCancel>
+            {/*
+              A plain `Button`, deliberately not `AlertDialogAction`: that primitive closes
+              the dialog on click and does so even when the handler calls preventDefault,
+              so the dialog would vanish before the write finished and claim a success it
+              had not yet had. Owning the button means the close is ours to time, and it
+              happens in `onDone`, after the mutation lands and the toast fires.
+            */}
+            <Button
+              loading={isAdding}
               onClick={() =>
-                quarantine({ testId: test.testId, title: test.title, file: test.file })
+                quarantine(
+                  { testId: test.testId, title: test.title, file: test.file },
+                  { onDone: () => setConfirmOpen(false) },
+                )
               }
             >
               Quarantine
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -45,9 +45,22 @@ export function useQuarantine(projectId: string) {
   });
 
   return {
-    quarantine: (test: { testId: string; title?: string; file?: string; reason?: string }) =>
-      add.mutate({ path: { projectId }, body: test }),
-    unquarantine: (testId: string) => remove.mutate({ path: { projectId, testId } }),
+    /**
+     * `onDone` runs after the hook's own success handling, so a caller holding a confirm
+     * dialog open can close it once the write has actually landed and the toast has
+     * fired, rather than closing optimistically on click.
+     */
+    quarantine: (
+      test: { testId: string; title?: string; file?: string; reason?: string },
+      opts?: { onDone?: () => void },
+    ) => add.mutate({ path: { projectId }, body: test }, { onSuccess: () => opts?.onDone?.() }),
+    unquarantine: (testId: string, opts?: { onDone?: () => void }) =>
+      remove.mutate({ path: { projectId, testId } }, { onSuccess: () => opts?.onDone?.() }),
+    // Separate flags: the two actions have different affordances. Quarantining is
+    // confirmed in a dialog, so its spinner belongs on that dialog's confirm button;
+    // removing happens straight from the row, so its spinner belongs on the row button.
+    isAdding: add.isPending,
+    isRemoving: remove.isPending,
     isPending: add.isPending || remove.isPending,
   };
 }
