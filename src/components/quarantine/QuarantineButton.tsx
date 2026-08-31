@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ShieldBanIcon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
@@ -53,7 +53,13 @@ export function QuarantineButton({
 
   const label = quarantined ? 'Take out of quarantine' : 'Quarantine this test';
 
-  const onClick = () => {
+  // Several of the rows this button sits in ARE links (the explorer/flaky/failing
+  // `TestRow` is a `Flex as={Link}`), so the button is a real child of the anchor and a
+  // plain click would bubble up and navigate away instead of quarantining. Stopping it
+  // here rather than at each call site keeps every current and future mount point safe.
+  const onClick = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (quarantined) {
       unquarantine(test.testId);
       return;
@@ -71,8 +77,8 @@ export function QuarantineButton({
             loading={isPending}
             aria-label={label}
             onClick={onClick}
-            // z-10 lifts it above the row's full-area overlay link (the test rows are
-            // themselves links), so the button stays independently clickable.
+            // z-10 keeps it above any full-area overlay link a row may draw; the
+            // navigation itself is stopped in onClick above.
             className={cn(
               'relative z-10 shrink-0',
               quarantined ? 'text-info' : 'text-muted-foreground',
@@ -86,7 +92,18 @@ export function QuarantineButton({
       </Tooltip>
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent>
+        {/*
+          This button is mounted inside rows that ARE links, and although Radix portals
+          the dialog into document.body, a React portal still propagates events through
+          the REACT tree, not the DOM tree. So without this, clicking anywhere in the
+          dialog (Cancel included) bubbles to the row's `Link` and navigates away. The
+          DOM looks innocent, which is what makes it hard to spot: the click's target has
+          no anchor ancestor at all.
+
+          Safe to swallow unconditionally: nothing behind a modal should react to a click
+          inside it.
+        */}
+        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
           <AlertDialogHeader>
             <AlertDialogTitle>Quarantine this test?</AlertDialogTitle>
             <AlertDialogDescription>
