@@ -130,9 +130,16 @@ jobs:
           NIJAM_E2E_BASE_URL: ${{ steps.preview.outputs.url }}
           # Bypass Vercel Deployment Protection on the preview (sent as an HTTP header).
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          # Required, or both specs skip themselves (the check would be a green no-op).
+          # Required, or those specs skip themselves (the check would be a green no-op).
           NIJAM_E2E_EMAIL: ${{ secrets.NIJAM_E2E_EMAIL }}
           NIJAM_E2E_PASSWORD: ${{ secrets.NIJAM_E2E_PASSWORD }}
+          # Signup / sign-in verify through real inbound email, so they need a Resend key
+          # with FULL access: a send-only key does not fail fast, it 401s on the first
+          # poll after the signup has already appeared to work. Unset = those specs skip.
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          # Not a secret, just the receiving subdomain. Resend accepts any local part on
+          # it, so each run gets a fresh address.
+          RESEND_INBOX_DOMAIN: inbox.nijam.dev
           # Optional: dogfood, upload the run to Nijam (the GitHub App then posts a
           # check/comment on the PR). Inert unless both are set.
           NIJAM_API_KEY: ${{ secrets.NIJAM_API_KEY }}

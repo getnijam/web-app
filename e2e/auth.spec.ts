@@ -4,6 +4,12 @@ import { inboxConfigured, uniqueTestEmail, waitForVerificationToken } from './ut
 
 const PASSWORD = 'e2e-Passw0rd!verify';
 
+// Real email delivery dominates the wall clock here: `waitForVerificationToken` alone
+// allows 90s, and the sign-in spec pays that plus two login attempts and cleanup. The
+// 30s default cannot cover it, and the failure it produces is a bare "Test timeout"
+// that says nothing about email.
+test.describe.configure({ timeout: 180_000 });
+
 /**
  * Signup and sign-in, verified through real inbound email.
  *
@@ -15,7 +21,61 @@ const PASSWORD = 'e2e-Passw0rd!verify';
  * behind and never collide.
  */
 
-/** Delete the signed-in account, so a run leaves no user behind even if it failed. */
+/**
+ * Submit the signup form and confirm it was accepted.
+ *
+ * The rate limiter is the reason this is a helper. It is in-memory and per IP, so a few
+ * consecutive runs against the same API exhaust it, and the form then simply stays put.
+ * Asserting "Check your inbox" alone reports that as `element(s) not found`, which sends
+ * you looking at selectors instead of at a 429. Race the two outcomes and name the real
+ * one.
+ */
+async function submitSignup(page: Page, name: string, email: string): Promise<void> {
+  await page.goto('/signup');
+  await page.getByTestId('signup-name').fill(name);
+  await page.getByTestId('signup-email').fill(email);
+  await page.getByTestId('signup-password').fill(PASSWORD);
+  await page.getByTestId('signup-submit').click();
+
+  const accepted = page.getByText('Check your inbox');
+  const rejected = page.getByText(/too many attempts/i);
+  await expect(accepted.or(rejected)).toBeVisible({ timeout: 15_000 });
+  if (await rejected.isVisible()) {
+    throw new Error(
+      'Signup was rate limited (429). The API limiter is in-memory and per IP: restart ' +
+        'the API to clear it, or wait a few minutes between runs.',
+    );
+  }
+}
+
+/** Set by each test right after signup, so cleanup runs even when the test fails. */
+let created: { email: string; password: string } | null = null;
+
+/**
+ * Cleanup has to be an afterEach, not a final line in each test. The first failure most
+ * people will hit is a send-only Resend key, which throws on the first inbox poll, after
+ * signup has already created the account. A trailing cleanup call never runs in that
+ * path, so every failed attempt would leave an orphan behind.
+ */
+test.afterEach(async ({ page }) => {
+  if (!created) return;
+  const { email, password } = created;
+  created = null;
+  try {
+    // Verifying does not sign you in, and a failed test may have left no session, so
+    // /profile/danger is not reliably reachable. Sign in only when we actually get
+    // bounced, rather than paying for a login after every test.
+    await page.goto('/profile/danger');
+    if (/\/login/.test(page.url())) await login(page, email, password);
+    await deleteAccount(page, email, password);
+  } catch {
+    // An account that never got verified cannot sign in, so it cannot be deleted this
+    // way. Say which one, rather than failing the run a second time over cleanup.
+    console.warn(`[cleanup] left ${email} behind, delete it by hand`);
+  }
+});
+
+/** Delete the signed-in account. */
 async function deleteAccount(page: Page, email: string, password: string): Promise<void> {
   await page.goto('/profile/danger');
   await page.getByRole('button', { name: 'Delete my account' }).click();
@@ -34,15 +94,11 @@ test.describe('Signup', () => {
   test('sign up, verify by email, land signed in', async ({ page }) => {
     const email = uniqueTestEmail();
 
-    await page.goto('/signup');
-    await page.getByTestId('signup-name').fill('E2E Signup');
-    await page.getByTestId('signup-email').fill(email);
-    await page.getByTestId('signup-password').fill(PASSWORD);
-    await page.getByTestId('signup-submit').click();
+    await submitSignup(page, 'E2E Signup', email);
+    created = { email, password: PASSWORD };
 
-    // Signup succeeds whether or not the mail actually goes out, so this assertion is
-    // not evidence the email was sent. The wait below is.
-    await expect(page.getByText('Check your inbox')).toBeVisible({ timeout: 15_000 });
+    // Reaching this point is not evidence the email was sent, only that signup was
+    // accepted. The wait below is what proves delivery.
 
     // Rebuild the URL against THIS run's base URL rather than following the emailed
     // link, which carries the API's own WEB_URL and may point somewhere else entirely.
@@ -50,33 +106,33 @@ test.describe('Signup', () => {
     await page.goto(`/verify?token=${token}`);
     await expect(page.getByText('Email verified')).toBeVisible({ timeout: 15_000 });
 
-    // Verified accounts are signed in and land on the org picker.
-    await page.waitForURL(/\/orgs(\/|$|\?)/, { timeout: 15_000 });
-
-    await deleteAccount(page, email, PASSWORD);
+    // Verifying does not create a session; it hands you to sign-in. Follow that through
+    // so the test proves the account is actually usable, not merely marked verified.
+    await page.getByRole('link', { name: 'Continue to sign in' }).click();
+    await page.waitForURL(/\/login/, { timeout: 15_000 });
+    await login(page, email, PASSWORD);
   });
 
-  test('a used verification link cannot be replayed', async ({ page }) => {
+  test('a replayed verification link still reads as verified', async ({ page }) => {
     const email = uniqueTestEmail();
 
-    await page.goto('/signup');
-    await page.getByTestId('signup-name').fill('E2E Replay');
-    await page.getByTestId('signup-email').fill(email);
-    await page.getByTestId('signup-password').fill(PASSWORD);
-    await page.getByTestId('signup-submit').click();
+    await submitSignup(page, 'E2E Replay', email);
+    created = { email, password: PASSWORD };
 
     const token = await waitForVerificationToken(email);
     await page.goto(`/verify?token=${token}`);
     await expect(page.getByText('Email verified')).toBeVisible({ timeout: 15_000 });
 
-    // Tokens are single-use. A second visit must not silently succeed, which is the
-    // failure mode that would matter if the token ever leaked from an inbox.
+    // The token IS single-use server-side: the second call returns
+    // VERIFICATION_TOKEN_USED. `verify.tsx` deliberately renders that as success anyway,
+    // on the reasoning that a second visit almost always means the user clicked twice,
+    // and showing them an error for succeeding is hostile. This asserts that decision, so
+    // a future change that starts erroring on a double click gets caught.
     await page.goto(`/verify?token=${token}`);
-    await expect(page.getByText('Email verified')).toBeHidden();
-    await expect(page.getByText(/invalid link|link expired/i)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText('Email verified')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/invalid link|link expired/i)).toBeHidden();
 
     await login(page, email, PASSWORD);
-    await deleteAccount(page, email, PASSWORD);
   });
 });
 
@@ -91,11 +147,8 @@ test.describe('Sign in', () => {
 
     // A verified account of our own, so this spec never depends on a shared fixture
     // user whose password someone might rotate.
-    await page.goto('/signup');
-    await page.getByTestId('signup-name').fill('E2E Signin');
-    await page.getByTestId('signup-email').fill(email);
-    await page.getByTestId('signup-password').fill(PASSWORD);
-    await page.getByTestId('signup-submit').click();
+    await submitSignup(page, 'E2E Signin', email);
+    created = { email, password: PASSWORD };
     const token = await waitForVerificationToken(email);
     await page.goto(`/verify?token=${token}`);
     await expect(page.getByText('Email verified')).toBeVisible({ timeout: 15_000 });
@@ -127,7 +180,5 @@ test.describe('Sign in', () => {
     // The session must survive a reload, not just the redirect after login.
     await page.reload();
     await expect(page).toHaveURL(/\/orgs(\/|$|\?)/);
-
-    await deleteAccount(page, email, PASSWORD);
   });
 });
