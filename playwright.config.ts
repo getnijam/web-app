@@ -9,6 +9,18 @@ import { defineConfig, devices } from '@playwright/test';
  * lifecycle spec skips itself when they're unset, so a bare `npm run test:e2e`
  * never fails.
  *
+ * The signup / sign-in specs verify through REAL inbound email, because
+ * `issueVerificationToken` stores only the token's hash and the raw token exists
+ * nowhere but the message. They skip unless both are set:
+ *   RESEND_INBOX_DOMAIN     , a Resend RECEIVING domain (e.g. inbox.nijam.dev).
+ *                             Resend accepts any local part on it, so each run uses
+ *                             a fresh address with no per-test setup.
+ *   RESEND_API_KEY          , the Resend key, which must have FULL access rather than
+ *                             the send-only scope: a send-restricted key 401s on the
+ *                             receiving endpoint with restricted_api_key.
+ * The API those specs point at also needs RESEND_API_KEY + EMAIL_FROM, or it never
+ * sends and the wait times out while signup itself still looks fine.
+ *
  * Optionally push these runs to a Nijam project (dogfooding) by setting, **at run
  * time**, all of:
  *   NIJAM_API_KEY     , a secret key for the target project
