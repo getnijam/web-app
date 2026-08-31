@@ -1,5 +1,8 @@
 import { expect, type Page } from '@playwright/test';
 
+/** The password every account these helpers create is given. */
+export const E2E_PASSWORD = 'e2e-Passw0rd!verify';
+
 /**
  * Where login can land. A first-time account (no `lastOrgId`) gets the org picker at
  * `/orgs`; a returning one is sent straight into its last org at
@@ -56,4 +59,46 @@ export async function expectLoginRejected(
   });
   await expect(page.getByText(/no account|not found|does not exist|unregistered/i)).toBeHidden();
   await expect(page).toHaveURL(/\/login/);
+}
+
+/**
+ * Submit the signup form and confirm it was accepted.
+ *
+ * The rate limiter is the reason this is a helper. It is in-memory and per IP, so a few
+ * consecutive runs against the same API exhaust it, and the form then simply stays put.
+ * Asserting "Check your inbox" alone reports that as `element(s) not found`, which sends
+ * you looking at selectors instead of at a 429. Race the two outcomes and name the real
+ * one.
+ */
+export async function submitSignup(
+  page: Page,
+  name: string,
+  email: string,
+  password = E2E_PASSWORD,
+): Promise<void> {
+  await page.goto('/signup');
+  await page.getByTestId('signup-name').fill(name);
+  await page.getByTestId('signup-email').fill(email);
+  await page.getByTestId('signup-password').fill(password);
+  await page.getByTestId('signup-submit').click();
+
+  const accepted = page.getByText('Check your inbox');
+  const rejected = page.getByText(/too many attempts/i);
+  await expect(accepted.or(rejected)).toBeVisible({ timeout: 15_000 });
+  if (await rejected.isVisible()) {
+    throw new Error(
+      'Signup was rate limited (429). The API limiter is in-memory and per IP: restart ' +
+        'the API to clear it, or wait a few minutes between runs.',
+    );
+  }
+}
+
+/** Delete the signed-in account. */
+export async function deleteAccount(page: Page, email: string, password: string): Promise<void> {
+  await page.goto('/profile/danger');
+  await page.getByRole('button', { name: 'Delete my account' }).click();
+  await page.locator('#delete-confirm').fill(email);
+  await page.locator('#delete-password').fill(password);
+  await page.getByRole('button', { name: 'Delete account', exact: true }).click();
+  await page.waitForURL(/\/(login|)$/, { timeout: 15_000 });
 }

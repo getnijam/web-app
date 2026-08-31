@@ -1,8 +1,13 @@
-import { test, expect, type Page } from '@playwright/test';
-import { expectLoginRejected, login } from './utils/auth';
+import { test, expect } from '@playwright/test';
+import {
+  deleteAccount,
+  E2E_PASSWORD,
+  expectLoginRejected,
+  login,
+  submitSignup,
+} from './utils/auth';
 import { inboxConfigured, uniqueTestEmail, waitForVerificationToken } from './utils/inbox';
 
-const PASSWORD = 'e2e-Passw0rd!verify';
 const FIXTURE_EMAIL = process.env.NIJAM_E2E_EMAIL ?? '';
 
 // Real email delivery dominates the wall clock here: `waitForVerificationToken` alone
@@ -21,33 +26,6 @@ test.describe.configure({ timeout: 180_000 });
  * Each test creates its own account and deletes it at the end, so runs leave nothing
  * behind and never collide.
  */
-
-/**
- * Submit the signup form and confirm it was accepted.
- *
- * The rate limiter is the reason this is a helper. It is in-memory and per IP, so a few
- * consecutive runs against the same API exhaust it, and the form then simply stays put.
- * Asserting "Check your inbox" alone reports that as `element(s) not found`, which sends
- * you looking at selectors instead of at a 429. Race the two outcomes and name the real
- * one.
- */
-async function submitSignup(page: Page, name: string, email: string): Promise<void> {
-  await page.goto('/signup');
-  await page.getByTestId('signup-name').fill(name);
-  await page.getByTestId('signup-email').fill(email);
-  await page.getByTestId('signup-password').fill(PASSWORD);
-  await page.getByTestId('signup-submit').click();
-
-  const accepted = page.getByText('Check your inbox');
-  const rejected = page.getByText(/too many attempts/i);
-  await expect(accepted.or(rejected)).toBeVisible({ timeout: 15_000 });
-  if (await rejected.isVisible()) {
-    throw new Error(
-      'Signup was rate limited (429). The API limiter is in-memory and per IP: restart ' +
-        'the API to clear it, or wait a few minutes between runs.',
-    );
-  }
-}
 
 /** Set by each test right after signup, so cleanup runs even when the test fails. */
 let created: { email: string; password: string } | null = null;
@@ -76,16 +54,6 @@ test.afterEach(async ({ page }) => {
   }
 });
 
-/** Delete the signed-in account. */
-async function deleteAccount(page: Page, email: string, password: string): Promise<void> {
-  await page.goto('/profile/danger');
-  await page.getByRole('button', { name: 'Delete my account' }).click();
-  await page.locator('#delete-confirm').fill(email);
-  await page.locator('#delete-password').fill(password);
-  await page.getByRole('button', { name: 'Delete account', exact: true }).click();
-  await page.waitForURL(/\/(login|)$/, { timeout: 15_000 });
-}
-
 test.describe('Signup', () => {
   test.skip(
     !inboxConfigured,
@@ -96,7 +64,7 @@ test.describe('Signup', () => {
     const email = uniqueTestEmail();
 
     await submitSignup(page, 'E2E Signup', email);
-    created = { email, password: PASSWORD };
+    created = { email, password: E2E_PASSWORD };
 
     // Reaching this point is not evidence the email was sent, only that signup was
     // accepted. The wait below is what proves delivery.
@@ -122,7 +90,7 @@ test.describe('Signup', () => {
     // so the test proves the account is actually usable, not merely marked verified.
     await page.getByRole('link', { name: 'Continue to sign in' }).click();
     await page.waitForURL(/\/login/, { timeout: 15_000 });
-    await login(page, email, PASSWORD);
+    await login(page, email, E2E_PASSWORD);
     await page.waitForURL(/\/orgs(\/|$|\?)/, { timeout: 15_000 });
 
     // The session must survive a reload, not just the redirect straight after login.
