@@ -120,7 +120,7 @@ export function QuarantineList({ orgId, projectId }: { orgId: string; projectId:
     return (
       <EmptyState
         title="Nothing is quarantined"
-        description="Quarantine a flaky or failing test and it will keep running, but stop blocking the build. It shows up here with who parked it and how it has behaved since."
+        description="Quarantine a flaky or failing test and it keeps running, but its failures stop marking the run as failed. It shows up here with who parked it and how it has behaved since."
       />
     );
   }

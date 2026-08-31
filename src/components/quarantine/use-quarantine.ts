@@ -26,7 +26,7 @@ export function useQuarantine(projectId: string) {
     onSuccess: (_data, vars) => {
       invalidate();
       notify.success('Test quarantined', {
-        description: `Failures of ${vars.body?.title ?? 'this test'} will no longer block the build.`,
+        description: `Failures of ${vars.body?.title ?? 'this test'} will no longer mark a run as failed.`,
       });
     },
     onError: (err) => notify.error("Couldn't quarantine the test", { description: errMsg(err) }),
@@ -37,7 +37,7 @@ export function useQuarantine(projectId: string) {
     onSuccess: () => {
       invalidate();
       notify.success('Test taken out of quarantine', {
-        description: 'Its failures will block the build again from the next run.',
+        description: 'Its failures will mark the run as failed again from the next run.',
       });
     },
     onError: (err) =>

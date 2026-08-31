@@ -582,7 +582,7 @@ export const getProjectTest = <ThrowOnError extends boolean = false>(options: Op
 export const listProjectQuarantine = <ThrowOnError extends boolean = false>(options: Options<ListProjectQuarantineData, ThrowOnError>): RequestResult<ListProjectQuarantineResponses, ListProjectQuarantineErrors, ThrowOnError> => (options.client ?? client).get<ListProjectQuarantineResponses, ListProjectQuarantineErrors, ThrowOnError>({ url: '/v1/projects/{projectId}/quarantine', ...options });
 
 /**
- * Quarantine a test so its failures stop blocking the build (admin only)
+ * Quarantine a test so its failures no longer mark a run as failed (admin only)
  */
 export const addProjectQuarantine = <ThrowOnError extends boolean = false>(options: Options<AddProjectQuarantineData, ThrowOnError>): RequestResult<AddProjectQuarantineResponses, AddProjectQuarantineErrors, ThrowOnError> => (options.client ?? client).post<AddProjectQuarantineResponses, AddProjectQuarantineErrors, ThrowOnError>({
     url: '/v1/projects/{projectId}/quarantine',
@@ -594,7 +594,7 @@ export const addProjectQuarantine = <ThrowOnError extends boolean = false>(optio
 });
 
 /**
- * Take a test out of quarantine so its failures block again (admin only)
+ * Take a test out of quarantine so its failures count as failures again (admin only)
  */
 export const removeProjectQuarantine = <ThrowOnError extends boolean = false>(options: Options<RemoveProjectQuarantineData, ThrowOnError>): RequestResult<RemoveProjectQuarantineResponses, RemoveProjectQuarantineErrors, ThrowOnError> => (options.client ?? client).delete<RemoveProjectQuarantineResponses, RemoveProjectQuarantineErrors, ThrowOnError>({ url: '/v1/projects/{projectId}/quarantine/{testId}', ...options });
 

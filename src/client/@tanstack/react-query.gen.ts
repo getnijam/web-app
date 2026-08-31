@@ -1306,7 +1306,7 @@ export const listProjectQuarantineOptions = (options: Options<ListProjectQuarant
 });
 
 /**
- * Quarantine a test so its failures stop blocking the build (admin only)
+ * Quarantine a test so its failures no longer mark a run as failed (admin only)
  */
 export const addProjectQuarantineMutation = (options?: Partial<Options<AddProjectQuarantineData>>): UseMutationOptions<AddProjectQuarantineResponse, AddProjectQuarantineError, Options<AddProjectQuarantineData>> => {
     const mutationOptions: UseMutationOptions<AddProjectQuarantineResponse, AddProjectQuarantineError, Options<AddProjectQuarantineData>> = {
@@ -1323,7 +1323,7 @@ export const addProjectQuarantineMutation = (options?: Partial<Options<AddProjec
 };
 
 /**
- * Take a test out of quarantine so its failures block again (admin only)
+ * Take a test out of quarantine so its failures count as failures again (admin only)
  */
 export const removeProjectQuarantineMutation = (options?: Partial<Options<RemoveProjectQuarantineData>>): UseMutationOptions<RemoveProjectQuarantineResponse, RemoveProjectQuarantineError, Options<RemoveProjectQuarantineData>> => {
     const mutationOptions: UseMutationOptions<RemoveProjectQuarantineResponse, RemoveProjectQuarantineError, Options<RemoveProjectQuarantineData>> = {

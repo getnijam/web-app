@@ -24,7 +24,8 @@ export function QuarantineBadge({ className }: { className?: string }) {
         </span>
       </TooltipTrigger>
       <TooltipContent className="max-w-xs">
-        This test still runs, but its failures do not block the build.
+        This test still runs, but its failures no longer mark the run as failed. If you use the
+        Nijam check on your pull requests, it stays green.
       </TooltipContent>
     </Tooltip>
   );

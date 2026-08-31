@@ -24,9 +24,10 @@ export interface QuarantineTarget {
 
 /**
  * Quarantine / un-quarantine one test. Renders nothing for non-admins: this decides
- * whether future runs block a merge, so it is a merge-gate control, and a member who
- * cannot act on it should not see a dead button. The state itself stays visible to
- * everyone via `QuarantineBadge`.
+ * whether future runs are recorded as failures, and so whether the check we post to
+ * GitHub or GitLab goes red, which for teams using it as a required check decides
+ * whether a PR can merge. A member who cannot act on it should not see a dead button;
+ * the state itself stays visible to everyone via `QuarantineBadge`.
  *
  * Quarantining asks for confirmation and names the consequence; removing does not, since
  * it only restores the default and the toast says what happened.
@@ -114,9 +115,10 @@ export function QuarantineButton({
             <AlertDialogTitle>Quarantine this test?</AlertDialogTitle>
             <AlertDialogDescription>
               <span className="font-medium text-foreground">{test.title}</span> will keep running
-              and keep recording results, but from the next run its failures will no longer block
-              the build, and the pull request check will stay green. Everyone in the organization
-              can see what is quarantined.
+              and keep recording results, but from the next run its failures will no longer mark the
+              run as failed. It will show as a pass across your run history, and if you use the
+              Nijam check on GitHub or GitLab, that check will stay green, which may unblock the
+              pull request. Everyone in the organization can see what is quarantined.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

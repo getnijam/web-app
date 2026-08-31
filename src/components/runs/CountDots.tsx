@@ -33,7 +33,8 @@ const LABEL: Record<CountKind, (n: number) => string> = {
   passed: (n) => `${n} ${n === 1 ? 'test' : 'tests'} passed`,
   failed: (n) => `${n} ${n === 1 ? 'test' : 'tests'} failed`,
   flaky: (n) => `${n} ${n === 1 ? 'test is' : 'tests are'} flaky`,
-  quarantined: (n) => `${n} quarantined ${n === 1 ? 'test' : 'tests'} failed, not blocking`,
+  quarantined: (n) =>
+    `${n} quarantined ${n === 1 ? 'test' : 'tests'} failed, the run still counts as a pass`,
   skipped: (n) => `${n} ${n === 1 ? 'test' : 'tests'} skipped`,
 };
 
